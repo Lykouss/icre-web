@@ -1,11 +1,11 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-// O TypeScript agora exige que saibamos o formato do estado (State)
 export async function login(
-  prevState: { error: string } | null, 
+  prevState: { error: string } | null,
   formData: FormData
 ) {
   const email = formData.get('email') as string;
@@ -13,15 +13,21 @@ export async function login(
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     return { error: 'E-mail ou senha inválidos.' };
   }
 
-  // Se o login der certo, vai para a home
   redirect('/');
+}
+
+export async function logout() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+
+  const cookieStore = await cookies();
+  cookieStore.delete('admin_unlocked');
+
+  redirect('/login');
 }

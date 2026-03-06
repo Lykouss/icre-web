@@ -3,8 +3,7 @@
 import React, { useTransition } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { logout } from '@/features/core/actions/auth';
 
 interface UserMenuProps {
   fullName: string;
@@ -12,14 +11,11 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ fullName, roles }: UserMenuProps) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   function handleSignOut() {
     startTransition(async () => {
-      const supabase = createClient();
-      await supabase.auth.signOut();
-      router.push('/login');
+      await logout();
     });
   }
 
@@ -46,13 +42,11 @@ export function UserMenu({ fullName, roles }: UserMenuProps) {
           sideOffset={8}
           className="z-50 min-w-[200px] bg-white rounded-xl shadow-lg border border-slate-200 py-1 animate-in fade-in-0 zoom-in-95"
         >
-          {/* Info do usuário */}
           <div className="px-4 py-3 border-b border-slate-100">
             <p className="text-sm font-semibold text-slate-800 truncate">{fullName}</p>
             <p className="text-xs text-slate-500 mt-0.5">{roles.join(', ')}</p>
           </div>
 
-          {/* Ir para o site */}
           <DropdownMenu.Item asChild>
             <Link
               href="/"
@@ -67,7 +61,6 @@ export function UserMenu({ fullName, roles }: UserMenuProps) {
 
           <DropdownMenu.Separator className="h-px bg-slate-100 my-1" />
 
-          {/* Sair */}
           <DropdownMenu.Item asChild>
             <button
               onClick={handleSignOut}

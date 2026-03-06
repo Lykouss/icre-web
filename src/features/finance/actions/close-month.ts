@@ -21,6 +21,9 @@ export async function closeMonth(month: number, year: number) {
   );
   if (!hasAccess) return { error: 'Acesso negado.' };
 
+  if (!Number.isInteger(month) || month < 1 || month > 12) return { error: 'Mês inválido.' };
+  if (!Number.isInteger(year) || year < 2000 || year > 2100) return { error: 'Ano inválido.' };
+
   const supabase = await createClient();
 
   const { data: existing } = await supabase

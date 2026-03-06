@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import { saveFinanceLog } from '@/features/finance/utils/finance-log-helper';
+import { isValidUuid } from '@/lib/action-validators';
+
+const VALID_TYPES = ['entrada', 'saida'] as const;
+type ValidType = (typeof VALID_TYPES)[number];
 
 function hasFinanceAccess(user: Awaited<ReturnType<typeof getCurrentUser>>) {
   if (!user) return false;
@@ -30,14 +34,18 @@ export async function createTransaction(formData: FormData) {
   const memberId = formData.get('memberId') as string;
   const date = formData.get('date') as string;
 
-  if (!type || !category || !amountRaw || !date) {
-    return { error: 'Preencha todos os campos obrigatórios.' };
-  }
+  if (!VALID_TYPES.includes(type as ValidType)) return { error: 'Tipo inválido.' };
+  if (!category?.trim()) return { error: 'Categoria obrigatória.' };
+  if (!amountRaw || !date) return { error: 'Preencha todos os campos obrigatórios.' };
 
   const amount = parseFloat(amountRaw.replace(',', '.'));
   if (isNaN(amount) || amount <= 0) return { error: 'Valor inválido.' };
 
+  if (memberId && !isValidUuid(memberId)) return { error: 'Membro inválido.' };
+
   const parsedDate = new Date(date);
+  if (isNaN(parsedDate.getTime())) return { error: 'Data inválida.' };
+
   const month = parsedDate.getMonth() + 1;
   const year = parsedDate.getFullYear();
 
@@ -56,8 +64,8 @@ export async function createTransaction(formData: FormData) {
 
   const payload = {
     type,
-    category,
-    description: description || null,
+    category: category.trim(),
+    description: description?.trim() || null,
     amount,
     member_id: memberId || null,
     date: parsedDate.toISOString(),
@@ -94,6 +102,8 @@ export async function createTransaction(formData: FormData) {
 export async function deleteTransaction(id: string) {
   const user = await getCurrentUser();
   if (!user?.isSysAdmin) return { error: 'Apenas SysAdmin pode excluir lançamentos.' };
+
+  if (!isValidUuid(id)) return { error: 'ID inválido.' };
 
   const supabase = await createClient();
 

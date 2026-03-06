@@ -22,37 +22,24 @@ export async function updateMemberGeneral(memberId: string, formData: FormData) 
     return { error: 'Acesso negado. Você não tem permissão para editar membros.' };
   }
 
-  if (!isValidUuid(memberId)) {
-    return { error: 'Identificador de membro inválido.' };
-  }
+  if (!isValidUuid(memberId)) return { error: 'Identificador de membro inválido.' };
 
-  const fullName = (formData.get('fullName') as string)?.trim();
-  const email = (formData.get('email') as string)?.trim();
-  const phone = (formData.get('phone') as string)?.trim();
-  const birthDate = (formData.get('birthDate') as string)?.trim();
-  const gender = (formData.get('gender') as string)?.trim();
-  const maritalStatus = (formData.get('maritalStatus') as string)?.trim();
-  const status = (formData.get('status') as string)?.trim();
-  const cellId = (formData.get('cellId') as string)?.trim();
+  const fullName     = (formData.get('fullName')     as string)?.trim();
+  const email        = (formData.get('email')        as string)?.trim();
+  const phone        = (formData.get('phone')        as string)?.trim();
+  const birthDate    = (formData.get('birthDate')    as string)?.trim();
+  const gender       = (formData.get('gender')       as string)?.trim();
+  const maritalStatus= (formData.get('maritalStatus')as string)?.trim();
+  const status       = (formData.get('status')       as string)?.trim();
+  const cellId       = (formData.get('cellId')       as string)?.trim();
+  const address      = (formData.get('address')      as string)?.trim();
 
-  if (!fullName || fullName.length < 3) {
-    return { error: 'O nome precisa ter pelo menos 3 letras.' };
-  }
-  if (email && !isValidEmail(email)) {
-    return { error: 'Formato de e-mail inválido.' };
-  }
-  if (phone && !isValidPhone(phone)) {
-    return { error: 'Formato de telefone inválido.' };
-  }
-  if (birthDate && !isValidDate(birthDate)) {
-    return { error: 'Data de nascimento inválida.' };
-  }
-  if (gender && !isValidGender(gender)) {
-    return { error: 'Gênero inválido.' };
-  }
-  if (maritalStatus && !isValidMaritalStatus(maritalStatus)) {
-    return { error: 'Estado civil inválido.' };
-  }
+  if (!fullName || fullName.length < 3) return { error: 'O nome precisa ter pelo menos 3 letras.' };
+  if (email && !isValidEmail(email))          return { error: 'Formato de e-mail inválido.' };
+  if (phone && !isValidPhone(phone))          return { error: 'Formato de telefone inválido.' };
+  if (birthDate && !isValidDate(birthDate))   return { error: 'Data de nascimento inválida.' };
+  if (gender && !isValidGender(gender))       return { error: 'Gênero inválido.' };
+  if (maritalStatus && !isValidMaritalStatus(maritalStatus)) return { error: 'Estado civil inválido.' };
 
   const resolvedStatus = status && isValidMemberStatus(status) ? status : 'Visitante';
 
@@ -67,15 +54,16 @@ export async function updateMemberGeneral(memberId: string, formData: FormData) 
   const { data: newMember, error } = await supabase
     .from('members')
     .update({
-      full_name: fullName,
-      email: email || null,
-      phone: phone || null,
-      birth_date: birthDate || null,
-      gender: gender || null,
+      full_name:      fullName,
+      email:          email || null,
+      phone:          phone || null,
+      birth_date:     birthDate || null,
+      gender:         gender || null,
       marital_status: maritalStatus || null,
-      status: resolvedStatus,
-      cell_id: cellId || null,
-      updated_at: new Date().toISOString(),
+      status:         resolvedStatus,
+      cell_id:        cellId || null,
+      address:        address || null,
+      updated_at:     new Date().toISOString(),
     })
     .eq('id', memberId)
     .select()
@@ -88,13 +76,13 @@ export async function updateMemberGeneral(memberId: string, formData: FormData) 
 
   await supabase.from('audit_logs').insert({
     entity_name: 'members',
-    entity_id: memberId,
-    action: 'UPDATE',
-    actor_id: user.id,
-    actor_name: user.fullName,
-    actor_role: user.roles[0],
-    old_data: oldData,
-    new_data: newMember,
+    entity_id:   memberId,
+    action:      'UPDATE',
+    actor_id:    user.id,
+    actor_name:  user.fullName,
+    actor_role:  user.roles[0],
+    old_data:    oldData,
+    new_data:    newMember,
   });
 
   revalidatePath(`/membros/${memberId}`);

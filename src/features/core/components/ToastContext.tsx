@@ -17,6 +17,10 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
+function generateId(): string {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -25,7 +29,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toast = useCallback((type: ToastType, message: string): string => {
-    const id = crypto.randomUUID();
+    const id = generateId();
     setToasts(prev => [...prev, { id, type, message }]);
 
     if (type !== 'loading') {

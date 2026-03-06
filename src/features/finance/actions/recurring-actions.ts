@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import { saveFinanceLog } from '@/features/finance/utils/finance-log-helper';
+import { isValidUuid } from '@/lib/action-validators';
+
+const VALID_TYPES = ['entrada', 'saida'] as const;
+type ValidType = (typeof VALID_TYPES)[number];
 
 function resolveRole(user: NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>) {
   if (user.isSysAdmin) return 'SYSADMIN';
@@ -29,12 +33,13 @@ export async function createRecurring(formData: FormData) {
   const amountRaw = formData.get('amount') as string;
   const dayRaw = formData.get('day_of_month') as string;
 
-  if (!title || !category || !type || !amountRaw || !dayRaw) {
-    return { error: 'Preencha todos os campos.' };
-  }
+  if (!title?.trim()) return { error: 'Título obrigatório.' };
+  if (!category?.trim()) return { error: 'Categoria obrigatória.' };
+  if (!VALID_TYPES.includes(type as ValidType)) return { error: 'Tipo inválido.' };
+  if (!amountRaw || !dayRaw) return { error: 'Preencha todos os campos.' };
 
   const amount = parseFloat(amountRaw.replace(',', '.'));
-  const day = parseInt(dayRaw);
+  const day = parseInt(dayRaw, 10);
 
   if (isNaN(amount) || amount <= 0) return { error: 'Valor inválido.' };
   if (isNaN(day) || day < 1 || day > 31) return { error: 'Dia inválido (1–31).' };
@@ -43,7 +48,15 @@ export async function createRecurring(formData: FormData) {
 
   const { data: newItem, error } = await supabase
     .from('financial_recurring')
-    .insert({ title, category, type, amount, day_of_month: day, active: true, created_by: user!.id })
+    .insert({
+      title: title.trim(),
+      category: category.trim(),
+      type,
+      amount,
+      day_of_month: day,
+      active: true,
+      created_by: user!.id,
+    })
     .select()
     .single();
 
@@ -70,6 +83,8 @@ export async function createRecurring(formData: FormData) {
 export async function toggleRecurring(id: string, active: boolean) {
   const user = await getCurrentUser();
   if (!hasFinanceAccess(user)) return { error: 'Acesso negado.' };
+
+  if (!isValidUuid(id)) return { error: 'ID inválido.' };
 
   const supabase = await createClient();
 
@@ -98,7 +113,7 @@ export async function toggleRecurring(id: string, active: boolean) {
     entityName: 'financial_recurring',
     entityId: id,
     oldData: old as Record<string, unknown>,
-    newData: { ...old, active } as Record<string, unknown>,
+    newData: { active } as Record<string, unknown>,
   });
 
   revalidatePath('/financeiro');
@@ -107,7 +122,9 @@ export async function toggleRecurring(id: string, active: boolean) {
 
 export async function deleteRecurring(id: string) {
   const user = await getCurrentUser();
-  if (!hasFinanceAccess(user)) return { error: 'Acesso negado.' };
+  if (!user?.isSysAdmin) return { error: 'Apenas SysAdmin pode excluir recorrentes.' };
+
+  if (!isValidUuid(id)) return { error: 'ID inválido.' };
 
   const supabase = await createClient();
 
@@ -123,16 +140,16 @@ export async function deleteRecurring(id: string) {
     .eq('id', id);
 
   if (error) {
-    console.error('Erro ao excluir recorrente:', JSON.stringify(error, null, 2));
+    console.error('Erro ao deletar recorrente:', JSON.stringify(error, null, 2));
     return { error: 'Falha ao excluir.' };
   }
 
   await saveFinanceLog({
     supabase,
     action: 'DELETE_RECURRING',
-    actorId: user!.id,
-    actorName: user!.fullName,
-    actorRole: resolveRole(user!),
+    actorId: user.id,
+    actorName: user.fullName,
+    actorRole: 'SYSADMIN',
     entityName: 'financial_recurring',
     entityId: id,
     oldData: old as Record<string, unknown>,

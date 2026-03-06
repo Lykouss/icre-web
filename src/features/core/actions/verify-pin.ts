@@ -22,7 +22,6 @@ export async function verifyPin(
     return { error: 'Sessão expirada. Faça login novamente.' };
   }
 
-  // Rate limiting: máx 5 tentativas em 15 minutos
   const rateLimit = await checkPinRateLimit(supabase, user.id);
   if (!rateLimit.allowed) {
     return {
@@ -30,17 +29,12 @@ export async function verifyPin(
     };
   }
 
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('security_pin')
-    .eq('id', user.id)
-    .single();
+  const { data: isCorrect, error: rpcError } = await supabase
+    .rpc('verify_pin', { user_id: user.id, pin_input: pin });
 
-  const isCorrect = !error && profile?.security_pin === pin;
+  await recordPinAttempt(supabase, user.id, !!isCorrect && !rpcError);
 
-  await recordPinAttempt(supabase, user.id, isCorrect);
-
-  if (!isCorrect) {
+  if (rpcError || !isCorrect) {
     const remaining = rateLimit.remainingAttempts;
     const suffix = remaining > 0
       ? ` Você ainda tem ${remaining} tentativa${remaining !== 1 ? 's' : ''}.`

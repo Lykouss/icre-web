@@ -10,11 +10,9 @@ export async function updateMemberNotes(memberId: string, notes: string) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
 
-  if (!isValidUuid(memberId)) {
-    return { error: 'Identificador de membro inválido.' };
-  }
+  if (!isValidUuid(memberId)) return { error: 'Identificador de membro inválido.' };
 
-  if (!canManageConfidentialNotes(user.roles[0])) {
+  if (!canManageConfidentialNotes(user.roles)) {
     return { error: 'Acesso negado. Apenas a alta liderança pode alterar anotações confidenciais.' };
   }
 
@@ -32,10 +30,7 @@ export async function updateMemberNotes(memberId: string, notes: string) {
 
   const { data: newMember, error } = await supabase
     .from('members')
-    .update({
-      notes: notes || null,
-      updated_at: new Date().toISOString(),
-    })
+    .update({ notes: notes || null, updated_at: new Date().toISOString() })
     .eq('id', memberId)
     .select()
     .single();
