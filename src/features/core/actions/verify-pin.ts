@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { checkPinRateLimit, recordPinAttempt } from '@/features/core/utils/pin-rate-limit';
 
 export async function verifyPin(
   prevState: { error: string } | null,
@@ -10,8 +11,8 @@ export async function verifyPin(
 ) {
   const pin = formData.get('pin') as string;
 
-  if (!pin || pin.length !== 4) {
-    return { error: 'O PIN deve ter exatamente 4 dígitos.' };
+  if (!pin || !/^\d{4}$/.test(pin)) {
+    return { error: 'O PIN deve ter exatamente 4 dígitos numéricos.' };
   }
 
   const supabase = await createClient();
@@ -21,26 +22,40 @@ export async function verifyPin(
     return { error: 'Sessão expirada. Faça login novamente.' };
   }
 
-  // Busca o PIN real do usuário no banco (Leitura segura via servidor)
+  // Rate limiting: máx 5 tentativas em 15 minutos
+  const rateLimit = await checkPinRateLimit(supabase, user.id);
+  if (!rateLimit.allowed) {
+    return {
+      error: `Muitas tentativas incorretas. Aguarde ${rateLimit.retryAfterMinutes} minutos antes de tentar novamente.`,
+    };
+  }
+
   const { data: profile, error } = await supabase
     .from('profiles')
     .select('security_pin')
     .eq('id', user.id)
     .single();
 
-  if (error || !profile || profile.security_pin !== pin) {
-    return { error: 'PIN incorreto. Tente novamente.' };
+  const isCorrect = !error && profile?.security_pin === pin;
+
+  await recordPinAttempt(supabase, user.id, isCorrect);
+
+  if (!isCorrect) {
+    const remaining = rateLimit.remainingAttempts;
+    const suffix = remaining > 0
+      ? ` Você ainda tem ${remaining} tentativa${remaining !== 1 ? 's' : ''}.`
+      : ' Você atingiu o limite de tentativas.';
+    return { error: `PIN incorreto.${suffix}` };
   }
 
-  // Se acertou o PIN, criamos o "carimbo" (Cookie seguro válido por 2 horas)
   const cookieStore = await cookies();
   cookieStore.set('admin_unlocked', 'true', {
-    maxAge: 60 * 60 * 2, // 2 horas em segundos
-    httpOnly: true,      // Impede que o JavaScript do navegador leia isso (anti-hack)
+    maxAge: 60 * 60 * 2,
+    httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
     path: '/',
   });
 
-  // Redireciona para o painel
   redirect('/dashboard');
 }

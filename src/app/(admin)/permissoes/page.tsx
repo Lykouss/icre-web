@@ -2,6 +2,8 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
+import { getFeatureFlag } from '@/features/core/api/get-feature-flag';
+import { FeatureMaintenance } from '@/features/core/components/FeatureMaintenance';
 
 // 1. O nosso dicionário visual e de permissões
 const ROLES_DATA = [
@@ -85,6 +87,12 @@ const ROLES_DATA = [
 export default async function PermissionsPage() {
   const user = await getCurrentUser();
   if (!user) redirect('/login');
+
+  const isActive = await getFeatureFlag('module_permissions', user);
+  
+    if (!isActive) {
+      return <FeatureMaintenance featureName="Módulo de Cargos" />;
+    }
 
   const supabase = await createClient();
 
