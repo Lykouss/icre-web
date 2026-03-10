@@ -1,29 +1,47 @@
-import React from 'react';
+import { createClient } from '@/lib/supabase/server';
+import { PublicHomeClient } from '@/features/portal/components/PublicHomeClient';
+import type { SiteBlock } from '@/features/portal/types';
 
-export default function HomePage() {
+export const revalidate = 60;
+
+interface HomePageProps {
+  searchParams: Promise<{ preview?: string }>;
+}
+
+export default async function PublicHomePage({ searchParams }: HomePageProps) {
+  const { preview } = await searchParams;
+  const isPreview = preview === 'true';
+
+  const supabase = await createClient();
+
+  const [{ data: blocks }, { data: events }] = await Promise.all([
+    supabase
+      .from('site_blocks')
+      .select('*')
+      .eq('is_active', true)
+      .order('order_idx')
+      .returns<SiteBlock[]>(),
+    supabase
+      .from('events')
+      .select('id, title, date, time, location')
+      .eq('is_public', true)
+      .eq('status', 'publicado')
+      .gte('date', new Date().toISOString().split('T')[0])
+      .order('date')
+      .limit(6),
+  ]);
+
+  // No modo preview, usa content (rascunho). No modo público, usa published_content.
+  const displayBlocks = (blocks ?? []).map(block => ({
+    ...block,
+    content: isPreview ? block.content : (block.published_content ?? block.content),
+  }));
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] text-center px-4 sm:px-6 lg:px-8">
-      
-      {/* Badge de "Em Desenvolvimento" */}
-      <div className="mb-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 border border-amber-200 text-amber-800 text-sm font-medium shadow-sm">
-        <span className="relative flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-        </span>
-        Site em Desenvolvimento
-      </div>
-
-      {/* Título Principal */}
-      <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6">
-        Igreja de Cristo <br className="hidden sm:block" />
-        <span className="text-blue-600">Rocha Eterna</span>
-      </h1>
-
-      {/* Subtítulo */}
-      <p className="mt-4 max-w-2xl text-lg sm:text-xl text-slate-600 mb-10">
-        Bem-vindo ao nosso novo portal digital. Estamos construindo um espaço para conectar nossa comunidade, facilitar doações e organizar nossos eventos.
-      </p>
-
-    </div>
+    <PublicHomeClient
+      blocks={displayBlocks}
+      publicEvents={events ?? []}
+      isPreview={isPreview}
+    />
   );
 }
