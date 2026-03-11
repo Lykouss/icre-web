@@ -1,33 +1,297 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
+import { isValidEmail, isValidPhone, isValidDate } from '@/lib/action-validators';
+import { headers } from 'next/headers';
 
-export async function login(
-  prevState: { error: string } | null,
+const MAX_REGISTER_ATTEMPTS = 5;
+const WINDOW_MINUTES = 60;
+
+interface RegisterResult {
+  error?: string;
+  field?: string;
+}
+
+function sanitize(value: string): string {
+  return value.trim().replace(/[<>]/g, '');
+}
+
+async function checkRegisterRateLimit(email: string): Promise<boolean> {
+  const supabase = await createAdminClient();
+  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000).toISOString();
+
+  const { count } = await supabase
+    .from('auth_rate_limits')
+    .select('id', { count: 'exact', head: true })
+    .eq('identifier', email.toLowerCase())
+    .eq('action', 'register')
+    .gte('attempted_at', windowStart);
+
+  return (count ?? 0) < MAX_REGISTER_ATTEMPTS;
+}
+
+async function recordRegisterAttempt(email: string): Promise<void> {
+  const supabase = await createAdminClient();
+  await supabase.from('auth_rate_limits').insert({
+    identifier: email.toLowerCase(),
+    action: 'register',
+  });
+}
+
+export async function registerUser(formData: FormData): Promise<RegisterResult> {
+  const fullName    = sanitize((formData.get('fullName')    as string) ?? '');
+  const email       = sanitize((formData.get('email')       as string) ?? '').toLowerCase();
+  const phone       = sanitize((formData.get('phone')       as string) ?? '');
+  const address     = sanitize((formData.get('address')     as string) ?? '');
+  const birthDate   = sanitize((formData.get('birthDate')   as string) ?? '');
+  const password    = (formData.get('password')    as string) ?? '';
+  const confirmPass = (formData.get('confirmPass') as string) ?? '';
+  const termsAccepted = formData.get('termsAccepted') === 'true';
+
+  // ── Validações ────────────────────────────────────────────────
+  if (!fullName || fullName.length < 3 || fullName.length > 100) {
+    return { error: 'Nome deve ter entre 3 e 100 caracteres.', field: 'fullName' };
+  }
+  if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(fullName)) {
+    return { error: 'Nome contém caracteres inválidos.', field: 'fullName' };
+  }
+
+  if (!isValidEmail(email)) {
+    return { error: 'E-mail inválido.', field: 'email' };
+  }
+
+  if (phone && !isValidPhone(phone)) {
+    return { error: 'Telefone inválido.', field: 'phone' };
+  }
+
+  if (!birthDate || !isValidDate(birthDate)) {
+    return { error: 'Data de nascimento inválida.', field: 'birthDate' };
+  }
+  const age = Math.floor((Date.now() - new Date(birthDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25));
+  if (age < 13) {
+    return { error: 'É necessário ter pelo menos 13 anos para criar uma conta.', field: 'birthDate' };
+  }
+  if (age > 120) {
+    return { error: 'Data de nascimento inválida.', field: 'birthDate' };
+  }
+
+  if (address && address.length > 300) {
+    return { error: 'Endereço muito longo.', field: 'address' };
+  }
+
+  if (password.length < 8 || password.length > 72) {
+    return { error: 'A senha deve ter entre 8 e 72 caracteres.', field: 'password' };
+  }
+  if (!/[A-Z]/.test(password)) {
+    return { error: 'A senha deve conter ao menos uma letra maiúscula.', field: 'password' };
+  }
+  if (!/[0-9]/.test(password)) {
+    return { error: 'A senha deve conter ao menos um número.', field: 'password' };
+  }
+
+  if (password !== confirmPass) {
+    return { error: 'As senhas não coincidem.', field: 'confirmPass' };
+  }
+
+  if (!termsAccepted) {
+    return { error: 'Você precisa aceitar os Termos e Condições.', field: 'terms' };
+  }
+
+  // ── Rate Limiting ─────────────────────────────────────────────
+  const allowed = await checkRegisterRateLimit(email);
+  if (!allowed) {
+    return { error: 'Muitas tentativas de cadastro. Aguarde 1 hora e tente novamente.' };
+  }
+  await recordRegisterAttempt(email);
+
+  // ── Criação no Supabase Auth ──────────────────────────────────
+  const supabase = await createClient();
+  const { data, error: signUpError } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+      },
+    },
+  });
+
+  if (signUpError) {
+    if (signUpError.message.includes('already registered')) {
+      return { error: 'Este e-mail já está cadastrado.', field: 'email' };
+    }
+    console.error('Erro no signUp:', signUpError.message);
+    return { error: 'Erro ao criar conta. Tente novamente.' };
+  }
+
+  if (!data.user) {
+    return { error: 'Erro inesperado ao criar conta.' };
+  }
+
+  // ── Atualiza o profile com os dados extras ────────────────────
+  // O trigger do Supabase já criou o profile — agora completamos
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({
+      full_name:          fullName,
+      phone:              phone || null,
+      address:            address || null,
+      birth_date:         birthDate || null,
+      terms_accepted_at:  new Date().toISOString(),
+    })
+    .eq('id', data.user.id);
+
+  if (profileError) {
+    console.error('Erro ao atualizar profile:', profileError.message);
+  }
+
+  redirect('/cadastro/sucesso');
+}
+
+// ── Login ─────────────────────────────────────────────────────────
+
+const MAX_LOGIN_ATTEMPTS = 10;
+const LOGIN_WINDOW_MINUTES = 15;
+
+interface LoginResult {
+  error?: string;
+}
+
+async function checkLoginRateLimit(email: string): Promise<{ allowed: boolean; remainingMinutes?: number }> {
+  const supabase = await createAdminClient();
+  const windowStart = new Date(Date.now() - LOGIN_WINDOW_MINUTES * 60 * 1000).toISOString();
+
+  const { count } = await supabase
+    .from('auth_rate_limits')
+    .select('id', { count: 'exact', head: true })
+    .eq('identifier', email.toLowerCase())
+    .eq('action', 'login')
+    .gte('attempted_at', windowStart);
+
+  const attempts = count ?? 0;
+  if (attempts >= MAX_LOGIN_ATTEMPTS) {
+    return { allowed: false, remainingMinutes: LOGIN_WINDOW_MINUTES };
+  }
+  return { allowed: true };
+}
+
+async function recordLoginAttempt(email: string): Promise<void> {
+  const supabase = await createAdminClient();
+  await supabase.from('auth_rate_limits').insert({
+    identifier: email.toLowerCase(),
+    action: 'login',
+  });
+}
+
+export async function loginUser(
+  prevState: LoginResult | null,
   formData: FormData
-) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+): Promise<LoginResult> {
+  const email    = sanitize((formData.get('email')    as string) ?? '').toLowerCase();
+  const password = (formData.get('password') as string) ?? '';
+
+  if (!isValidEmail(email) || !password) {
+    return { error: 'E-mail ou senha inválidos.' };
+  }
+
+  const rateLimit = await checkLoginRateLimit(email);
+  if (!rateLimit.allowed) {
+    return { error: `Muitas tentativas. Aguarde ${rateLimit.remainingMinutes} minutos.` };
+  }
 
   const supabase = await createClient();
-
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return { error: 'E-mail ou senha inválidos.' };
+    await recordLoginAttempt(email);
+    return { error: 'E-mail ou senha incorretos.' };
   }
 
   redirect('/');
 }
 
-export async function logout() {
+// ── Reset de senha ─────────────────────────────────────────────
+
+export async function requestPasswordReset(
+  prevState: { error?: string; success?: boolean } | null,
+  formData: FormData
+): Promise<{ error?: string; success?: boolean }> {
+  const email = sanitize((formData.get('email') as string) ?? '').toLowerCase();
+
+  if (!isValidEmail(email)) {
+    return { error: 'E-mail inválido.' };
+  }
+
+  // Rate limit para reset
+  const supabase = await createAdminClient();
+  const windowStart = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const { count } = await supabase
+    .from('auth_rate_limits')
+    .select('id', { count: 'exact', head: true })
+    .eq('identifier', email)
+    .eq('action', 'reset_password')
+    .gte('attempted_at', windowStart);
+
+  if ((count ?? 0) >= 3) {
+    return { error: 'Muitas solicitações. Aguarde 1 hora.' };
+  }
+
+  await supabase.from('auth_rate_limits').insert({ identifier: email, action: 'reset_password' });
+
+  const clientSupabase = await createClient();
+  const { error } = await clientSupabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/nova-senha`,
+  });
+
+  if (error) {
+    console.error('Erro no reset de senha:', error.message);
+  }
+
+  // Sempre retorna sucesso para não vazar se o email existe ou não
+  return { success: true };
+}
+
+// ── Aceitar termos de admin ────────────────────────────────────
+
+export async function acceptAdminTerms(): Promise<{ error?: string }> {
   const supabase = await createClient();
-  await supabase.auth.signOut();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Não autorizado.' };
 
-  const cookieStore = await cookies();
-  cookieStore.delete('admin_unlocked');
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      admin_terms_accepted_at: new Date().toISOString(),
+      onboarding_step: 'create_pin',
+    })
+    .eq('id', user.id);
 
-  redirect('/login');
+  if (error) {
+    console.error('Erro ao aceitar termos de admin:', error.message);
+    return { error: 'Falha ao salvar. Tente novamente.' };
+  }
+
+  redirect('/criar-pin');
+}
+
+// ── Finalizar onboarding (após criar PIN) ─────────────────────
+
+export async function completeAdminOnboarding(): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Não autorizado.' };
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ onboarding_step: 'done' })
+    .eq('id', user.id);
+
+  if (error) {
+    console.error('Erro ao finalizar onboarding:', error.message);
+    return { error: 'Falha ao finalizar. Tente novamente.' };
+  }
+
+  redirect('/dashboard');
 }

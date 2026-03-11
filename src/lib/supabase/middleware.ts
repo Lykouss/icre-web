@@ -9,9 +9,7 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
+        getAll() { return request.cookies.getAll(); },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           supabaseResponse = NextResponse.next({ request });
@@ -24,7 +22,6 @@ export async function updateSession(request: NextRequest) {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-
   const { pathname } = request.nextUrl;
 
   const adminRoutes = [
@@ -34,28 +31,39 @@ export async function updateSession(request: NextRequest) {
     '/pin-lock',
   ];
 
+  const onboardingRoutes = ['/termos-admin', '/criar-pin'];
+  const isOnboardingRoute = onboardingRoutes.some(r => pathname.startsWith(r));
   const isProtectedRoute = adminRoutes.some(route => pathname.startsWith(route));
 
-  // Qualquer rota protegida (incluindo /pin-lock) exige autenticação
   if (isProtectedRoute && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Rotas admin (exceto /pin-lock) exigem cookie de PIN desbloqueado
+  // Usuário logado em rota admin — verifica onboarding_step
+  if (isProtectedRoute && user && !isOnboardingRoute) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('onboarding_step')
+      .eq('id', user.id)
+      .single();
+
+    const step = profile?.onboarding_step ?? 'done';
+
+    if (step === 'accept_admin_terms') {
+      return NextResponse.redirect(new URL('/termos-admin', request.url));
+    }
+    if (step === 'create_pin') {
+      return NextResponse.redirect(new URL('/criar-pin', request.url));
+    }
+  }
+
   const requiresPin = isProtectedRoute && pathname !== '/pin-lock';
   if (requiresPin && !request.cookies.has('admin_unlocked')) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/pin-lock';
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL('/pin-lock', request.url));
   }
 
-  // Usuário já autenticado tentando acessar /login
   if (pathname === '/login' && user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return supabaseResponse;
