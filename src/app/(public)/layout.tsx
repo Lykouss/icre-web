@@ -1,49 +1,30 @@
-import React from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { PublicNavbar } from '@/features/portal/components/PublicNavbar';
-import { PublicFooter } from '@/features/portal/components/PublicFooter';
-import { AdminSystemButton } from '@/features/portal/components/AdminSystemButton';
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
 
-  let profile: { full_name: string | null } | null = null;
-  let isAdmin = false;
+  let navUser: { fullName: string; photoUrl: string | null; isAdmin: boolean } | null = null;
 
-  if (user) {
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('full_name')
-      .eq('id', user.id)
-      .single();
+  if (authUser) {
+    const [profileRes, roleRes] = await Promise.all([
+      supabase.from('profiles').select('full_name, photo_url').eq('id', authUser.id).single(),
+      supabase.from('user_roles').select('role').eq('user_id', authUser.id),
+    ]);
 
-    profile = profileData;
-
-    const { data: roleData } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .in('role', ['LEADER', 'FINANCE_ADMIN', 'CHURCH_ADMIN', 'SYSADMIN'])
-      .limit(1)
-      .single();
-
-    isAdmin = !!roleData;
+    const roles = roleRes.data?.map(r => r.role) ?? [];
+    navUser = {
+      fullName: profileRes.data?.full_name ?? 'Usuário',
+      photoUrl: profileRes.data?.photo_url ?? null,
+      isAdmin:  roles.some(r => ['SYSADMIN', 'CHURCH_ADMIN'].includes(r)),
+    };
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <PublicNavbar
-        user={user ? { fullName: profile?.full_name ?? 'Usuário', isAdmin } : null}
-      />
-
-      <main className="flex-grow">
-        {children}
-      </main>
-
-      <PublicFooter />
-
-      {isAdmin && <AdminSystemButton />}
-    </div>
+    <>
+      <PublicNavbar user={navUser} />
+      <div className="pt-0">{children}</div>
+    </>
   );
 }

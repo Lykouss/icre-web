@@ -1,47 +1,52 @@
 import { createClient } from '@/lib/supabase/server';
-import { PublicHomeClient } from '@/features/portal/components/PublicHomeClient';
-import type { SiteBlock } from '@/features/portal/types';
+import { HeroSection }    from '@/features/portal/components/HeroSection';
+import { AboutSection }   from '@/features/portal/components/AboutSection';
+import { PastorsSection } from '@/features/portal/components/PastorsSection';
+import { CellsSection }   from '@/features/portal/components/CellsSection';
+import { ContactSection } from '@/features/portal/components/ContactSection';
+import type {
+  SiteBlock, HeroContent, AboutContent,
+  PastorsSectionContent, CellsSectionContent,
+  ContactContent, Pastor, PublicCell,
+} from '@/features/portal/types';
 
-export const revalidate = 60;
-
-interface HomePageProps {
-  searchParams: Promise<{ preview?: string }>;
-}
-
-export default async function PublicHomePage({ searchParams }: HomePageProps) {
-  const { preview } = await searchParams;
-  const isPreview = preview === 'true';
-
+async function getSiteData() {
   const supabase = await createClient();
 
-  const [{ data: blocks }, { data: events }] = await Promise.all([
-    supabase
-      .from('site_blocks')
-      .select('*')
-      .eq('is_active', true)
-      .order('order_idx')
-      .returns<SiteBlock[]>(),
-    supabase
-      .from('events')
-      .select('id, title, date, time, location')
-      .eq('is_public', true)
-      .eq('status', 'publicado')
-      .gte('date', new Date().toISOString().split('T')[0])
-      .order('date')
-      .limit(6),
+  const [blocksRes, pastorsRes, cellsRes] = await Promise.all([
+    supabase.from('site_blocks').select('*').eq('is_active', true).order('order_idx'),
+    supabase.from('pastors').select('id,name,role,bio,photo_url,sort_order').eq('is_active', true).order('sort_order'),
+    supabase.from('cells').select('id,name,leader_name,meeting_days,meeting_time,meeting_type,neighborhood').eq('is_public', true).order('name'),
   ]);
 
-  // No modo preview, usa content (rascunho). No modo público, usa published_content.
-  const displayBlocks = (blocks ?? []).map(block => ({
-    ...block,
-    content: isPreview ? block.content : (block.published_content ?? block.content),
-  }));
+  return {
+    blocks:  (blocksRes.data  ?? []) as SiteBlock[],
+    pastors: (pastorsRes.data ?? []) as Pastor[],
+    cells:   (cellsRes.data   ?? []) as PublicCell[],
+  };
+}
+
+function block<T>(blocks: SiteBlock[], type: string): T {
+  const found = blocks.find(b => b.type === type);
+  return (found?.content ?? {}) as T;
+}
+
+export default async function PublicHomePage() {
+  const { blocks, pastors, cells } = await getSiteData();
+
+  const hero    = block<HeroContent>(blocks, 'hero');
+  const about   = block<AboutContent>(blocks, 'about');
+  const pastSec = block<PastorsSectionContent>(blocks, 'pastors');
+  const cellSec = block<CellsSectionContent>(blocks, 'cells');
+  const contact = block<ContactContent>(blocks, 'contact');
 
   return (
-    <PublicHomeClient
-      blocks={displayBlocks}
-      publicEvents={events ?? []}
-      isPreview={isPreview}
-    />
+    <main>
+      <HeroSection content={hero} />
+      <AboutSection content={about} />
+      {pastors.length > 0 && <PastorsSection content={pastSec} pastors={pastors} />}
+      {cells.length > 0   && <CellsSection   content={cellSec}  cells={cells}    />}
+      <ContactSection content={contact} />
+    </main>
   );
 }

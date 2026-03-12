@@ -1,5 +1,25 @@
-- Por enquanto, nenhuma mudança/adição com prioridade para finanças, membros e eventos.
+------------------------------- ATUALIZAÇÕES PRIORITÁRIAS -------------------------------
 
-- Próximo foco de desenvolvimento: Escalas.
+- Prioridade: Finalizar o desenvolvimento do site público e do editor.
 
-- Prioridade: Finalizar o desenvolvimento do site público e do editor; Criar avisos.
+- Criar um módulo de avisos que servem tanto para o sistema como para o site público.
+
+- Corrigir as cores da logo da igreja em temas escuros e na página 404.
+
+- Implementar o novo estilo visual em todas as páginas do site público (Login, Registro, Termos e Uso, Perfil).
+
+- Corrigir a posição da logo atrás da header na tela de login.
+
+- Adicionar a opção de inserir uma foto de perfil no cadastro e no perfil.
+
+- Atualizar o módulo de edição do site público de acordo com as atualizações implementadas.
+
+------------------------------- ATUALIZAÇÕES FUTURAS -------------------------------
+
+- Adicionar a opção de adicionar/editar/remover administradores na página de sysadmin.
+
+- Criar um módulo de sugestões/reportes de bugs ou vulnerabilidades para administradores.
+
+- Documentar TODO o sistema.
+
+- Fazer um deploy da primeira versão do sistema (1.0.0 BETA) para fins de testes.
