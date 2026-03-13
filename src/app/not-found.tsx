@@ -14,28 +14,22 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center overflow-hidden relative px-6">
-      {/* Fundo decorativo */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-blue-600/8 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-600/8 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 text-center max-w-lg mx-auto">
-        {/* Logo */}
-        <div
-          className={`flex items-center justify-center gap-3 mb-6 transition-all duration-700 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-        >
+        <div className={`flex items-center justify-center gap-3 mb-6 transition-all duration-700 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="relative w-10 h-10">
-            <Image src="/logo.svg" alt="ICRE" fill className="object-contain" />
+            <Image src="/logo.svg" alt="ICRE" fill className="object-contain brightness-0 invert opacity-70" />
           </div>
           <span className="font-black text-xl tracking-tight text-white/80">ICRE</span>
         </div>
 
-        {/* Número 404 */}
-        <div
-          className={`transition-all duration-700 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-        >
-          <p className="text-[10rem] sm:text-[14rem] font-black leading-none tracking-tighter select-none"
+        <div className={`transition-all duration-700 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          <p
+            className="text-[10rem] sm:text-[14rem] font-black leading-none tracking-tighter select-none"
             style={{
               background: 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #1e40af 100%)',
               WebkitBackgroundClip: 'text',
@@ -47,10 +41,7 @@ export default function NotFound() {
           </p>
         </div>
 
-        {/* Mensagem */}
-        <div
-          className={`-mt-4 sm:-mt-8 transition-all duration-700 delay-100 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-        >
+        <div className={`-mt-4 sm:-mt-8 transition-all duration-700 delay-100 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">
             Página não encontrada
           </h1>
@@ -60,10 +51,7 @@ export default function NotFound() {
           </p>
         </div>
 
-        {/* Ações */}
-        <div
-          className={`flex items-center justify-center gap-4 flex-wrap transition-all duration-700 delay-200 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-        >
+        <div className={`flex items-center justify-center gap-4 flex-wrap transition-all duration-700 delay-200 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
           <Link
             href="/"
             className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-2xl transition-all duration-200 hover:scale-105 hover:shadow-xl hover:shadow-blue-600/30"

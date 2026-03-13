@@ -1,14 +1,15 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import type { SiteBlockType } from '@/features/portal/types';
 
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
-const MAX_SITE_IMAGE = 5 * 1024 * 1024;  // 5 MB
-const MAX_AVATAR     = 2 * 1024 * 1024;  // 2 MB
-const MAX_PASTOR     = 3 * 1024 * 1024;  // 3 MB
+const MAX_SITE_IMAGE = 5 * 1024 * 1024;
+const MAX_AVATAR     = 2 * 1024 * 1024;
+const MAX_PASTOR     = 3 * 1024 * 1024;
 
 function isAdmin(user: Awaited<ReturnType<typeof getCurrentUser>>) {
   if (!user) return false;
@@ -26,17 +27,23 @@ async function uploadFile(
   if (!ALLOWED_MIME.has(file.type)) return { error: 'Formato inválido. Use JPG, PNG ou WebP.' };
   if (file.size > maxSize) return { error: `Arquivo muito grande. Máximo ${maxSize / 1024 / 1024} MB.` };
 
-  const supabase = await createClient();
+  const admin = await createAdminClient();
   const ext = file.name.split('.').pop() ?? 'jpg';
   const fullPath = `${path}.${ext}`;
 
-  const { error } = await supabase.storage
+  console.log(`[UPLOAD] bucket=${bucket} path=${fullPath} type=${file.type} size=${file.size}`);
+
+  const { error } = await admin.storage
     .from(bucket)
     .upload(fullPath, file, { upsert: true, contentType: file.type });
 
-  if (error) return { error: 'Falha no upload.' };
+  if (error) {
+    console.error(`[UPLOAD ERROR] bucket=${bucket} path=${fullPath}`, JSON.stringify(error));
+    return { error: `Falha no upload: ${error.message}` };
+  }
 
-  const { data } = supabase.storage.from(bucket).getPublicUrl(fullPath);
+  const { data } = admin.storage.from(bucket).getPublicUrl(fullPath);
+  console.log(`[UPLOAD OK] url=${data.publicUrl}`);
   return { url: data.publicUrl };
 }
 
@@ -47,7 +54,11 @@ export async function uploadAvatar(formData: FormData) {
   if (!user) return { error: 'Não autenticado.' };
 
   const file = formData.get('file');
+
+  console.log(`[AVATAR] user=${user.id} file type=${file instanceof File ? file.type : typeof file} size=${file instanceof File ? file.size : 'N/A'}`);
+
   if (!(file instanceof File)) return { error: 'Arquivo inválido.' };
+  if (file.size === 0) return { error: 'Arquivo vazio.' };
 
   const result = await uploadFile('avatars', `${user.id}/avatar`, file, MAX_AVATAR);
   if ('error' in result) return result;
@@ -58,7 +69,10 @@ export async function uploadAvatar(formData: FormData) {
     .update({ photo_url: result.url })
     .eq('id', user.id);
 
-  if (error) return { error: 'Falha ao salvar URL do avatar.' };
+  if (error) {
+    console.error('[AVATAR] Erro ao salvar photo_url:', JSON.stringify(error));
+    return { error: 'Falha ao salvar a foto. Tente novamente.' };
+  }
 
   revalidatePath('/minha-conta');
   return { success: true, url: result.url };
@@ -69,7 +83,15 @@ export async function removeAvatar() {
   if (!user) return { error: 'Não autenticado.' };
 
   const supabase = await createClient();
-  await supabase.from('profiles').update({ photo_url: null }).eq('id', user.id);
+  const { error } = await supabase
+    .from('profiles')
+    .update({ photo_url: null })
+    .eq('id', user.id);
+
+  if (error) {
+    console.error('[AVATAR] Erro ao remover photo_url:', JSON.stringify(error));
+    return { error: 'Falha ao remover a foto. Tente novamente.' };
+  }
 
   revalidatePath('/minha-conta');
   return { success: true };

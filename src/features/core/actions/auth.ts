@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
 import { isValidEmail, isValidPhone, isValidDate } from '@/lib/action-validators';
-import { headers } from 'next/headers';
 
 const MAX_REGISTER_ATTEMPTS = 5;
 const WINDOW_MINUTES = 60;
@@ -50,22 +49,18 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
   const confirmPass = (formData.get('confirmPass') as string) ?? '';
   const termsAccepted = formData.get('termsAccepted') === 'true';
 
-  // ── Validações ────────────────────────────────────────────────
   if (!fullName || fullName.length < 3 || fullName.length > 100) {
     return { error: 'Nome deve ter entre 3 e 100 caracteres.', field: 'fullName' };
   }
   if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(fullName)) {
     return { error: 'Nome contém caracteres inválidos.', field: 'fullName' };
   }
-
   if (!isValidEmail(email)) {
     return { error: 'E-mail inválido.', field: 'email' };
   }
-
   if (phone && !isValidPhone(phone)) {
     return { error: 'Telefone inválido.', field: 'phone' };
   }
-
   if (!birthDate || !isValidDate(birthDate)) {
     return { error: 'Data de nascimento inválida.', field: 'birthDate' };
   }
@@ -76,11 +71,9 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
   if (age > 120) {
     return { error: 'Data de nascimento inválida.', field: 'birthDate' };
   }
-
   if (address && address.length > 300) {
     return { error: 'Endereço muito longo.', field: 'address' };
   }
-
   if (password.length < 8 || password.length > 72) {
     return { error: 'A senha deve ter entre 8 e 72 caracteres.', field: 'password' };
   }
@@ -90,39 +83,33 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
   if (!/[0-9]/.test(password)) {
     return { error: 'A senha deve conter ao menos um número.', field: 'password' };
   }
-
   if (password !== confirmPass) {
     return { error: 'As senhas não coincidem.', field: 'confirmPass' };
   }
-
   if (!termsAccepted) {
     return { error: 'Você precisa aceitar os Termos e Condições.', field: 'terms' };
   }
 
-  // ── Rate Limiting ─────────────────────────────────────────────
   const allowed = await checkRegisterRateLimit(email);
   if (!allowed) {
     return { error: 'Muitas tentativas de cadastro. Aguarde 1 hora e tente novamente.' };
   }
   await recordRegisterAttempt(email);
 
-  // ── Criação no Supabase Auth ──────────────────────────────────
-  const supabase = await createClient();
-  const { data, error: signUpError } = await supabase.auth.signUp({
+  // Usa admin client para criar o usuário já confirmado (sem necessidade de verificação por email)
+  const adminSupabase = await createAdminClient();
+  const { data, error: createError } = await adminSupabase.auth.admin.createUser({
     email,
     password,
-    options: {
-      data: {
-        full_name: fullName,
-      },
-    },
+    email_confirm: true,
+    user_metadata: { full_name: fullName },
   });
 
-  if (signUpError) {
-    if (signUpError.message.includes('already registered')) {
+  if (createError) {
+    if (createError.message.toLowerCase().includes('already registered') || createError.message.toLowerCase().includes('already exists')) {
       return { error: 'Este e-mail já está cadastrado.', field: 'email' };
     }
-    console.error('Erro no signUp:', signUpError.message);
+    console.error('Erro ao criar conta:', createError.message);
     return { error: 'Erro ao criar conta. Tente novamente.' };
   }
 
@@ -130,22 +117,24 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
     return { error: 'Erro inesperado ao criar conta.' };
   }
 
-  // ── Atualiza o profile com os dados extras ────────────────────
-  // O trigger do Supabase já criou o profile — agora completamos
-  const { error: profileError } = await supabase
+  const { error: profileError } = await adminSupabase
     .from('profiles')
     .update({
-      full_name:          fullName,
-      phone:              phone || null,
-      address:            address || null,
-      birth_date:         birthDate || null,
-      terms_accepted_at:  new Date().toISOString(),
+      full_name:         fullName,
+      phone:             phone    || null,
+      address:           address  || null,
+      birth_date:        birthDate || null,
+      terms_accepted_at: new Date().toISOString(),
     })
     .eq('id', data.user.id);
 
   if (profileError) {
     console.error('Erro ao atualizar profile:', profileError.message);
   }
+
+  // Faz login automático após o cadastro
+  const supabase = await createClient();
+  await supabase.auth.signInWithPassword({ email, password });
 
   redirect('/cadastro/sucesso');
 }
@@ -224,7 +213,6 @@ export async function requestPasswordReset(
     return { error: 'E-mail inválido.' };
   }
 
-  // Rate limit para reset
   const supabase = await createAdminClient();
   const windowStart = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   const { count } = await supabase
@@ -249,7 +237,6 @@ export async function requestPasswordReset(
     console.error('Erro no reset de senha:', error.message);
   }
 
-  // Sempre retorna sucesso para não vazar se o email existe ou não
   return { success: true };
 }
 

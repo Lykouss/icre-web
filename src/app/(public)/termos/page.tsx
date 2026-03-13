@@ -5,114 +5,221 @@ export const metadata = {
   description: 'Termos e Condições de Uso da plataforma SIGE-Web da Igreja de Cristo Rocha Eterna.',
 };
 
+interface SectionProps {
+  number: string;
+  title: string;
+  children: React.ReactNode;
+}
+
+function Section({ number, title, children }: SectionProps) {
+  return (
+    <div>
+      <div className="flex items-start gap-4 mb-3">
+        <span className="shrink-0 w-8 h-8 rounded-lg bg-blue-600/10 text-blue-400 text-xs font-black flex items-center justify-center mt-0.5">
+          {number}
+        </span>
+        <h2 className="text-xl font-bold text-white">{title}</h2>
+      </div>
+      <div className="ml-12 text-slate-400 leading-relaxed space-y-3">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-3xl mx-auto px-6 py-16">
+    <div className="min-h-screen bg-slate-950">
+      {/* Hero */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-br from-blue-950/60 to-slate-950 pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="mb-10">
-          <Link href="/" className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">
-            ← Voltar ao site
+        <div className="relative max-w-3xl mx-auto px-6 pt-32 pb-16">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm font-medium transition-colors mb-10"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Voltar ao início
           </Link>
+
+          <div className="inline-flex items-center gap-2 bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-6">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            Documento legal
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-4">
+            Termos e<br />Condições de Uso
+          </h1>
+          <p className="text-slate-400 text-sm">
+            Última atualização: março de 2026
+          </p>
         </div>
+      </div>
 
-        <div className="mb-10">
-          <h1 className="text-4xl font-bold text-slate-900 mb-3">Termos e Condições de Uso</h1>
-          <p className="text-slate-500">Igreja de Cristo Rocha Eterna — ICRE</p>
-          <p className="text-slate-400 text-sm mt-1">Última atualização: março de 2026</p>
-        </div>
+      {/* Conteúdo */}
+      <div className="max-w-3xl mx-auto px-6 pb-24">
+        <div className="w-full h-px bg-white/5 mb-16" />
 
-        <div className="prose prose-slate max-w-none space-y-8 text-slate-700 leading-relaxed">
+        <div className="space-y-12">
+          <Section number="1" title="Aceitação dos Termos">
+            <p>
+              Ao criar uma conta ou utilizar a plataforma SIGE-Web da Igreja de Cristo Rocha Eterna (ICRE),
+              você declara que leu, compreendeu e concorda com estes Termos e Condições de Uso. Se não
+              concordar com qualquer parte, não crie uma conta e não utilize a plataforma.
+            </p>
+            <p>
+              Estes Termos constituem um acordo juridicamente vinculante entre você e a ICRE. Ao continuar
+              utilizando a plataforma após alterações nestes Termos, você aceita as versões atualizadas.
+            </p>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">1. Aceitação dos Termos</h2>
-            <p>Ao criar uma conta ou utilizar a plataforma SIGE-Web da Igreja de Cristo Rocha Eterna (ICRE), você declara que leu, compreendeu e concorda com estes Termos e Condições de Uso (&quot;Termos&quot;). Se você não concordar com qualquer parte destes Termos, não crie uma conta e não utilize a plataforma.</p>
-            <p>Estes Termos constituem um acordo juridicamente vinculante entre você e a ICRE. Ao continuar utilizando a plataforma após alterações nestes Termos, você aceita as versões atualizadas.</p>
-          </section>
+          <Section number="2" title="Descrição da Plataforma">
+            <p>
+              O SIGE-Web é um sistema de gestão eclesiástica desenvolvido para uso exclusivo da comunidade
+              da ICRE. A plataforma permite gerenciar informações de membros, eventos, escalas de ministério,
+              finanças e comunicações internas. O acesso é destinado a membros, visitantes cadastrados e
+              colaboradores autorizados.
+            </p>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">2. Descrição da Plataforma</h2>
-            <p>O SIGE-Web é um sistema de gestão eclesiástica desenvolvido para uso exclusivo da comunidade da ICRE. A plataforma permite gerenciar informações de membros, eventos, escalas de ministério, finanças e comunicações internas da igreja. O acesso é destinado a membros, visitantes cadastrados e colaboradores autorizados.</p>
-          </section>
+          <Section number="3" title="Elegibilidade">
+            <p>
+              Para criar uma conta, você deve ter no mínimo 13 anos de idade. Ao se cadastrar, você declara
+              que as informações fornecidas são verdadeiras, precisas e completas. A ICRE reserva-se o
+              direito de recusar ou encerrar contas que violem estes Termos ou que contenham informações falsas.
+            </p>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">3. Elegibilidade</h2>
-            <p>Para criar uma conta, você deve ter no mínimo 13 anos de idade. Ao se cadastrar, você declara que as informações fornecidas são verdadeiras, precisas e completas. A ICRE reserva-se o direito de recusar ou encerrar contas que violem estes Termos ou que contenham informações falsas.</p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">4. Coleta e Uso de Dados Pessoais</h2>
-            <p>Para criar e manter sua conta, coletamos os seguintes dados: nome completo, endereço de e-mail, número de telefone, endereço residencial e data de nascimento. Estes dados são utilizados exclusivamente para as seguintes finalidades:</p>
-            <ul className="list-disc pl-6 space-y-1 mt-3">
-              <li>Identificação e autenticação na plataforma;</li>
-              <li>Comunicação sobre eventos, avisos e atividades da igreja;</li>
-              <li>Gestão pastoral e organizacional interna da ICRE;</li>
-              <li>Cumprimento de obrigações legais aplicáveis.</li>
+          <Section number="4" title="Coleta e Uso de Dados Pessoais">
+            <p>Para criar e manter sua conta, coletamos os seguintes dados:</p>
+            <ul className="space-y-2 mt-2">
+              {[
+                'Nome completo',
+                'Endereço de e-mail',
+                'Número de telefone',
+                'Endereço residencial',
+                'Data de nascimento',
+                'Foto de perfil (opcional)',
+              ].map(item => (
+                <li key={item} className="flex items-center gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
+                  {item}
+                </li>
+              ))}
             </ul>
-            <p className="mt-3">Não vendemos, alugamos nem comercializamos seus dados pessoais. Dados não são compartilhados com terceiros, exceto quando exigido por determinação judicial ou obrigação legal.</p>
-          </section>
+            <p>
+              Estes dados são utilizados exclusivamente para identificação e autenticação na plataforma,
+              comunicação de eventos e avisos, e gestão pastoral interna da ICRE. Não vendemos, alugamos
+              nem comercializamos seus dados pessoais.
+            </p>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">5. Segurança da Conta</h2>
-            <p>Você é responsável pela confidencialidade de suas credenciais de acesso (e-mail, senha e PIN). Não compartilhe sua senha ou PIN com ninguém, inclusive com outros membros da equipe administrativa. Em caso de suspeita de acesso não autorizado à sua conta, notifique imediatamente a administração da ICRE.</p>
-            <p className="mt-3">A ICRE implementa medidas técnicas e organizacionais razoáveis para proteger seus dados. Contudo, nenhum sistema de segurança é absolutamente infalível. A ICRE não se responsabiliza por acessos não autorizados decorrentes de negligência do próprio usuário.</p>
-          </section>
+          <Section number="5" title="Segurança da Conta">
+            <p>
+              Você é responsável pela confidencialidade de suas credenciais de acesso (e-mail, senha e PIN).
+              Não compartilhe sua senha ou PIN com ninguém. Em caso de suspeita de acesso não autorizado,
+              notifique imediatamente a administração da ICRE.
+            </p>
+            <p>
+              A ICRE implementa medidas técnicas e organizacionais razoáveis para proteger seus dados.
+              Contudo, nenhum sistema de segurança é absolutamente infalível. A ICRE não se responsabiliza
+              por acessos não autorizados decorrentes de negligência do próprio usuário.
+            </p>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">6. Conduta do Usuário</h2>
+          <Section number="6" title="Conduta do Usuário">
             <p>Ao utilizar a plataforma, você concorda em não:</p>
-            <ul className="list-disc pl-6 space-y-1 mt-3">
-              <li>Utilizar a plataforma para fins ilegais, difamatórios ou contrários aos valores cristãos da ICRE;</li>
-              <li>Acessar, modificar ou divulgar dados de outros membros sem autorização;</li>
-              <li>Tentar comprometer a segurança, integridade ou disponibilidade do sistema;</li>
-              <li>Fornecer informações falsas ou enganosas durante o cadastro ou uso;</li>
-              <li>Utilizar a plataforma para fins comerciais pessoais não relacionados à ICRE.</li>
+            <ul className="space-y-2 mt-2">
+              {[
+                'Utilizar a plataforma para fins ilegais ou contrários aos valores cristãos da ICRE',
+                'Acessar, modificar ou divulgar dados de outros membros sem autorização',
+                'Tentar comprometer a segurança ou integridade do sistema',
+                'Fornecer informações falsas ou enganosas durante o cadastro ou uso',
+                'Utilizar a plataforma para fins comerciais pessoais não relacionados à ICRE',
+              ].map(item => (
+                <li key={item} className="flex items-center gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
+                  {item}
+                </li>
+              ))}
             </ul>
-          </section>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">7. Direitos do Titular dos Dados (LGPD)</h2>
-            <p>Em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018), você tem os seguintes direitos em relação aos seus dados pessoais:</p>
-            <ul className="list-disc pl-6 space-y-1 mt-3">
-              <li>Confirmação da existência de tratamento de seus dados;</li>
-              <li>Acesso aos dados que temos sobre você;</li>
-              <li>Correção de dados incompletos, inexatos ou desatualizados;</li>
-              <li>Portabilidade dos dados, mediante solicitação;</li>
-              <li>Eliminação dos dados tratados com base no seu consentimento;</li>
-              <li>Revogação do consentimento a qualquer momento.</li>
-            </ul>
-            <p className="mt-3">Para exercer qualquer destes direitos, entre em contato com a secretaria da ICRE.</p>
-          </section>
+          <Section number="7" title="Conteúdo e Propriedade Intelectual">
+            <p>
+              Todo o conteúdo disponibilizado na plataforma, incluindo textos, imagens, logotipos e código,
+              é de propriedade da ICRE ou de seus respectivos criadores, protegido por leis de direitos
+              autorais. É vedada a reprodução ou distribuição sem autorização prévia.
+            </p>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">8. Encerramento e Exclusão de Conta</h2>
-            <p>Você pode solicitar o encerramento de sua conta a qualquer momento entrando em contato com a administração. Após o encerramento, seus dados pessoais serão eliminados, exceto aqueles cuja retenção seja exigida por obrigação legal (por exemplo, registros financeiros que devem ser mantidos por prazo determinado pela legislação tributária brasileira).</p>
-            <p className="mt-3">A ICRE também pode encerrar ou suspender contas que violem estes Termos, sem aviso prévio e sem obrigação de indenização.</p>
-          </section>
+          <Section number="8" title="Limitação de Responsabilidade">
+            <p>
+              A ICRE não se responsabiliza por danos diretos, indiretos ou consequentes decorrentes do uso
+              ou impossibilidade de uso da plataforma, incluindo interrupções de serviço, perda de dados ou
+              falhas técnicas.
+            </p>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">9. Alterações nestes Termos</h2>
-            <p>A ICRE pode revisar estes Termos periodicamente. Quando realizarmos alterações significativas, notificaremos você por e-mail com antecedência razoável. A data de &quot;Última atualização&quot; no topo deste documento indica quando foi feita a revisão mais recente. O uso continuado da plataforma após a data de vigência das alterações constitui aceitação dos novos Termos.</p>
-          </section>
+          <Section number="9" title="Alterações nos Termos">
+            <p>
+              A ICRE reserva-se o direito de atualizar estes Termos a qualquer momento. Alterações
+              significativas serão comunicadas por e-mail ou aviso na plataforma com antecedência mínima de
+              7 dias. O uso contínuo após o prazo de aviso implica aceitação da nova versão.
+            </p>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">10. Disposições Gerais</h2>
-            <p>Estes Termos são regidos pelas leis da República Federativa do Brasil. Qualquer disputa decorrente destes Termos será submetida ao foro da comarca onde a ICRE está sediada, com renúncia a qualquer outro, por mais privilegiado que seja.</p>
-            <p className="mt-3">A invalidade ou inexequibilidade de qualquer disposição destes Termos não afetará a validade das demais disposições, que permanecerão em pleno vigor.</p>
-          </section>
+          <Section number="10" title="Encerramento de Conta">
+            <p>
+              Você pode solicitar a exclusão de sua conta a qualquer momento em{' '}
+              <Link href="/minha-conta" className="text-blue-400 hover:text-blue-300 underline transition-colors">
+                Minha Conta
+              </Link>.
+              Dados necessários para cumprimento de obrigações legais poderão ser mantidos pelo período
+              exigido pela legislação brasileira.
+            </p>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">11. Contato</h2>
-            <p>Dúvidas, solicitações ou reclamações relacionadas a estes Termos podem ser enviadas à secretaria da ICRE pelos canais disponíveis na página de <Link href="/contato" className="text-blue-600 hover:text-blue-700 underline">Contato</Link>.</p>
-          </section>
+          <Section number="11" title="Disposições Gerais">
+            <p>
+              Estes Termos são regidos pelas leis da República Federativa do Brasil. Qualquer disputa
+              decorrente destes Termos será submetida ao foro da comarca onde a ICRE está sediada.
+            </p>
+            <p>
+              A invalidade ou inexequibilidade de qualquer disposição não afetará a validade das demais,
+              que permanecerão em pleno vigor.
+            </p>
+          </Section>
 
+          <Section number="12" title="Contato">
+            <p>
+              Dúvidas, solicitações ou reclamações relacionadas a estes Termos podem ser enviadas à
+              secretaria da ICRE pelos canais disponíveis na página de{' '}
+              <Link href="/#contato" className="text-blue-400 hover:text-blue-300 underline transition-colors">
+                Contato
+              </Link>.
+            </p>
+          </Section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-slate-100 flex items-center justify-between flex-wrap gap-4">
-          <p className="text-sm text-slate-400">© {new Date().getFullYear()} Igreja de Cristo Rocha Eterna — ICRE. Todos os direitos reservados.</p>
-          <Link href="/privacidade" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
-            Política de Privacidade →
-          </Link>
+        <div className="mt-20 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <p className="text-slate-500 text-sm">
+            © {new Date().getFullYear()} Igreja de Cristo Rocha Eterna
+          </p>
+          <div className="flex items-center gap-6 text-sm">
+            <Link href="/privacidade" className="text-slate-500 hover:text-slate-300 transition-colors">
+              Política de Privacidade
+            </Link>
+            <Link href="/" className="text-slate-500 hover:text-slate-300 transition-colors">
+              Voltar ao início
+            </Link>
+          </div>
         </div>
       </div>
     </div>

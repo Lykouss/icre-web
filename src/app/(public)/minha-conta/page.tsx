@@ -11,7 +11,7 @@ export default async function MyAccountPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, phone, address, birth_date')
+    .select('full_name, phone, address, birth_date, photo_url')
     .eq('id', user.id)
     .single();
 
@@ -23,8 +23,6 @@ export default async function MyAccountPage() {
     .limit(1)
     .single();
 
-  const isAdmin = !!roleData;
-
   return (
     <ProfileClient
       email={user.email ?? ''}
@@ -32,7 +30,8 @@ export default async function MyAccountPage() {
       phone={profile?.phone ?? ''}
       address={profile?.address ?? ''}
       birthDate={profile?.birth_date ?? ''}
-      isAdmin={isAdmin}
+      photoUrl={profile?.photo_url ?? null}
+      isAdmin={!!roleData}
     />
   );
 }

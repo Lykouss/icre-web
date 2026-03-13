@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { PublicNavbar } from '@/features/portal/components/PublicNavbar';
+import LayoutShell from '@/features/portal/components/LayoutShell';
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -21,10 +21,5 @@ export default async function PublicLayout({ children }: { children: React.React
     };
   }
 
-  return (
-    <>
-      <PublicNavbar user={navUser} />
-      <div className="pt-0">{children}</div>
-    </>
-  );
+  return <LayoutShell navUser={navUser}>{children}</LayoutShell>;
 }

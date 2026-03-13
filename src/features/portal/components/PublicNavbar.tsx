@@ -17,14 +17,13 @@ interface Props {
   user: NavUser | null;
 }
 
-function Avatar({ name, photoUrl, size = 'sm' }: { name: string; photoUrl: string | null; size?: 'sm' | 'md' }) {
-  const sz = size === 'sm' ? 'w-8 h-8 text-xs' : 'w-10 h-10 text-sm';
+function Avatar({ name, photoUrl }: { name: string; photoUrl: string | null }) {
   const initials = name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
 
   return (
-    <div className={`${sz} rounded-full overflow-hidden bg-blue-600 text-white font-bold flex items-center justify-center shrink-0`}>
+    <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 text-white font-bold flex items-center justify-center shrink-0 text-xs">
       {photoUrl ? (
-        <Image src={photoUrl} alt={name} width={40} height={40} className="object-cover w-full h-full" />
+        <Image src={photoUrl} alt={name} width={32} height={32} className="object-cover w-full h-full" />
       ) : (
         initials
       )}
@@ -32,25 +31,35 @@ function Avatar({ name, photoUrl, size = 'sm' }: { name: string; photoUrl: strin
   );
 }
 
+// Threshold: altura aproximada do HeroSection (92vh)
+const HERO_THRESHOLD = typeof window !== 'undefined' ? window.innerHeight * 0.85 : 600;
+
 export function PublicNavbar({ user }: Props) {
   const pathname    = usePathname();
   const router      = useRouter();
   const isHome      = pathname === '/';
-
-  const [open, setOpen]         = useState(false);
-  const [scrolled, setScrolled] = useState(() => pathname !== '/');
+  const [open, setOpen]       = useState(false);
+  // Na home começa sobre o hero (escuro). Fora da home começa sempre no modo claro.
+  const [overHero, setOverHero] = useState(isHome);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isHome) return;
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+
+    const update = () => {
+      setOverHero(window.scrollY < HERO_THRESHOLD);
+    };
+
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    return () => window.removeEventListener('scroll', update);
   }, [isHome]);
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setOpen(false);
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
     };
     document.addEventListener('mousedown', onClickOutside);
     return () => document.removeEventListener('mousedown', onClickOutside);
@@ -62,58 +71,71 @@ export function PublicNavbar({ user }: Props) {
     router.refresh();
   };
 
-  const navBase = 'fixed top-0 left-0 right-0 z-50 transition-all duration-300';
-  const navBg   = scrolled
-    ? 'bg-white/95 backdrop-blur-sm shadow-sm border-b border-slate-200'
-    : 'bg-transparent';
+  // Estilos adaptativos: escuro sobre hero, claro sobre conteúdo branco
+  const navBg   = overHero
+    ? 'bg-slate-900/60 backdrop-blur-xl border-white/10'
+    : 'bg-white/80 backdrop-blur-xl border-slate-200/80 shadow-sm shadow-black/5';
+
+  const textColor  = overHero ? 'text-white/75 hover:text-white'    : 'text-slate-600 hover:text-slate-900';
+  const logoFilter = overHero ? 'brightness-0 invert'                : '';
+  const logoText   = overHero ? 'text-white'                         : 'text-slate-900';
+  const chevron    = overHero ? 'text-white/50'                      : 'text-slate-400';
 
   return (
-    <header className={`${navBase} ${navBg}`}>
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-3">
+      <nav className={`max-w-6xl mx-auto flex items-center justify-between gap-4 h-14 px-4 rounded-2xl border transition-all duration-300 ${navBg}`}>
+
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="relative w-8 h-8">
-            <Image src="/logo.svg" alt="ICRE" fill className="object-contain" />
+        <Link href="/" className="flex items-center gap-2.5 shrink-0">
+          <div className="relative w-7 h-7">
+            <Image
+              src="/logo.svg"
+              alt="ICRE"
+              fill
+              className={`object-contain transition-all duration-300 ${logoFilter}`}
+            />
           </div>
-          <span className={`font-black text-lg tracking-tight transition-colors ${scrolled ? 'text-slate-900' : 'text-white'}`}>
+          <span className={`font-black text-base tracking-tight transition-colors duration-300 ${logoText}`}>
             ICRE
           </span>
         </Link>
 
         {/* Links centrais */}
-        <nav className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-1">
           {[
-            { label: 'Início',    href: '/#'       },
-            { label: 'Sobre',     href: '/#sobre'  },
-            { label: 'Liderança', href: '/#pastores'},
-            { label: 'Células',   href: '/#celulas' },
-            { label: 'Contato',   href: '/#contato' },
+            { label: 'Início',    href: '/#'         },
+            { label: 'Sobre',     href: '/#sobre'    },
+            { label: 'Liderança', href: '/#pastores' },
+            { label: 'Células',   href: '/#celulas'  },
+            { label: 'Contato',   href: '/#contato'  },
           ].map(item => (
             <a
               key={item.href}
               href={item.href}
-              className={`text-sm font-semibold transition-colors ${
-                scrolled ? 'text-slate-600 hover:text-slate-900' : 'text-white/80 hover:text-white'
+              className={`text-sm font-semibold px-3 py-1.5 rounded-xl transition-all duration-300 ${textColor} ${
+                overHero ? 'hover:bg-white/10' : 'hover:bg-slate-100'
               }`}
             >
               {item.label}
             </a>
           ))}
-        </nav>
+        </div>
 
         {/* Área direita */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
           {!user && (
             <>
               <Link
                 href="/login"
-                className={`text-sm font-semibold transition-colors ${scrolled ? 'text-slate-600 hover:text-slate-900' : 'text-white/80 hover:text-white'}`}
+                className={`text-sm font-semibold px-3 py-1.5 rounded-xl transition-all duration-300 ${textColor} ${
+                  overHero ? 'hover:bg-white/10' : 'hover:bg-slate-100'
+                }`}
               >
                 Entrar
               </Link>
               <Link
                 href="/cadastro"
-                className="text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl transition-colors"
+                className="text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl transition-colors shadow-sm"
               >
                 Criar conta
               </Link>
@@ -124,10 +146,15 @@ export function PublicNavbar({ user }: Props) {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setOpen(v => !v)}
-                className="flex items-center gap-2 p-1 rounded-xl hover:bg-white/10 transition-colors"
+                className={`flex items-center gap-2 px-2 py-1.5 rounded-xl transition-colors ${
+                  overHero ? 'hover:bg-white/10' : 'hover:bg-slate-100'
+                }`}
               >
                 <Avatar name={user.fullName} photoUrl={user.photoUrl} />
-                <svg className={`w-4 h-4 transition-transform ${open ? 'rotate-180' : ''} ${scrolled ? 'text-slate-600' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''} ${chevron}`}
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
@@ -140,7 +167,11 @@ export function PublicNavbar({ user }: Props) {
                   </div>
 
                   <div className="py-1">
-                    <Link href="/minha-conta" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                    <Link
+                      href="/minha-conta"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
                       <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
@@ -148,7 +179,11 @@ export function PublicNavbar({ user }: Props) {
                     </Link>
 
                     {user.isAdmin && (
-                      <Link href="/dashboard" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 transition-colors font-semibold">
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 transition-colors font-semibold"
+                      >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
                         </svg>
@@ -158,7 +193,10 @@ export function PublicNavbar({ user }: Props) {
                   </div>
 
                   <div className="border-t border-slate-100 py-1">
-                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
@@ -170,7 +208,7 @@ export function PublicNavbar({ user }: Props) {
             </div>
           )}
         </div>
-      </div>
+      </nav>
     </header>
   );
 }

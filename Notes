@@ -2,19 +2,21 @@
 
 - Prioridade: Finalizar o desenvolvimento do site público e do editor.
 
-- Criar um módulo de avisos que servem tanto para o sistema como para o site público.
+- Corrigir os lugares onde a foto de perfil não aparecem.
 
-- Corrigir as cores da logo da igreja em temas escuros e na página 404.
+- Criar uma seção dedicada para a opção do upload de uma foto de perfil após o sucesso do cadastro.
 
-- Implementar o novo estilo visual em todas as páginas do site público (Login, Registro, Termos e Uso, Perfil).
+- Para a alteração de senhar ser autorizada, o usuário deve inserir a senha antiga.
 
-- Corrigir a posição da logo atrás da header na tela de login.
+- Para a exclusão da conta ser autorizada, o usuário deve inserir a senha + as outras etapas.
 
-- Adicionar a opção de inserir uma foto de perfil no cadastro e no perfil.
+- Ao ser efetivada a exclusão da conta, tudo associado à aquela conta deve ser excluído junto, principalmente arquivos, por exemplo, a foto de perfil.
 
 - Atualizar o módulo de edição do site público de acordo com as atualizações implementadas.
 
 ------------------------------- ATUALIZAÇÕES FUTURAS -------------------------------
+
+- Criar um módulo de avisos que servem tanto para o sistema como para o site público.
 
 - Adicionar a opção de adicionar/editar/remover administradores na página de sysadmin.
 
