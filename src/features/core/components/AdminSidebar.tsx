@@ -98,6 +98,22 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+function UserAvatar({ photoUrl, fullName, size }: { photoUrl: string | null; fullName: string; size: number }) {
+  const initials = fullName.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+  const sizeClass = size === 32 ? 'w-8 h-8 text-sm' : 'w-10 h-10 text-base';
+
+  return (
+    <div className={`${sizeClass} rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white font-bold shrink-0`}>
+      {photoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={photoUrl} alt={fullName || 'Avatar'} className="object-cover w-full h-full" />
+      ) : (
+        initials
+      )}
+    </div>
+  );
+}
+
 export function AdminSidebar({ user, flags = {} }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
@@ -124,8 +140,6 @@ export function AdminSidebar({ user, flags = {} }: SidebarProps) {
   function isActive(href: string) {
     return pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
   }
-
-  const initials = user.fullName.charAt(0).toUpperCase();
 
   return (
     <aside className={`bg-slate-900 text-slate-300 flex flex-col shadow-xl z-20 transition-all duration-300 ease-in-out relative shrink-0 ${
@@ -221,22 +235,10 @@ export function AdminSidebar({ user, flags = {} }: SidebarProps) {
       {/* Rodapé com avatar */}
       <div className={`border-t border-slate-800 p-3 shrink-0 ${isCollapsed ? 'flex justify-center' : ''}`}>
         {isCollapsed ? (
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
-            {user.photoUrl ? (
-              <Image src={user.photoUrl} alt={user.fullName} width={32} height={32} className="object-cover w-full h-full" />
-            ) : (
-              initials
-            )}
-          </div>
+          <UserAvatar photoUrl={user.photoUrl} fullName={user.fullName} size={32} />
         ) : (
           <div className="flex items-center gap-3 px-2 py-1.5 rounded-lg">
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
-              {user.photoUrl ? (
-                <Image src={user.photoUrl} alt={user.fullName} width={32} height={32} className="object-cover w-full h-full" />
-              ) : (
-                initials
-              )}
-            </div>
+            <UserAvatar photoUrl={user.photoUrl} fullName={user.fullName} size={32} />
             <div className="min-w-0">
               <p className="text-sm font-semibold text-white truncate">{user.fullName}</p>
               <p className="text-xs text-slate-500 truncate">{user.roles[0]}</p>

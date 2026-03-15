@@ -6,18 +6,27 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        // Supabase Storage — avatars, imagens de pastores, site
+        protocol: 'https',
+        hostname: 'oybwiwvoqsipilqaayyq.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        // Google (fotos de perfil OAuth)
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
       },
       {
+        // Qualquer URL HTTPS inserida no CMS pelo editor
+        // Necessário porque admins podem inserir imagens de qualquer domínio
         protocol: 'https',
-        hostname: 'oybwiwvoqsipilqaayyq.supabase.co',
+        hostname: '**',
       },
     ],
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '5mb',
+      bodySizeLimit: '10mb',
     },
   },
 };

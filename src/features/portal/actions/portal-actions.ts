@@ -6,10 +6,11 @@ import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import type { SiteBlockType } from '@/features/portal/types';
 
-const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
-const MAX_SITE_IMAGE = 5 * 1024 * 1024;
-const MAX_AVATAR     = 2 * 1024 * 1024;
-const MAX_PASTOR     = 3 * 1024 * 1024;
+const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+const MAX_AVATAR       = 2 * 1024 * 1024;    //   2 MB
+const MAX_PASTOR       = 3 * 1024 * 1024;    //   3 MB
+const MAX_SITE_MEDIA   = 10 * 1024 * 1024;   //  10 MB por arquivo
+const SITE_MEDIA_QUOTA = 200 * 1024 * 1024;  // 200 MB total
 
 const AVATAR_MAX_PER_DAY = 3;
 
@@ -23,19 +24,14 @@ function isAdmin(user: Awaited<ReturnType<typeof getCurrentUser>>) {
 async function checkAvatarRateLimit(userId: string): Promise<{ allowed: boolean; remaining: number }> {
   const admin = await createAdminClient();
   const windowStart = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-
   const { count } = await admin
     .from('auth_rate_limits')
     .select('id', { count: 'exact', head: true })
     .eq('identifier', userId)
     .eq('action', 'avatar_upload')
     .gte('attempted_at', windowStart);
-
   const used = count ?? 0;
-  return {
-    allowed: used < AVATAR_MAX_PER_DAY,
-    remaining: Math.max(0, AVATAR_MAX_PER_DAY - used),
-  };
+  return { allowed: used < AVATAR_MAX_PER_DAY, remaining: Math.max(0, AVATAR_MAX_PER_DAY - used) };
 }
 
 async function recordAvatarUpload(userId: string): Promise<void> {
@@ -43,7 +39,7 @@ async function recordAvatarUpload(userId: string): Promise<void> {
   await admin.from('auth_rate_limits').insert({ identifier: userId, action: 'avatar_upload' });
 }
 
-// ── Upload helpers ───────────────────────────────────────────
+// ── Upload genérico ───────────────────────────────────────────
 
 async function uploadFile(
   bucket: string,
@@ -51,7 +47,7 @@ async function uploadFile(
   file: File,
   maxSize: number
 ): Promise<{ url: string } | { error: string }> {
-  if (!ALLOWED_MIME.has(file.type)) return { error: 'Formato inválido. Use JPG, PNG ou WebP.' };
+  if (!ALLOWED_MIME.has(file.type)) return { error: 'Formato inválido. Use JPG, PNG, WebP ou GIF.' };
   if (file.size > maxSize) return { error: `Arquivo muito grande. Máximo ${maxSize / 1024 / 1024} MB.` };
 
   const admin = await createAdminClient();
@@ -64,7 +60,7 @@ async function uploadFile(
 
   if (error) {
     console.error(`[upload] ${bucket}/${fullPath}:`, error.message);
-    return { error: 'Falha no upload. Tente novamente.' };
+    return { error: `Falha no upload: ${error.message}` };
   }
 
   const { data } = admin.storage.from(bucket).getPublicUrl(fullPath);
@@ -126,6 +122,124 @@ export async function removeAvatar() {
   return { success: true };
 }
 
+// ── Galeria de mídia do site ──────────────────────────────────
+
+export interface SiteMediaItem {
+  id:         string;
+  name:       string;
+  url:        string;
+  size_bytes: number;
+  mime_type:  string;
+  created_at: string;
+}
+
+export async function listSiteMedia(): Promise<{ items: SiteMediaItem[]; usedBytes: number } | { error: string }> {
+  const user = await getCurrentUser();
+  if (!isAdmin(user)) return { error: 'Acesso negado.' };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('site_media')
+    .select('id, name, url, size_bytes, mime_type, created_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('[site_media] Erro ao listar:', error.message);
+    return { error: 'Falha ao carregar galeria.' };
+  }
+
+  const items = (data ?? []) as SiteMediaItem[];
+  const usedBytes = items.reduce((sum, i) => sum + i.size_bytes, 0);
+  return { items, usedBytes };
+}
+
+export async function uploadSiteMedia(formData: FormData): Promise<{ success: true; url: string; item: SiteMediaItem } | { error: string }> {
+  const user = await getCurrentUser();
+  if (!isAdmin(user)) return { error: 'Acesso negado.' };
+
+  const file = formData.get('file');
+  if (!(file instanceof File) || file.size === 0) return { error: 'Arquivo inválido.' };
+
+  if (!ALLOWED_MIME.has(file.type)) {
+    return { error: 'Formato inválido. Use JPG, PNG, WebP ou GIF.' };
+  }
+  if (file.size > MAX_SITE_MEDIA) {
+    return { error: `Arquivo muito grande. Máximo ${MAX_SITE_MEDIA / 1024 / 1024} MB por arquivo.` };
+  }
+
+  const supabase = await createClient();
+
+  // Verifica quota total
+  const { data: usageData } = await supabase
+    .from('site_media')
+    .select('size_bytes');
+
+  const usedBytes = (usageData ?? []).reduce((sum: number, row: { size_bytes: number }) => sum + row.size_bytes, 0);
+
+  if (usedBytes + file.size > SITE_MEDIA_QUOTA) {
+    const usedMB = (usedBytes / 1024 / 1024).toFixed(1);
+    const quotaMB = (SITE_MEDIA_QUOTA / 1024 / 1024).toFixed(0);
+    return {
+      error: `Quota de armazenamento atingida (${usedMB} MB de ${quotaMB} MB usados). Exclua imagens para liberar espaço.`,
+    };
+  }
+
+  const slug = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+  const result = await uploadFile('site-images', `gallery/${slug}`, file, MAX_SITE_MEDIA);
+  if ('error' in result) return result;
+
+  const { data: inserted, error: dbError } = await supabase
+    .from('site_media')
+    .insert({
+      name:        file.name,
+      url:         result.url,
+      size_bytes:  file.size,
+      mime_type:   file.type,
+      uploaded_by: user!.id,
+    })
+    .select()
+    .single();
+
+  if (dbError || !inserted) {
+    console.error('[site_media] Erro ao registrar:', dbError?.message);
+    return { error: 'Upload realizado mas falhou ao registrar. Contate o administrador.' };
+  }
+
+  revalidatePath('/portal');
+  return { success: true, url: result.url, item: inserted as SiteMediaItem };
+}
+
+export async function deleteSiteMedia(id: string): Promise<{ success: true } | { error: string }> {
+  const user = await getCurrentUser();
+  if (!isAdmin(user)) return { error: 'Acesso negado.' };
+
+  const supabase = await createClient();
+
+  const { data: media } = await supabase
+    .from('site_media')
+    .select('url')
+    .eq('id', id)
+    .single();
+
+  if (!media) return { error: 'Arquivo não encontrado.' };
+
+  const admin = await createAdminClient();
+  const urlPath = new URL(media.url).pathname;
+  const storagePath = urlPath.split('/object/public/site-images/')[1];
+  if (storagePath) {
+    await admin.storage.from('site-images').remove([storagePath]);
+  }
+
+  const { error } = await supabase.from('site_media').delete().eq('id', id);
+  if (error) {
+    console.error('[site_media] Erro ao deletar:', error.message);
+    return { error: 'Falha ao excluir o arquivo.' };
+  }
+
+  revalidatePath('/portal');
+  return { success: true };
+}
+
 // ── Blocos CMS ───────────────────────────────────────────────
 
 export async function upsertSiteBlock(
@@ -147,16 +261,6 @@ export async function upsertSiteBlock(
 
   revalidatePath('/');
   return { success: true };
-}
-
-export async function uploadSiteBlockImage(blockType: SiteBlockType, formData: FormData) {
-  const user = await getCurrentUser();
-  if (!isAdmin(user)) return { error: 'Acesso negado.' };
-
-  const file = formData.get('file');
-  if (!(file instanceof File)) return { error: 'Arquivo inválido.' };
-
-  return uploadFile('site-images', `${blockType}/banner`, file, MAX_SITE_IMAGE);
 }
 
 // ── Pastores ─────────────────────────────────────────────────

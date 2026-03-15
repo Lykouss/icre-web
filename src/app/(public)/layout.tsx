@@ -4,7 +4,15 @@ import { ToastProvider } from '@/features/core/components/ToastContext';
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
-  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  const [{ data: { user: authUser } }, { data: blocksData }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from('site_blocks')
+      .select('type, is_active')
+      .eq('is_active', true)
+      .order('order_idx'),
+  ]);
 
   let navUser: { fullName: string; photoUrl: string | null; isAdmin: boolean } | null = null;
 
@@ -13,7 +21,6 @@ export default async function PublicLayout({ children }: { children: React.React
       supabase.from('profiles').select('full_name, photo_url').eq('id', authUser.id).single(),
       supabase.from('user_roles').select('role').eq('user_id', authUser.id),
     ]);
-
     const roles = roleRes.data?.map(r => r.role) ?? [];
     navUser = {
       fullName: profileRes.data?.full_name ?? 'Usuário',
@@ -22,9 +29,11 @@ export default async function PublicLayout({ children }: { children: React.React
     };
   }
 
+  const activeBlockTypes = (blocksData ?? []).map(b => b.type as string);
+
   return (
     <ToastProvider>
-      <PublicNavbar user={navUser} />
+      <PublicNavbar user={navUser} activeBlockTypes={activeBlockTypes} />
       <div className="pt-0">{children}</div>
     </ToastProvider>
   );

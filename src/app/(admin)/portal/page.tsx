@@ -3,7 +3,7 @@ import { getCurrentUser } from '@/features/core/api/get-current-user';
 import { getFeatureFlag } from '@/features/core/api/get-feature-flag';
 import { FeatureMaintenance } from '@/features/core/components/FeatureMaintenance';
 import { createClient } from '@/lib/supabase/server';
-import { VisualEditor } from '@/features/portal/components/VisualEditor';
+import { SiteEditor } from '@/features/portal/components/SiteEditor';
 import type { SiteBlock } from '@/features/portal/types';
 
 export default async function PortalPage() {
@@ -25,10 +25,10 @@ export default async function PortalPage() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Editor do Site</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Edite no preview · salve rascunho · publique quando estiver pronto.</p>
+          <p className="text-sm text-slate-500 mt-0.5">Edite o conteúdo · salve rascunho · publique quando pronto.</p>
         </div>
       </div>
-      <VisualEditor initialBlocks={data ?? []} isSysAdmin={user.isSysAdmin} />
+      <SiteEditor blocks={data ?? []} />
     </div>
   );
 }
