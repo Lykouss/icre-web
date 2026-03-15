@@ -18,22 +18,20 @@ function sanitize(value: string): string {
 }
 
 async function checkRegisterRateLimit(email: string): Promise<boolean> {
-  const supabase = await createAdminClient();
+  const admin = await createAdminClient();
   const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000).toISOString();
-
-  const { count } = await supabase
+  const { count } = await admin
     .from('auth_rate_limits')
     .select('id', { count: 'exact', head: true })
     .eq('identifier', email.toLowerCase())
     .eq('action', 'register')
     .gte('attempted_at', windowStart);
-
   return (count ?? 0) < MAX_REGISTER_ATTEMPTS;
 }
 
 async function recordRegisterAttempt(email: string): Promise<void> {
-  const supabase = await createAdminClient();
-  await supabase.from('auth_rate_limits').insert({
+  const admin = await createAdminClient();
+  await admin.from('auth_rate_limits').insert({
     identifier: email.toLowerCase(),
     action: 'register',
   });
@@ -49,6 +47,7 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
   const confirmPass = (formData.get('confirmPass') as string) ?? '';
   const termsAccepted = formData.get('termsAccepted') === 'true';
 
+  // ── Validações ────────────────────────────────────────────────
   if (!fullName || fullName.length < 3 || fullName.length > 100) {
     return { error: 'Nome deve ter entre 3 e 100 caracteres.', field: 'fullName' };
   }
@@ -90,15 +89,17 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
     return { error: 'Você precisa aceitar os Termos e Condições.', field: 'terms' };
   }
 
+  // ── Rate Limiting ─────────────────────────────────────────────
   const allowed = await checkRegisterRateLimit(email);
   if (!allowed) {
     return { error: 'Muitas tentativas de cadastro. Aguarde 1 hora e tente novamente.' };
   }
   await recordRegisterAttempt(email);
 
-  // Usa admin client para criar o usuário já confirmado (sem necessidade de verificação por email)
-  const adminSupabase = await createAdminClient();
-  const { data, error: createError } = await adminSupabase.auth.admin.createUser({
+  // ── Cria usuário via adminClient (email já confirmado) ────────
+  const admin = await createAdminClient();
+
+  const { data: createdUser, error: createError } = await admin.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
@@ -106,35 +107,60 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
   });
 
   if (createError) {
-    if (createError.message.toLowerCase().includes('already registered') || createError.message.toLowerCase().includes('already exists')) {
+    if (
+      createError.message.toLowerCase().includes('already registered') ||
+      createError.message.toLowerCase().includes('already exists')
+    ) {
       return { error: 'Este e-mail já está cadastrado.', field: 'email' };
     }
-    console.error('Erro ao criar conta:', createError.message);
+    console.error('[register] Erro ao criar usuário:', createError.message);
     return { error: 'Erro ao criar conta. Tente novamente.' };
   }
 
-  if (!data.user) {
+  if (!createdUser.user) {
     return { error: 'Erro inesperado ao criar conta.' };
   }
 
-  const { error: profileError } = await adminSupabase
+  const userId = createdUser.user.id;
+
+  // ── Atualiza profile via adminClient (bypassa RLS) ───────────
+  // O trigger handle_new_user já criou o profile.
+  // Aqui preenchemos todos os dados do cadastro público.
+  const { error: profileError } = await admin
     .from('profiles')
     .update({
       full_name:         fullName,
-      phone:             phone    || null,
-      address:           address  || null,
+      phone:             phone || null,
+      address:           address || null,
       birth_date:        birthDate || null,
       terms_accepted_at: new Date().toISOString(),
     })
-    .eq('id', data.user.id);
+    .eq('id', userId);
 
   if (profileError) {
-    console.error('Erro ao atualizar profile:', profileError.message);
+    console.error('[register] Erro ao atualizar profile:', profileError.message);
+    // O trigger on_profile_complete_create_member só dispara no UPDATE,
+    // então tentamos criar a ficha de membro diretamente aqui como fallback.
+    await admin.from('members').insert({
+      user_id:    userId,
+      full_name:  fullName,
+      phone:      phone || null,
+      address:    address || null,
+      birth_date: birthDate || null,
+      status:     'Visitante',
+    }).then(({ error: mError }) => {
+      if (mError) console.error('[register] Fallback member insert falhou:', mError.message);
+    });
   }
 
-  // Faz login automático após o cadastro
+  // ── Login automático ──────────────────────────────────────────
   const supabase = await createClient();
-  await supabase.auth.signInWithPassword({ email, password });
+  const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (loginError) {
+    console.error('[register] Erro no login automático:', loginError.message);
+    redirect('/login');
+  }
 
   redirect('/cadastro/sucesso');
 }
@@ -149,16 +175,14 @@ interface LoginResult {
 }
 
 async function checkLoginRateLimit(email: string): Promise<{ allowed: boolean; remainingMinutes?: number }> {
-  const supabase = await createAdminClient();
+  const admin = await createAdminClient();
   const windowStart = new Date(Date.now() - LOGIN_WINDOW_MINUTES * 60 * 1000).toISOString();
-
-  const { count } = await supabase
+  const { count } = await admin
     .from('auth_rate_limits')
     .select('id', { count: 'exact', head: true })
     .eq('identifier', email.toLowerCase())
     .eq('action', 'login')
     .gte('attempted_at', windowStart);
-
   const attempts = count ?? 0;
   if (attempts >= MAX_LOGIN_ATTEMPTS) {
     return { allowed: false, remainingMinutes: LOGIN_WINDOW_MINUTES };
@@ -167,8 +191,8 @@ async function checkLoginRateLimit(email: string): Promise<{ allowed: boolean; r
 }
 
 async function recordLoginAttempt(email: string): Promise<void> {
-  const supabase = await createAdminClient();
-  await supabase.from('auth_rate_limits').insert({
+  const admin = await createAdminClient();
+  await admin.from('auth_rate_limits').insert({
     identifier: email.toLowerCase(),
     action: 'login',
   });
@@ -213,9 +237,9 @@ export async function requestPasswordReset(
     return { error: 'E-mail inválido.' };
   }
 
-  const supabase = await createAdminClient();
+  const admin = await createAdminClient();
   const windowStart = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const { count } = await supabase
+  const { count } = await admin
     .from('auth_rate_limits')
     .select('id', { count: 'exact', head: true })
     .eq('identifier', email)
@@ -226,15 +250,15 @@ export async function requestPasswordReset(
     return { error: 'Muitas solicitações. Aguarde 1 hora.' };
   }
 
-  await supabase.from('auth_rate_limits').insert({ identifier: email, action: 'reset_password' });
+  await admin.from('auth_rate_limits').insert({ identifier: email, action: 'reset_password' });
 
-  const clientSupabase = await createClient();
-  const { error } = await clientSupabase.auth.resetPasswordForEmail(email, {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/nova-senha`,
   });
 
   if (error) {
-    console.error('Erro no reset de senha:', error.message);
+    console.error('[reset] Erro no reset de senha:', error.message);
   }
 
   return { success: true };
@@ -256,7 +280,7 @@ export async function acceptAdminTerms(): Promise<{ error?: string }> {
     .eq('id', user.id);
 
   if (error) {
-    console.error('Erro ao aceitar termos de admin:', error.message);
+    console.error('[admin] Erro ao aceitar termos:', error.message);
     return { error: 'Falha ao salvar. Tente novamente.' };
   }
 
@@ -276,7 +300,7 @@ export async function completeAdminOnboarding(): Promise<{ error?: string }> {
     .eq('id', user.id);
 
   if (error) {
-    console.error('Erro ao finalizar onboarding:', error.message);
+    console.error('[admin] Erro ao finalizar onboarding:', error.message);
     return { error: 'Falha ao finalizar. Tente novamente.' };
   }
 

@@ -11,6 +11,7 @@ interface SidebarProps {
   user: {
     id: string;
     fullName: string;
+    photoUrl: string | null;
     roles: AppRole[];
     isAdmin: boolean;
     isSysAdmin: boolean;
@@ -22,7 +23,6 @@ interface NavItem {
   label: string;
   href: string;
   flag: string;
-  // Roles que podem ver este item (vazio = todos os admins)
   roles: AppRole[];
   icon: React.ReactNode;
 }
@@ -67,43 +67,10 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Eventos',
     href: '/eventos',
     flag: 'module_events',
-    roles: ['SYSADMIN', 'CHURCH_ADMIN', 'LEADER'],
-    icon: (
-      <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Escalas',
-    href: '/escalas',
-    flag: 'module_volunteers',
-    roles: ['SYSADMIN', 'CHURCH_ADMIN', 'LEADER'],
-    icon: (
-      <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Kids',
-    href: '/kids',
-    flag: 'module_kids',
-    roles: ['SYSADMIN', 'CHURCH_ADMIN', 'LEADER'],
-    icon: (
-      <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Patrimônio',
-    href: '/patrimonio',
-    flag: 'module_assets',
     roles: ['SYSADMIN', 'CHURCH_ADMIN'],
     icon: (
       <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     ),
   },
@@ -148,7 +115,6 @@ export function AdminSidebar({ user, flags = {} }: SidebarProps) {
     return () => { supabase.removeChannel(channel); };
   }, [router]);
 
-  // Item visível se: flag ativa E usuário tem o role necessário
   const visibleItems = NAV_ITEMS.filter(item => {
     if (!flags[item.flag]) return false;
     if (user.isSysAdmin) return true;
@@ -158,6 +124,8 @@ export function AdminSidebar({ user, flags = {} }: SidebarProps) {
   function isActive(href: string) {
     return pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
   }
+
+  const initials = user.fullName.charAt(0).toUpperCase();
 
   return (
     <aside className={`bg-slate-900 text-slate-300 flex flex-col shadow-xl z-20 transition-all duration-300 ease-in-out relative shrink-0 ${
@@ -186,7 +154,7 @@ export function AdminSidebar({ user, flags = {} }: SidebarProps) {
         </Link>
       </div>
 
-      {/* Navegação — scrollbar estilizada inline para funcionar em todos os contextos */}
+      {/* Navegação */}
       <nav
         className="flex-1 py-4 overflow-y-auto overflow-x-hidden"
         style={{ scrollbarWidth: 'thin', scrollbarColor: '#334155 transparent' }}
@@ -220,7 +188,6 @@ export function AdminSidebar({ user, flags = {} }: SidebarProps) {
           })}
         </div>
 
-        {/* Seção Sistema — apenas SysAdmin */}
         {user.isSysAdmin && (
           <>
             <div className={`mt-6 mb-3 ${isCollapsed ? 'mx-3 border-t border-slate-800' : 'px-6'}`}>
@@ -251,16 +218,24 @@ export function AdminSidebar({ user, flags = {} }: SidebarProps) {
         )}
       </nav>
 
-      {/* Rodapé com nome do usuário */}
+      {/* Rodapé com avatar */}
       <div className={`border-t border-slate-800 p-3 shrink-0 ${isCollapsed ? 'flex justify-center' : ''}`}>
         {isCollapsed ? (
-          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
-            {user.fullName.charAt(0).toUpperCase()}
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+            {user.photoUrl ? (
+              <Image src={user.photoUrl} alt={user.fullName} width={32} height={32} className="object-cover w-full h-full" />
+            ) : (
+              initials
+            )}
           </div>
         ) : (
           <div className="flex items-center gap-3 px-2 py-1.5 rounded-lg">
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
-              {user.fullName.charAt(0).toUpperCase()}
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+              {user.photoUrl ? (
+                <Image src={user.photoUrl} alt={user.fullName} width={32} height={32} className="object-cover w-full h-full" />
+              ) : (
+                initials
+              )}
             </div>
             <div className="min-w-0">
               <p className="text-sm font-semibold text-white truncate">{user.fullName}</p>

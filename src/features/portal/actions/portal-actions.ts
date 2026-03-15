@@ -11,9 +11,36 @@ const MAX_SITE_IMAGE = 5 * 1024 * 1024;
 const MAX_AVATAR     = 2 * 1024 * 1024;
 const MAX_PASTOR     = 3 * 1024 * 1024;
 
+const AVATAR_MAX_PER_DAY = 3;
+
 function isAdmin(user: Awaited<ReturnType<typeof getCurrentUser>>) {
   if (!user) return false;
   return user.isSysAdmin || user.roles.some(r => ['CHURCH_ADMIN'].includes(r));
+}
+
+// ── Rate limit de avatar ──────────────────────────────────────
+
+async function checkAvatarRateLimit(userId: string): Promise<{ allowed: boolean; remaining: number }> {
+  const admin = await createAdminClient();
+  const windowStart = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+  const { count } = await admin
+    .from('auth_rate_limits')
+    .select('id', { count: 'exact', head: true })
+    .eq('identifier', userId)
+    .eq('action', 'avatar_upload')
+    .gte('attempted_at', windowStart);
+
+  const used = count ?? 0;
+  return {
+    allowed: used < AVATAR_MAX_PER_DAY,
+    remaining: Math.max(0, AVATAR_MAX_PER_DAY - used),
+  };
+}
+
+async function recordAvatarUpload(userId: string): Promise<void> {
+  const admin = await createAdminClient();
+  await admin.from('auth_rate_limits').insert({ identifier: userId, action: 'avatar_upload' });
 }
 
 // ── Upload helpers ───────────────────────────────────────────
@@ -31,19 +58,16 @@ async function uploadFile(
   const ext = file.name.split('.').pop() ?? 'jpg';
   const fullPath = `${path}.${ext}`;
 
-  console.log(`[UPLOAD] bucket=${bucket} path=${fullPath} type=${file.type} size=${file.size}`);
-
   const { error } = await admin.storage
     .from(bucket)
     .upload(fullPath, file, { upsert: true, contentType: file.type });
 
   if (error) {
-    console.error(`[UPLOAD ERROR] bucket=${bucket} path=${fullPath}`, JSON.stringify(error));
-    return { error: `Falha no upload: ${error.message}` };
+    console.error(`[upload] ${bucket}/${fullPath}:`, error.message);
+    return { error: 'Falha no upload. Tente novamente.' };
   }
 
   const { data } = admin.storage.from(bucket).getPublicUrl(fullPath);
-  console.log(`[UPLOAD OK] url=${data.publicUrl}`);
   return { url: data.publicUrl };
 }
 
@@ -54,14 +78,17 @@ export async function uploadAvatar(formData: FormData) {
   if (!user) return { error: 'Não autenticado.' };
 
   const file = formData.get('file');
+  if (!(file instanceof File) || file.size === 0) return { error: 'Arquivo inválido.' };
 
-  console.log(`[AVATAR] user=${user.id} file type=${file instanceof File ? file.type : typeof file} size=${file instanceof File ? file.size : 'N/A'}`);
-
-  if (!(file instanceof File)) return { error: 'Arquivo inválido.' };
-  if (file.size === 0) return { error: 'Arquivo vazio.' };
+  const rateLimit = await checkAvatarRateLimit(user.id);
+  if (!rateLimit.allowed) {
+    return { error: 'Limite de 3 trocas de foto por dia atingido. Tente novamente amanhã.' };
+  }
 
   const result = await uploadFile('avatars', `${user.id}/avatar`, file, MAX_AVATAR);
   if ('error' in result) return result;
+
+  await recordAvatarUpload(user.id);
 
   const supabase = await createClient();
   const { error } = await supabase
@@ -70,12 +97,13 @@ export async function uploadAvatar(formData: FormData) {
     .eq('id', user.id);
 
   if (error) {
-    console.error('[AVATAR] Erro ao salvar photo_url:', JSON.stringify(error));
+    console.error('[avatar] Erro ao salvar photo_url:', error.message);
     return { error: 'Falha ao salvar a foto. Tente novamente.' };
   }
 
   revalidatePath('/minha-conta');
-  return { success: true, url: result.url };
+  revalidatePath('/dashboard');
+  return { success: true, url: result.url, remaining: rateLimit.remaining - 1 };
 }
 
 export async function removeAvatar() {
@@ -89,11 +117,12 @@ export async function removeAvatar() {
     .eq('id', user.id);
 
   if (error) {
-    console.error('[AVATAR] Erro ao remover photo_url:', JSON.stringify(error));
+    console.error('[avatar] Erro ao remover photo_url:', error.message);
     return { error: 'Falha ao remover a foto. Tente novamente.' };
   }
 
   revalidatePath('/minha-conta');
+  revalidatePath('/dashboard');
   return { success: true };
 }
 
@@ -127,8 +156,7 @@ export async function uploadSiteBlockImage(blockType: SiteBlockType, formData: F
   const file = formData.get('file');
   if (!(file instanceof File)) return { error: 'Arquivo inválido.' };
 
-  const result = await uploadFile('site-images', `${blockType}/banner`, file, MAX_SITE_IMAGE);
-  return result;
+  return uploadFile('site-images', `${blockType}/banner`, file, MAX_SITE_IMAGE);
 }
 
 // ── Pastores ─────────────────────────────────────────────────
@@ -137,9 +165,9 @@ export async function createPastor(formData: FormData) {
   const user = await getCurrentUser();
   if (!isAdmin(user)) return { error: 'Acesso negado.' };
 
-  const name  = (formData.get('name') as string)?.trim();
-  const role  = (formData.get('role') as string)?.trim();
-  const bio   = (formData.get('bio')  as string)?.trim() || null;
+  const name = (formData.get('name') as string)?.trim();
+  const role = (formData.get('role') as string)?.trim();
+  const bio  = (formData.get('bio')  as string)?.trim() || null;
 
   if (!name || !role) return { error: 'Nome e cargo são obrigatórios.' };
   if (name.length < 2 || name.length > 120) return { error: 'Nome inválido.' };
@@ -174,9 +202,9 @@ export async function updatePastor(id: string, formData: FormData) {
 
   if (!id.match(/^[0-9a-f-]{36}$/i)) return { error: 'ID inválido.' };
 
-  const name  = (formData.get('name') as string)?.trim();
-  const role  = (formData.get('role') as string)?.trim();
-  const bio   = (formData.get('bio')  as string)?.trim() || null;
+  const name = (formData.get('name') as string)?.trim();
+  const role = (formData.get('role') as string)?.trim();
+  const bio  = (formData.get('bio')  as string)?.trim() || null;
 
   if (!name || !role) return { error: 'Nome e cargo são obrigatórios.' };
   if (bio && bio.length > 600) return { error: 'Bio muito longa.' };
@@ -184,7 +212,7 @@ export async function updatePastor(id: string, formData: FormData) {
   const supabase = await createClient();
 
   const photoFile = formData.get('photo');
-  let photo_url: string | undefined = undefined;
+  let photo_url: string | undefined;
   if (photoFile instanceof File && photoFile.size > 0) {
     const upload = await uploadFile('pastor-photos', id, photoFile, MAX_PASTOR);
     if ('url' in upload) photo_url = upload.url;

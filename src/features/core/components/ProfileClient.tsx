@@ -1,16 +1,8 @@
 'use client'
 
-import React, { useState, useTransition, useRef } from 'react';
-import Image from 'next/image';
+import React, { useState, useTransition } from 'react';
 import { updatePublicProfile, changePublicPassword, deletePublicAccount } from '@/features/core/actions/profile';
-import { uploadAvatar, removeAvatar } from '@/features/portal/actions/portal-actions';
-
-type Tab = 'dados' | 'senha' | 'conta';
-
-interface FeedbackState {
-  type: 'success' | 'error';
-  message: string;
-}
+import { AvatarUpload } from '@/features/core/components/AvatarUpload';
 
 interface ProfileClientProps {
   email: string;
@@ -20,14 +12,22 @@ interface ProfileClientProps {
   birthDate: string;
   photoUrl: string | null;
   isAdmin: boolean;
+  uploadsRemaining: number;
+}
+
+type Tab = 'dados' | 'senha' | 'conta';
+
+interface FeedbackState {
+  type: 'success' | 'error';
+  message: string;
 }
 
 function Alert({ state, onClose }: { state: FeedbackState; onClose: () => void }) {
   return (
     <div className={`flex items-start gap-3 px-4 py-3 rounded-xl border text-sm mb-6 ${
       state.type === 'success'
-        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-        : 'bg-red-500/10 border-red-500/20 text-red-400'
+        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+        : 'bg-red-500/10 border-red-500/30 text-red-400'
     }`}>
       <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         {state.type === 'success'
@@ -45,160 +45,95 @@ function Alert({ state, onClose }: { state: FeedbackState; onClose: () => void }
   );
 }
 
-function AvatarUpload({
-  fullName,
-  photoUrl,
-  onFeedback,
-}: {
-  fullName: string;
-  photoUrl: string | null;
-  onFeedback: (f: FeedbackState) => void;
-}) {
-  const [preview, setPreview] = useState<string | null>(photoUrl);
-  const [isPending, startTransition] = useTransition();
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const initials = fullName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
-
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const objectUrl = URL.createObjectURL(file);
-    setPreview(objectUrl);
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    startTransition(async () => {
-      const result = await uploadAvatar(formData);
-      if ('error' in result && result.error) {
-        onFeedback({ type: 'error', message: result.error });
-        setPreview(photoUrl);
-      } else {
-        onFeedback({ type: 'success', message: 'Foto atualizada com sucesso!' });
-      }
-    });
-  };
-
-  const handleRemove = () => {
-    startTransition(async () => {
-      const result = await removeAvatar();
-      if (result.success) {
-        setPreview(null);
-        onFeedback({ type: 'success', message: 'Foto removida.' });
-      }
-    });
-  };
-
-  return (
-    <div className="flex items-center gap-5 mb-8">
-      <div className="relative shrink-0">
-        <div className="w-20 h-20 rounded-2xl overflow-hidden bg-blue-600 flex items-center justify-center text-white font-bold text-2xl">
-          {preview ? (
-            <Image src={preview} alt={fullName} width={80} height={80} className="object-cover w-full h-full" />
-          ) : (
-            initials
-          )}
-        </div>
-        {isPending && (
-          <div className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center">
-            <svg className="w-5 h-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-            </svg>
-          </div>
-        )}
-      </div>
-
-      <div>
-        <p className="font-bold text-white text-lg leading-tight">{fullName || 'Minha Conta'}</p>
-        <div className="flex items-center gap-3 mt-2">
-          <button
-            onClick={() => fileRef.current?.click()}
-            disabled={isPending}
-            className="text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors disabled:opacity-50"
-          >
-            {preview ? 'Trocar foto' : 'Adicionar foto'}
-          </button>
-          {preview && (
-            <>
-              <span className="text-slate-700 text-xs">·</span>
-              <button
-                onClick={handleRemove}
-                disabled={isPending}
-                className="text-xs font-semibold text-red-400 hover:text-red-300 transition-colors disabled:opacity-50"
-              >
-                Remover
-              </button>
-            </>
-          )}
-        </div>
-        <p className="text-xs text-slate-500 mt-1">JPG, PNG ou WebP · máx. 2 MB</p>
-        <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFile} />
-      </div>
-    </div>
-  );
-}
-
-export function ProfileClient({ email, fullName, phone, address, birthDate, photoUrl, isAdmin }: ProfileClientProps) {
+export function ProfileClient({
+  email, fullName, phone, address, birthDate, photoUrl, isAdmin, uploadsRemaining,
+}: ProfileClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>('dados');
-  const [feedback, setFeedback] = useState<FeedbackState | null>(null);
+  const [feedback, setFeedback]   = useState<FeedbackState | null>(null);
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'dados', label: 'Dados Pessoais' },
-    { id: 'senha', label: 'Senha'          },
-    { id: 'conta', label: 'Minha Conta'    },
+    { id: 'senha', label: 'Senha' },
+    { id: 'conta', label: 'Minha Conta' },
   ];
 
   const inputClass = 'w-full bg-slate-800/50 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-slate-500';
   const labelClass = 'block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5';
+  const initials   = fullName.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <div className="max-w-2xl mx-auto px-4 pt-[100px] pb-16">
+    <div className="min-h-screen bg-slate-950">
+      {/* Blurs decorativos */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-blue-600/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/3 right-1/4 w-64 h-64 bg-indigo-600/8 rounded-full blur-3xl" />
+      </div>
 
-        <AvatarUpload fullName={fullName} photoUrl={photoUrl} onFeedback={setFeedback} />
-
-        <p className="text-slate-500 text-sm mb-8">{email}</p>
-
-        {feedback && <Alert state={feedback} onClose={() => setFeedback(null)} />}
-
-        <div className="flex border-b border-slate-800 mb-8 gap-1">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => { setActiveTab(tab.id); setFeedback(null); }}
-              className={`px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors ${
-                activeTab === tab.id
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      <div className="relative max-w-2xl mx-auto px-4 pt-32 pb-16">
+        {/* Header do perfil */}
+        <div className="flex items-center gap-5 mb-10">
+          <div className="w-16 h-16 rounded-2xl overflow-hidden bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-300 font-bold text-2xl shrink-0">
+            {photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photoUrl} alt={fullName || 'Avatar'} className="object-cover w-full h-full" />
+            ) : (
+              initials
+            )}
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-white">{fullName || 'Minha Conta'}</h1>
+            <p className="text-slate-400 text-sm mt-0.5">{email}</p>
+            {isAdmin && (
+              <span className="inline-flex items-center mt-2 px-2.5 py-1 bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-semibold rounded-lg">
+                Administrador
+              </span>
+            )}
+          </div>
         </div>
 
-        {activeTab === 'dados' && (
-          <DataTab
-            fullName={fullName}
-            phone={phone}
-            address={address}
-            birthDate={birthDate}
-            inputClass={inputClass}
-            labelClass={labelClass}
-            onFeedback={setFeedback}
-          />
-        )}
+        {/* Card com glass */}
+        <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl overflow-hidden shadow-2xl">
+          {/* Tabs */}
+          <div className="flex border-b border-slate-700/50">
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => { setActiveTab(tab.id); setFeedback(null); }}
+                className={`flex-1 py-4 text-sm font-semibold transition-colors ${
+                  activeTab === tab.id
+                    ? 'text-blue-400 border-b-2 border-blue-500 bg-blue-500/5'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-        {activeTab === 'senha' && (
-          <PasswordTab inputClass={inputClass} labelClass={labelClass} onFeedback={setFeedback} />
-        )}
+          <div className="p-6 md:p-8">
+            {feedback && <Alert state={feedback} onClose={() => setFeedback(null)} />}
 
-        {activeTab === 'conta' && (
-          <AccountTab isAdmin={isAdmin} onFeedback={setFeedback} />
-        )}
+            {activeTab === 'dados' && (
+              <DataTab
+                fullName={fullName}
+                phone={phone}
+                address={address}
+                birthDate={birthDate}
+                photoUrl={photoUrl}
+                uploadsRemaining={uploadsRemaining}
+                inputClass={inputClass}
+                labelClass={labelClass}
+                onFeedback={setFeedback}
+              />
+            )}
+            {activeTab === 'senha' && (
+              <PasswordTab inputClass={inputClass} labelClass={labelClass} onFeedback={setFeedback} />
+            )}
+            {activeTab === 'conta' && (
+              <AccountTab isAdmin={isAdmin} onFeedback={setFeedback} />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -207,9 +142,10 @@ export function ProfileClient({ email, fullName, phone, address, birthDate, phot
 // ── Aba Dados Pessoais ───────────────────────────────────────────
 
 function DataTab({
-  fullName, phone, address, birthDate, inputClass, labelClass, onFeedback,
+  fullName, phone, address, birthDate, photoUrl, uploadsRemaining, inputClass, labelClass, onFeedback,
 }: {
   fullName: string; phone: string; address: string; birthDate: string;
+  photoUrl: string | null; uploadsRemaining: number;
   inputClass: string; labelClass: string;
   onFeedback: (f: FeedbackState) => void;
 }) {
@@ -226,42 +162,52 @@ function DataTab({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div>
-        <label className={labelClass}>Nome completo *</label>
-        <input name="fullName" type="text" defaultValue={fullName} maxLength={100} required className={inputClass} />
-      </div>
-      <div>
-        <label className={labelClass}>Telefone</label>
-        <input name="phone" type="tel" defaultValue={phone} maxLength={20} placeholder="(XX) XXXXX-XXXX" className={inputClass} />
-      </div>
-      <div>
-        <label className={labelClass}>Data de nascimento</label>
-        <input name="birthDate" type="date" defaultValue={birthDate} max={new Date().toISOString().split('T')[0]} className={inputClass} />
-      </div>
-      <div>
-        <label className={labelClass}>Endereço</label>
-        <textarea name="address" defaultValue={address} maxLength={300} rows={3} placeholder="Rua, número, bairro, cidade..." className={`${inputClass} resize-none`} />
-      </div>
+    <div className="space-y-8">
+      <AvatarUpload
+        currentPhotoUrl={photoUrl}
+        fullName={fullName}
+        uploadsRemaining={uploadsRemaining}
+      />
 
-      <div className="pt-2">
-        <button
-          type="submit"
-          disabled={isPending}
-          className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2 text-sm"
-        >
-          {isPending ? (
-            <>
-              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-              </svg>
-              Salvando...
-            </>
-          ) : 'Salvar alterações'}
-        </button>
+      <div className="border-t border-slate-700/50 pt-8">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className={labelClass}>Nome completo *</label>
+            <input name="fullName" type="text" defaultValue={fullName} maxLength={100} required className={inputClass} />
+          </div>
+          <div>
+            <label className={labelClass}>Telefone</label>
+            <input name="phone" type="tel" defaultValue={phone} maxLength={20} placeholder="(XX) XXXXX-XXXX" className={inputClass} />
+          </div>
+          <div>
+            <label className={labelClass}>Data de nascimento</label>
+            <input name="birthDate" type="date" defaultValue={birthDate} max={new Date().toISOString().split('T')[0]} className={`${inputClass} [color-scheme:dark]`} />
+          </div>
+          <div>
+            <label className={labelClass}>Endereço</label>
+            <textarea name="address" defaultValue={address} maxLength={300} rows={3} placeholder="Rua, número, bairro, cidade..." className={`${inputClass} resize-none`} />
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={isPending}
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2 text-sm"
+            >
+              {isPending ? (
+                <>
+                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                  </svg>
+                  Salvando...
+                </>
+              ) : 'Salvar alterações'}
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   );
 }
 
@@ -274,9 +220,9 @@ function PasswordTab({
   onFeedback: (f: FeedbackState) => void;
 }) {
   const [isPending, startTransition] = useTransition();
-  const [showNew, setShowNew] = useState(false);
+  const [showNew, setShowNew]         = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [newPass, setNewPass] = useState('');
+  const [newPass, setNewPass]         = useState('');
   const [confirmPass, setConfirmPass] = useState('');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -294,19 +240,13 @@ function PasswordTab({
     });
   };
 
-  const eyeBtn = (show: boolean, toggle: () => void) => (
-    <button type="button" onClick={toggle} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
-      {show ? (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-        </svg>
-      ) : (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        </svg>
-      )}
-    </button>
+  const eyeIcon = (visible: boolean) => (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      {visible
+        ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+        : <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></>
+      }
+    </svg>
   );
 
   return (
@@ -318,10 +258,14 @@ function PasswordTab({
           type={showNew ? 'text' : 'password'}
           value={newPass}
           onChange={e => setNewPass(e.target.value)}
-          placeholder="Mínimo 8 caracteres"
-          className={`${inputClass} pr-10`}
+          minLength={8}
+          maxLength={72}
+          required
+          className={inputClass}
         />
-        {eyeBtn(showNew, () => setShowNew(v => !v))}
+        <button type="button" onClick={() => setShowNew(v => !v)} className="absolute right-3 top-[34px] text-slate-500 hover:text-slate-300">
+          {eyeIcon(showNew)}
+        </button>
       </div>
 
       <div className="relative">
@@ -331,19 +275,23 @@ function PasswordTab({
           type={showConfirm ? 'text' : 'password'}
           value={confirmPass}
           onChange={e => setConfirmPass(e.target.value)}
-          placeholder="Repita a senha"
-          className={`${inputClass} pr-10`}
+          minLength={8}
+          maxLength={72}
+          required
+          className={inputClass}
         />
-        {eyeBtn(showConfirm, () => setShowConfirm(v => !v))}
+        <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute right-3 top-[34px] text-slate-500 hover:text-slate-300">
+          {eyeIcon(showConfirm)}
+        </button>
       </div>
 
       {confirmPass && (
-        <p className={`text-xs font-medium ${newPass === confirmPass ? 'text-emerald-400' : 'text-red-400'}`}>
+        <p className={`text-xs font-semibold ${newPass === confirmPass ? 'text-emerald-400' : 'text-red-400'}`}>
           {newPass === confirmPass ? '✓ Senhas coincidem' : '✗ Senhas não coincidem'}
         </p>
       )}
 
-      <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 text-xs text-slate-500 space-y-1">
+      <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 text-xs text-slate-500 space-y-1">
         <p className={newPass.length >= 8 ? 'text-emerald-400' : ''}>• Mínimo 8 caracteres</p>
         <p className={/[A-Z]/.test(newPass) ? 'text-emerald-400' : ''}>• Pelo menos 1 letra maiúscula</p>
         <p className={/[0-9]/.test(newPass) ? 'text-emerald-400' : ''}>• Pelo menos 1 número</p>
@@ -375,7 +323,7 @@ function PasswordTab({
 function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f: FeedbackState) => void }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmText, setConfirmText] = useState('');
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition]  = useTransition();
 
   const handleDelete = () => {
     startTransition(async () => {
@@ -386,18 +334,20 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-5 space-y-3">
-        <h3 className="font-semibold text-white text-sm">Informações da conta</h3>
+      <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 space-y-3">
+        <h3 className="font-semibold text-slate-200 text-sm">Informações da conta</h3>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-500">Tipo de conta</span>
+          <span className="text-slate-400">Tipo de conta</span>
           <span className={`font-semibold px-2.5 py-1 rounded-lg text-xs ${
-            isAdmin ? 'bg-violet-500/15 text-violet-400' : 'bg-slate-700 text-slate-400'
+            isAdmin
+              ? 'bg-violet-500/15 border border-violet-500/30 text-violet-300'
+              : 'bg-slate-700/50 border border-slate-600/50 text-slate-300'
           }`}>
             {isAdmin ? 'Administrador' : 'Membro / Visitante'}
           </span>
         </div>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-500">Autenticação</span>
+          <span className="text-slate-400">Autenticação</span>
           <span className="font-medium text-slate-300">E-mail e senha</span>
         </div>
       </div>
@@ -410,13 +360,13 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
             </svg>
             Zona de Perigo
           </h3>
-          <p className="text-red-500/70 text-xs mt-1">Ações irreversíveis. Prossiga com cuidado.</p>
+          <p className="text-red-400/70 text-xs mt-1">Ações irreversíveis. Prossiga com cuidado.</p>
         </div>
 
         <div className="p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="font-semibold text-white text-sm">Excluir minha conta</p>
+              <p className="font-semibold text-slate-200 text-sm">Excluir minha conta</p>
               <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                 Remove permanentemente sua conta e todos os dados pessoais. Esta ação não pode ser desfeita.
               </p>
@@ -425,7 +375,7 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
               <button
                 onClick={() => setShowConfirm(true)}
                 disabled={isAdmin}
-                className="shrink-0 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="shrink-0 bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Excluir
               </button>
@@ -439,25 +389,25 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
           )}
 
           {showConfirm && !isAdmin && (
-            <div className="mt-4 space-y-3">
-              <p className="text-sm text-red-400">
-                Digite <strong>EXCLUIR</strong> para confirmar:
+            <div className="mt-4 space-y-3 border-t border-red-500/20 pt-4">
+              <p className="text-xs text-slate-400">
+                Digite <strong className="text-slate-200">EXCLUIR</strong> para confirmar:
               </p>
               <input
                 type="text"
                 value={confirmText}
                 onChange={e => setConfirmText(e.target.value)}
                 placeholder="EXCLUIR"
-                className="w-full bg-slate-800 border border-red-500/30 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-600"
+                className="w-full bg-slate-800/50 border border-red-500/30 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-600"
               />
-              <div className="flex items-center gap-3">
+              <div className="flex gap-2">
                 <button
                   onClick={handleDelete}
                   disabled={confirmText !== 'EXCLUIR' || isPending}
-                  className="bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {isPending && (
-                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                     </svg>
@@ -466,7 +416,7 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
                 </button>
                 <button
                   onClick={() => { setShowConfirm(false); setConfirmText(''); }}
-                  className="text-slate-500 hover:text-slate-300 text-sm font-semibold transition-colors"
+                  className="text-xs font-semibold text-slate-500 hover:text-slate-200 px-4 py-2.5 rounded-xl transition-colors"
                 >
                   Cancelar
                 </button>
