@@ -12,18 +12,130 @@ interface StepConfig {
   id: StepId;
   title: string;
   subtitle: string;
-  icon: string;
 }
 
 const STEPS: StepConfig[] = [
-  { id: 'name',      title: 'Como podemos te chamar?',     subtitle: 'Seu nome completo.',                          icon: '👋' },
-  { id: 'email',     title: 'Qual o seu e-mail?',           subtitle: 'Usaremos para login e comunicados.',          icon: '✉️' },
-  { id: 'phone',     title: 'E seu telefone?',              subtitle: 'WhatsApp preferencial. Opcional.',            icon: '📱' },
-  { id: 'birthdate', title: 'Quando você nasceu?',          subtitle: 'Sua data de nascimento.',                     icon: '🎂' },
-  { id: 'address',   title: 'Onde você mora?',              subtitle: 'Endereço completo. Opcional.',                icon: '📍' },
-  { id: 'password',  title: 'Crie sua senha',               subtitle: 'Mínimo 8 caracteres, 1 maiúscula, 1 número.', icon: '🔒' },
-  { id: 'terms',     title: 'Termos e Condições',           subtitle: 'Leia e aceite para continuar.',               icon: '📋' },
+  { id: 'name',      title: 'Como podemos te chamar?',      subtitle: 'Seu nome completo.' },
+  { id: 'email',     title: 'Qual o seu e-mail?',            subtitle: 'Usaremos para login e comunicados.' },
+  { id: 'phone',     title: 'E seu telefone?',               subtitle: 'WhatsApp preferencial. Opcional.' },
+  { id: 'birthdate', title: 'Quando você nasceu?',           subtitle: 'Sua data de nascimento.' },
+  { id: 'address',   title: 'Onde você mora?',               subtitle: 'Endereço completo. Opcional.' },
+  { id: 'password',  title: 'Crie sua senha',                subtitle: 'Mínimo 8 caracteres, 1 maiúscula, 1 número.' },
+  { id: 'terms',     title: 'Termos e Condições',            subtitle: 'Leia e aceite para continuar.' },
 ];
+
+function StepIllustration({ id }: { id: StepId }) {
+  const base = 'w-16 h-16 mx-auto mb-6';
+  switch (id) {
+    case 'name':
+      return (
+        <svg className={base} viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="22" r="12" className="fill-blue-500/20 stroke-blue-400" strokeWidth="1.5" />
+          <circle cx="32" cy="22" r="6" className="fill-blue-400/30" />
+          <path d="M10 52c0-12.15 9.85-22 22-22s22 9.85 22 22" className="stroke-blue-400" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="44" cy="18" r="3" className="fill-blue-300/40 stroke-blue-300" strokeWidth="1" />
+          <circle cx="20" cy="26" r="2" className="fill-blue-500/40" />
+        </svg>
+      );
+    case 'email':
+      return (
+        <svg className={base} viewBox="0 0 64 64" fill="none">
+          <rect x="8" y="16" width="48" height="34" rx="6" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
+          <path d="M8 22l24 16 24-16" className="stroke-blue-400" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M8 42l16-12M56 42L40 30" className="stroke-blue-300/40" strokeWidth="1" strokeLinecap="round" />
+          <circle cx="49" cy="15" r="5" className="fill-blue-400" />
+          <path d="M47 15h4M49 13v4" className="stroke-white" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    case 'phone':
+      return (
+        <svg className={base} viewBox="0 0 64 64" fill="none">
+          <rect x="18" y="6" width="28" height="52" rx="6" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
+          <rect x="24" y="12" width="16" height="10" rx="2" className="fill-blue-400/20" />
+          <circle cx="32" cy="50" r="3" className="fill-blue-400/50" />
+          <path d="M26 28h12M26 34h8" className="stroke-blue-300/60" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M42 10c4 4 4 10 0 14" className="stroke-blue-300/50" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M46 6c6 6 6 16 0 22" className="stroke-blue-200/30" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    case 'birthdate':
+      return (
+        <svg className={base} viewBox="0 0 64 64" fill="none">
+          <rect x="8" y="18" width="48" height="38" rx="6" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
+          <path d="M8 28h48" className="stroke-blue-400/60" strokeWidth="1.5" />
+          <rect x="20" y="10" width="4" height="14" rx="2" className="fill-blue-400" />
+          <rect x="40" y="10" width="4" height="14" rx="2" className="fill-blue-400" />
+          <circle cx="22" cy="38" r="3" className="fill-blue-400/40" />
+          <circle cx="32" cy="38" r="3" className="fill-blue-400" />
+          <circle cx="42" cy="38" r="3" className="fill-blue-400/40" />
+          <circle cx="22" cy="48" r="3" className="fill-blue-400/40" />
+          <circle cx="32" cy="48" r="3" className="fill-blue-400/40" />
+        </svg>
+      );
+    case 'address':
+      return (
+        <svg className={base} viewBox="0 0 64 64" fill="none">
+          <path d="M32 6C22.06 6 14 14.06 14 24c0 14 18 34 18 34s18-20 18-34C50 14.06 41.94 6 32 6z" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
+          <circle cx="32" cy="24" r="7" className="fill-blue-400/30 stroke-blue-400" strokeWidth="1.5" />
+          <circle cx="32" cy="24" r="3" className="fill-blue-400" />
+          <path d="M46 52c4 1.5 6 3.5 6 5.5C52 60 43 62 32 62s-20-2-20-4.5c0-2 2-4 6-5.5" className="stroke-blue-300/50" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    case 'password':
+      return (
+        <svg className={base} viewBox="0 0 64 64" fill="none">
+          <rect x="12" y="28" width="40" height="28" rx="6" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
+          <path d="M20 28V22a12 12 0 0124 0v6" className="stroke-blue-400" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="32" cy="42" r="5" className="fill-blue-400/40 stroke-blue-400" strokeWidth="1.5" />
+          <path d="M32 42v5" className="stroke-blue-400" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="18" cy="22" r="2" className="fill-blue-300/40" />
+          <circle cx="46" cy="22" r="2" className="fill-blue-300/40" />
+        </svg>
+      );
+    case 'terms':
+      return (
+        <svg className={base} viewBox="0 0 64 64" fill="none">
+          <rect x="10" y="6" width="44" height="52" rx="6" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
+          <path d="M20 20h24M20 28h24M20 36h16" className="stroke-blue-400/60" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="44" cy="46" r="10" className="fill-slate-900 stroke-emerald-400" strokeWidth="2" />
+          <path d="M39 46l3 3 6-6" className="stroke-emerald-400" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+  }
+}
+
+function EyeIcon({ open }: { open: boolean }) {
+  return open ? (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+    </svg>
+  ) : (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+    </svg>
+  );
+}
+
+function TermsContent() {
+  return (
+    <>
+      <p className="font-semibold text-slate-300">1. Aceitação dos Termos</p>
+      <p>Ao criar uma conta, você concorda com estes Termos de Uso e com nossa Política de Privacidade.</p>
+      <p className="font-semibold text-slate-300">2. Uso do Sistema</p>
+      <p>O sistema SIGE-ICRE é destinado exclusivamente a membros e visitantes da Igreja de Cristo Rocha Eterna. O uso indevido pode resultar no cancelamento da conta.</p>
+      <p className="font-semibold text-slate-300">3. Dados Pessoais</p>
+      <p>Coletamos nome, e-mail, telefone, data de nascimento e endereço para gerenciamento eclesial. Seus dados não serão compartilhados com terceiros.</p>
+      <p className="font-semibold text-slate-300">4. Responsabilidades</p>
+      <p>Você é responsável por manter a confidencialidade de sua senha e por todas as atividades realizadas em sua conta.</p>
+      <p>
+        <Link href="/termos" target="_blank" className="text-blue-400 hover:underline">
+          Leia os termos completos →
+        </Link>
+      </p>
+    </>
+  );
+}
 
 function validateStep(step: StepId, values: Record<string, string>): string | null {
   switch (step) {
@@ -75,26 +187,23 @@ function validateStep(step: StepId, values: Record<string, string>): string | nu
 
 function passwordStrength(p: string): { score: number; label: string; color: string } {
   let score = 0;
-  if (p.length >= 8)  score++;
-  if (p.length >= 12) score++;
-  if (/[A-Z]/.test(p)) score++;
-  if (/[0-9]/.test(p)) score++;
+  if (p.length >= 8)          score++;
+  if (p.length >= 12)         score++;
+  if (/[A-Z]/.test(p))        score++;
+  if (/[0-9]/.test(p))        score++;
   if (/[^A-Za-z0-9]/.test(p)) score++;
   if (score <= 1) return { score, label: 'Fraca',  color: 'bg-red-500' };
   if (score <= 3) return { score, label: 'Média',  color: 'bg-amber-500' };
-  return            { score, label: 'Forte',  color: 'bg-emerald-500' };
+  return                     { score, label: 'Forte',  color: 'bg-emerald-500' };
 }
 
 export default function RegisterPage() {
   const { draft, setDraft, clearDraft } = useRegisterDraft();
 
-  const [currentStep, setCurrentStep] = useState(() => draft.currentStep ?? 0);
-  const [values, setValues]           = useState<Record<string, string>>(() => {
-    const { currentStep: _step, ...rest } = draft;
-    return rest as Record<string, string>;
-  });
+  const [currentStep, setCurrentStep] = useState(0);
+  const [values, setValues]           = useState<Record<string, string>>({});
   const [error, setError]             = useState<string | null>(null);
-  const [animating, setAnimating]     = useState(false);
+  const [phase, setPhase]             = useState<'idle' | 'exit' | 'enter'>('idle');
   const [direction, setDirection]     = useState<'forward' | 'back'>('forward');
   const [showPass, setShowPass]       = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -102,23 +211,41 @@ export default function RegisterPage() {
   const [isPending, startTransition]  = useTransition();
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
 
+  // Aplica o draft salvo apenas no cliente, após a hidratação
+  useEffect(() => {
+    const { currentStep: savedStep, ...savedValues } = draft;
+    if (savedStep) setCurrentStep(savedStep);
+    if (Object.keys(savedValues).length > 0) setValues(savedValues as Record<string, string>);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const step     = STEPS[currentStep];
   const progress = (currentStep / (STEPS.length - 1)) * 100;
+  const strength = step.id === 'password' ? passwordStrength(values.password ?? '') : null;
 
   useEffect(() => {
-    const t = setTimeout(() => inputRef.current?.focus(), 350);
+    const t = setTimeout(() => inputRef.current?.focus(), 380);
     return () => clearTimeout(t);
   }, [currentStep]);
 
   const set = (key: string, value: string) => {
     const next = { ...values, [key]: value };
     setValues(next);
-    // Persiste tudo exceto senha e confirmação por segurança
     const safeToPersist = Object.fromEntries(
       Object.entries(next).filter(([k]) => k !== 'password' && k !== 'confirmPass')
     );
     setDraft({ ...safeToPersist, currentStep });
     if (error) setError(null);
+    if (serverError) setServerError(null);
+  };
+
+  const animateTransition = (callback: () => void) => {
+    setPhase('exit');
+    setTimeout(() => {
+      callback();
+      setPhase('enter');
+      setTimeout(() => setPhase('idle'), 320);
+    }, 260);
   };
 
   const goNext = () => {
@@ -131,31 +258,37 @@ export default function RegisterPage() {
     }
 
     setDirection('forward');
-    setAnimating(true);
-    setTimeout(() => {
+    animateTransition(() => {
       const next = currentStep + 1;
       setCurrentStep(next);
       setDraft({ currentStep: next });
       setError(null);
-      setAnimating(false);
-    }, 280);
+    });
   };
 
   const goBack = () => {
     if (currentStep === 0) return;
     setDirection('back');
-    setAnimating(true);
-    setTimeout(() => {
+    animateTransition(() => {
       const prev = currentStep - 1;
       setCurrentStep(prev);
       setDraft({ currentStep: prev });
       setError(null);
-      setAnimating(false);
-    }, 280);
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && step.id !== 'terms') goNext();
+  };
+
+  const fieldToStep: Record<string, number> = {
+    fullName:  0,
+    email:     1,
+    phone:     2,
+    birthDate: 3,
+    address:   4,
+    password:  5,
+    terms:     6,
   };
 
   const handleSubmit = () => {
@@ -164,24 +297,48 @@ export default function RegisterPage() {
       Object.entries(values).forEach(([k, v]) => formData.set(k, v));
       const result = await registerUser(formData);
       if (result?.error) {
-        setServerError(result.error);
+        const targetStep = result.field ? (fieldToStep[result.field] ?? null) : null;
+        if (targetStep !== null && targetStep !== currentStep) {
+          setDirection('back');
+          animateTransition(() => {
+            setCurrentStep(targetStep);
+            setError(result.error ?? null);
+          });
+        } else {
+          setServerError(result.error);
+        }
       } else {
         clearDraft();
       }
     });
   };
 
-  const inputClass = 'w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all';
-  const strength   = step.id === 'password' ? passwordStrength(values.password ?? '') : null;
+  const contentClass = [
+    'transition-all duration-260',
+    phase === 'exit'
+      ? direction === 'forward'
+        ? 'opacity-0 -translate-x-6 scale-98'
+        : 'opacity-0 translate-x-6 scale-98'
+      : phase === 'enter'
+      ? direction === 'forward'
+        ? 'opacity-0 translate-x-6 scale-98'
+        : 'opacity-0 -translate-x-6 scale-98'
+      : 'opacity-100 translate-x-0 scale-100',
+  ].join(' ');
+
+  const inputClass =
+    'w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-slate-600';
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
 
-      <div className="relative w-full max-w-lg">
-        {/* Header */}
+      <div className="relative w-full max-w-lg animate-[fadeSlideUp_0.4s_ease_both]">
         <div className="flex items-center justify-between mb-8">
-          <Link href="/login" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium">
+          <Link
+            href="/login"
+            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium"
+          >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -193,7 +350,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Progresso */}
+        {/* Barra de progresso */}
         <div className="mb-8">
           <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
             <span>Passo {currentStep + 1} de {STEPS.length}</span>
@@ -201,27 +358,35 @@ export default function RegisterPage() {
           </div>
           <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
             <div
-              className="h-full bg-blue-500 rounded-full transition-all duration-500"
+              className="h-full bg-blue-500 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
+          {/* Dots indicadores */}
+          <div className="flex items-center justify-between mt-3 px-0.5">
+            {STEPS.map((s, i) => (
+              <div
+                key={s.id}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i < currentStep
+                    ? 'bg-blue-500 w-5'
+                    : i === currentStep
+                    ? 'bg-blue-400 w-3 ring-2 ring-blue-400/30'
+                    : 'bg-slate-700 w-1.5'
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* Card */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl min-h-[380px] flex flex-col">
-          <div
-            className={`transition-all duration-280 ${
-              animating
-                ? direction === 'forward' ? 'opacity-0 translate-y-4' : 'opacity-0 -translate-y-4'
-                : 'opacity-100 translate-y-0'
-            }`}
-          >
-            <div className="text-4xl mb-4">{step.icon}</div>
-            <h2 className="text-2xl font-bold text-white mb-1">{step.title}</h2>
-            <p className="text-slate-400 text-sm mb-8">{step.subtitle}</p>
+        <div className="bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-3xl p-8 shadow-2xl min-h-[420px] flex flex-col overflow-hidden">
+          <div className={contentClass}>
+            <StepIllustration id={step.id} />
+
+            <h2 className="text-2xl font-bold text-white mb-1 text-center">{step.title}</h2>
+            <p className="text-slate-400 text-sm mb-8 text-center">{step.subtitle}</p>
 
             <div onKeyDown={handleKeyDown} className="space-y-4">
-
               {step.id === 'name' && (
                 <input
                   ref={el => { inputRef.current = el; }}
@@ -254,7 +419,7 @@ export default function RegisterPage() {
                   ref={el => { inputRef.current = el; }}
                   type="date" max={new Date().toISOString().split('T')[0]}
                   value={values.birthDate ?? ''} onChange={e => set('birthDate', e.target.value)}
-                  className={inputClass}
+                  className={`${inputClass} [color-scheme:dark]`}
                 />
               )}
 
@@ -277,19 +442,31 @@ export default function RegisterPage() {
                       value={values.password ?? ''} onChange={e => set('password', e.target.value)}
                       className={`${inputClass} pr-12`} autoComplete="new-password"
                     />
-                    <button type="button" onClick={() => setShowPass(v => !v)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                    <button
+                      type="button"
+                      onClick={() => setShowPass(v => !v)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                      aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}
+                    >
                       <EyeIcon open={showPass} />
                     </button>
                   </div>
 
                   {strength && (values.password?.length ?? 0) > 0 && (
-                    <div>
-                      <div className="flex gap-1 mb-1">
-                        {[1,2,3,4,5].map(i => (
-                          <div key={i} className={`h-1 flex-1 rounded-full transition-all ${i <= strength.score ? strength.color : 'bg-slate-700'}`} />
+                    <div className="space-y-1.5">
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map(i => (
+                          <div
+                            key={i}
+                            className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                              i <= strength.score ? strength.color : 'bg-slate-700'
+                            }`}
+                          />
                         ))}
                       </div>
-                      <p className="text-xs text-slate-400">Força: <span className="font-semibold text-white">{strength.label}</span></p>
+                      <p className="text-xs text-slate-400">
+                        Força: <span className="font-semibold text-white">{strength.label}</span>
+                      </p>
                     </div>
                   )}
 
@@ -300,14 +477,35 @@ export default function RegisterPage() {
                       value={values.confirmPass ?? ''} onChange={e => set('confirmPass', e.target.value)}
                       className={`${inputClass} pr-12`} autoComplete="new-password"
                     />
-                    <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirm(v => !v)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                      aria-label={showConfirm ? 'Ocultar confirmação' : 'Mostrar confirmação'}
+                    >
                       <EyeIcon open={showConfirm} />
                     </button>
                   </div>
 
                   {values.confirmPass && (
-                    <p className={`text-xs font-medium ${values.password === values.confirmPass ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {values.password === values.confirmPass ? '✓ Senhas coincidem' : '✗ As senhas não coincidem'}
+                    <p className={`text-xs font-medium flex items-center gap-1.5 ${
+                      values.password === values.confirmPass ? 'text-emerald-400' : 'text-red-400'
+                    }`}>
+                      {values.password === values.confirmPass ? (
+                        <>
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                          </svg>
+                          Senhas coincidem
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          As senhas não coincidem
+                        </>
+                      )}
                     </p>
                   )}
                 </>
@@ -324,9 +522,13 @@ export default function RegisterPage() {
                         type="checkbox"
                         checked={values.termsAccepted === 'true'}
                         onChange={e => set('termsAccepted', e.target.checked ? 'true' : 'false')}
-                        className="sr-only peer"
+                        className="sr-only"
                       />
-                      <div className="w-5 h-5 rounded-md border-2 border-slate-600 peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-all flex items-center justify-center">
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                        values.termsAccepted === 'true'
+                          ? 'bg-blue-600 border-blue-600'
+                          : 'bg-transparent border-slate-600 group-hover:border-slate-400'
+                      }`}>
                         {values.termsAccepted === 'true' && (
                           <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
@@ -334,47 +536,51 @@ export default function RegisterPage() {
                         )}
                       </div>
                     </div>
-                    <span className="text-sm text-slate-300 group-hover:text-white transition-colors leading-relaxed">
+                    <span className="text-sm text-slate-300 leading-relaxed">
                       Li e aceito os{' '}
-                      <Link href="/termos" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline hover:text-blue-300">
-                        Termos e Condições
-                      </Link>
-                      {' '}e a{' '}
-                      <Link href="/privacidade" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline hover:text-blue-300">
+                      <Link href="/termos" target="_blank" className="text-blue-400 hover:underline">
+                        Termos de Uso
+                      </Link>{' '}
+                      e a{' '}
+                      <Link href="/privacidade" target="_blank" className="text-blue-400 hover:underline">
                         Política de Privacidade
                       </Link>
-                      {' '}da ICRE.
                     </span>
                   </label>
                 </div>
               )}
-            </div>
 
-            {(error || serverError) && (
-              <div className="mt-4 flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl">
-                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {error ?? serverError}
-              </div>
-            )}
+              {(error || serverError) && (
+                <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl animate-[fadeSlideUp_0.2s_ease_both]">
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {error ?? serverError}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Botões */}
-          <div className="mt-auto pt-6 flex items-center gap-3">
+          <div className="mt-auto pt-8 flex items-center gap-3">
             {currentStep > 0 && (
               <button
+                type="button"
                 onClick={goBack}
-                disabled={animating || isPending}
-                className="px-5 py-3.5 text-slate-400 hover:text-white font-semibold rounded-xl hover:bg-slate-800 transition-all disabled:opacity-50"
+                disabled={phase !== 'idle'}
+                className="flex items-center gap-2 px-5 py-3.5 text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 rounded-2xl transition-all text-sm font-semibold disabled:opacity-50"
               >
-                ← Voltar
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Voltar
               </button>
             )}
+
             <button
+              type="button"
               onClick={goNext}
-              disabled={animating || isPending}
-              className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              disabled={isPending || phase !== 'idle'}
+              className="flex-1 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/20"
             >
               {isPending ? (
                 <>
@@ -384,73 +590,40 @@ export default function RegisterPage() {
                   </svg>
                   Criando conta...
                 </>
-              ) : currentStep === STEPS.length - 1 ? 'Criar minha conta →' : (
+              ) : currentStep === STEPS.length - 1 ? (
+                <>
+                  Criar conta
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </>
+              ) : (
                 <>
                   Continuar
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
                 </>
               )}
             </button>
           </div>
-
-          {/* Dots */}
-          <div className="flex justify-center gap-1.5 mt-5">
-            {STEPS.map((_, i) => (
-              <div key={i} className={`rounded-full transition-all duration-300 ${
-                i === currentStep ? 'w-6 h-2 bg-blue-500' : i < currentStep ? 'w-2 h-2 bg-blue-700' : 'w-2 h-2 bg-slate-700'
-              }`} />
-            ))}
-          </div>
         </div>
 
-        <p className="text-center text-slate-500 text-sm mt-6">
-          Já tem conta?{' '}
-          <Link href="/login" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
-            Entrar
-          </Link>
-        </p>
+        {step.id === 'phone' || step.id === 'address' ? (
+          <p className="text-center text-xs text-slate-600 mt-4">
+            Campo opcional — você pode preencher depois no seu perfil
+          </p>
+        ) : null}
       </div>
+
+      <style>{`
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(14px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .scale-98 { transform: scale(0.98); }
+        .duration-260 { transition-duration: 260ms; }
+      `}</style>
     </div>
-  );
-}
-
-function EyeIcon({ open }: { open: boolean }) {
-  return (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={open
-        ? 'M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21'
-        : 'M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'
-      } />
-    </svg>
-  );
-}
-
-function TermsContent() {
-  return (
-    <>
-      <p className="font-bold text-slate-200 text-sm">Termos e Condições de Uso — ICRE</p>
-      <p>Última atualização: março de 2026</p>
-      <p className="font-semibold text-slate-200">1. Aceitação dos Termos</p>
-      <p>Ao se cadastrar na plataforma SIGE-Web da Igreja de Cristo Rocha Eterna (ICRE), você declara que leu, compreendeu e concorda com estes Termos e Condições. Caso não concorde, não prossiga com o cadastro.</p>
-      <p className="font-semibold text-slate-200">2. Uso da Plataforma</p>
-      <p>A plataforma SIGE-Web é um sistema de gestão eclesiástica destinado exclusivamente a membros, visitantes e colaboradores da ICRE. O acesso é pessoal e intransferível.</p>
-      <p className="font-semibold text-slate-200">3. Dados Pessoais</p>
-      <p>Os dados coletados são utilizados exclusivamente para fins de gestão interna da igreja, comunicação com os membros e organização de eventos. Não compartilhamos seus dados com terceiros sem seu consentimento expresso.</p>
-      <p className="font-semibold text-slate-200">4. Conduta do Usuário</p>
-      <p>Você concorda em não utilizar a plataforma para fins ilícitos ou que violem os valores cristãos da ICRE. É proibido o compartilhamento de informações confidenciais de outros membros.</p>
-      <p className="font-semibold text-slate-200">5. Segurança</p>
-      <p>Você é responsável pela confidencialidade de suas credenciais. Em caso de suspeita de acesso não autorizado, entre em contato imediatamente com a administração.</p>
-      <p className="font-semibold text-slate-200">6. Alterações nos Termos</p>
-      <p>A ICRE reserva-se o direito de atualizar estes Termos. Usuários serão notificados por e-mail sobre mudanças significativas.</p>
-      <p className="font-semibold text-slate-200">7. Encerramento de Conta</p>
-      <p>Você pode solicitar a exclusão de sua conta a qualquer momento. Dados necessários para cumprimento de obrigações legais poderão ser mantidos pelo período exigido pela legislação brasileira.</p>
-      <p>Para a versão completa, acesse a{' '}
-        <Link href="/termos" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">
-          página de Termos
-        </Link>.
-      </p>
-    </>
   );
 }

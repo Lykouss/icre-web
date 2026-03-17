@@ -96,9 +96,21 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
   }
   await recordRegisterAttempt(email);
 
-  // ── Cria usuário via adminClient (email já confirmado) ────────
   const admin = await createAdminClient();
 
+  // ── Verifica e-mail duplicado de forma determinística ─────────
+  const { data: authUser } = await admin
+    .schema('auth')
+    .from('users')
+    .select('id')
+    .eq('email', email)
+    .maybeSingle();
+
+  if (authUser) {
+    return { error: 'Este e-mail já está cadastrado.', field: 'email' };
+  }
+
+  // ── Cria usuário via adminClient (email já confirmado) ────────
   const { data: createdUser, error: createError } = await admin.auth.admin.createUser({
     email,
     password,
@@ -106,11 +118,8 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
     user_metadata: { full_name: fullName },
   });
 
-  if (createError) {
-    if (
-      createError.message.toLowerCase().includes('already registered') ||
-      createError.message.toLowerCase().includes('already exists')
-    ) {
+ if (createError) {
+    if (createError.code === 'email_exists') {
       return { error: 'Este e-mail já está cadastrado.', field: 'email' };
     }
     console.error('[register] Erro ao criar usuário:', createError.message);
