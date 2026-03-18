@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { ContactForm } from '@/features/portal/components/ContactForm';
+//import { ContactForm } from '@/features/portal/components/ContactForm';
 import type { ContactContent } from '@/features/portal/types';
 
 export const revalidate = 120;
@@ -100,7 +100,7 @@ export default async function PublicContactPage() {
           <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
             <h2 className="text-xl font-bold text-slate-900 mb-1">Deixe uma mensagem</h2>
             <p className="text-sm text-slate-500 mb-6">Nossa equipe responderá em breve.</p>
-            <ContactForm />
+            
           </div>
 
         </div>
