@@ -30,7 +30,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="flex-1 flex flex-col min-w-0 h-full">
           <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-10 shrink-0">
             <h2 className="font-semibold text-slate-700 truncate">Visão Geral</h2>
-            <UserMenu fullName={user.fullName} roles={user.roles} />
+            <UserMenu
+              fullName={user.fullName}
+              roles={user.roles}
+              photoUrl={photoUrl}
+            />
           </header>
 
           <main

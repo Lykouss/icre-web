@@ -2,17 +2,11 @@
 
 - Prioridade: Finalizar o desenvolvimento do site público e do editor.
 
-- Corrigir os lugares onde a foto de perfil não aparecem.
-
-- Criar uma seção dedicada para a opção do upload de uma foto de perfil após o sucesso do cadastro.
-
-- Para a alteração de senhar ser autorizada, o usuário deve inserir a senha antiga.
+- Para a alteração da senha ser autorizada, o usuário deve inserir a senha antiga.
 
 - Para a exclusão da conta ser autorizada, o usuário deve inserir a senha + as outras etapas.
 
 - Ao ser efetivada a exclusão da conta, tudo associado à aquela conta deve ser excluído junto, principalmente arquivos, por exemplo, a foto de perfil.
-
-- Atualizar o módulo de edição do site público de acordo com as atualizações implementadas.
 
 ------------------------------- ATUALIZAÇÕES FUTURAS -------------------------------
 

@@ -1,22 +1,41 @@
 'use client'
 
-import React, { useTransition } from 'react';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import Link from 'next/link';
-import { logout } from '@/features/core/actions/auth';
+import React, { useTransition } from 'react'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
 interface UserMenuProps {
-  fullName: string;
-  roles: string[];
+  fullName: string
+  roles: string[]
+  photoUrl: string | null
 }
 
-export function UserMenu({ fullName, roles }: UserMenuProps) {
-  const [isPending, startTransition] = useTransition();
+function Avatar({ name, photoUrl }: { name: string; photoUrl: string | null }) {
+  const initials =
+    name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?'
 
-  function handleSignOut() {
-    startTransition(async () => {
-      await logout();
-    });
+  return (
+    <div className="h-8 w-8 rounded-full overflow-hidden bg-slate-900 flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0">
+      {photoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
+      ) : (
+        initials
+      )}
+    </div>
+  )
+}
+
+export function UserMenu({ fullName, roles, photoUrl }: UserMenuProps) {
+  const [isPending] = useTransition()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.refresh()
   }
 
   return (
@@ -27,9 +46,9 @@ export function UserMenu({ fullName, roles }: UserMenuProps) {
             <p className="text-sm font-semibold text-slate-800 leading-tight">{fullName}</p>
             <p className="text-xs text-slate-500 leading-tight">{roles[0]}</p>
           </span>
-          <div className="h-8 w-8 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0">
-            {fullName.charAt(0).toUpperCase()}
-          </div>
+
+          <Avatar name={fullName} photoUrl={photoUrl} />
+
           <svg className="w-4 h-4 text-slate-400 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
           </svg>
@@ -40,7 +59,7 @@ export function UserMenu({ fullName, roles }: UserMenuProps) {
         <DropdownMenu.Content
           align="end"
           sideOffset={8}
-          className="z-50 min-w-[200px] bg-white rounded-xl shadow-lg border border-slate-200 py-1 animate-in fade-in-0 zoom-in-95"
+          className="z-50 min-w-[200px] bg-white rounded-xl shadow-lg border border-slate-200 py-1"
         >
           <div className="px-4 py-3 border-b border-slate-100">
             <p className="text-sm font-semibold text-slate-800 truncate">{fullName}</p>
@@ -48,13 +67,7 @@ export function UserMenu({ fullName, roles }: UserMenuProps) {
           </div>
 
           <DropdownMenu.Item asChild>
-            <Link
-              href="/"
-              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer outline-none transition-colors"
-            >
-              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-              </svg>
+            <Link href="/" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
               Ir para o site
             </Link>
           </DropdownMenu.Item>
@@ -63,18 +76,15 @@ export function UserMenu({ fullName, roles }: UserMenuProps) {
 
           <DropdownMenu.Item asChild>
             <button
-              onClick={handleSignOut}
+              onClick={handleLogout}
               disabled={isPending}
-              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 cursor-pointer outline-none transition-colors disabled:opacity-50"
+              className="w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
               {isPending ? 'Saindo...' : 'Sair'}
             </button>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
-  );
+  )
 }
