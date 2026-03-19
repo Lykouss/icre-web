@@ -25,7 +25,7 @@ export default function AdminTermsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+   <div className="min-h-screen bg-slate-950 flex items-center justify-center pt-24 pb-8 px-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#3b1f5e_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative w-full max-w-2xl">

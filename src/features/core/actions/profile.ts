@@ -65,37 +65,44 @@ export async function changePublicPassword(formData: FormData): Promise<ProfileR
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Não autorizado.' };
 
-  const newPassword  = (formData.get('newPassword')     as string) ?? '';
-  const confirmPass  = (formData.get('confirmPassword') as string) ?? '';
+  const currentPassword = (formData.get('currentPassword') as string) ?? '';
+  const newPassword     = (formData.get('newPassword')     as string) ?? '';
+  const confirmPass     = (formData.get('confirmPassword') as string) ?? '';
 
-  if (newPassword.length < 8 || newPassword.length > 72) {
+  if (!currentPassword) return { error: 'Informe a senha atual.' };
+
+  // Verifica senha atual
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: user.email!,
+    password: currentPassword,
+  });
+  if (signInError) return { error: 'Senha atual incorreta.' };
+
+  if (newPassword.length < 8 || newPassword.length > 72)
     return { error: 'A senha deve ter entre 8 e 72 caracteres.' };
-  }
-  if (!/[A-Z]/.test(newPassword)) {
+  if (!/[A-Z]/.test(newPassword))
     return { error: 'Inclua pelo menos uma letra maiúscula.' };
-  }
-  if (!/[0-9]/.test(newPassword)) {
+  if (!/[0-9]/.test(newPassword))
     return { error: 'Inclua pelo menos um número.' };
-  }
-  if (newPassword !== confirmPass) {
+  if (newPassword !== confirmPass)
     return { error: 'As senhas não coincidem.' };
-  }
+  if (newPassword === currentPassword)
+    return { error: 'A nova senha deve ser diferente da atual.' };
 
   const { error } = await supabase.auth.updateUser({ password: newPassword });
-  if (error) {
-    console.error('Erro ao alterar senha:', error.message);
-    return { error: 'Falha ao alterar a senha. Tente novamente.' };
-  }
+  if (error) return { error: 'Falha ao alterar a senha. Tente novamente.' };
 
   return { success: true };
 }
 
-export async function deletePublicAccount(): Promise<ProfileResult> {
+export async function deletePublicAccount(password: string): Promise<ProfileResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Não autorizado.' };
 
-  // Verifica se o usuário não é admin — admins não podem se auto-excluir pelo site público
+  if (!password) return { error: 'Informe sua senha para confirmar.' };
+
+  // Verifica que não é admin
   const { data: roleData } = await supabase
     .from('user_roles')
     .select('role')
@@ -104,20 +111,35 @@ export async function deletePublicAccount(): Promise<ProfileResult> {
     .limit(1)
     .single();
 
-  if (roleData) {
-    return { error: 'Administradores não podem excluir a própria conta por aqui. Entre em contato com a liderança.' };
+  if (roleData) return { error: 'Administradores não podem excluir a própria conta por aqui. Entre em contato com a liderança.' };
+
+  // Verifica senha
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: user.email!,
+    password,
+  });
+  if (signInError) return { error: 'Senha incorreta.' };
+
+  // Remove avatar do storage
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('photo_url')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.photo_url) {
+    const admin = await createAdminClient();
+    const urlPath = new URL(profile.photo_url).pathname;
+    const storagePath = urlPath.split('/object/public/avatars/')[1];
+    if (storagePath) {
+      await admin.storage.from('avatars').remove([storagePath]);
+    }
   }
 
-  // Exclui o usuário via service role (único jeito de apagar do Auth)
   const adminSupabase = await createAdminClient();
   const { error } = await adminSupabase.auth.admin.deleteUser(user.id);
+  if (error) return { error: 'Falha ao excluir a conta. Tente novamente.' };
 
-  if (error) {
-    console.error('Erro ao excluir conta:', error.message);
-    return { error: 'Falha ao excluir a conta. Tente novamente.' };
-  }
-
-  // Faz logout local
   await supabase.auth.signOut();
   redirect('/');
 }

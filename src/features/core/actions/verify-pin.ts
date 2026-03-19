@@ -18,23 +18,31 @@ export async function verifyPin(
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    return { error: 'Sessão expirada. Faça login novamente.' };
-  }
+  if (!user) return { error: 'Sessão expirada. Faça login novamente.' };
 
   const rateLimit = await checkPinRateLimit(supabase, user.id);
   if (!rateLimit.allowed) {
     return {
-      error: `Muitas tentativas incorretas. Aguarde ${rateLimit.retryAfterMinutes} minutos antes de tentar novamente.`,
+      error: `Muitas tentativas incorretas. Aguarde ${rateLimit.retryAfterMinutes} minutos.`,
     };
   }
 
-  const { data: isCorrect, error: rpcError } = await supabase
-    .rpc('verify_pin', { user_id: user.id, pin_input: pin });
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('security_pin_hash')
+    .eq('id', user.id)
+    .single();
 
-  await recordPinAttempt(supabase, user.id, !!isCorrect && !rpcError);
+  if (!profile?.security_pin_hash) {
+    return { error: 'PIN não configurado. Entre em contato com a liderança.' };
+  }
 
-  if (rpcError || !isCorrect) {
+  const bcrypt = await import('bcryptjs');
+  const isCorrect = await bcrypt.compare(pin, profile.security_pin_hash);
+
+  await recordPinAttempt(supabase, user.id, isCorrect);
+
+  if (!isCorrect) {
     const remaining = rateLimit.remainingAttempts;
     const suffix = remaining > 0
       ? ` Você ainda tem ${remaining} tentativa${remaining !== 1 ? 's' : ''}.`

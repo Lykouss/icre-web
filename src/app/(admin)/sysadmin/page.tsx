@@ -41,18 +41,20 @@ export default async function SysAdminPage() {
         </Link>
 
         {/* 2. Gestão de Acessos e Segurança */}
-        <div className="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200 opacity-80 flex flex-col h-full cursor-not-allowed">
-          <div className="absolute top-4 right-4 bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-md">Em breve</div>
-          <div className="w-12 h-12 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center mb-4">
+        <Link href="/sysadmin/acessos" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col h-full">
+          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
           </div>
           <h3 className="text-lg font-bold text-slate-800 mb-2">Segurança & Acessos</h3>
-          <p className="text-sm text-slate-500 flex-grow">
-            Controle de cargos (RBAC), logs de auditoria e monitoramento de sessões ativas no sistema.
+          <p className="text-sm text-slate-500 grow">
+            Controle de cargos (RBAC), concessão e revogação de acessos administrativos.
           </p>
-        </div>
+          <div className="mt-4 flex items-center text-sm font-semibold text-blue-600">
+            Acessar painel <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </Link>
 
         {/* 3. Configurações da Instituição */}
         <div className="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200 opacity-80 flex flex-col h-full cursor-not-allowed">

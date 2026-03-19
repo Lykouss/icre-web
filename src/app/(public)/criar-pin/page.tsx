@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useState, useTransition } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import { completeAdminOnboarding } from '@/features/core/actions/auth';
+import { saveAdminPin, completeAdminOnboarding } from '@/features/core/actions/auth';
 
 const PIN_LENGTH = 4;
 
@@ -43,46 +42,37 @@ export default function CreatePinPage() {
   };
 
   const handleSave = (finalConfirm: string) => {
-    if (pin !== finalConfirm) {
-      setError('Os PINs não coincidem. Tente novamente.');
+  if (pin !== finalConfirm) {
+    setError('Os PINs não coincidem. Tente novamente.');
+    setPin('');
+    setConfirmPin('');
+    setStep('create');
+    return;
+  }
+
+  startTransition(async () => {
+    const saveResult = await saveAdminPin(pin);
+    if (saveResult.error) {
+      setError(saveResult.error);
       setPin('');
       setConfirmPin('');
       setStep('create');
       return;
     }
 
-    startTransition(async () => {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { setError('Sessão expirada. Recarregue a página.'); return; }
-
-      const { error: dbError } = await supabase
-        .from('profiles')
-        .update({ security_pin: pin })
-        .eq('id', user.id);
-
-      if (dbError) {
-        console.error('Erro ao salvar PIN:', dbError.message);
-        setError('Falha ao salvar o PIN. Tente novamente.');
-        setPin('');
-        setConfirmPin('');
-        setStep('create');
-        return;
-      }
-
-      const result = await completeAdminOnboarding();
-      if (result?.error) {
-        setError(result.error);
-      }
-    });
-  };
+    const result = await completeAdminOnboarding();
+    if (result?.error) {
+      setError(result.error);
+    }
+  });
+};
 
   const currentPin = step === 'create' ? pin : confirmPin;
 
   const digits = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center pt-24 pb-8 px-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative w-full max-w-sm">

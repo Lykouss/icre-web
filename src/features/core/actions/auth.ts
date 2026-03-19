@@ -315,3 +315,59 @@ export async function completeAdminOnboarding(): Promise<{ error?: string }> {
 
   redirect('/dashboard');
 }
+
+export async function saveAdminPin(pin: string): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Não autorizado.' };
+
+  if (!/^\d{4}$/.test(pin)) return { error: 'PIN inválido.' };
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('onboarding_step')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.onboarding_step !== 'create_pin') {
+    return { error: 'Etapa inválida.' };
+  }
+
+  const bcrypt = await import('bcryptjs');
+  const hash = await bcrypt.hash(pin, 12);
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ security_pin_hash: hash })
+    .eq('id', user.id);
+
+  if (error) {
+    console.error('Erro ao salvar PIN:', error.message);
+    return { error: 'Falha ao salvar o PIN. Tente novamente.' };
+  }
+
+  return {};
+}
+
+export async function verifyAdminPin(pin: string): Promise<{ error?: string }> {
+  if (!/^\d{4}$/.test(pin)) return { error: 'PIN inválido.' };
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Sessão expirada. Faça login novamente.' };
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('security_pin_hash')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile?.security_pin_hash) return { error: 'PIN não configurado.' };
+
+  const bcrypt = await import('bcryptjs');
+  const isCorrect = await bcrypt.compare(pin, profile.security_pin_hash);
+
+  if (!isCorrect) return { error: 'PIN incorreto.' };
+
+  return {};
+}

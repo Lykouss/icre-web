@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { PublicNavbar } from '@/features/portal/components/PublicNavbar';
+import { AdminPromotionBanner } from '@/features/core/components/AdminPromotionBanner';
+import { PendingOnboardingBanner } from '@/features/core/components/PendingOnboardingBanner';
 import { ToastProvider } from '@/features/core/components/ToastContext';
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -33,6 +35,8 @@ export default async function PublicLayout({ children }: { children: React.React
 
   return (
     <ToastProvider>
+      <AdminPromotionBanner />
+      <PendingOnboardingBanner />
       <PublicNavbar user={navUser} activeBlockTypes={activeBlockTypes} />
       <div className="pt-0">{children}</div>
     </ToastProvider>
