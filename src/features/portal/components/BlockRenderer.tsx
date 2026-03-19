@@ -45,14 +45,17 @@ const FLEX_ALIGN: Record<BlockAlignment, string> = {
 };
 
 const DEFAULTS: Record<SiteBlock['type'], Required<BlockLayout>> = {
-  hero:        { alignment: 'center', width: 'full',      padding: 'spacious', bg_color: 'transparent' },
-  about:       { alignment: 'left',   width: 'container', padding: 'normal',   bg_color: '#ffffff' },
-  mission:     { alignment: 'center', width: 'container', padding: 'normal',   bg_color: '#f8fafc' },
-  events:      { alignment: 'center', width: 'container', padding: 'normal',   bg_color: '#ffffff' },
-  youtube:     { alignment: 'center', width: 'container', padding: 'normal',   bg_color: '#0f172a' },
-  contact:     { alignment: 'left',   width: 'container', padding: 'normal',   bg_color: '#f8fafc' },
-  custom_text: { alignment: 'center', width: 'narrow',    padding: 'normal',   bg_color: '#ffffff' },
-  banner:      { alignment: 'center', width: 'full',      padding: 'compact',  bg_color: 'transparent' },
+  hero:           { alignment: 'center', width: 'full',      padding: 'spacious', bg_color: 'transparent' },
+  about:          { alignment: 'left',   width: 'container', padding: 'normal',   bg_color: '#ffffff' },
+  mission:        { alignment: 'center', width: 'container', padding: 'normal',   bg_color: '#f8fafc' },
+  events:         { alignment: 'center', width: 'container', padding: 'normal',   bg_color: '#ffffff' },
+  youtube:        { alignment: 'center', width: 'container', padding: 'normal',   bg_color: '#0f172a' },
+  contact:        { alignment: 'left',   width: 'container', padding: 'normal',   bg_color: '#f8fafc' },
+  custom_text:    { alignment: 'center', width: 'narrow',    padding: 'normal',   bg_color: '#ffffff' },
+  banner:         { alignment: 'center', width: 'full',      padding: 'compact',  bg_color: 'transparent' },
+  pastors:        { alignment: 'center', width: 'container', padding: 'normal',   bg_color: '#0f172a' },
+  cells:          { alignment: 'center', width: 'container', padding: 'normal',   bg_color: '#0f172a' },
+  events_preview: { alignment: 'center', width: 'container', padding: 'normal',   bg_color: '#0f172a' },
 };
 
 function resolveLayout(content: unknown, type: SiteBlock['type']): Required<BlockLayout> {

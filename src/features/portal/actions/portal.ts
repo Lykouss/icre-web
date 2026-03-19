@@ -139,15 +139,18 @@ export async function addBlock(type: SiteBlockType) {
   const nextOrder = (last?.order_idx ?? 0) + 1;
 
   const DEFAULT_CONTENT: Record<SiteBlockType, Record<string, unknown>> = {
-    hero:        { title: 'Novo Hero', subtitle: '', bg_color: '#1e3a5f', text_color: '#ffffff', button_text: '', button_link: '', image_url: '' },
-    about:       { title: 'Sobre nós', text: '', image_url: '' },
-    mission:     { title: 'Nossa Missão', items: [] },
-    events:      { title: 'Próximos Eventos', subtitle: '' },
-    youtube:     { title: 'Ao Vivo', channel_url: '', video_id: '' },
-    contact:     { title: 'Contato', subtitle: '', address: '', phone: '', email: '', maps_embed_url: '' },
-    custom_text: { title: '', text: '', bg_color: '#ffffff', text_color: '#1e293b' },
-    banner:      { image_url: '', link: '', alt: '' },
-  };
+  hero:           { title: 'Novo Hero', subtitle: '', bg_color: '#1e3a5f', text_color: '#ffffff', button_text: '', button_link: '', image_url: '' },
+  about:          { title: 'Sobre nós', text: '', image_url: '' },
+  mission:        { title: 'Nossa Missão', items: [] },
+  events:         { title: 'Próximos Eventos', subtitle: '' },
+  youtube:        { title: 'Ao Vivo', channel_url: '', video_id: '' },
+  contact:        { title: 'Contato', subtitle: '', address: '', phone: '', email: '', maps_embed_url: '' },
+  custom_text:    { title: '', text: '', bg_color: '#ffffff', text_color: '#1e293b' },
+  banner:         { image_url: '', link: '', alt: '' },
+  pastors:        { title: 'Nossa Liderança', subtitle: '' },
+  cells:          { title: 'Nossas Células', subtitle: '' },
+  events_preview: { title: 'Próximos Eventos', subtitle: '' },
+};
 
   const { error } = await supabase.from('site_blocks').insert({
     type,
