@@ -31,68 +31,68 @@ export async function updateSession(request: NextRequest) {
     '/pin-lock',
   ];
 
-  const onboardingRoutes = ['/termos-admin', '/criar-pin'];
+  const onboardingRoutes = ['/termos-admin', '/criar-pin', '/admin-onboarding'];
   const isOnboardingRoute = onboardingRoutes.some(r => pathname.startsWith(r));
-  const isProtectedRoute = adminRoutes.some(route => pathname.startsWith(route));
+  const isProtectedRoute  = adminRoutes.some(r => pathname.startsWith(r));
 
   if (isProtectedRoute && !user) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Usuário logado em rota admin — verifica onboarding_step
   if (isProtectedRoute && user && !isOnboardingRoute) {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('onboarding_step, admin_profile_completed_at, photo_url, admin_terms_accepted_at, security_pin_hash')
-    .eq('id', user.id)
-    .single();
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('onboarding_step, is_suspended, suspended_until, admin_profile_completed_at, photo_url, admin_terms_accepted_at, security_pin_hash')
+      .eq('id', user.id)
+      .single();
 
-  // Verifica se é admin
-  const { data: roleData } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', user.id)
-    .in('role', ['CHURCH_ADMIN', 'FINANCE_ADMIN', 'LEADER', 'SYSADMIN'])
-    .limit(1)
-    .maybeSingle();
+    // Suspensão ativa — bloqueia acesso ao sistema
+    if (profile?.is_suspended) {
+      const until = profile.suspended_until ? new Date(profile.suspended_until) : null;
+      const expired = until !== null && until < new Date();
 
-  const isAdminUser = !!roleData;
-
-  if (isAdminUser && profile) {
-    // Determina a próxima etapa pendente independente do onboarding_step salvo
-    let pendingStep: string | null = null;
-
-    if (!profile.admin_profile_completed_at) pendingStep = 'fill_admin_profile';
-    else if (!profile.photo_url)             pendingStep = 'upload_photo';
-    else if (!profile.admin_terms_accepted_at) pendingStep = 'accept_admin_terms';
-    else if (!profile.security_pin_hash)     pendingStep = 'create_pin';
-
-    if (pendingStep && profile.onboarding_step !== pendingStep) {
-      // Sincroniza o onboarding_step com a realidade
-      await supabase
-        .from('profiles')
-        .update({ onboarding_step: pendingStep })
-        .eq('id', user.id);
+      if (expired) {
+        await supabase
+          .from('profiles')
+          .update({ is_suspended: false, suspended_until: null, suspension_reason: null, suspended_by_name: null })
+          .eq('id', user.id);
+      } else {
+        const response = NextResponse.redirect(new URL('/acesso-suspenso', request.url));
+        response.cookies.delete('admin_unlocked');
+        return response;
+      }
     }
 
-    const step = pendingStep ?? profile.onboarding_step ?? 'done';
+    // Onboarding pendente — verifica campos reais
+    const step = profile?.onboarding_step ?? 'done';
+    if (step !== 'done') {
+      let realStep = step;
+      if (!profile?.admin_profile_completed_at) {
+        realStep = 'fill_admin_profile';
+      } else if (!profile.admin_terms_accepted_at) {
+        realStep = 'accept_admin_terms';
+      } else if (!profile.security_pin_hash) {
+        realStep = 'create_pin';
+      } else {
+        realStep = 'done';
+        await supabase.from('profiles').update({ onboarding_step: 'done' }).eq('id', user.id);
+      }
 
-    if (step === 'admin_notification') {
-      // Deixa passar — o banner cuida disso client-side
-    } else if (step === 'fill_admin_profile') {
-      return NextResponse.redirect(new URL('/admin-onboarding', request.url));
-    } else if (step === 'upload_photo') {
-      return NextResponse.redirect(new URL('/admin-onboarding/foto', request.url));
-    } else if (step === 'accept_admin_terms') {
-      return NextResponse.redirect(new URL('/termos-admin', request.url));
-    } else if (step === 'create_pin') {
-      return NextResponse.redirect(new URL('/criar-pin', request.url));
+      if (['admin_notification', 'fill_admin_profile', 'upload_photo'].includes(realStep)) {
+        return NextResponse.redirect(new URL('/admin-onboarding', request.url));
+      }
+      if (realStep === 'accept_admin_terms') {
+        return NextResponse.redirect(new URL('/termos-admin', request.url));
+      }
+      if (realStep === 'create_pin') {
+        return NextResponse.redirect(new URL('/criar-pin', request.url));
+      }
     }
   }
-}
 
+  // PIN lock
   const requiresPin = isProtectedRoute && pathname !== '/pin-lock';
-  if (requiresPin && !request.cookies.has('admin_unlocked')) {
+  if (requiresPin && user && !request.cookies.has('admin_unlocked')) {
     return NextResponse.redirect(new URL('/pin-lock', request.url));
   }
 

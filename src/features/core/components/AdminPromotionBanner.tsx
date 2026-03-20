@@ -50,19 +50,46 @@ export function AdminPromotionBanner() {
   }, []);
 
   const handleProceed = async () => {
-    setLoading(true);
-    setShow(false); // fecha ANTES do redirect
+  setLoading(true);
+  setShow(false);
 
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: profile } = await supabase
+      .from('profiles')
+      .select('admin_profile_completed_at, photo_url, admin_terms_accepted_at, security_pin_hash')
+      .eq('id', user.id)
+      .single();
+
+    // Detecta próxima etapa pendente
+    let nextStep = 'fill_admin_profile';
+    let nextPath = '/admin-onboarding';
+
+    if (profile?.admin_profile_completed_at) {
+      if (!profile.photo_url) {
+        nextStep = 'upload_photo';
+        nextPath = '/admin-onboarding/foto';
+      } else if (!profile.admin_terms_accepted_at) {
+        nextStep = 'accept_admin_terms';
+        nextPath = '/termos-admin';
+      } else if (!profile.security_pin_hash) {
+        nextStep = 'create_pin';
+        nextPath = '/criar-pin';
+      } else {
+        // Tudo completo — só atualiza o step e vai para o dashboard
+        nextStep = 'done';
+        nextPath = '/dashboard';
+      }
+    }
 
     await supabase
       .from('profiles')
-      .update({ onboarding_step: 'fill_admin_profile' })
+      .update({ onboarding_step: nextStep })
       .eq('id', user.id);
 
-    router.push('/admin-onboarding');
+    router.push(nextPath);
   };
 
   if (!show) return null;

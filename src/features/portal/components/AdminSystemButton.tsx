@@ -1,3 +1,5 @@
+// src/features/portal/components/AdminSystemButton.tsx
+
 'use client'
 
 import { useEffect, useState } from 'react';
@@ -5,30 +7,59 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 
 export function AdminSystemButton() {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [isAdmin, setIsAdmin]   = useState(false);
+  const [visible, setVisible]   = useState(false);
 
   useEffect(() => {
+    const supabase = createClient();
+    let userId: string | null = null;
+
     const check = async () => {
-      const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+      userId = user.id;
 
-      const { data } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
-        .in('role', ['LEADER', 'FINANCE_ADMIN', 'CHURCH_ADMIN', 'SYSADMIN'])
-        .limit(1)
-        .single();
+      // Verifica cargo E onboarding completo
+      const [{ data: roleData }, { data: profileData }] = await Promise.all([
+        supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .in('role', ['LEADER', 'FINANCE_ADMIN', 'CHURCH_ADMIN', 'SYSADMIN'])
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from('profiles')
+          .select('onboarding_step')
+          .eq('id', user.id)
+          .single(),
+      ]);
 
-      if (data) {
+      // Só mostra se tem cargo E onboarding completo
+      if (roleData && profileData?.onboarding_step === 'done') {
         setIsAdmin(true);
         setTimeout(() => setVisible(true), 500);
       }
     };
 
     check();
+
+    // Realtime — detecta quando onboarding_step vira 'done'
+    const channel = supabase
+      .channel('admin_button_watch')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'profiles' },
+        payload => {
+          if (payload.new.id === userId && payload.new.onboarding_step === 'done') {
+            setIsAdmin(true);
+            setTimeout(() => setVisible(true), 300);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   if (!isAdmin) return null;

@@ -73,6 +73,54 @@ export function PublicNavbar({ user, activeBlockTypes = [] }: Props) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const [isAdminOverride, setIsAdminOverride] = useState<boolean | null>(null);
+
+useEffect(() => {
+    const check = async () => {
+      const supabase = createClient();
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) return;
+
+      const [{ data: roleData }, { data: profileData }] = await Promise.all([
+        supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', authUser.id)
+          .in('role', ['LEADER', 'FINANCE_ADMIN', 'CHURCH_ADMIN', 'SYSADMIN'])
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from('profiles')
+          .select('onboarding_step')
+          .eq('id', authUser.id)
+          .single(),
+      ]);
+
+      setIsAdminOverride(!!roleData && profileData?.onboarding_step === 'done');
+    };
+
+    check();
+
+    // Realtime — detecta onboarding concluído
+    const supabase = createClient();
+    const channel = supabase
+      .channel('navbar_admin_watch')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'profiles' },
+        payload => {
+          if (payload.new.onboarding_step === 'done') {
+            setIsAdminOverride(true);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
+  const showAdminButton = isAdminOverride !== null ? isAdminOverride : user?.isAdmin;
+
   // IntersectionObserver — seção ativa + tema de cor
   useEffect(() => {
     if (!isHome) return;
@@ -214,7 +262,7 @@ export function PublicNavbar({ user, activeBlockTypes = [] }: Props) {
                       <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                       Minha Conta
                     </Link>
-                    {user.isAdmin && (
+                    {showAdminButton && (
                       <Link href="/dashboard" onClick={() => setUserOpen(false)}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-blue-400 font-semibold hover:text-blue-300 hover:bg-blue-500/10 transition-colors">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" /></svg>

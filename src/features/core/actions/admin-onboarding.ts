@@ -144,7 +144,16 @@ export async function submitAdminProfile(
 
   const fullAddress = `${address}, ${number}, ${neighborhood}, ${city}/${state.toUpperCase()} — CEP ${cep}`;
 
-  const { error } = await supabase
+  const { data: currentProfile } = await supabase
+  .from('profiles')
+  .select('photo_url')
+  .eq('id', user.id)
+  .single();
+ 
+    const nextStep = currentProfile?.photo_url ? 'accept_admin_terms' : 'upload_photo';
+    const nextPath = currentProfile?.photo_url ? '/termos-admin' : '/admin-onboarding/foto';
+    
+    const { error } = await supabase
     .from('profiles')
     .update({
       full_name:                  fullName,
@@ -154,14 +163,14 @@ export async function submitAdminProfile(
       church_role:                churchRole,
       address:                    fullAddress,
       admin_profile_completed_at: new Date().toISOString(),
-      onboarding_step:            'done', // agora avança para foto
+      onboarding_step:            nextStep,
     })
     .eq('id', user.id);
 
-  if (error) {
+    if (error) {
     console.error('[admin-onboarding] Erro ao salvar perfil:', error.message);
     return { error: 'Falha ao salvar. Tente novamente.' };
   }
-
-  redirect('/admin-onboarding/foto');
+    
+  redirect(nextPath);
 }
