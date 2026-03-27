@@ -20,6 +20,8 @@ export interface ChurchEvent {
   capacity: number | null;
   is_public: boolean;
   publish_at: string | null;
+  expires_at: string | null;
+  ticket_price: number | null;
   created_by: string | null;
   created_at: string;
 }
