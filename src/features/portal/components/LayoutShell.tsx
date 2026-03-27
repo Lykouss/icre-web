@@ -1,29 +1,29 @@
 'use client'
 
-import { usePathname } from 'next/navigation';
-import { PublicNavbar } from '@/features/portal/components/PublicNavbar';
+import { usePathname } from 'next/navigation'
+import { PublicNavbar } from '@/features/portal/components/PublicNavbar'
 
-const STANDALONE_PREFIXES = ['/login', '/cadastro', '/criar-pin'];
+const STANDALONE_PREFIXES = ['/login', '/cadastro', '/criar-pin', '/telao']
 
 interface NavUser {
-  fullName: string;
-  photoUrl: string | null;
-  isAdmin: boolean;
+  fullName: string
+  photoUrl: string | null
+  isAdmin: boolean
 }
 
 interface Props {
-  navUser: NavUser | null;
-  children: React.ReactNode;
+  navUser: NavUser | null
+  children: React.ReactNode
 }
 
 export default function LayoutShell({ navUser, children }: Props) {
-  const pathname = usePathname();
+  const pathname = usePathname()
   const standalone = STANDALONE_PREFIXES.some(
     p => pathname === p || pathname.startsWith(p + '/')
-  );
+  )
 
   if (standalone) {
-    return <>{children}</>;
+    return <>{children}</>
   }
 
   return (
@@ -31,5 +31,5 @@ export default function LayoutShell({ navUser, children }: Props) {
       <PublicNavbar user={navUser} />
       {children}
     </>
-  );
+  )
 }
