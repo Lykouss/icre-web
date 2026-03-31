@@ -14,6 +14,7 @@ import type {
   Pastor, PublicCell,
 } from '@/features/portal/types';
 import type { PublicEvent } from '@/features/portal/components/EventsSection';
+import { getNextEventOccurrence } from '@/lib/event-utils';
 
 export const revalidate = 60;
 
@@ -28,14 +29,24 @@ async function getSiteData() {
     supabase.from('site_blocks').select('type, is_active, published_content').order('order_idx'),
     supabase.from('pastors').select('id, name, role, bio, photo_url, sort_order').eq('is_active', true).order('sort_order'),
     supabase.from('cells').select('id, name, leader_name, meeting_days, meeting_time, meeting_type, neighborhood').eq('is_public', true).order('name'),
-    supabase.from('events').select('id, title, date, time, location').eq('is_public', true).eq('status', 'publicado').gte('date', new Date().toISOString().split('T')[0]).order('date').limit(6),
+    supabase.from('events').select('id, title, date, time, location, is_recurring, recurrence_rules, type, banner_url, cancelled_dates').eq('is_public', true).eq('status', 'publicado'),
   ]);
+
+  const rawEvents = (eventsRes.data ?? []);
+  
+  // Compute next dates dynamically
+  const computedEvents = rawEvents.map(ev => {
+    const { nextDate, isCancelled } = getNextEventOccurrence(ev as any);
+    return { ...ev, date: nextDate, isCancelled };
+  }).filter(ev => ev.date !== null)
+    .sort((a, b) => (a.date as string).localeCompare(b.date as string))
+    .slice(0, 6);
 
   return {
     blocks:  (blocksRes.data  ?? []) as BlockRow[],
     pastors: (pastorsRes.data ?? []) as Pastor[],
     cells:   (cellsRes.data   ?? []) as PublicCell[],
-    events:  (eventsRes.data  ?? []) as PublicEvent[],
+    events:  computedEvents as any[],
   };
 }
 

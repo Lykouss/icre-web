@@ -1,113 +1,129 @@
-"use client";
+'use client'
 
-import { ChurchEvent } from "../types";
-import { format, isPast } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { CalendarIcon, MapPinIcon, ClockIcon, Image as ImageIcon } from "lucide-react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
+import { ChurchEvent } from '../types';
 
 interface EventCardProps {
   event: ChurchEvent;
   onClick: (event: ChurchEvent) => void;
 }
 
-export function EventCard({ event, onClick }: EventCardProps) {
-  const isExpired = event.expires_at ? isPast(new Date(event.expires_at)) : false;
-  
-  // Design limpo para as etiquetas (Pills)
-  const getStatusStyle = () => {
-    if (event.status === 'rascunho') return "bg-slate-100 text-slate-600 border-slate-200";
-    if (event.status === 'cancelado') return "bg-red-50 text-red-600 border-red-100";
-    if (event.status === 'encerrado' || isExpired) return "bg-slate-50 text-slate-400 border-slate-200";
-    
-    // Publicado / Agendado
-    if (event.status === 'publicado' && event.publish_at && !isPast(new Date(event.publish_at))) {
-      return "bg-amber-50 text-amber-600 border-amber-200"; // Agendado
-    }
-    
-    return "bg-emerald-50 text-emerald-600 border-emerald-200"; // Publicado
-  };
+const WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const MONTHS_SHORT = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-  const getStatusLabel = () => {
-    if (event.status === 'rascunho') return "Rascunho";
-    if (event.status === 'cancelado') return "Cancelado";
-    if (event.status === 'encerrado' || isExpired) return "Encerrado";
-    if (event.status === 'publicado' && event.publish_at && !isPast(new Date(event.publish_at))) return "Agendado";
-    return "Publicado";
-  };
+function getStatusConfig(event: ChurchEvent): { label: string; cls: string } {
+  const now = new Date();
+  const isExpired = event.expires_at ? new Date(event.expires_at) < now : false;
+
+  if (event.status === 'cancelado') return { label: 'Cancelado', cls: 'bg-red-50 text-red-600 border-red-200' };
+  if (event.status === 'encerrado' || isExpired) return { label: 'Encerrado', cls: 'bg-slate-100 text-slate-500 border-slate-200' };
+  if (event.status === 'rascunho') return { label: 'Rascunho', cls: 'bg-amber-50 text-amber-600 border-amber-200' };
+  if (event.publish_at && new Date(event.publish_at) > now) return { label: 'Agendado', cls: 'bg-violet-50 text-violet-600 border-violet-200' };
+  return { label: 'Publicado', cls: 'bg-green-50 text-green-600 border-green-200' };
+}
+
+export function EventCard({ event, onClick }: EventCardProps) {
+  const status = getStatusConfig(event);
+  const date = event.date ? new Date(event.date + 'T12:00:00') : null;
+  const isPaid = event.requires_payment && (event.ticket_price ?? 0) > 0;
 
   return (
-    <div 
+    <div
       onClick={() => onClick(event)}
-      className="group flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300"
+      className="group bg-white border border-slate-200 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-lg hover:shadow-slate-200/80 transition-all duration-200"
     >
-      {/* Área da Imagem */}
-      <div className="relative h-48 w-full bg-slate-50 border-b border-slate-100 flex items-center justify-center overflow-hidden">
+      {/* Banner */}
+      <div className="relative h-40 bg-slate-50 border-b border-slate-100 overflow-hidden">
         {event.banner_url ? (
           <Image
             src={event.banner_url}
             alt={event.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="flex flex-col items-center text-slate-300 transition-colors group-hover:text-blue-300">
-            <ImageIcon className="h-10 w-10 mb-2 opacity-50" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sem Banner</span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+            <svg className="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span className="text-xs font-medium text-slate-400">Sem banner</span>
           </div>
         )}
-        
-        {/* Badges Flutuantes */}
-        <div className="absolute top-3 right-3 flex gap-2">
-          <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border shadow-sm backdrop-blur-sm ${getStatusStyle()}`}>
-            {getStatusLabel()}
+
+        {/* Data flutuante */}
+        {date && (
+          <div className="absolute bottom-3 left-3">
+            <div className="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl px-3 py-1.5 text-center shadow-sm">
+              <p className="text-base font-black text-slate-900 leading-none">{date.getDate().toString().padStart(2, '0')}</p>
+              <p className="text-[10px] font-bold text-blue-600 uppercase">{MONTHS_SHORT[date.getMonth()]}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Badges */}
+        <div className="absolute top-2 right-2 flex flex-col gap-1.5 items-end">
+          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg border ${status.cls}`}>
+            {status.label}
           </span>
+          {isPaid && (
+            <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700">
+              R$ {Number(event.ticket_price).toFixed(2)}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Conteúdo do Card */}
-      <div className="p-5 flex flex-col flex-1">
-        
-        <div className="flex items-center gap-2 mb-2">
-          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600">
+      {/* Conteúdo */}
+      <div className="p-4">
+        <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+            event.type === 'culto' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+          }`}>
             {event.type === 'culto' ? 'Culto' : 'Especial'}
           </span>
-          {event.ticket_price && event.ticket_price > 0 ? (
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100">
-              R$ {event.ticket_price.toFixed(2)}
+          {event.is_public && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-500">
+              Público
             </span>
-          ) : (
-             <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500">
-               Gratuito
-             </span>
+          )}
+          {event.requires_registration && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-500">
+              Inscrição
+            </span>
           )}
         </div>
 
-        <h3 className="font-bold text-lg text-slate-900 leading-tight line-clamp-2 mb-4 group-hover:text-blue-600 transition-colors">
+        <h3 className="font-bold text-slate-900 text-sm leading-snug mb-3 group-hover:text-blue-700 transition-colors line-clamp-2">
           {event.title}
         </h3>
 
-        <div className="mt-auto space-y-2.5">
-          {event.date && (
-            <div className="flex items-center gap-2.5 text-sm text-slate-500">
-              <CalendarIcon className="h-4 w-4 text-slate-400 shrink-0" />
-              <span className="font-medium">{format(new Date(event.date), "dd 'de' MMMM, yyyy", { locale: ptBR })}</span>
-            </div>
-          )}
-          {event.time && (
-            <div className="flex items-center gap-2.5 text-sm text-slate-500">
-              <ClockIcon className="h-4 w-4 text-slate-400 shrink-0" />
-              <span className="font-medium">{event.time.substring(0, 5)}</span>
+        <div className="space-y-1.5">
+          {date && (
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <svg className="w-3 h-3 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>{WEEKDAYS_SHORT[date.getDay()]}, {date.getDate()} {MONTHS_SHORT[date.getMonth()]}{event.time ? ` · ${event.time.slice(0, 5)}` : ''}</span>
             </div>
           )}
           {event.location && (
-            <div className="flex items-center gap-2.5 text-sm text-slate-500">
-              <MapPinIcon className="h-4 w-4 text-slate-400 shrink-0" />
-              <span className="truncate font-medium">{event.location}</span>
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <svg className="w-3 h-3 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              </svg>
+              <span className="truncate">{event.location}</span>
+            </div>
+          )}
+          {event.capacity && (
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <svg className="w-3 h-3 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>{event.capacity} vagas</span>
             </div>
           )}
         </div>
-        
       </div>
     </div>
   );

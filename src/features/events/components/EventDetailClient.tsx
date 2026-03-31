@@ -8,6 +8,8 @@ import { upsertScheduleSlot, removeScheduleSlot } from '@/features/events/action
 import { checkInAttendance } from '@/features/events/actions/registrations';
 import { RegistrationsPanel } from '@/features/events/components/RegistrationsPanel';
 import type { ChurchEvent, EventSchedule, EventRegistration, EventAttendance, ScheduleRole } from '@/features/events/types';
+import { getNextEventOccurrence } from '@/lib/event-utils';
+import { cancelEventOccurrence } from '@/features/events/actions/events';
 
 const ROLES: { id: ScheduleRole; label: string; icon: string }[] = [
   { id: 'louvor',   label: 'Louvor',   icon: '🎵' },
@@ -28,9 +30,11 @@ interface EventDetailClientProps {
   attendance: EventAttendance[];
   members: Member[];
   canManage: boolean;
+  onEdit?: () => void;
+  onEventUpdate?: (event: Partial<ChurchEvent>) => void;
 }
 
-type Tab = 'escala' | 'inscricoes' | 'presenca';
+type Tab = 'escala' | 'inscricoes' | 'presenca' | 'recorrencia';
 
 export function EventDetailClient({
   event,
@@ -39,6 +43,8 @@ export function EventDetailClient({
   attendance,
   members,
   canManage,
+  onEdit,
+  onEventUpdate,
 }: EventDetailClientProps) {
   const router = useRouter();
   const { toast, dismiss } = useToast();
@@ -112,6 +118,23 @@ export function EventDetailClient({
     });
   };
 
+  const handleCancelOccurrence = () => {
+    const { nextDate } = getNextEventOccurrence(event as any);
+    if (!nextDate) return;
+    if (!confirm(`Tem certeza que deseja cancelar a próxima ocorrência em ${nextDate}?`)) return;
+    
+    startTransition(async () => {
+      const result = await cancelEventOccurrence(event.id, nextDate);
+      if (result.error) toast('error', result.error);
+      else {
+        toast('success', `Ocorrência de ${nextDate} cancelada com sucesso!`);
+        if (onEventUpdate && result.cancelled_dates) {
+          onEventUpdate({ ...event, cancelled_dates: result.cancelled_dates });
+        }
+      }
+    });
+  };
+
   const inputClass = 'w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm';
   const confirmedCount = registrations.filter(r => r.status === 'confirmado').length;
 
@@ -120,6 +143,9 @@ export function EventDetailClient({
     ...(event.type === 'especial' ? [
       { id: 'inscricoes' as Tab, label: 'Inscrições', count: confirmedCount },
       { id: 'presenca'   as Tab, label: 'Presenças',  count: attendance.length },
+    ] : []),
+    ...(event.is_recurring ? [
+      { id: 'recorrencia' as Tab, label: 'Recorrências' }
     ] : []),
   ];
 
@@ -145,6 +171,60 @@ export function EventDetailClient({
       </div>
 
       <div className="p-6 md:p-8 bg-slate-50 min-h-[400px]">
+
+        {tab === 'recorrencia' && event.is_recurring && (
+          <div className="animate-in fade-in duration-300 max-w-2xl bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <h3 className="text-lg font-bold text-slate-800 mb-4">Gerenciar Recorrência</h3>
+            <p className="text-sm text-slate-500 mb-6">Aqui você pode visualizar a próxima ocorrência dinâmica deste evento e cancelar ocorrências específicas.</p>
+            
+            <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center justify-between mb-6">
+              <div>
+                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">Próxima Ocorrência</p>
+                {getNextEventOccurrence(event as any).nextDate ? (
+                   <p className="text-lg font-black text-slate-800">
+                     {new Date(getNextEventOccurrence(event as any).nextDate + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}
+                     {getNextEventOccurrence(event as any).isCancelled && <span className="ml-3 text-red-500 text-sm italic font-semibold">(Cancelado)</span>}
+                   </p>
+                ) : (
+                   <p className="text-sm text-slate-500">Nenhuma data prevista nas próximas semanas.</p>
+                )}
+              </div>
+              
+              {!getNextEventOccurrence(event as any).isCancelled && getNextEventOccurrence(event as any).nextDate && canManage && (
+                <div className="flex gap-2">
+                  <button 
+                    onClick={handleCancelOccurrence}
+                    disabled={isPending}
+                    className="px-4 py-2 bg-white text-red-600 border border-red-200 font-bold text-sm rounded-xl hover:bg-red-50 hover:border-red-300 transition-all disabled:opacity-50"
+                  >
+                    Cancelar este dia
+                  </button>
+                  {onEdit && (
+                    <button 
+                      onClick={onEdit}
+                      className="px-4 py-2 bg-white text-blue-600 border border-blue-200 font-bold text-sm rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all"
+                    >
+                      Editar Regras
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {event.cancelled_dates && event.cancelled_dates.length > 0 && (
+              <div className="mt-8">
+                <p className="text-sm font-bold text-slate-700 mb-3 text-red-600">Dias Cancelados:</p>
+                <div className="flex flex-wrap gap-2">
+                  {event.cancelled_dates.map(d => (
+                    <span key={d} className="px-3 py-1 bg-red-50 border border-red-100 text-red-600 text-sm font-semibold rounded-lg line-through decora">
+                      {new Date(d + 'T12:00:00').toLocaleDateString('pt-BR')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {tab === 'escala' && (
           <div className="animate-in fade-in duration-300 max-w-2xl">

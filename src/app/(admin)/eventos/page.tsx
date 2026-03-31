@@ -11,20 +11,17 @@ export default async function EventosPage() {
   if (!user) redirect('/login');
 
   const isActive = await getFeatureFlag('module_events', user);
-
   if (!isActive) return <FeatureMaintenance featureName="Eventos e Calendário" />;
 
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('events')
-    .select('id, title, type, date, time, location, is_recurring, recurrence_day, capacity, is_public, created_at')
-    .order('date', { ascending: true })
+    .select('id, title, type, date, time, location, description, is_recurring, recurrence_rules, cancelled_dates, capacity, is_public, requires_registration, requires_payment, ticket_price, status, banner_url, publish_at, expires_at, created_at')
+    .order('date', { ascending: false })
     .returns<ChurchEvent[]>();
 
-  if (error) {
-    console.error('Erro ao buscar eventos:', JSON.stringify(error, null, 2));
-  }
+  if (error) console.error('[EventosPage]', error.message);
 
   const canManage = user.roles.some(r => ['SYSADMIN', 'CHURCH_ADMIN'].includes(r));
 
@@ -33,11 +30,15 @@ export default async function EventosPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Eventos e Calendário</h1>
-          <p className="text-slate-500 mt-1">Gerencie cultos, eventos especiais e escalas de ministério.</p>
+          <p className="text-slate-500 mt-1">Gerencie cultos, eventos especiais e inscrições.</p>
         </div>
       </div>
 
-      <EventsPageClient initialEvents={data ?? []} canManage={canManage} isSysAdmin={user.isSysAdmin} />
+      <EventsPageClient
+        initialEvents={data ?? []}
+        canManage={canManage}
+        isSysAdmin={user.isSysAdmin}
+      />
     </div>
   );
 }

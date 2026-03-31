@@ -12,6 +12,9 @@ export interface PublicEvent {
   time: string | null;
   location: string | null;
   description?: string | null;
+  type?: 'culto' | 'especial';
+  banner_url?: string | null;
+  isCancelled?: boolean;
 }
 
 const MONTH_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -40,18 +43,36 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
       >
         <style>{`@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}`}</style>
 
-        {/* Header colorido */}
-        <div className="relative bg-linear-to-br from-blue-600 to-indigo-700 p-8 pb-6">
-          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 70% 20%, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-          <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 bg-white/10 hover:bg-white/20 text-white rounded-xl flex items-center justify-center transition-colors">
+        {/* Header colorido ou Imagem */}
+        <div 
+          className="relative bg-linear-to-br from-blue-600 to-indigo-700 p-8 pb-6 bg-cover bg-center"
+          style={event.banner_url ? { backgroundImage: `url(${event.banner_url})` } : {}}
+        >
+          {event.banner_url && <div className="absolute inset-0 bg-slate-900/60" />}
+          {!event.banner_url && <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 70% 20%, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />}
+          
+          <button onClick={onClose} className="absolute z-50 top-4 right-4 w-8 h-8 bg-black/30 hover:bg-black/50 text-white rounded-xl flex items-center justify-center transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
-          {date && (
-            <div className="inline-flex items-center gap-2 bg-white/20 border border-white/25 text-white text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-full mb-4">
-              {date.weekday}, {date.full}
-            </div>
-          )}
-          <h3 className="text-2xl font-black text-white leading-tight">{event.title}</h3>
+          
+          <div className="relative z-10 w-[calc(100%-24px)]">
+            {event.type === 'especial' && (
+              <div className="inline-flex mb-3 items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-black tracking-widest uppercase px-2.5 py-1 rounded-md">
+                ★ Evento Especial
+              </div>
+            )}
+            {event.isCancelled && (
+              <div className="inline-flex mb-3 ml-2 items-center gap-1 bg-red-500/20 text-red-300 border border-red-500/30 text-[10px] font-black tracking-widest uppercase px-2.5 py-1 rounded-md">
+                Cancelado
+              </div>
+            )}
+            {date && (
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-full mb-4 w-max">
+                {date.weekday}, {date.full}
+              </div>
+            )}
+            <h3 className="text-2xl font-black text-white leading-tight">{event.title}</h3>
+          </div>
         </div>
 
         <div className="p-6 space-y-4">
@@ -81,7 +102,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
             <p className="text-slate-400 text-sm leading-relaxed pt-2 border-t border-white/6">{event.description}</p>
           )}
           <div className="pt-2">
-            <Link href="/contato"
+            <Link href={`/agenda/${event.id}`}
               className="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl text-sm transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/25">
               Tenho interesse
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
@@ -103,7 +124,11 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
       <div
         ref={ref}
         onClick={() => setOpen(true)}
-        className="group flex items-start gap-5 bg-slate-900/60 backdrop-blur-sm border border-white/8 rounded-2xl p-5 cursor-pointer hover:border-blue-500/30 hover:-translate-y-1 transition-all duration-300 ease-out"
+        className={`group flex items-start gap-5 backdrop-blur-sm rounded-2xl p-5 cursor-pointer transition-all duration-300 ease-out ${
+          event.type === 'especial'
+            ? 'bg-amber-950/30 border border-amber-500/30 hover:border-amber-400 hover:-translate-y-1 shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]'
+            : 'bg-slate-900/60 border border-white/8 hover:border-blue-500/30 hover:-translate-y-1'
+        } ${event.isCancelled ? 'opacity-60 grayscale-[50%]' : ''}`}
         style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transitionDelay: `${index * 70}ms` }}
       >
         {/* Calendário */}
@@ -124,6 +149,16 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
           {date && <p className="text-xs text-slate-500 font-semibold mb-1">{date.weekday}</p>}
           <h3 className="font-bold text-white group-hover:text-blue-300 transition-colors duration-200 truncate">{event.title}</h3>
           <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+            {event.type === 'especial' && (
+              <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-amber-500">
+                ★ Especial
+              </span>
+            )}
+            {event.isCancelled && (
+              <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-red-500">
+                Cancelado
+              </span>
+            )}
             {event.time && (
               <span className="flex items-center gap-1 text-xs text-slate-500">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>

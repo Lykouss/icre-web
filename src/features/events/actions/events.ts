@@ -25,25 +25,26 @@ function extractEventFields(formData: FormData) {
   const publishAt    = (formData.get('publish_at')     as string)?.trim();
   const isPublic     = formData.get('is_public')    === 'on';
   const isRecurring  = formData.get('is_recurring') === 'on';
-  const recDay       = parseInt(formData.get('recurrence_day') as string, 10);
+  const recurrenceRules = JSON.parse((formData.get('recurrence_rules') as string) || 'null');
+  const cancelledDates = JSON.parse((formData.get('cancelled_dates') as string) || 'null');
   const capacity     = parseInt(formData.get('capacity') as string, 10);
 
-  return { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recDay, capacity };
+  return { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recurrenceRules, cancelledDates, capacity };
 }
 
 function validateEventFields(fields: ReturnType<typeof extractEventFields>): string | null {
-  const { title, type, date, isRecurring, recDay } = fields;
+  const { title, type, date, isRecurring, recurrenceRules } = fields;
 
   if (!title || title.length < 3)          return 'Título precisa ter ao menos 3 caracteres.';
   if (!VALID_EVENT_TYPES.includes(type))   return 'Tipo de evento inválido.';
   if (!isRecurring && (!date || !isValidDate(date))) return 'Data inválida.';
-  if (isRecurring && !VALID_RECURRENCE_DAYS.includes(recDay)) return 'Dia de recorrência inválido.';
+  if (isRecurring && !recurrenceRules) return 'Regras de recorrência inválidas.';
 
   return null;
 }
 
 function buildEventPayload(fields: ReturnType<typeof extractEventFields>, createdBy?: string) {
-  const { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recDay, capacity } = fields;
+  const { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recurrenceRules, cancelledDates, capacity } = fields;
 
   return {
     title,
@@ -56,7 +57,8 @@ function buildEventPayload(fields: ReturnType<typeof extractEventFields>, create
     publish_at:     publishAt     || null,
     is_public:      isPublic,
     is_recurring:   isRecurring,
-    recurrence_day: isRecurring   ? recDay : null,
+    recurrence_rules: isRecurring ? recurrenceRules : null,
+    cancelled_dates: cancelledDates || [],
     capacity:       !isNaN(capacity) && capacity > 0 ? capacity : null,
     ...(createdBy ? { created_by: createdBy } : {}),
   };
@@ -212,3 +214,26 @@ export async function generateRecurringOccurrences(templateId: string, weeksAhea
   revalidatePath('/eventos');
   return { success: true, count: occurrences.length };
 }
+
+export async function cancelEventOccurrence(eventId: string, dateStr: string) {
+  const user = await getCurrentUser();
+  if (!user) return { error: 'Não autorizado.' };
+  if (!canManageEvents(user.roles)) return { error: 'Acesso negado.' };
+
+  const supabase = await createClient();
+  
+  const { data, error: fetchErr } = await supabase.from('events').select('cancelled_dates').eq('id', eventId).single();
+  if (fetchErr || !data) return { error: 'Evento não encontrado: ' + fetchErr?.message };
+  
+  const currentDates = Array.isArray(data.cancelled_dates) ? data.cancelled_dates : [];
+  if (!currentDates.includes(dateStr)) {
+    currentDates.push(dateStr);
+    const { error: updErr } = await supabase.from('events').update({ cancelled_dates: currentDates }).eq('id', eventId);
+    if (updErr) return { error: 'Falha ao salvar no banco: ' + updErr.message };
+  }
+
+  revalidatePath('/eventos');
+  revalidatePath(`/eventos/${eventId}`);
+  revalidatePath('/');
+  return { success: true, cancelled_dates: currentDates };
+}

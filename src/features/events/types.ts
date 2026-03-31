@@ -1,9 +1,9 @@
 export type EventType = 'culto' | 'especial';
 export type EventStatus = 'rascunho' | 'publicado' | 'encerrado' | 'cancelado';
 export type ScheduleRole = 'louvor' | 'pregador' | 'recepcao' | 'tecnica';
-export type RegistrationStatus = 'confirmado' | 'cancelado';
-export type PaymentStatus = 'gratuito' | 'pendente' | 'pago' | 'reembolsado';
-export type PaymentMethod = 'pix' | 'cartao' | 'dinheiro' | 'cortesia';
+export type RegistrationStatus = 'confirmado' | 'cancelado' | 'pendente_pagamento';
+export type PaymentStatus = 'gratuito' | 'pendente' | 'pago' | 'reembolsado' | 'expirado';
+export type PaymentMethod = 'pix' | 'cartao' | 'dinheiro' | 'cortesia' | 'asaas_pix' | 'asaas_boleto';
 
 export interface ChurchEvent {
   id: string;
@@ -17,11 +17,15 @@ export interface ChurchEvent {
   banner_url: string | null;
   is_recurring: boolean;
   recurrence_day: number | null;
+  recurrence_rules?: { type: 'weekly' | 'monthly', days: number[] } | null;
+  cancelled_dates?: string[] | null;
   capacity: number | null;
   is_public: boolean;
+  requires_registration: boolean;
+  requires_payment: boolean;
+  ticket_price: number | null;
   publish_at: string | null;
   expires_at: string | null;
-  ticket_price: number | null;
   created_by: string | null;
   created_at: string;
 }
@@ -41,13 +45,17 @@ export interface EventRegistration {
   event_id: string;
   member_id: string | null;
   name: string;
+  email: string | null;
   phone: string | null;
   status: RegistrationStatus;
   payment_status: PaymentStatus;
   payment_method: PaymentMethod | null;
   payment_amount: number | null;
   payment_ref: string | null;
+  asaas_payment_id: string | null;
+  asaas_invoice_url: string | null;
   paid_at: string | null;
+  receipt_url: string | null;
   created_at: string;
 }
 
@@ -57,4 +65,15 @@ export interface EventAttendance {
   member_id: string | null;
   name: string;
   checked_in_at: string;
+}
+
+export interface AsaasPaymentInfo {
+  paymentId: string;
+  invoiceUrl: string;
+  pixQrCode?: string;
+  pixCopyPaste?: string;
+  boletoUrl?: string;
+  status: string;
+  value: number;
+  dueDate: string;
 }
