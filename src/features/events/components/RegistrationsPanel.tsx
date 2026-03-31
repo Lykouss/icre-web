@@ -14,6 +14,7 @@ const PAYMENT_STATUS_STYLES: Record<PaymentStatus, string> = {
   pendente:   'bg-amber-100 text-amber-700',
   pago:       'bg-green-100 text-green-700',
   reembolsado:'bg-blue-100 text-blue-700',
+  expirado:   'bg-red-100 text-red-700',
 };
 
 const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
@@ -21,6 +22,7 @@ const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   pendente:   'Pendente',
   pago:       'Pago',
   reembolsado:'Reembolsado',
+  expirado:   'Expirado',
 };
 
 const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
@@ -28,6 +30,8 @@ const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   cartao:    'Cartão',
   dinheiro:  'Dinheiro',
   cortesia:  'Cortesia',
+  asaas_pix: 'Asaas PIX',
+  asaas_boleto: 'Asaas Boleto',
 };
 
 interface Member {

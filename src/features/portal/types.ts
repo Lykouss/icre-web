@@ -142,11 +142,38 @@ export interface Pastor {
 // ── Células (visão pública) ───────────────────────────────────
 
 export interface PublicCell {
-  id:           string;
-  name:         string;
-  leader_name:  string | null;
-  meeting_days: string | null;
-  meeting_time: string | null;
-  meeting_type: MeetingType;
-  neighborhood: string | null;
+  id:               string;
+  name:             string;
+  leader_name:      string | null;
+  meeting_days:     string | null;
+  meeting_time:     string | null;
+  meeting_type:     MeetingType;
+  neighborhood:     string | null;
+  description:      string | null;
+  contact_phone:    string | null;
+  contact_whatsapp: string | null;
+  image_url:        string | null;
+  leader_photo_url: string | null;
+}
+
+// ── Células (visão admin completa) ────────────────────────────
+
+export interface Cell {
+  id:               string;
+  name:             string;
+  leader_name:      string | null;
+  leader_photo_url: string | null;
+  description:      string | null;
+  neighborhood:     string | null;
+  address:          string | null;
+  meeting_days:     string | null;
+  meeting_time:     string | null;
+  meeting_type:     MeetingType;
+  contact_phone:    string | null;
+  contact_whatsapp: string | null;
+  contact_email:    string | null;
+  image_url:        string | null;
+  is_active:        boolean;
+  sort_order:       number;
+  created_at:       string;
 }

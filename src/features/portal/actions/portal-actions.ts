@@ -346,3 +346,20 @@ export async function deletePastor(id: string) {
   revalidatePath('/');
   return { success: true };
 }
+
+export async function togglePastorActive(id: string, isActive: boolean) {
+  const user = await getCurrentUser();
+  if (!isAdmin(user)) return { error: 'Acesso negado.' };
+  if (!id.match(/^[0-9a-f-]{36}$/i)) return { error: 'ID inválido.' };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from('pastors')
+    .update({ is_active: isActive, updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) return { error: 'Falha ao alterar status.' };
+
+  revalidatePath('/');
+  revalidatePath('/pastores');
+  return { success: true };
+}

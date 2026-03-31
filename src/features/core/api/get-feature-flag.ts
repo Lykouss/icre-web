@@ -40,8 +40,10 @@ export async function getSidebarFeatureFlags(user: UserContext) {
     'module_volunteers',
     'module_kids',
     'module_assets',
-    'module_public_site', // era module_portal — corrigido
+    'module_public_site',
     'module_permissions',
+    'module_cells',
+    'module_pastors',
   ];
 
   const flags: Record<string, boolean> = {};
