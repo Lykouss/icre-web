@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import { getFeatureFlag } from '@/features/core/api/get-feature-flag';
-import { FeatureMaintenance } from '@/features/core/components/FeatureMaintenance';
+import { MaintenanceScreen } from '@/features/core/components/MaintenanceScreen';
+import { FirstAccessTracker } from '@/features/core/components/FirstAccessTracker';
 
 /* ─── Role definitions ──────────────────────────────────────────── */
 
@@ -168,8 +169,10 @@ export default async function PermissionsPage() {
   const user = await getCurrentUser();
   if (!user) redirect('/login');
 
-  const isActive = await getFeatureFlag('module_permissions', user);
-  if (!isActive) return <FeatureMaintenance featureName="Módulo de Cargos" />;
+  const flag = await getFeatureFlag('module_permissions', user);
+  if (!flag.isActive || flag.status === 'manutencao') {
+    return <MaintenanceScreen featureName="Permissões" />;
+  }
 
   const supabase = await createClient();
 
@@ -187,6 +190,7 @@ export default async function PermissionsPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
+      <FirstAccessTracker flagSlug="module_permissions" userId={user?.id} />
 
       {/* ── Header ── */}
       <div className="mb-8">

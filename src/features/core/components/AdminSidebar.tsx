@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import { AppRole } from '@/features/core/api/get-current-user';
+import type { FlagResult } from '@/features/core/api/get-feature-flag';
 
 /* ─── Types ─────────────────────────────────────────────────────── */
 
@@ -19,7 +20,7 @@ interface SidebarProps {
     isAdmin: boolean;
     isSysAdmin: boolean;
   };
-  flags?: Record<string, boolean>;
+  flags?: Record<string, FlagResult>;
   mobileOpen?: boolean;
   onMobileClose?: () => void;
 }
@@ -199,14 +200,12 @@ function CollapseButton({ isCollapsed, onClick }: { isCollapsed: boolean; onClic
       whileHover={{ scale: 1.06, x: 2 }}
       whileTap={{ scale: 0.94 }}
       className="
-        absolute -right-5 top-1/2 -translate-y-1/2 z-20
-        w-10 h-10 rounded-full
-        bg-[#0a1628] border-2 border-blue-500/50
-        flex items-center justify-center
-        shadow-[0_0_16px_rgba(59,130,246,0.25)]
-        text-blue-300 hover:text-white
-        hover:border-blue-400/80 hover:bg-blue-900/60
-        hover:shadow-[0_0_24px_rgba(59,130,246,0.45)]
+        ml-auto z-20 
+        w-8 h-8 rounded-full
+        bg-white/5 border border-white/10
+        flex items-center justify-center shrink-0
+        text-slate-400 hover:text-white
+        hover:border-blue-500/50 hover:bg-blue-900/40
         transition-all duration-200
         cursor-pointer
       "
@@ -236,7 +235,7 @@ function SidebarContent({
   isMobile = false,
 }: {
   user: SidebarProps['user'];
-  flags: Record<string, boolean>;
+  flags: Record<string, FlagResult>;
   isCollapsed: boolean;
   onCollapse: () => void;
   onClose?: () => void;
@@ -264,9 +263,9 @@ function SidebarContent({
   }, [pathname, onClose]);
 
   const visibleItems = NAV_ITEMS.filter(item => {
-    if (!flags[item.flag]) return false;
-    if (user.isSysAdmin) return true;
-    return item.roles.some(r => user.roles.includes(r));
+    const flagData = flags[item.flag];
+    if (!flagData || !flagData.isAllowed) return false;
+    return true;
   });
 
   function isActive(href: string) {
@@ -334,19 +333,51 @@ function SidebarContent({
           {visibleItems.map(item => {
             const active = isActive(item.href);
             const isLoading = navigatingTo === item.href;
+            
+            const flagData = flags[item.flag];
+            let dynamicBadge: { text: string; bg: string; textCol: string } | null = null;
+            if (flagData) {
+              switch (flagData.status) {
+                case 'novo':
+                  // Only show "Novo" badge if the user hasn't visited yet
+                  if (!flagData.userHasViewed) {
+                    dynamicBadge = { text: 'Novo', bg: 'bg-emerald-500/20', textCol: 'text-emerald-400' };
+                  }
+                  break;
+                case 'antecipado': dynamicBadge = { text: '★ VIP', bg: 'bg-amber-500/20', textCol: 'text-amber-400' }; break;
+                case 'desenvolvimento': dynamicBadge = { text: 'Dev', bg: 'bg-slate-500/20', textCol: 'text-slate-400' }; break;
+                case 'manutencao': dynamicBadge = { text: 'Manutenção', bg: 'bg-red-500/20', textCol: 'text-red-400' }; break;
+                case 'inativo': dynamicBadge = { text: 'Inativo', bg: 'bg-stone-500/20', textCol: 'text-stone-400' }; break;
+                case 'indisponivel': dynamicBadge = { text: 'Fim', bg: 'bg-orange-500/20', textCol: 'text-orange-400' }; break;
+                case 'movido': dynamicBadge = { text: 'Movido', bg: 'bg-indigo-500/20', textCol: 'text-indigo-400' }; break;
+              }
+            }
+            const fallbackBadge = item.badge ? { text: item.badge, bg: 'bg-blue-500/20', textCol: 'text-blue-300' } : null;
+            const FinalBadge = dynamicBadge || fallbackBadge;
+
+            const isMaintenanceBlocked = flagData?.status === 'manutencao' && !user.isSysAdmin;
+            
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => handleNavClick(item.href)}
-                title={isCollapsed ? item.label : undefined}
-                className={`relative flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-150 group
-                  ${isCollapsed ? 'justify-center px-0 py-3' : 'px-4 py-3'}
-                  ${active
-                    ? 'bg-blue-500/10 text-blue-300 shadow-[inset_0_0_0_1px_rgba(59,130,246,0.2)]'
-                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                  }`}
-              >
+              <div key={item.href} className="relative group/link">
+                <Link
+                  href={isMaintenanceBlocked ? '#' : item.href}
+                  onClick={(e) => {
+                    if (isMaintenanceBlocked) {
+                      e.preventDefault();
+                      return;
+                    }
+                    handleNavClick(item.href);
+                  }}
+                  title={isCollapsed ? item.label : undefined}
+                  className={`relative flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-150 group
+                    ${isCollapsed ? 'justify-center px-0 py-3' : 'px-4 py-3'}
+                    ${active
+                      ? 'bg-blue-500/10 text-blue-300 shadow-[inset_0_0_0_1px_rgba(59,130,246,0.2)]'
+                      : isMaintenanceBlocked 
+                        ? 'text-slate-500 opacity-70 cursor-not-allowed hover:bg-transparent hover:text-slate-500'
+                        : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                    }`}
+                >
                 {/* Active left border */}
                 {active && (
                   <motion.span
@@ -395,12 +426,18 @@ function SidebarContent({
                 )}
 
                 {/* Badge (ex: "Novo", "Beta") */}
-                {item.badge && !isCollapsed && !isLoading && (
-                  <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300">
-                    {item.badge}
+                {FinalBadge && !isCollapsed && !isLoading && (
+                  <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full ${FinalBadge.bg} ${FinalBadge.textCol}`}>
+                    {FinalBadge.text}
                   </span>
                 )}
-              </Link>
+                </Link>
+                {isMaintenanceBlocked && !isCollapsed && (
+                   <span className="absolute hidden group-hover/link:block left-full ml-2 w-max bg-slate-800 text-xs text-white p-2 rounded z-[100] shadow-xl">
+                     Módulo em Manutenção
+                   </span>
+                )}
+              </div>
             );
           })}
         </div>

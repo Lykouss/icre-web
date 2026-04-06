@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import { getFeatureFlag } from '@/features/core/api/get-feature-flag';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { FeatureMaintenance } from '@/features/core/components/FeatureMaintenance';
+import { MaintenanceScreen } from '@/features/core/components/MaintenanceScreen';
+import { FirstAccessTracker } from '@/features/core/components/FirstAccessTracker';
 import { CellsAdminClient } from '@/features/cells/components/CellsAdminClient';
 import type { Cell } from '@/features/portal/types';
 
@@ -11,8 +12,10 @@ export default async function CelulasPage() {
   const user = await getCurrentUser();
   if (!user) redirect('/login');
 
-  const isActive = await getFeatureFlag('module_cells', user);
-  if (!isActive) return <FeatureMaintenance featureName="Módulo de Células" />;
+  const flag = await getFeatureFlag('module_cells', user);
+  if (!flag.isActive || flag.status === 'manutencao') {
+    return <MaintenanceScreen featureName="Células" />;
+  }
 
   const canManage = user.isSysAdmin || user.roles.some(r => ['CHURCH_ADMIN'].includes(r));
 
@@ -27,10 +30,13 @@ export default async function CelulasPage() {
   const cells: Cell[] = (data ?? []) as Cell[];
 
   return (
-    <CellsAdminClient
-      initialCells={cells}
-      canManage={canManage}
-      isSysAdmin={user.isSysAdmin}
-    />
+    <>
+      <FirstAccessTracker flagSlug="module_cells" userId={user?.id} />
+      <CellsAdminClient
+        initialCells={cells}
+        canManage={canManage}
+        isSysAdmin={user.isSysAdmin}
+      />
+    </>
   );
 }

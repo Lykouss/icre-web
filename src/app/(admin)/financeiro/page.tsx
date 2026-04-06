@@ -1,6 +1,7 @@
 import { getFeatureFlag } from '@/features/core/api/get-feature-flag';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
-import { FeatureMaintenance } from '@/features/core/components/FeatureMaintenance';
+import { MaintenanceScreen } from '@/features/core/components/MaintenanceScreen';
+import { FirstAccessTracker } from '@/features/core/components/FirstAccessTracker';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { NewTransactionModal } from '@/features/finance/components/NewTransactionModal';
@@ -19,8 +20,10 @@ export default async function FinanceiroPage() {
   const user = await getCurrentUser();
   if (!user) redirect('/login');
 
-  const isActive = await getFeatureFlag('module_finance', user);
-  if (!isActive) return <FeatureMaintenance featureName="Módulo Financeiro" />;
+  const flag = await getFeatureFlag('module_finance', user);
+  if (!flag.isActive || flag.status === 'manutencao') {
+    return <MaintenanceScreen featureName="Financeiro" />;
+  }
 
   const hasFinanceAccess = user.isSysAdmin || user.roles.some(r =>
     ['FINANCE_ADMIN', 'CHURCH_ADMIN'].includes(r)
@@ -122,6 +125,7 @@ export default async function FinanceiroPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      <FirstAccessTracker flagSlug="module_finance" userId={user?.id} />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Financeiro</h1>

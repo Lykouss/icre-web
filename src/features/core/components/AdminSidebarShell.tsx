@@ -5,6 +5,8 @@ import { AdminSidebar } from '@/features/core/components/AdminSidebar';
 import { UserMenu } from '@/features/core/components/UserMenu';
 import { AppRole } from '@/features/core/api/get-current-user';
 
+import type { FlagResult } from '@/features/core/api/get-feature-flag';
+
 interface Props {
   user: {
     id: string;
@@ -14,7 +16,7 @@ interface Props {
     isAdmin: boolean;
     isSysAdmin: boolean;
   };
-  flags: Record<string, boolean>;
+  flags: Record<string, FlagResult>;
   children: React.ReactNode;
 }
 

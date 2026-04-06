@@ -5,6 +5,7 @@ import { getSidebarFeatureFlags } from '@/features/core/api/get-feature-flag';
 import { createClient } from '@/lib/supabase/server';
 import { AdminSidebarShell } from '@/features/core/components/AdminSidebarShell';
 import { ToastProvider } from '@/features/core/components/ToastContext';
+import { MaintenanceProvider } from '@/features/core/components/MaintenanceProvider';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -23,12 +24,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <ToastProvider>
-      <AdminSidebarShell
-        user={{ ...user, photoUrl }}
-        flags={sidebarFlags}
-      >
-        {children}
-      </AdminSidebarShell>
+      <MaintenanceProvider>
+        <AdminSidebarShell
+          user={{ ...user, photoUrl }}
+          flags={sidebarFlags}
+        >
+          {children}
+        </AdminSidebarShell>
+      </MaintenanceProvider>
     </ToastProvider>
   );
 }
