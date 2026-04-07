@@ -7,7 +7,7 @@ export default async function DashboardPage() {
   const user = await getCurrentUser();
   const flag = await getFeatureFlag('module_dashboard', user);
 
-  if (!flag.isActive || flag.status === 'manutencao') {
+  if (!flag.isSysAdmin && (!flag.isActive || flag.status === 'manutencao')) {
     return <MaintenanceScreen featureName="Dashboard" />;
   }
 

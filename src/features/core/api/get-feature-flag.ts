@@ -18,11 +18,28 @@ export interface FlagResult {
   userHasViewed: boolean;
 }
 
+const DEFAULT_MODULE_ROLES: Record<string, AppRole[]> = {
+  'module_dashboard': ['SYSADMIN', 'CHURCH_ADMIN', 'FINANCE_ADMIN', 'LEADER'],
+  'module_finance': ['SYSADMIN', 'CHURCH_ADMIN', 'FINANCE_ADMIN'],
+  'module_members': ['SYSADMIN', 'CHURCH_ADMIN', 'LEADER'],
+  'module_events': ['SYSADMIN', 'CHURCH_ADMIN'],
+  'module_cells': ['SYSADMIN', 'CHURCH_ADMIN'],
+  'module_pastors': ['SYSADMIN', 'CHURCH_ADMIN'],
+  'module_public_site': ['SYSADMIN', 'CHURCH_ADMIN'],
+  'module_permissions': ['SYSADMIN', 'CHURCH_ADMIN'],
+  'module_kids': ['SYSADMIN', 'CHURCH_ADMIN'],
+  'module_assets': ['SYSADMIN', 'CHURCH_ADMIN'],
+  'module_volunteers': ['SYSADMIN', 'CHURCH_ADMIN'],
+};
+
 export async function getFeatureFlag(slug: string, user?: UserContext | null): Promise<FlagResult> {
+  const defaultRoles = DEFAULT_MODULE_ROLES[slug] || [];
+  const hasDefaultRole = Boolean(user && defaultRoles.some(r => user.roles.includes(r)));
+
   const defaultResult: FlagResult = {
     slug,
-    isActive: false,
-    isAllowed: false,
+    isActive: true, // Fail-open for active status if DB is blocked
+    isAllowed: Boolean(user?.isSysAdmin || hasDefaultRole),
     status: 'normal',
     maintenanceScheduledAt: null,
     isSysAdmin: Boolean(user?.isSysAdmin),
@@ -39,17 +56,31 @@ export async function getFeatureFlag(slug: string, user?: UserContext | null): P
 
   if (error || !data) return defaultResult;
 
+  const dbRoles = data.allowed_roles?.length > 0 ? data.allowed_roles : defaultRoles;
   const hasRoleAccess = Boolean(
-    user && data.allowed_roles?.some((role: string) => user.roles.includes(role as AppRole))
+    user && dbRoles.some((role: string) => user.roles.includes(role as AppRole))
   );
   const hasUserAccess = Boolean(user && data.allowed_users?.includes(user.id));
   const isAllowed = user?.isSysAdmin || hasRoleAccess || hasUserAccess;
+
+  let currentStatus = data.status || 'normal';
+
+  // Proteção contra datas orfãs na DB: se a manutenção agendada já passou há mais de 24h e o status não é 'manutenção', ignoramos.
+  if (data.maintenance_scheduled_at) {
+    const scheduledAt = new Date(data.maintenance_scheduled_at);
+    const now = new Date();
+    const hoursSinceScheduled = (now.getTime() - scheduledAt.getTime()) / (1000 * 60 * 60);
+
+    if (now >= scheduledAt && hoursSinceScheduled < 24) {
+      currentStatus = 'manutencao';
+    }
+  }
 
   return {
     slug,
     isActive: data.is_active,
     isAllowed: isAllowed,
-    status: data.status || 'normal',
+    status: currentStatus,
     maintenanceScheduledAt: data.maintenance_scheduled_at,
     isSysAdmin: Boolean(user?.isSysAdmin),
     userHasViewed: false, // populated in getSidebarFeatureFlags

@@ -174,7 +174,7 @@ export function FlagManager({
     startTransition(async () => {
       const r = await scheduleMaintenance(slug, new Date(maintenanceAt).toISOString());
       if (r.error) showToast(r.error, 'error');
-      else { setStatus('manutencao'); showToast('Manutenção agendada e propagada', 'success'); }
+      else { showToast('Manutenção agendada com sucesso', 'success'); }
     });
   }
 
@@ -232,6 +232,11 @@ export function FlagManager({
               <div className={`w-1.5 h-1.5 rounded-full bg-current ${status === 'manutencao' || status === 'novo' ? 'animate-pulse' : ''}`} />
               {currentStatusOption.label}
             </span>
+            {maintenanceAt && new Date() < new Date(maintenanceAt) && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ring-1 bg-slate-100 text-slate-500 border-slate-200">
+                ⏰ Agendado
+              </span>
+            )}
           </div>
           <p className="text-sm text-slate-500 mt-0.5 max-w-lg line-clamp-1">{description}</p>
         </div>

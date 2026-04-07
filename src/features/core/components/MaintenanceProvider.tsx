@@ -67,11 +67,7 @@ export function MaintenanceProvider({ children }: MaintenanceProviderProps) {
     const interval = setInterval(() => {
       setMaintenanceTimer((prev) => {
         if (prev === null) return null;
-        if (prev <= 1) {
-          router.push('/dashboard');
-          router.refresh();
-          return null;
-        }
+        if (prev <= 1) return 0;
         return prev - 1;
       });
     }, 1000);
@@ -82,6 +78,13 @@ export function MaintenanceProvider({ children }: MaintenanceProviderProps) {
     };
   }, [router]);
 
+  useEffect(() => {
+    if (maintenanceTimer === 0) {
+      router.push('/dashboard');
+      router.refresh();
+    }
+  }, [maintenanceTimer, router]);
+
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60);
     const s = secs % 60;
@@ -91,29 +94,31 @@ export function MaintenanceProvider({ children }: MaintenanceProviderProps) {
   return (
     <>
       <AnimatePresence>
-        {maintenanceTimer !== null && (
+        {maintenanceTimer !== null && maintenanceTimer > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-0 left-0 right-0 z-[100] flex justify-center p-4 pointer-events-none"
+            initial={{ opacity: 0, y: -50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -50, scale: 0.95 }}
+            className="fixed top-6 left-0 right-0 z-[100] flex justify-center px-4 pointer-events-none"
           >
-            <div className="bg-gradient-to-r from-red-600 to-amber-600 text-white shadow-2xl rounded-2xl p-4 max-w-xl w-full flex items-center justify-between pointer-events-auto border border-red-400/30">
+            <div className="bg-slate-900/80 backdrop-blur-xl text-white shadow-2xl shadow-red-500/10 rounded-3xl p-4 md:px-6 w-auto max-w-2xl flex flex-col md:flex-row items-center gap-4 border border-white/10 ring-1 ring-red-500/20 pointer-events-auto">
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20">
-                  <svg className="w-6 h-6 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500/20 to-amber-500/10 border border-white/5 ring-1 ring-inset ring-white/10 shadow-inner">
+                  <svg className="w-6 h-6 text-red-400 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </span>
-                <div>
-                  <h3 className="font-bold text-sm">Aviso de Manutenção</h3>
-                  <p className="text-xs text-red-100 pr-4">
-                    {moduleName} entrará em manutenção em breve. Por favor, <strong>salve tudo o que estiver fazendo</strong>.
+                <div className="min-w-0 pr-4">
+                  <h3 className="font-bold text-sm tracking-tight text-white line-clamp-1">{moduleName} entrará em manutenção</h3>
+                  <p className="text-[13px] text-slate-400 leading-tight mt-0.5 line-clamp-1">
+                    Por favor, <strong>salve suas alterações</strong> o mais rápido possível.
                   </p>
                 </div>
               </div>
-              <div className="text-2xl font-black tabular-nums tracking-tighter bg-black/20 px-3 py-1.5 rounded-xl text-center min-w-[5rem]">
-                {formatTime(maintenanceTimer)}
+              <div className="flex items-center justify-center bg-black/40 shadow-inner px-4 py-2.5 rounded-2xl border border-white/5 min-w-[6rem] mx-auto md:ml-auto md:mr-0 shrink-0">
+                <span className="text-2xl font-black tabular-nums tracking-tighter text-red-400">
+                  {formatTime(maintenanceTimer)}
+                </span>
               </div>
             </div>
           </motion.div>

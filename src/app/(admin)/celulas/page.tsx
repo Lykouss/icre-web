@@ -13,7 +13,7 @@ export default async function CelulasPage() {
   if (!user) redirect('/login');
 
   const flag = await getFeatureFlag('module_cells', user);
-  if (!flag.isActive || flag.status === 'manutencao') {
+  if (!flag.isSysAdmin && (!flag.isActive || flag.status === 'manutencao')) {
     return <MaintenanceScreen featureName="Células" />;
   }
 

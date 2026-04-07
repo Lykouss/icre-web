@@ -170,7 +170,7 @@ export default async function PermissionsPage() {
   if (!user) redirect('/login');
 
   const flag = await getFeatureFlag('module_permissions', user);
-  if (!flag.isActive || flag.status === 'manutencao') {
+  if (!flag.isSysAdmin && (!flag.isActive || flag.status === 'manutencao')) {
     return <MaintenanceScreen featureName="Permissões" />;
   }
 

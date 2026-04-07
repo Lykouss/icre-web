@@ -12,7 +12,7 @@ export default async function EventosPage() {
   if (!user) redirect('/login');
 
   const flag = await getFeatureFlag('module_events', user);
-  if (!flag.isActive || flag.status === 'manutencao') {
+  if (!flag.isSysAdmin && (!flag.isActive || flag.status === 'manutencao')) {
     return <MaintenanceScreen featureName="Eventos" />;
   }
 

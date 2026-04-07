@@ -7,7 +7,7 @@ export default async function PatrimonioPage() {
   const user = await getCurrentUser();
   const flag = await getFeatureFlag('module_assets', user);
 
-  if (!flag.isActive || flag.status === 'manutencao') {
+  if (!flag.isSysAdmin && (!flag.isActive || flag.status === 'manutencao')) {
     return <MaintenanceScreen featureName="Patrimônio" />;
   }
 

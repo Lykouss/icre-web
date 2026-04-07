@@ -21,7 +21,7 @@ export default async function MembrosPage() {
   const user = await getCurrentUser();
   const flag = await getFeatureFlag('module_members', user);
 
-  if (!flag.isActive || flag.status === 'manutencao') {
+  if (!flag.isSysAdmin && (!flag.isActive || flag.status === 'manutencao')) {
     return <MaintenanceScreen featureName="Membros" />;
   }
 

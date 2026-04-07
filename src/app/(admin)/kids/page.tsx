@@ -7,7 +7,7 @@ export default async function KidsPage() {
   const user = await getCurrentUser();
   const flag = await getFeatureFlag('module_kids', user);
 
-  if (!flag.isActive || flag.status === 'manutencao') {
+  if (!flag.isSysAdmin && (!flag.isActive || flag.status === 'manutencao')) {
     return <MaintenanceScreen featureName="Kids" />;
   }
 

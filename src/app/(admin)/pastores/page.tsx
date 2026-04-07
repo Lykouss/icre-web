@@ -13,7 +13,7 @@ export default async function PastoresPage() {
   if (!user) redirect('/login');
 
   const flag = await getFeatureFlag('module_pastors', user);
-  if (!flag.isActive || flag.status === 'manutencao') {
+  if (!flag.isSysAdmin && (!flag.isActive || flag.status === 'manutencao')) {
     return <MaintenanceScreen featureName="Liderança" />;
   }
 

@@ -21,7 +21,7 @@ export default async function FinanceiroPage() {
   if (!user) redirect('/login');
 
   const flag = await getFeatureFlag('module_finance', user);
-  if (!flag.isActive || flag.status === 'manutencao') {
+  if (!flag.isSysAdmin && (!flag.isActive || flag.status === 'manutencao')) {
     return <MaintenanceScreen featureName="Financeiro" />;
   }
 

@@ -19,9 +19,14 @@ export async function updateFlagStatus(slug: string, status: FlagStatus) {
   if (!user?.isSysAdmin) return { error: 'Acesso negado.' };
 
   const supabase = await createClient();
+  const updateData: any = { status };
+  if (status !== 'manutencao') {
+    updateData.maintenance_scheduled_at = null;
+  }
+
   const { error } = await supabase
     .from('feature_flags')
-    .update({ status })
+    .update(updateData)
     .eq('slug', slug);
 
   if (error) return { error: 'Falha ao atualizar status.' };
@@ -50,10 +55,10 @@ export async function scheduleMaintenance(slug: string, scheduledAt: string | nu
 
   const supabase = await createClient();
 
-  // If scheduledAt is null, we're cancelling maintenance
+  // Se agendar uma data, apenas salva a data. Se anular, salva também.
   const updateData = scheduledAt
-    ? { maintenance_scheduled_at: scheduledAt, status: 'manutencao' as FlagStatus }
-    : { maintenance_scheduled_at: null, status: 'normal' as FlagStatus };
+    ? { maintenance_scheduled_at: scheduledAt }
+    : { maintenance_scheduled_at: null };
 
   const { error } = await supabase
     .from('feature_flags')
