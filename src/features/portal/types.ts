@@ -139,12 +139,28 @@ export interface Pastor {
   is_active:  boolean;
 }
 
+// ── Líderes ──────────────────────────────────────────────────
+
+export interface Leader {
+  id:        string;
+  name:      string;
+  phone:     string | null;
+  photo_url: string | null;
+  bio:       string | null;
+  is_active: boolean;
+}
+
+export interface PublicLeader {
+  id:        string;
+  name:      string;
+  photo_url: string | null;
+}
+
 // ── Células (visão pública) ───────────────────────────────────
 
 export interface PublicCell {
   id:               string;
   name:             string;
-  leader_name:      string | null;
   meeting_days:     string | null;
   meeting_time:     string | null;
   meeting_type:     MeetingType;
@@ -154,6 +170,10 @@ export interface PublicCell {
   contact_whatsapp: string | null;
   image_url:        string | null;
   leader_photo_url: string | null;
+  leader1_id:       string | null;
+  leader2_id:       string | null;
+  leader1:          PublicLeader | null;
+  leader2:          PublicLeader | null;
 }
 
 // ── Células (visão admin completa) ────────────────────────────
@@ -161,7 +181,6 @@ export interface PublicCell {
 export interface Cell {
   id:               string;
   name:             string;
-  leader_name:      string | null;
   leader_photo_url: string | null;
   description:      string | null;
   neighborhood:     string | null;
@@ -176,4 +195,8 @@ export interface Cell {
   is_active:        boolean;
   sort_order:       number;
   created_at:       string;
+  leader1_id:       string | null;
+  leader2_id:       string | null;
+  leader1:          Leader | null;
+  leader2:          Leader | null;
 }

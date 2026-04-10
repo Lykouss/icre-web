@@ -289,7 +289,7 @@ export async function createPastor(formData: FormData) {
 
   const photoFile = formData.get('photo');
   if (photoFile instanceof File && photoFile.size > 0) {
-    const upload = await uploadFile('pastor-photos', data.id, photoFile, MAX_PASTOR);
+    const upload = await uploadFile('site-images', `pastors/${data.id}`, photoFile, MAX_PASTOR);
     if ('url' in upload) {
       await supabase.from('pastors').update({ photo_url: upload.url }).eq('id', data.id);
     }
@@ -318,7 +318,7 @@ export async function updatePastor(id: string, formData: FormData) {
   const photoFile = formData.get('photo');
   let photo_url: string | undefined;
   if (photoFile instanceof File && photoFile.size > 0) {
-    const upload = await uploadFile('pastor-photos', id, photoFile, MAX_PASTOR);
+    const upload = await uploadFile('site-images', `pastors/${id}`, photoFile, MAX_PASTOR);
     if ('url' in upload) photo_url = upload.url;
     else return upload;
   }

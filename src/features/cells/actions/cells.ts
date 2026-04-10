@@ -1,6 +1,5 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
@@ -49,7 +48,6 @@ export async function createCell(formData: FormData) {
   const name = (formData.get('name') as string)?.trim();
   if (!name || name.length < 2) return { error: 'Nome da célula é obrigatório.' };
 
-  const leader_name      = (formData.get('leader_name')      as string)?.trim() || null;
   const description      = (formData.get('description')      as string)?.trim() || null;
   const neighborhood     = (formData.get('neighborhood')     as string)?.trim() || null;
   const address          = (formData.get('address')          as string)?.trim() || null;
@@ -60,18 +58,24 @@ export async function createCell(formData: FormData) {
   const contact_whatsapp = (formData.get('contact_whatsapp') as string)?.trim() || null;
   const contact_email    = (formData.get('contact_email')    as string)?.trim() || null;
 
-  const supabase = await createClient();
-  const { data, error } = await supabase
+  const leader1_id = (formData.get('leader1_id') as string) || null;
+  const leader2_id = (formData.get('leader2_id') as string) || null;
+
+  const admin = await createAdminClient();
+  const { data, error } = await admin
     .from('cells')
-    .insert({ name, leader_name, description, neighborhood, address,
+    .insert({ name, description, neighborhood, address,
               meeting_days, meeting_time, meeting_type,
-              contact_phone, contact_whatsapp, contact_email })
+              contact_phone, contact_whatsapp, contact_email,
+              leader1_id: leader1_id || null,
+              leader2_id: leader2_id || null,
+              is_active: true, is_public: true })
     .select('id')
     .single();
 
   if (error || !data) {
     console.error('[cells] create:', error?.message);
-    return { error: 'Falha ao criar célula.' };
+    return { error: `Falha ao criar célula: ${error?.message ?? 'erro desconhecido'}` };
   }
 
   const id = data.id as string;
@@ -80,14 +84,14 @@ export async function createCell(formData: FormData) {
   if (bannerFile instanceof File && bannerFile.size > 0) {
     const upload = await uploadCellFile(`cells/${id}/banner`, bannerFile);
     if ('url' in upload)
-      await supabase.from('cells').update({ image_url: upload.url }).eq('id', id);
+      await admin.from('cells').update({ image_url: upload.url }).eq('id', id);
   }
 
   const leaderPhotoFile = formData.get('leader_photo');
   if (leaderPhotoFile instanceof File && leaderPhotoFile.size > 0) {
     const upload = await uploadCellFile(`cells/${id}/leader`, leaderPhotoFile);
     if ('url' in upload)
-      await supabase.from('cells').update({ leader_photo_url: upload.url }).eq('id', id);
+      await admin.from('cells').update({ leader_photo_url: upload.url }).eq('id', id);
   }
 
   revalidatePath('/celulas');
@@ -108,7 +112,6 @@ export async function updateCell(id: string, formData: FormData) {
 
   const patch: Record<string, unknown> = {
     name,
-    leader_name:      (formData.get('leader_name')      as string)?.trim() || null,
     description:      (formData.get('description')      as string)?.trim() || null,
     neighborhood:     (formData.get('neighborhood')     as string)?.trim() || null,
     address:          (formData.get('address')          as string)?.trim() || null,
@@ -118,10 +121,11 @@ export async function updateCell(id: string, formData: FormData) {
     contact_phone:    (formData.get('contact_phone')    as string)?.trim() || null,
     contact_whatsapp: (formData.get('contact_whatsapp') as string)?.trim() || null,
     contact_email:    (formData.get('contact_email')    as string)?.trim() || null,
-    updated_at:       new Date().toISOString(),
+    leader1_id:       (formData.get('leader1_id') as string) || null,
+    leader2_id:       (formData.get('leader2_id') as string) || null,
   };
 
-  const supabase = await createClient();
+  const admin = await createAdminClient();
 
   const bannerFile = formData.get('image');
   if (bannerFile instanceof File && bannerFile.size > 0) {
@@ -137,8 +141,11 @@ export async function updateCell(id: string, formData: FormData) {
     else return upload;
   }
 
-  const { error } = await supabase.from('cells').update(patch).eq('id', id);
-  if (error) return { error: 'Falha ao atualizar célula.' };
+  const { error } = await admin.from('cells').update(patch).eq('id', id);
+  if (error) {
+    console.error('[cells] update:', error.message);
+    return { error: `Falha ao atualizar célula: ${error.message}` };
+  }
 
   revalidatePath('/celulas');
   revalidatePath('/');
@@ -153,10 +160,10 @@ export async function toggleCellActive(id: string, isActive: boolean) {
   if (!canManage(user.roles)) return { error: 'Acesso negado.' };
   if (!isValidUuid(id)) return { error: 'ID inválido.' };
 
-  const supabase = await createClient();
-  const { error } = await supabase
+  const admin = await createAdminClient();
+  const { error } = await admin
     .from('cells')
-    .update({ is_active: isActive, updated_at: new Date().toISOString() })
+    .update({ is_active: isActive, is_public: isActive })
     .eq('id', id);
 
   if (error) return { error: 'Falha ao alterar status.' };
@@ -174,10 +181,10 @@ export async function deleteCell(id: string) {
   if (!user.isSysAdmin) return { error: 'Apenas SYSADMIN pode excluir células.' };
   if (!isValidUuid(id)) return { error: 'ID inválido.' };
 
-  const supabase = await createClient();
-  const { error } = await supabase
+  const admin = await createAdminClient();
+  const { error } = await admin
     .from('cells')
-    .update({ is_active: false, updated_at: new Date().toISOString() })
+    .update({ is_active: false, is_public: false })
     .eq('id', id);
 
   if (error) return { error: 'Falha ao remover célula.' };

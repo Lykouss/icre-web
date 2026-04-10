@@ -28,7 +28,7 @@ async function getSiteData() {
   const [blocksRes, pastorsRes, cellsRes, eventsRes] = await Promise.all([
     supabase.from('site_blocks').select('type, is_active, published_content').order('order_idx'),
     supabase.from('pastors').select('id, name, role, bio, photo_url, sort_order').eq('is_active', true).order('sort_order'),
-    supabase.from('cells').select('id, name, leader_name, meeting_days, meeting_time, meeting_type, neighborhood').eq('is_public', true).order('name'),
+    supabase.from('cells').select('id, name, meeting_days, meeting_time, meeting_type, neighborhood, description, contact_phone, contact_whatsapp, image_url, leader_photo_url, leader1_id, leader2_id, leader1:leaders!leader1_id(id,name,photo_url), leader2:leaders!leader2_id(id,name,photo_url)').eq('is_active', true).order('name'),
     supabase.from('events').select('id, title, date, time, location, is_recurring, recurrence_rules, type, banner_url, cancelled_dates').eq('is_public', true).eq('status', 'publicado'),
   ]);
 
@@ -45,7 +45,7 @@ async function getSiteData() {
   return {
     blocks:  (blocksRes.data  ?? []) as BlockRow[],
     pastors: (pastorsRes.data ?? []) as Pastor[],
-    cells:   (cellsRes.data   ?? []) as PublicCell[],
+    cells:   (cellsRes.data ?? []) as unknown as PublicCell[],
     events:  computedEvents as any[],
   };
 }
