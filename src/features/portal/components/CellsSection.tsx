@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { useScrollReveal } from '@/features/core/hooks/use-scroll-reveal';
 import type { CellsSectionContent, PublicCell, MeetingType } from '@/features/portal/types';
 
@@ -10,17 +11,18 @@ const TYPE_CONFIG: Record<MeetingType, { label: string; cls: string }> = {
   hibrido:    { label: 'Híbrido',    cls: 'bg-violet-500/15 border-violet-500/25 text-violet-400' },
 };
 
-function CellCard({ cell, index }: { cell: PublicCell; index: number }) {
-  const { ref, visible } = useScrollReveal<HTMLDivElement>({ threshold: 0.08 });
+function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; onClick: () => void }) {
+  const { ref, visible } = useScrollReveal<HTMLButtonElement>({ threshold: 0.08 });
   const typeConfig = TYPE_CONFIG[cell.meeting_type] ?? { label: cell.meeting_type, cls: 'bg-slate-500/15 border-slate-500/25 text-slate-400' };
 
   return (
-    <div
+    <button
       ref={ref}
-      className="group flex flex-col bg-slate-900/60 backdrop-blur-sm border border-white/8 rounded-3xl overflow-hidden hover:border-blue-500/25 hover:-translate-y-1.5 transition-all duration-300 ease-out"
+      onClick={onClick}
+      className="group flex flex-col text-left bg-slate-900/60 backdrop-blur-sm border border-white/8 rounded-3xl overflow-hidden hover:border-blue-500/25 hover:-translate-y-1.5 transition-all duration-300 ease-out"
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(28px)', transitionDelay: `${index * 70}ms` }}
     >
-      <div className="relative aspect-[2/1] bg-slate-800 shrink-0 border-b border-white/5">
+      <div className="relative aspect-[2/1] bg-slate-800 shrink-0 border-b border-white/5 w-full">
         {cell.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={cell.image_url} alt={cell.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -88,6 +90,90 @@ function CellCard({ cell, index }: { cell: PublicCell; index: number }) {
         )}
       </div>
       </div>
+    </button>
+  );
+}
+
+function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => void }) {
+  const typeConfig = TYPE_CONFIG[cell.meeting_type] ?? { label: cell.meeting_type, cls: 'bg-slate-500/15 text-slate-400' };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 px-4 sm:px-6" onClick={onClose}>
+      <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md" />
+      <div className="relative bg-slate-900 border border-white/10 rounded-3xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+        <div className="relative aspect-[21/9] bg-slate-800 shrink-0 border-b border-white/5">
+          {cell.image_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={cell.image_url} alt={cell.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-800/80">
+              <svg className="w-10 h-10 text-blue-500/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+          <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-slate-900/50 hover:bg-slate-900/80 rounded-full text-white/70 hover:text-white backdrop-blur-sm transition-all border border-white/10">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+
+        <div className="p-6 sm:p-8 flex-1 overflow-y-auto">
+          <div className="mb-6">
+            <span className={`inline-block text-[10px] font-bold border px-2.5 py-1 rounded-full mb-3 border-transparent ${typeConfig.cls}`}>{typeConfig.label}</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{cell.name}</h2>
+          </div>
+
+          {(cell.leader1 || cell.leader2) && (
+            <div className="mb-8 p-4 bg-slate-800/50 rounded-2xl border border-white/5 flex flex-wrap gap-4 items-center">
+              {[cell.leader1, cell.leader2].filter(Boolean).map((leader, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  {leader!.photo_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={leader!.photo_url} alt={leader!.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-white/10 shadow-lg" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center ring-2 ring-blue-500/20">
+                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    </div>
+                  )}
+                  <div>
+                    <span className="block text-xs font-medium text-slate-400 mb-0.5">Líder {i + 1}</span>
+                    <span className="block text-sm font-semibold text-white">{leader!.name}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="space-y-4 text-sm text-slate-300">
+            {cell.description && <p className="leading-relaxed mb-6 bg-slate-800/30 p-4 rounded-xl border border-white/5">{cell.description}</p>}
+            
+            <div className="grid sm:grid-cols-2 gap-4">
+              {(cell.meeting_days || cell.meeting_time) && (
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/20 border border-white/5">
+                  <div className="mt-0.5 p-2 bg-blue-500/10 rounded-lg shrink-0 border border-blue-500/10">
+                    <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  </div>
+                  <div>
+                    <span className="block text-xs font-semibold text-slate-400 mb-1">Encontros</span>
+                    <span className="text-white font-medium">{cell.meeting_days} {cell.meeting_time && `às ${cell.meeting_time}`}</span>
+                  </div>
+                </div>
+              )}
+
+              {cell.neighborhood && (
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/20 border border-white/5">
+                  <div className="mt-0.5 p-2 bg-emerald-500/10 rounded-lg shrink-0 border border-emerald-500/10">
+                    <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  </div>
+                  <div>
+                    <span className="block text-xs font-semibold text-slate-400 mb-1">Localização</span>
+                    <span className="text-white font-medium">{cell.neighborhood}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -124,6 +210,7 @@ interface Props {
 
 export function CellsSection({ content, cells }: Props) {
   const { ref, visible } = useScrollReveal({ threshold: 0.1 });
+  const [selectedCell, setSelectedCell] = useState<PublicCell | null>(null);
 
   return (
     <section id="celulas" className="relative py-32 px-6 bg-slate-900 overflow-hidden">
@@ -146,7 +233,7 @@ export function CellsSection({ content, cells }: Props) {
         {cells.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {cells.map((cell, i) => <CellCard key={cell.id} cell={cell} index={i} />)}
+              {cells.map((cell, i) => <CellCard key={cell.id} cell={cell} index={i} onClick={() => setSelectedCell(cell)} />)}
             </div>
             {/* <div className="text-center mt-12 transition-all duration-700 ease-out"
               style={{ opacity: visible ? 1 : 0, transitionDelay: '400ms' }}>
@@ -161,6 +248,10 @@ export function CellsSection({ content, cells }: Props) {
           <ComingSoonPlaceholder />
         )}
       </div>
+
+      {selectedCell && (
+        <CellDetailModal cell={selectedCell} onClose={() => setSelectedCell(null)} />
+      )}
     </section>
   );
 }

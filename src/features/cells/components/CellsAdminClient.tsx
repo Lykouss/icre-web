@@ -52,7 +52,7 @@ function CellModal({ editing, leaders, isPending, onClose, onSubmit }: {
   onClose: () => void; onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }) {
   const [bannerSrc, setBannerSrc] = useState<string | null>(editing?.image_url ?? null);
-  const activeLeaders = leaders.filter(l => l.is_active);
+  const activeLeaders = leaders.filter(l => l.is_active !== false);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>

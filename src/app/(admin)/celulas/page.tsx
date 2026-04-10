@@ -35,6 +35,10 @@ export default async function CelulasPage() {
   const cells: Cell[] = (cellsRes.data ?? []) as Cell[];
   const leaders: Leader[] = (leadersRes.data ?? []) as Leader[];
 
+  console.log('[DEBUG celulas/page] cellsRes error:', cellsRes.error);
+  console.log('[DEBUG celulas/page] leadersRes error:', leadersRes.error);
+  console.log('[DEBUG celulas/page] leaders count:', leaders.length);
+
   return (
     <>
       <FirstAccessTracker flagSlug="module_cells" userId={user?.id} />
