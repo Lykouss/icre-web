@@ -17,21 +17,32 @@ function CellCard({ cell, index }: { cell: PublicCell; index: number }) {
   return (
     <div
       ref={ref}
-      className="group bg-slate-900/60 backdrop-blur-sm border border-white/8 rounded-3xl p-6 hover:border-blue-500/25 hover:-translate-y-1.5 transition-all duration-300 ease-out"
+      className="group flex flex-col bg-slate-900/60 backdrop-blur-sm border border-white/8 rounded-3xl overflow-hidden hover:border-blue-500/25 hover:-translate-y-1.5 transition-all duration-300 ease-out"
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(28px)', transitionDelay: `${index * 70}ms` }}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
-          <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
+      <div className="relative aspect-[2/1] bg-slate-800 shrink-0 border-b border-white/5">
+        {cell.image_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={cell.image_url} alt={cell.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-800/80">
+            <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+            </div>
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/10 to-transparent" />
+        <div className="absolute top-4 left-4">
+          <span className={`text-[10px] font-bold border px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md ${typeConfig.cls}`}>
+            {typeConfig.label}
+          </span>
         </div>
-        <span className={`text-xs font-bold border px-2.5 py-1 rounded-full ${typeConfig.cls}`}>
-          {typeConfig.label}
-        </span>
       </div>
 
-      <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-300 transition-colors duration-200">{cell.name}</h3>
+      <div className="p-6 flex flex-col flex-1">
+        <h3 className="text-lg font-bold text-white mb-4 group-hover:text-blue-300 transition-colors duration-200">{cell.name}</h3>
 
 
 
@@ -76,6 +87,7 @@ function CellCard({ cell, index }: { cell: PublicCell; index: number }) {
           </div>
         )}
       </div>
+      </div>
     </div>
   );
 }
@@ -93,13 +105,13 @@ function ComingSoonPlaceholder() {
         </div>
         <p className="text-slate-400 font-semibold mb-2">Módulo de Células em desenvolvimento</p>
         <p className="text-slate-600 text-sm">As células serão exibidas aqui assim que o módulo for ativado.</p>
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <Link href="/contato"
             className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm font-semibold border border-blue-500/20 hover:border-blue-400/40 px-5 py-2.5 rounded-2xl hover:bg-blue-500/8 transition-all duration-200">
             Quero participar de uma célula
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -136,14 +148,14 @@ export function CellsSection({ content, cells }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {cells.map((cell, i) => <CellCard key={cell.id} cell={cell} index={i} />)}
             </div>
-            <div className="text-center mt-12 transition-all duration-700 ease-out"
+            {/* <div className="text-center mt-12 transition-all duration-700 ease-out"
               style={{ opacity: visible ? 1 : 0, transitionDelay: '400ms' }}>
               <Link href="/contato"
                 className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold border border-white/10 hover:border-white/25 px-6 py-3 rounded-2xl hover:bg-white/5 transition-all duration-200">
                 Quero participar de uma célula
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
               </Link>
-            </div>
+            </div> */}
           </>
         ) : (
           <ComingSoonPlaceholder />

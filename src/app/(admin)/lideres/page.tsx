@@ -7,6 +7,7 @@ import { MaintenanceScreen } from '@/features/core/components/MaintenanceScreen'
 import { FirstAccessTracker } from '@/features/core/components/FirstAccessTracker';
 import { LeadersAdminClient } from '@/features/leaders/components/LeadersAdminClient';
 import type { Leader } from '@/features/leaders/components/LeadersAdminClient';
+import type { Cell } from '@/features/portal/types';
 
 export default async function LideresPage() {
   const user = await getCurrentUser();
@@ -20,19 +21,27 @@ export default async function LideresPage() {
   const canManage = user.isSysAdmin || user.roles.some(r => ['CHURCH_ADMIN'].includes(r));
 
   const admin = await createAdminClient();
-  const { data } = await admin
-    .from('leaders')
-    .select('*')
-    .order('sort_order', { ascending: true })
-    .order('name', { ascending: true });
+  const [leadersRes, cellsRes] = await Promise.all([
+    admin
+      .from('leaders')
+      .select('*')
+      .order('sort_order', { ascending: true })
+      .order('name', { ascending: true }),
+    admin
+      .from('cells')
+      .select('id, name, leader1_id, leader2_id')
+      .order('name', { ascending: true })
+  ]);
 
-  const leaders: Leader[] = (data ?? []) as Leader[];
+  const leaders: Leader[] = (leadersRes.data ?? []) as Leader[];
+  const cells = cellsRes.data ?? [];
 
   return (
     <>
       <FirstAccessTracker flagSlug="module_leaders" userId={user?.id} />
       <LeadersAdminClient
         initialLeaders={leaders}
+        cells={cells}
         canManage={canManage}
         isSysAdmin={user.isSysAdmin}
       />

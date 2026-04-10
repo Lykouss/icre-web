@@ -88,6 +88,9 @@ export async function createLeader(formData: FormData) {
     }
   }
 
+  const cellId = formData.get('cell_id') as string | null;
+  await assignLeaderToCell(data.id, cellId);
+
   revalidatePath('/lideres');
   revalidatePath('/celulas');
   revalidatePath('/');
@@ -125,6 +128,9 @@ export async function updateLeader(id: string, formData: FormData) {
     console.error('[leaders] update:', error.message);
     return { error: `Falha ao atualizar líder: ${error.message}` };
   }
+
+  const cellId = formData.get('cell_id') as string | null;
+  await assignLeaderToCell(id, cellId);
 
   revalidatePath('/lideres');
   revalidatePath('/celulas');
@@ -181,5 +187,37 @@ export async function deleteLeader(id: string) {
   revalidatePath('/lideres');
   revalidatePath('/celulas');
   revalidatePath('/');
+  return { success: true };
+}
+
+/* ─── Assign leader to cell ────────────────────────────────── */
+
+export async function assignLeaderToCell(leaderId: string, cellId: string | null) {
+  const user = await getCurrentUser();
+  if (!user) return { error: 'Não autorizado.' };
+  if (!canManage(user.roles)) return { error: 'Acesso negado.' };
+  if (!isValidUuid(leaderId)) return { error: 'ID inválido.' };
+
+  const admin = await createAdminClient();
+
+  // Remove this leader from any cell they are currently linked to
+  await admin.from('cells').update({ leader1_id: null }).eq('leader1_id', leaderId);
+  await admin.from('cells').update({ leader2_id: null }).eq('leader2_id', leaderId);
+
+  // If a new cell was selected, assign to the first available slot
+  if (cellId) {
+    if (!isValidUuid(cellId)) return { error: 'ID de célula inválido.' };
+    const { data: cell } = await admin.from('cells').select('leader1_id, leader2_id').eq('id', cellId).single();
+    if (!cell) return { error: 'Célula não encontrada.' };
+
+    if (!cell.leader1_id) {
+      await admin.from('cells').update({ leader1_id: leaderId }).eq('id', cellId);
+    } else if (!cell.leader2_id) {
+      await admin.from('cells').update({ leader2_id: leaderId }).eq('id', cellId);
+    } else {
+      return { error: 'Esta célula já tem 2 líderes vinculados. Remova um deles primeiro.' };
+    }
+  }
+
   return { success: true };
 }

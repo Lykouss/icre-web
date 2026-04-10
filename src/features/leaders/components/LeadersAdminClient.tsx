@@ -64,9 +64,11 @@ function PhotoPreview({ src, onChange }: { src: string | null; onChange: (url: s
 /* ─── Leader Modal ────────────────────────────────────────────── */
 
 function LeaderModal({
-  editing, isPending, onClose, onSubmit,
+  editing, cells, linkedCellId, isPending, onClose, onSubmit,
 }: {
   editing: Leader | null;
+  cells: { id: string; name: string }[];
+  linkedCellId: string | null;
   isPending: boolean;
   onClose: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -118,6 +120,15 @@ function LeaderModal({
               </div>
             </div>
 
+            {/* Vinculação de célula */}
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Célula Vinculada</label>
+              <select name="cell_id" defaultValue={linkedCellId ?? ''} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 bg-white">
+                <option value="">— Nenhuma Célula Selecionada —</option>
+                {cells.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+
             {/* Bio */}
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">Bio / Descrição</label>
@@ -150,9 +161,9 @@ function LeaderModal({
 /* ─── Leader Card ─────────────────────────────────────────────── */
 
 function LeaderCard({
-  leader, canManage, isSysAdmin, onEdit, onToggle, toggling, onDelete,
+  leader, cellName, canManage, isSysAdmin, onEdit, onToggle, toggling, onDelete,
 }: {
-  leader: Leader; canManage: boolean; isSysAdmin: boolean;
+  leader: Leader; cellName: string | null; canManage: boolean; isSysAdmin: boolean;
   onEdit: () => void; onToggle: () => void; toggling: boolean; onDelete: () => void;
 }) {
   return (
@@ -183,6 +194,12 @@ function LeaderCard({
           </p>
         )}
         {leader.bio && <p className="text-xs text-slate-400 line-clamp-2 mb-3 leading-relaxed">{leader.bio}</p>}
+        {cellName && (
+          <div className="flex items-center gap-1.5 mt-auto mb-3 text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
+            <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+            <span className="truncate">{cellName}</span>
+          </div>
+        )}
 
         {canManage && (
           <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
@@ -215,11 +232,12 @@ function LeaderCard({
 
 interface Props {
   initialLeaders: Leader[];
+  cells: { id: string; name: string; leader1_id?: string | null; leader2_id?: string | null }[];
   canManage: boolean;
   isSysAdmin: boolean;
 }
 
-export function LeadersAdminClient({ initialLeaders, canManage, isSysAdmin }: Props) {
+export function LeadersAdminClient({ initialLeaders, cells, canManage, isSysAdmin }: Props) {
   const router = useRouter();
   const { toast, dismiss } = useToast();
   const [leaders, setLeaders] = useState(initialLeaders);
@@ -231,6 +249,8 @@ export function LeadersAdminClient({ initialLeaders, canManage, isSysAdmin }: Pr
 
   const openCreate = () => { setEditing(null); setIsOpen(true); };
   const openEdit = (l: Leader) => { setEditing(l); setIsOpen(true); };
+
+  const getLinkedCell = (leaderId: string) => cells.find(c => c.leader1_id === leaderId || c.leader2_id === leaderId);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -266,7 +286,8 @@ export function LeadersAdminClient({ initialLeaders, canManage, isSysAdmin }: Pr
       const toastId = toast('loading', 'Removendo...');
       const result = await deleteLeader(leader.id);
       dismiss(toastId);
-      if ('error' in result) { toast('error', result.error); return; }
+      const err = 'error' in result ? result.error : null;
+      if (err) { toast('error', err); return; }
       toast('success', 'Líder removido.');
       setLeaders(prev => prev.filter(l => l.id !== leader.id));
     });
@@ -351,18 +372,22 @@ export function LeadersAdminClient({ initialLeaders, canManage, isSysAdmin }: Pr
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filtered.map(leader => (
-            <LeaderCard
-              key={leader.id}
-              leader={leader}
-              canManage={canManage}
-              isSysAdmin={isSysAdmin}
-              onEdit={() => openEdit(leader)}
-              onToggle={() => handleToggle(leader)}
-              toggling={togglingId === leader.id}
-              onDelete={() => handleDelete(leader)}
-            />
-          ))}
+          {filtered.map(leader => {
+            const linked = getLinkedCell(leader.id);
+            return (
+              <LeaderCard
+                key={leader.id}
+                leader={leader}
+                cellName={linked?.name ?? null}
+                canManage={canManage}
+                isSysAdmin={isSysAdmin}
+                onEdit={() => openEdit(leader)}
+                onToggle={() => handleToggle(leader)}
+                toggling={togglingId === leader.id}
+                onDelete={() => handleDelete(leader)}
+              />
+            );
+          })}
         </div>
       )}
 
@@ -370,6 +395,8 @@ export function LeadersAdminClient({ initialLeaders, canManage, isSysAdmin }: Pr
       {isOpen && (
         <LeaderModal
           editing={editing}
+          cells={cells}
+          linkedCellId={editing ? getLinkedCell(editing.id)?.id ?? null : null}
           isPending={isPending}
           onClose={() => setIsOpen(false)}
           onSubmit={handleSubmit}
