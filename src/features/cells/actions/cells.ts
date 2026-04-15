@@ -57,6 +57,7 @@ export async function createCell(formData: FormData) {
   const contact_phone    = (formData.get('contact_phone')    as string)?.trim() || null;
   const contact_whatsapp = (formData.get('contact_whatsapp') as string)?.trim() || null;
   const contact_email    = (formData.get('contact_email')    as string)?.trim() || null;
+  const instagram_url    = (formData.get('instagram_url')    as string)?.trim() || null;
 
   const leader1_id = (formData.get('leader1_id') as string) || null;
   const leader2_id = (formData.get('leader2_id') as string) || null;
@@ -67,7 +68,7 @@ export async function createCell(formData: FormData) {
     .insert({ name, description, neighborhood, address,
               meeting_days, meeting_time, meeting_type,
               contact_phone, contact_whatsapp, contact_email,
-              leader1_id: leader1_id || null,
+              instagram_url, leader1_id: leader1_id || null,
               leader2_id: leader2_id || null,
               is_active: true, is_public: true })
     .select('id')
@@ -121,6 +122,7 @@ export async function updateCell(id: string, formData: FormData) {
     contact_phone:    (formData.get('contact_phone')    as string)?.trim() || null,
     contact_whatsapp: (formData.get('contact_whatsapp') as string)?.trim() || null,
     contact_email:    (formData.get('contact_email')    as string)?.trim() || null,
+    instagram_url:    (formData.get('instagram_url')    as string)?.trim() || null,
     leader1_id:       (formData.get('leader1_id') as string) || null,
     leader2_id:       (formData.get('leader2_id') as string) || null,
   };

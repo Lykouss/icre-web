@@ -36,9 +36,17 @@ function PastorModal({ pastor, onClose }: { pastor: Pastor; onClose: () => void 
           <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-1.5">{pastor.role}</p>
           <h3 className="text-2xl font-black text-white mb-4">{pastor.name}</h3>
           {pastor.bio
-            ? <p className="text-slate-400 leading-relaxed text-sm">{pastor.bio}</p>
-            : <p className="text-slate-600 text-sm italic">Sem biografia disponível.</p>
+            ? <p className="text-slate-400 leading-relaxed text-sm mb-5">{pastor.bio}</p>
+            : <p className="text-slate-600 text-sm italic mb-5">Sem biografia disponível.</p>
           }
+          {pastor.instagram_url && (
+            <div className="flex gap-3">
+              <a href={pastor.instagram_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-fuchsia-400 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 border border-fuchsia-500/20 px-4 py-2.5 rounded-xl transition-colors font-medium">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                Instagram
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>

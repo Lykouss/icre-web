@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createLeader, updateLeader, toggleLeaderActive, deleteLeader } from '@/features/leaders/actions/leaders';
 import { useToast } from '@/features/core/components/ToastContext';
@@ -11,6 +11,7 @@ export interface Leader {
   phone:      string | null;
   photo_url:  string | null;
   bio:        string | null;
+  instagram_url?: string | null;
   is_active:  boolean;
   sort_order: number;
   created_at: string;
@@ -117,6 +118,14 @@ function LeaderModal({
                     placeholder="(00) 00000-0000"
                   />
                 </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Instagram (@)</label>
+                  <input
+                    name="instagram_url" type="url" defaultValue={editing?.instagram_url ?? ''}
+                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                    placeholder="https://instagram.com/lider..."
+                  />
+                </div>
               </div>
             </div>
 
@@ -193,6 +202,12 @@ function LeaderCard({
             {leader.phone}
           </p>
         )}
+        {leader.instagram_url && (
+          <a href={leader.instagram_url} target="_blank" rel="noreferrer" className="text-xs text-fuchsia-600 mb-2 flex items-center gap-1 hover:underline">
+            <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            Instagram
+          </a>
+        )}
         {leader.bio && <p className="text-xs text-slate-400 line-clamp-2 mb-3 leading-relaxed">{leader.bio}</p>}
         {cellName && (
           <div className="flex items-center gap-1.5 mt-auto mb-3 text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
@@ -246,6 +261,11 @@ export function LeadersAdminClient({ initialLeaders, cells, canManage, isSysAdmi
   const [isPending, startTransition] = useTransition();
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+
+  // Sincronizar as props com o state ao recarregar (ex: router.refresh)
+  useEffect(() => {
+    setLeaders(initialLeaders);
+  }, [initialLeaders]);
 
   const openCreate = () => { setEditing(null); setIsOpen(true); };
   const openEdit = (l: Leader) => { setEditing(l); setIsOpen(true); };

@@ -67,11 +67,12 @@ export async function createLeader(formData: FormData) {
 
   const phone = (formData.get('phone') as string)?.trim() || null;
   const bio   = (formData.get('bio')   as string)?.trim() || null;
+  const instagram_url = (formData.get('instagram_url') as string)?.trim() || null;
 
   const admin = await createAdminClient();
   const { data, error } = await admin
     .from('leaders')
-    .insert({ name, phone, bio, is_active: true })
+    .insert({ name, phone, bio, instagram_url, is_active: true })
     .select('id')
     .single();
 
@@ -112,6 +113,7 @@ export async function updateLeader(id: string, formData: FormData) {
     name,
     phone: (formData.get('phone') as string)?.trim() || null,
     bio:   (formData.get('bio')   as string)?.trim() || null,
+    instagram_url: (formData.get('instagram_url') as string)?.trim() || null,
   };
 
   const admin = await createAdminClient();

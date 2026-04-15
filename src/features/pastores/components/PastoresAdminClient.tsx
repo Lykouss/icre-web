@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   createPastor,
@@ -107,11 +107,19 @@ function PastorModal({
                   className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
                   placeholder="Ex: Pastor João Silva" />
               </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Cargo / Função *</label>
-                <input name="role" defaultValue={editing?.role} required
-                  className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
-                  placeholder="Ex: Pastor Titular · Líder de Louvor" />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Cargo / Função *</label>
+                  <input name="role" defaultValue={editing?.role} required
+                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                    placeholder="Ex: Pastor Titular" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Instagram (@)</label>
+                  <input name="instagram_url" type="url" defaultValue={editing?.instagram_url ?? ''}
+                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                    placeholder="https://instagram.com/pastor..." />
+                </div>
               </div>
             </div>
 
@@ -178,6 +186,12 @@ function PastorCard({
 
       {/* Body */}
       <div className="p-4 flex flex-col flex-1">
+        {pastor.instagram_url && (
+          <a href={pastor.instagram_url} target="_blank" rel="noreferrer" className="text-xs font-medium text-fuchsia-600 mb-2 flex items-center gap-1 hover:underline">
+            <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            Instagram
+          </a>
+        )}
         {pastor.bio ? (
           <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed mb-3">{pastor.bio}</p>
         ) : (
@@ -228,6 +242,11 @@ export function PastoresAdminClient({ initialPastors, canManage, isSysAdmin }: P
   const [isPending, startTransition] = useTransition();
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+
+  // Sincronizar as props com o state ao recarregar
+  useEffect(() => {
+    setPastors(initialPastors);
+  }, [initialPastors]);
 
   const openCreate = () => { setEditing(null); setIsOpen(true); };
   const openEdit   = (p: Pastor) => { setEditing(p); setIsOpen(true); };

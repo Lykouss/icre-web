@@ -23,7 +23,7 @@ export default async function PastoresPage() {
   const admin = await createAdminClient();
   const { data } = await admin
     .from('pastors')
-    .select('id, name, role, bio, photo_url, sort_order, is_active')
+    .select('id, name, role, bio, photo_url, instagram_url, sort_order, is_active')
     .order('sort_order', { ascending: true })
     .order('name', { ascending: true });
 

@@ -272,6 +272,7 @@ export async function createPastor(formData: FormData) {
   const name = (formData.get('name') as string)?.trim();
   const role = (formData.get('role') as string)?.trim();
   const bio  = (formData.get('bio')  as string)?.trim() || null;
+  const instagram_url = (formData.get('instagram_url') as string)?.trim() || null;
 
   if (!name || !role) return { error: 'Nome e cargo são obrigatórios.' };
   if (name.length < 2 || name.length > 120) return { error: 'Nome inválido.' };
@@ -281,7 +282,7 @@ export async function createPastor(formData: FormData) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('pastors')
-    .insert({ name, role, bio })
+    .insert({ name, role, bio, instagram_url })
     .select('id')
     .single();
 
@@ -309,6 +310,7 @@ export async function updatePastor(id: string, formData: FormData) {
   const name = (formData.get('name') as string)?.trim();
   const role = (formData.get('role') as string)?.trim();
   const bio  = (formData.get('bio')  as string)?.trim() || null;
+  const instagram_url = (formData.get('instagram_url') as string)?.trim() || null;
 
   if (!name || !role) return { error: 'Nome e cargo são obrigatórios.' };
   if (bio && bio.length > 600) return { error: 'Bio muito longa.' };
@@ -323,7 +325,7 @@ export async function updatePastor(id: string, formData: FormData) {
     else return upload;
   }
 
-  const patch: Record<string, unknown> = { name, role, bio, updated_at: new Date().toISOString() };
+  const patch: Record<string, unknown> = { name, role, bio, instagram_url, updated_at: new Date().toISOString() };
   if (photo_url !== undefined) patch.photo_url = photo_url;
 
   const { error } = await supabase.from('pastors').update(patch).eq('id', id);

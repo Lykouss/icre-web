@@ -135,6 +135,7 @@ export interface Pastor {
   role:       string;
   bio:        string | null;
   photo_url:  string | null;
+  instagram_url?: string | null;
   sort_order: number;
   is_active:  boolean;
 }
@@ -147,6 +148,7 @@ export interface Leader {
   phone:     string | null;
   photo_url: string | null;
   bio:       string | null;
+  instagram_url?: string | null;
   is_active: boolean;
 }
 
@@ -154,6 +156,7 @@ export interface PublicLeader {
   id:        string;
   name:      string;
   photo_url: string | null;
+  instagram_url?: string | null;
 }
 
 // ── Células (visão pública) ───────────────────────────────────
@@ -165,9 +168,11 @@ export interface PublicCell {
   meeting_time:     string | null;
   meeting_type:     MeetingType;
   neighborhood:     string | null;
+  address:          string | null;
   description:      string | null;
   contact_phone:    string | null;
   contact_whatsapp: string | null;
+  instagram_url:    string | null;
   image_url:        string | null;
   leader_photo_url: string | null;
   leader1_id:       string | null;
@@ -191,6 +196,7 @@ export interface Cell {
   contact_phone:    string | null;
   contact_whatsapp: string | null;
   contact_email:    string | null;
+  instagram_url:    string | null;
   image_url:        string | null;
   is_active:        boolean;
   sort_order:       number;

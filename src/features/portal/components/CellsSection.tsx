@@ -22,7 +22,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
       className="group flex flex-col text-left bg-slate-900/60 backdrop-blur-sm border border-white/8 rounded-3xl overflow-hidden hover:border-blue-500/25 hover:-translate-y-1.5 transition-all duration-300 ease-out"
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(28px)', transitionDelay: `${index * 70}ms` }}
     >
-      <div className="relative aspect-[2/1] bg-slate-800 shrink-0 border-b border-white/5 w-full">
+      <div className="relative aspect-video bg-slate-800 shrink-0 border-b border-white/5 w-full">
         {cell.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={cell.image_url} alt={cell.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -55,7 +55,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
             <div key={i} className="flex items-center gap-1.5">
               {leader!.photo_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={leader!.photo_url} alt={leader!.name} className="w-6 h-6 rounded-full object-cover ring-1 ring-white/20" />
+                <img src={leader!.photo_url} alt={leader!.name} className="w-6 h-6 rounded-full object-cover object-top ring-1 ring-white/20" />
               ) : (
                 <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
                   <svg className="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,13 +79,16 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
             {cell.meeting_days}{cell.meeting_time && ` · ${cell.meeting_time}`}
           </div>
         )}
-        {cell.neighborhood && (
-          <div className="flex items-center gap-2 text-sm text-slate-400">
-            <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {(cell.neighborhood || cell.address) && (
+          <div className="flex items-start gap-2 text-sm text-slate-400">
+            <svg className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            {cell.neighborhood}
+            <div className="flex flex-col">
+              {cell.neighborhood && <span className="font-medium">{cell.neighborhood}</span>}
+              {cell.address && <span className="text-xs text-slate-500 leading-tight mt-0.5">{cell.address}</span>}
+            </div>
           </div>
         )}
       </div>
@@ -101,7 +104,7 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 px-4 sm:px-6" onClick={onClose}>
       <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md" />
       <div className="relative bg-slate-900 border border-white/10 rounded-3xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-        <div className="relative aspect-[21/9] bg-slate-800 shrink-0 border-b border-white/5">
+        <div className="relative h-36 sm:h-44 w-full bg-slate-800 shrink-0 border-b border-white/5">
           {cell.image_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={cell.image_url} alt={cell.name} className="w-full h-full object-cover" />
@@ -124,11 +127,14 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
 
           {(cell.leader1 || cell.leader2) && (
             <div className="mb-8 p-4 bg-slate-800/50 rounded-2xl border border-white/5 flex flex-wrap gap-4 items-center">
-              {[cell.leader1, cell.leader2].filter(Boolean).map((leader, i) => (
-                <div key={i} className="flex items-center gap-3">
+              {[cell.leader1, cell.leader2].filter(Boolean).map((leader, i) => {
+                const LeaderTag = leader!.instagram_url ? 'a' : 'div';
+                const tagProps = leader!.instagram_url ? { href: leader!.instagram_url, target: '_blank', rel: 'noreferrer' } : {};
+                return (
+                <LeaderTag key={i} {...tagProps} className={`flex items-center gap-3 ${leader!.instagram_url ? 'hover:bg-white/5 p-2 rounded-xl transition-colors cursor-pointer group' : ''}`}>
                   {leader!.photo_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={leader!.photo_url} alt={leader!.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-white/10 shadow-lg" />
+                    <img src={leader!.photo_url} alt={leader!.name} className="w-10 h-10 rounded-full object-cover object-top ring-2 ring-white/10 shadow-lg group-hover:ring-blue-500/50 transition-all" />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center ring-2 ring-blue-500/20">
                       <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
@@ -136,10 +142,11 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
                   )}
                   <div>
                     <span className="block text-xs font-medium text-slate-400 mb-0.5">Líder {i + 1}</span>
-                    <span className="block text-sm font-semibold text-white">{leader!.name}</span>
+                    <span className="block text-sm font-semibold text-white group-hover:text-blue-300 transition-colors">{leader!.name} {leader!.instagram_url && <svg className="inline w-3 h-3 text-fuchsia-400 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>}</span>
                   </div>
-                </div>
-              ))}
+                </LeaderTag>
+                )
+              })}
             </div>
           )}
 
@@ -159,18 +166,28 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
                 </div>
               )}
 
-              {cell.neighborhood && (
+              {(cell.neighborhood || cell.address) && (
                 <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/20 border border-white/5">
                   <div className="mt-0.5 p-2 bg-emerald-500/10 rounded-lg shrink-0 border border-emerald-500/10">
                     <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                   </div>
                   <div>
                     <span className="block text-xs font-semibold text-slate-400 mb-1">Localização</span>
-                    <span className="text-white font-medium">{cell.neighborhood}</span>
+                    <span className="text-white font-medium block">{cell.neighborhood}</span>
+                    {cell.address && <span className="text-slate-400 text-xs block mt-1">{cell.address}</span>}
                   </div>
                 </div>
               )}
             </div>
+            
+            {cell.instagram_url && (
+              <div className="mt-4 flex flex-wrap gap-3">
+                <a href={cell.instagram_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-fuchsia-400 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 border border-fuchsia-500/20 px-4 py-2.5 rounded-xl transition-colors font-medium">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                  Instagram da Célula
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </div>

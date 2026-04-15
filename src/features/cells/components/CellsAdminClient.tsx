@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createCell, updateCell, toggleCellActive, deleteCell } from '@/features/cells/actions/cells';
 import { useToast } from '@/features/core/components/ToastContext';
@@ -151,8 +151,8 @@ function CellModal({ editing, leaders, isPending, onClose, onSubmit }: {
 
             {/* Contato */}
             <div>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Contato</h3>
-              <div className="grid grid-cols-3 gap-3">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Contato e Redes</h3>
+              <div className="grid grid-cols-2 gap-3 mb-3">
                 <div>
                   <label className="block text-xs font-medium text-slate-600 mb-1">WhatsApp</label>
                   <input name="contact_whatsapp" defaultValue={editing?.contact_whatsapp ?? ''} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400" placeholder="(00) 00000-0000" />
@@ -161,9 +161,15 @@ function CellModal({ editing, leaders, isPending, onClose, onSubmit }: {
                   <label className="block text-xs font-medium text-slate-600 mb-1">Telefone</label>
                   <input name="contact_phone" defaultValue={editing?.contact_phone ?? ''} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400" placeholder="(00) 0000-0000" />
                 </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-slate-600 mb-1">E-mail</label>
                   <input name="contact_email" type="email" defaultValue={editing?.contact_email ?? ''} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400" placeholder="celula@..." />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Instagram (@)</label>
+                  <input name="instagram_url" type="url" defaultValue={editing?.instagram_url ?? ''} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400" placeholder="https://instagram.com/celula..." />
                 </div>
               </div>
             </div>
@@ -290,6 +296,12 @@ function CellDetailModal({ cell, leader1, leader2, onClose, onEdit }: {
                 {cell.contact_email}
               </a>
             )}
+            {cell.instagram_url && (
+              <a href={cell.instagram_url} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200 rounded-lg font-medium hover:bg-fuchsia-100 transition-colors">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                Instagram
+              </a>
+            )}
           </div>
 
           {/* Descrição */}
@@ -409,6 +421,11 @@ export function CellsAdminClient({ initialCells, leaders, canManage, isSysAdmin 
   const [isPending, startTransition] = useTransition();
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+
+  // Sincronizar as props com o state ao recarregar (ex: router.refresh)
+  useEffect(() => {
+    setCells(initialCells);
+  }, [initialCells]);
 
   const openCreate = () => { setEditing(null); setIsOpen(true); };
   const openEdit   = (c: Cell) => { setEditing(c); setIsOpen(true); };

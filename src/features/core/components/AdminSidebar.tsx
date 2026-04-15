@@ -155,7 +155,7 @@ const NAV_ITEMS: NavItem[] = [
     ),
   },
   {
-    label: 'Liderança',
+    label: 'Pastores',
     href: '/pastores',
     flag: 'module_pastors',
     roles: ['SYSADMIN', 'CHURCH_ADMIN'],
@@ -290,11 +290,11 @@ function SidebarContent({
     <div className="flex flex-col h-full overflow-hidden">
 
       {/* ── Logo Header ── */}
-      <div className="relative h-16 flex items-center shrink-0 px-4 border-b border-white/5">
+      <div className={`relative h-16 flex items-center justify-between shrink-0 border-b border-white/5 ${isCollapsed ? 'px-1' : 'px-4'}`}>
         <Link
           href="/dashboard"
           onClick={() => handleNavClick('/dashboard')}
-          className="flex items-center gap-3 min-w-0 group"
+          className={`flex items-center min-w-0 group ${isCollapsed ? '' : 'gap-3'}`}
         >
           <div className="relative w-8 h-8 shrink-0 transition-transform group-hover:scale-110 duration-200">
             <Image src="/logo.svg" alt="Logo ICRE" fill className="object-contain brightness-0 invert opacity-90" />
@@ -582,7 +582,23 @@ function SidebarContent({
 
 export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClose }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+
+  // Load saved state on mount
+  useEffect(() => {
+    setIsMounted(true);
+    const saved = localStorage.getItem('sige_sidebar_collapsed');
+    if (saved) setIsCollapsed(saved === 'true');
+  }, []);
+
+  const handleCollapseToggle = useCallback(() => {
+    setIsCollapsed(prev => {
+      const next = !prev;
+      localStorage.setItem('sige_sidebar_collapsed', String(next));
+      return next;
+    });
+  }, []);
 
   // Realtime feature flags listener
   useEffect(() => {
@@ -621,8 +637,8 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
       {/* ─────────────────── DESKTOP SIDEBAR ─────────────────── */}
       <motion.aside
         variants={{
-          expanded:  { width: 240, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-          collapsed: { width: 72,  transition: { duration: 0.36, ease: [0.4, 0, 0.2, 1]  } },
+          expanded:  { width: 240, transition: { duration: 0.5, ease: [0.33, 1, 0.68, 1] } },
+          collapsed: { width: 72,  transition: { duration: 0.5, ease: [0.33, 1, 0.68, 1] } },
         }}
         animate={isCollapsed ? 'collapsed' : 'expanded'}
         className={`
@@ -648,7 +664,7 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
             user={user}
             flags={flags}
             isCollapsed={isCollapsed}
-            onCollapse={() => setIsCollapsed(c => !c)}
+            onCollapse={handleCollapseToggle}
             isMobile={false}
           />
         </div>
