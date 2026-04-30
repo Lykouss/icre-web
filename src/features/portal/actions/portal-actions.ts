@@ -11,7 +11,7 @@ const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gi
 
 const AVATAR_MAX_PER_DAY = 3;
 
-function isAdmin(user: Awaited<ReturnType<typeof getCurrentUser>>) {
+function isAdmin(user: Awaited<ReturnType<typeof getCurrentUser>>): user is NonNullable<Awaited<ReturnType<typeof getCurrentUser>>> {
   if (!user) return false;
   return user.isSysAdmin || user.roles.some(r => ['CHURCH_ADMIN'].includes(r));
 }
@@ -211,7 +211,7 @@ export async function uploadSiteMedia(formData: FormData): Promise<{ success: tr
       url:         result.url,
       size_bytes:  file.size,
       mime_type:   file.type,
-      uploaded_by: user!.id,
+      uploaded_by: user.id,
     })
     .select()
     .single();
@@ -269,7 +269,7 @@ export async function upsertSiteBlock(
   const { error } = await supabase
     .from('site_blocks')
     .upsert(
-      { type: blockType, content, updated_at: new Date().toISOString(), updated_by: user!.id },
+      { type: blockType, content, updated_at: new Date().toISOString(), updated_by: user.id },
       { onConflict: 'type' }
     );
 
