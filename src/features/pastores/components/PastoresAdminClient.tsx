@@ -164,9 +164,9 @@ function PastorCard({
   onEdit: () => void; onToggle: () => void; toggling: boolean; onDelete: () => void;
 }) {
   return (
-    <div className={`bg-white rounded-2xl border overflow-hidden flex flex-col transition-all duration-200 hover:shadow-md ${pastor.is_active ? 'border-slate-200' : 'border-slate-200 opacity-60'}`}>
+    <div className={`bg-white rounded-2xl border p-4 flex flex-col sm:flex-row items-center gap-5 transition-all duration-200 hover:shadow-md hover:border-blue-200 ${pastor.is_active ? 'border-slate-200' : 'border-slate-200 opacity-60 bg-slate-50'}`}>
       {/* Photo */}
-      <div className="relative aspect-[3/4] bg-slate-100 overflow-hidden">
+      <div className="w-24 h-24 sm:w-20 sm:h-20 shrink-0 rounded-full sm:rounded-2xl bg-slate-100 overflow-hidden relative shadow-inner ring-4 ring-slate-50 sm:ring-0">
         {pastor.photo_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={pastor.photo_url} alt={pastor.name} className="w-full h-full object-cover object-top" />
@@ -177,50 +177,52 @@ function PastorCard({
             </svg>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest mb-0.5">{pastor.role}</p>
-          <h3 className="font-bold text-white text-base leading-tight">{pastor.name}</h3>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent sm:hidden" />
       </div>
 
       {/* Body */}
-      <div className="p-4 flex flex-col flex-1">
+      <div className="flex-1 flex flex-col text-center sm:text-left min-w-0 w-full">
+        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">{pastor.role}</p>
+        <h3 className="font-bold text-slate-900 text-lg leading-tight mb-1 truncate">{pastor.name}</h3>
+        
         {pastor.instagram_url && (
-          <a href={pastor.instagram_url} target="_blank" rel="noreferrer" className="text-xs font-medium text-fuchsia-600 mb-2 flex items-center gap-1 hover:underline">
+          <a href={pastor.instagram_url} target="_blank" rel="noreferrer" className="text-xs font-medium text-fuchsia-600 mb-2 inline-flex items-center justify-center sm:justify-start gap-1 hover:underline">
             <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
             Instagram
           </a>
         )}
         {pastor.bio ? (
-          <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed mb-3">{pastor.bio}</p>
+          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed max-w-2xl">{pastor.bio}</p>
         ) : (
-          <p className="text-xs text-slate-300 italic mb-3">Sem biografia cadastrada.</p>
-        )}
-
-        {canManage && (
-          <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
-            <div className="flex items-center gap-2">
-              <Toggle checked={pastor.is_active} onChange={onToggle} disabled={toggling} />
-              <span className="text-xs text-slate-500">{pastor.is_active ? 'Visível' : 'Oculto'}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <button onClick={onEdit} className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Editar">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </button>
-              {isSysAdmin && (
-                <button onClick={onDelete} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Remover">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              )}
-            </div>
-          </div>
+          <p className="text-xs text-slate-400 italic">Sem biografia cadastrada.</p>
         )}
       </div>
+
+      {/* Actions */}
+      {canManage && (
+        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 sm:gap-2 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 mt-2 sm:mt-0 shrink-0">
+          <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+            <Toggle checked={pastor.is_active} onChange={onToggle} disabled={toggling} />
+            <span className="text-xs font-medium text-slate-600">{pastor.is_active ? 'Visível' : 'Oculto'}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button onClick={onEdit} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50 transition-colors" title="Editar">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Editar
+            </button>
+            {isSysAdmin && (
+              <button onClick={onDelete} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 hover:bg-red-50 transition-colors" title="Remover">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Excluir
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -280,14 +282,14 @@ export function PastoresAdminClient({ initialPastors, canManage, isSysAdmin }: P
   };
 
   const handleDelete = (pastor: Pastor) => {
-    if (!confirm(`Ocultar "${pastor.name}" do portal?`)) return;
+    if (!confirm(`Tem certeza que deseja EXCLUIR DEFINITIVAMENTE "${pastor.name}"? Esta ação não pode ser desfeita e removerá o pastor do banco de dados.`)) return;
     startTransition(async () => {
-      const toastId = toast('loading', 'Removendo...');
+      const toastId = toast('loading', 'Excluindo...');
       const result = await deletePastor(pastor.id);
       dismiss(toastId);
       const err = 'error' in result ? result.error : null;
       if (err) { toast('error', err); return; }
-      toast('success', 'Líder ocultado do portal.');
+      toast('success', 'Pastor excluído permanentemente.');
       setPastors(prev => prev.filter(p => p.id !== pastor.id));
     });
   };
@@ -367,7 +369,7 @@ export function PastoresAdminClient({ initialPastors, canManage, isSysAdmin }: P
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div className="flex flex-col gap-4">
           {filtered.map(p => (
             <PastorCard
               key={p.id}

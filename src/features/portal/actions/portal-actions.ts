@@ -5,12 +5,9 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import type { SiteBlockType } from '@/features/portal/types';
+import { checkUploadPermission, registerMediaAsset } from '@/features/media/actions/media-actions';
 
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
-const MAX_AVATAR       = 2 * 1024 * 1024;    //   2 MB
-const MAX_PASTOR       = 3 * 1024 * 1024;    //   3 MB
-const MAX_SITE_MEDIA   = 10 * 1024 * 1024;   //  10 MB por arquivo
-const SITE_MEDIA_QUOTA = 200 * 1024 * 1024;  // 200 MB total
 
 const AVATAR_MAX_PER_DAY = 3;
 
@@ -44,11 +41,9 @@ async function recordAvatarUpload(userId: string): Promise<void> {
 async function uploadFile(
   bucket: string,
   path: string,
-  file: File,
-  maxSize: number
+  file: File
 ): Promise<{ url: string } | { error: string }> {
   if (!ALLOWED_MIME.has(file.type)) return { error: 'Formato inválido. Use JPG, PNG, WebP ou GIF.' };
-  if (file.size > maxSize) return { error: `Arquivo muito grande. Máximo ${maxSize / 1024 / 1024} MB.` };
 
   const admin = await createAdminClient();
   const ext = file.name.split('.').pop() ?? 'jpg';
@@ -81,8 +76,21 @@ export async function uploadAvatar(formData: FormData) {
     return { error: 'Limite de 3 trocas de foto por dia atingido. Tente novamente amanhã.' };
   }
 
-  const result = await uploadFile('avatars', `${user.id}/avatar`, file, MAX_AVATAR);
+  const perm = await checkUploadPermission('avatar', file.size);
+  if (!perm.allowed) return { error: perm.error || 'Upload negado.' };
+
+  const result = await uploadFile('avatars', `${user.id}/avatar`, file);
   if ('error' in result) return result;
+
+  await registerMediaAsset({
+    file_name: file.name,
+    category: 'avatar',
+    url: result.url,
+    storage_path: `${user.id}/avatar.${file.name.split('.').pop() ?? 'jpg'}`,
+    size_bytes: file.size,
+    mime_type: file.type,
+    uploaded_by: user.id
+  });
 
   await recordAvatarUpload(user.id);
 
@@ -160,16 +168,13 @@ export async function uploadSiteMedia(formData: FormData): Promise<{ success: tr
   const file = formData.get('file');
   if (!(file instanceof File) || file.size === 0) return { error: 'Arquivo inválido.' };
 
-  if (!ALLOWED_MIME.has(file.type)) {
-    return { error: 'Formato inválido. Use JPG, PNG, WebP ou GIF.' };
-  }
-  if (file.size > MAX_SITE_MEDIA) {
-    return { error: `Arquivo muito grande. Máximo ${MAX_SITE_MEDIA / 1024 / 1024} MB por arquivo.` };
-  }
+  const perm = await checkUploadPermission('banner', file.size);
+  if (!perm.allowed) return { error: perm.error || 'Upload negado.' };
 
   const supabase = await createClient();
 
-  // Verifica quota total
+  // Verifica quota total (ex: 200MB hard limit global, ou podemos ler de config depois)
+  const SITE_MEDIA_QUOTA = 200 * 1024 * 1024;
   const { data: usageData } = await supabase
     .from('site_media')
     .select('size_bytes');
@@ -185,8 +190,19 @@ export async function uploadSiteMedia(formData: FormData): Promise<{ success: tr
   }
 
   const slug = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-  const result = await uploadFile('site-images', `gallery/${slug}`, file, MAX_SITE_MEDIA);
+  const storagePath = `gallery/${slug}`;
+  const result = await uploadFile('site-images', storagePath, file);
   if ('error' in result) return result;
+
+  await registerMediaAsset({
+    file_name: file.name,
+    category: 'banner',
+    url: result.url,
+    storage_path: `${storagePath}.${file.name.split('.').pop() ?? 'jpg'}`,
+    size_bytes: file.size,
+    mime_type: file.type,
+    uploaded_by: user.id
+  });
 
   const { data: inserted, error: dbError } = await supabase
     .from('site_media')
@@ -290,9 +306,21 @@ export async function createPastor(formData: FormData) {
 
   const photoFile = formData.get('photo');
   if (photoFile instanceof File && photoFile.size > 0) {
-    const upload = await uploadFile('site-images', `pastors/${data.id}`, photoFile, MAX_PASTOR);
-    if ('url' in upload) {
-      await supabase.from('pastors').update({ photo_url: upload.url }).eq('id', data.id);
+    const perm = await checkUploadPermission('pastor', photoFile.size);
+    if (!perm.allowed) return { error: perm.error || 'Upload negado.' };
+
+    const result = await uploadFile('site-images', `pastors/${data.id}`, photoFile);
+    if ('url' in result) {
+      await supabase.from('pastors').update({ photo_url: result.url }).eq('id', data.id);
+      await registerMediaAsset({
+        file_name: photoFile.name,
+        category: 'pastor',
+        url: result.url,
+        storage_path: `pastors/${data.id}.${photoFile.name.split('.').pop() ?? 'jpg'}`,
+        size_bytes: photoFile.size,
+        mime_type: photoFile.type,
+        uploaded_by: user.id
+      });
     }
   }
 
@@ -320,9 +348,22 @@ export async function updatePastor(id: string, formData: FormData) {
   const photoFile = formData.get('photo');
   let photo_url: string | undefined;
   if (photoFile instanceof File && photoFile.size > 0) {
-    const upload = await uploadFile('site-images', `pastors/${id}`, photoFile, MAX_PASTOR);
-    if ('url' in upload) photo_url = upload.url;
-    else return upload;
+    const perm = await checkUploadPermission('pastor', photoFile.size);
+    if (!perm.allowed) return { error: perm.error || 'Upload negado.' };
+
+    const upload = await uploadFile('site-images', `pastors/${id}`, photoFile);
+    if ('url' in upload) {
+      photo_url = upload.url;
+      await registerMediaAsset({
+        file_name: photoFile.name,
+        category: 'pastor',
+        url: upload.url,
+        storage_path: `pastors/${id}.${photoFile.name.split('.').pop() ?? 'jpg'}`,
+        size_bytes: photoFile.size,
+        mime_type: photoFile.type,
+        uploaded_by: user.id
+      });
+    } else return upload;
   }
 
   const patch: Record<string, unknown> = { name, role, bio, instagram_url, updated_at: new Date().toISOString() };
@@ -342,8 +383,8 @@ export async function deletePastor(id: string) {
   if (!id.match(/^[0-9a-f-]{36}$/i)) return { error: 'ID inválido.' };
 
   const supabase = await createClient();
-  const { error } = await supabase.from('pastors').update({ is_active: false }).eq('id', id);
-  if (error) return { error: 'Falha ao remover.' };
+  const { error } = await supabase.from('pastors').delete().eq('id', id);
+  if (error) return { error: 'Falha ao remover do banco de dados.' };
 
   revalidatePath('/');
   return { success: true };

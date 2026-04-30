@@ -4,8 +4,8 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import { isValidUuid } from '@/lib/action-validators';
+import { checkUploadPermission, registerMediaAsset } from '@/features/media/actions/media-actions';
 
-const MAX_CELL_IMAGE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_MIME   = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 function canManage(roles: string[]): boolean {
@@ -18,8 +18,6 @@ async function uploadCellFile(
 ): Promise<{ url: string } | { error: string }> {
   if (!ALLOWED_MIME.has(file.type))
     return { error: 'Formato inválido. Use JPG, PNG ou WebP.' };
-  if (file.size > MAX_CELL_IMAGE)
-    return { error: 'Arquivo muito grande. Máximo 5 MB.' };
 
   const admin   = await createAdminClient();
   const ext      = file.name.split('.').pop() ?? 'jpg';
@@ -83,16 +81,42 @@ export async function createCell(formData: FormData) {
 
   const bannerFile = formData.get('image');
   if (bannerFile instanceof File && bannerFile.size > 0) {
+    const perm = await checkUploadPermission('cell', bannerFile.size);
+    if (!perm.allowed) return { error: perm.error || 'Upload de banner negado.' };
+
     const upload = await uploadCellFile(`cells/${id}/banner`, bannerFile);
-    if ('url' in upload)
+    if ('url' in upload) {
       await admin.from('cells').update({ image_url: upload.url }).eq('id', id);
+      await registerMediaAsset({
+        file_name: bannerFile.name,
+        category: 'cell',
+        url: upload.url,
+        storage_path: `cells/${id}/banner.${bannerFile.name.split('.').pop() ?? 'jpg'}`,
+        size_bytes: bannerFile.size,
+        mime_type: bannerFile.type,
+        uploaded_by: user.id
+      });
+    }
   }
 
   const leaderPhotoFile = formData.get('leader_photo');
   if (leaderPhotoFile instanceof File && leaderPhotoFile.size > 0) {
+    const perm = await checkUploadPermission('avatar', leaderPhotoFile.size);
+    if (!perm.allowed) return { error: perm.error || 'Upload de foto de líder negado.' };
+
     const upload = await uploadCellFile(`cells/${id}/leader`, leaderPhotoFile);
-    if ('url' in upload)
+    if ('url' in upload) {
       await admin.from('cells').update({ leader_photo_url: upload.url }).eq('id', id);
+      await registerMediaAsset({
+        file_name: leaderPhotoFile.name,
+        category: 'avatar',
+        url: upload.url,
+        storage_path: `cells/${id}/leader.${leaderPhotoFile.name.split('.').pop() ?? 'jpg'}`,
+        size_bytes: leaderPhotoFile.size,
+        mime_type: leaderPhotoFile.type,
+        uploaded_by: user.id
+      });
+    }
   }
 
   revalidatePath('/celulas');
@@ -131,16 +155,42 @@ export async function updateCell(id: string, formData: FormData) {
 
   const bannerFile = formData.get('image');
   if (bannerFile instanceof File && bannerFile.size > 0) {
+    const perm = await checkUploadPermission('cell', bannerFile.size);
+    if (!perm.allowed) return { error: perm.error || 'Upload de banner negado.' };
+
     const upload = await uploadCellFile(`cells/${id}/banner`, bannerFile);
-    if ('url' in upload) patch.image_url = upload.url;
-    else return upload;
+    if ('url' in upload) {
+      patch.image_url = upload.url;
+      await registerMediaAsset({
+        file_name: bannerFile.name,
+        category: 'cell',
+        url: upload.url,
+        storage_path: `cells/${id}/banner.${bannerFile.name.split('.').pop() ?? 'jpg'}`,
+        size_bytes: bannerFile.size,
+        mime_type: bannerFile.type,
+        uploaded_by: user.id
+      });
+    } else return upload;
   }
 
   const leaderPhotoFile = formData.get('leader_photo');
   if (leaderPhotoFile instanceof File && leaderPhotoFile.size > 0) {
+    const perm = await checkUploadPermission('avatar', leaderPhotoFile.size);
+    if (!perm.allowed) return { error: perm.error || 'Upload de foto de líder negado.' };
+
     const upload = await uploadCellFile(`cells/${id}/leader`, leaderPhotoFile);
-    if ('url' in upload) patch.leader_photo_url = upload.url;
-    else return upload;
+    if ('url' in upload) {
+      patch.leader_photo_url = upload.url;
+      await registerMediaAsset({
+        file_name: leaderPhotoFile.name,
+        category: 'avatar',
+        url: upload.url,
+        storage_path: `cells/${id}/leader.${leaderPhotoFile.name.split('.').pop() ?? 'jpg'}`,
+        size_bytes: leaderPhotoFile.size,
+        mime_type: leaderPhotoFile.type,
+        uploaded_by: user.id
+      });
+    } else return upload;
   }
 
   const { error } = await admin.from('cells').update(patch).eq('id', id);

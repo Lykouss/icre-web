@@ -4,8 +4,8 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import { isValidUuid } from '@/lib/action-validators';
+import { checkUploadPermission, registerMediaAsset } from '@/features/media/actions/media-actions';
 
-const MAX_LEADER_PHOTO = 4 * 1024 * 1024; // 4 MB
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 function canManage(roles: string[]): boolean {
@@ -18,8 +18,6 @@ async function uploadLeaderPhoto(
 ): Promise<{ url: string } | { error: string }> {
   if (!ALLOWED_MIME.has(file.type))
     return { error: 'Formato inválido. Use JPG, PNG ou WebP.' };
-  if (file.size > MAX_LEADER_PHOTO)
-    return { error: 'Arquivo muito grande. Máximo 4 MB.' };
 
   const admin = await createAdminClient();
   const ext = file.name.split('.').pop() ?? 'jpg';
@@ -83,9 +81,21 @@ export async function createLeader(formData: FormData) {
 
   const photoFile = formData.get('photo');
   if (photoFile instanceof File && photoFile.size > 0) {
+    const perm = await checkUploadPermission('pastor', photoFile.size);
+    if (!perm.allowed) return { error: perm.error || 'Upload de fotos negado.' };
+
     const upload = await uploadLeaderPhoto(data.id, photoFile);
     if ('url' in upload) {
       await admin.from('leaders').update({ photo_url: upload.url }).eq('id', data.id);
+      await registerMediaAsset({
+        file_name: photoFile.name,
+        category: 'pastor', // using pastor limit and category for leaders
+        url: upload.url,
+        storage_path: `leaders/${data.id}.${photoFile.name.split('.').pop() ?? 'jpg'}`,
+        size_bytes: photoFile.size,
+        mime_type: photoFile.type,
+        uploaded_by: user.id
+      });
     }
   }
 
@@ -120,9 +130,22 @@ export async function updateLeader(id: string, formData: FormData) {
 
   const photoFile = formData.get('photo');
   if (photoFile instanceof File && photoFile.size > 0) {
+    const perm = await checkUploadPermission('pastor', photoFile.size);
+    if (!perm.allowed) return { error: perm.error || 'Upload de fotos negado.' };
+
     const upload = await uploadLeaderPhoto(id, photoFile);
-    if ('url' in upload) patch.photo_url = upload.url;
-    else return upload;
+    if ('url' in upload) {
+      patch.photo_url = upload.url;
+      await registerMediaAsset({
+        file_name: photoFile.name,
+        category: 'pastor',
+        url: upload.url,
+        storage_path: `leaders/${id}.${photoFile.name.split('.').pop() ?? 'jpg'}`,
+        size_bytes: photoFile.size,
+        mime_type: photoFile.type,
+        uploaded_by: user.id
+      });
+    } else return upload;
   }
 
   const { error } = await admin.from('leaders').update(patch).eq('id', id);

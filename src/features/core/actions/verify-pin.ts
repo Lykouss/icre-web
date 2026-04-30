@@ -50,8 +50,11 @@ export async function verifyPin(
     return { error: `PIN incorreto.${suffix}` };
   }
 
+  const { createPinToken } = await import('@/features/core/utils/pin-token');
+  const token = await createPinToken(user.id);
+
   const cookieStore = await cookies();
-  cookieStore.set('admin_unlocked', 'true', {
+  cookieStore.set('admin_unlocked', token, {
     maxAge: 60 * 60 * 2,
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',

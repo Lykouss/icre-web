@@ -92,8 +92,22 @@ export async function updateSession(request: NextRequest) {
 
   // PIN lock
   const requiresPin = isProtectedRoute && pathname !== '/pin-lock';
-  if (requiresPin && user && !request.cookies.has('admin_unlocked')) {
-    return NextResponse.redirect(new URL('/pin-lock', request.url));
+  if (requiresPin && user) {
+    const unlockToken = request.cookies.get('admin_unlocked')?.value;
+    
+    if (!unlockToken) {
+      return NextResponse.redirect(new URL('/pin-lock', request.url));
+    }
+
+    const { verifyPinToken } = await import('@/features/core/utils/pin-token');
+    const isValidToken = await verifyPinToken(unlockToken, user.id);
+
+    if (!isValidToken) {
+      // Clear invalid cookie
+      const response = NextResponse.redirect(new URL('/pin-lock', request.url));
+      response.cookies.delete('admin_unlocked');
+      return response;
+    }
   }
 
   if (pathname === '/login' && user) {

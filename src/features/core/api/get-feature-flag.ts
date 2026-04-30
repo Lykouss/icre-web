@@ -26,6 +26,7 @@ const DEFAULT_MODULE_ROLES: Record<string, AppRole[]> = {
   'module_cells': ['SYSADMIN', 'CHURCH_ADMIN'],
   'module_pastors': ['SYSADMIN', 'CHURCH_ADMIN'],
   'module_leaders': ['SYSADMIN', 'CHURCH_ADMIN'],
+  'module_media': ['SYSADMIN', 'CHURCH_ADMIN'],
   'module_public_site': ['SYSADMIN', 'CHURCH_ADMIN'],
   'module_permissions': ['SYSADMIN', 'CHURCH_ADMIN'],
   'module_kids': ['SYSADMIN', 'CHURCH_ADMIN'],
@@ -102,6 +103,7 @@ export async function getSidebarFeatureFlags(user: UserContext) {
     'module_cells',
     'module_pastors',
     'module_leaders',
+    'module_media',
   ];
 
   const supabase = await createClient();
