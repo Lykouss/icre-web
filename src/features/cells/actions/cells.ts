@@ -8,8 +8,8 @@ import { checkUploadPermission, registerMediaAsset } from '@/features/media/acti
 
 const ALLOWED_MIME   = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
-function canManage(roles: string[]): boolean {
-  return roles.some(r => ['SYSADMIN', 'CHURCH_ADMIN'].includes(r));
+function canManage(roles: string[], isSysAdmin: boolean = false): boolean {
+  return isSysAdmin || roles.some(r => ['SYSADMIN', 'CHURCH_ADMIN'].includes(r));
 }
 
 async function uploadCellFile(
@@ -41,7 +41,7 @@ async function uploadCellFile(
 export async function createCell(formData: FormData) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
-  if (!canManage(user.roles)) return { error: 'Acesso negado.' };
+  if (!canManage(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
 
   const name = (formData.get('name') as string)?.trim();
   if (!name || name.length < 2) return { error: 'Nome da célula é obrigatório.' };
@@ -129,7 +129,7 @@ export async function createCell(formData: FormData) {
 export async function updateCell(id: string, formData: FormData) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
-  if (!canManage(user.roles)) return { error: 'Acesso negado.' };
+  if (!canManage(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
   if (!isValidUuid(id)) return { error: 'ID inválido.' };
 
   const name = (formData.get('name') as string)?.trim();
@@ -209,7 +209,7 @@ export async function updateCell(id: string, formData: FormData) {
 export async function toggleCellActive(id: string, isActive: boolean) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
-  if (!canManage(user.roles)) return { error: 'Acesso negado.' };
+  if (!canManage(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
   if (!isValidUuid(id)) return { error: 'ID inválido.' };
 
   const admin = await createAdminClient();

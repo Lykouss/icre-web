@@ -18,6 +18,9 @@ export default async function EventosPage() {
 
   const supabase = await createClient();
 
+  const hasAccess = user.isSysAdmin || user.roles.some(r => ['CHURCH_ADMIN'].includes(r));
+  if (!hasAccess) redirect('/dashboard');
+
   const { data, error } = await supabase
     .from('events')
     .select('id, title, type, date, time, location, description, is_recurring, recurrence_rules, cancelled_dates, capacity, is_public, requires_registration, requires_payment, ticket_price, status, banner_url, publish_at, expires_at, created_at')
@@ -26,7 +29,7 @@ export default async function EventosPage() {
 
   if (error) console.error('[EventosPage]', error.message);
 
-  const canManage = user.roles.some(r => ['SYSADMIN', 'CHURCH_ADMIN'].includes(r));
+  const canManage = hasAccess;
 
   return (
     <div className="max-w-7xl mx-auto">

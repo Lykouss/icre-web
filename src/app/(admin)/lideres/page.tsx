@@ -19,6 +19,7 @@ export default async function LideresPage() {
   }
 
   const canManage = user.isSysAdmin || user.roles.some(r => ['CHURCH_ADMIN'].includes(r));
+  if (!canManage) redirect('/dashboard');
 
   const admin = await createAdminClient();
   const [leadersRes, cellsRes] = await Promise.all([

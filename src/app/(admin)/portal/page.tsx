@@ -16,6 +16,11 @@ export default async function PortalPage() {
     return <MaintenanceScreen featureName="Editor do Site" />;
   }
 
+  const hasAccess = user?.isSysAdmin || user?.roles.some(r => ['CHURCH_ADMIN'].includes(r));
+  if (!hasAccess) {
+    redirect('/dashboard');
+  }
+
   const supabase = await createClient();
   const { data } = await supabase
     .from('site_blocks')

@@ -187,6 +187,7 @@ export async function checkAndUpdatePaymentStatus(
 export async function createRegistration(eventId: string, formData: FormData) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
+  if (!user.isSysAdmin && !user.roles.some(r => ['CHURCH_ADMIN'].includes(r))) return { error: 'Acesso negado.' };
   if (!isValidUuid(eventId)) return { error: 'Evento inválido.' };
 
   const name     = (formData.get('name')      as string)?.trim();
@@ -292,6 +293,7 @@ export async function updateRegistrationPayment(
 export async function cancelRegistration(registrationId: string, eventId: string) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
+  if (!user.isSysAdmin && !user.roles.some(r => ['CHURCH_ADMIN'].includes(r))) return { error: 'Acesso negado.' };
   if (!isValidUuid(registrationId)) return { error: 'Inscrição inválida.' };
 
   const supabase = await createClient();
@@ -312,6 +314,7 @@ export async function cancelRegistration(registrationId: string, eventId: string
 export async function checkInAttendance(eventId: string, name: string, memberId?: string) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
+  if (!user.isSysAdmin && !user.roles.some(r => ['CHURCH_ADMIN'].includes(r))) return { error: 'Acesso negado.' };
   if (!isValidUuid(eventId)) return { error: 'Evento inválido.' };
 
   const trimmedName = name?.trim();

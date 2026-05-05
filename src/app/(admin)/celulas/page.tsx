@@ -18,6 +18,7 @@ export default async function CelulasPage() {
   }
 
   const canManage = user.isSysAdmin || user.roles.some(r => ['CHURCH_ADMIN'].includes(r));
+  if (!canManage) redirect('/dashboard');
 
   const admin = await createAdminClient();
   const [cellsRes, leadersRes] = await Promise.all([

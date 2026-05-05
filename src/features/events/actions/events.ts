@@ -10,8 +10,8 @@ const VALID_EVENT_TYPES: EventType[] = ['culto', 'especial'];
 const VALID_EVENT_STATUSES: EventStatus[] = ['rascunho', 'publicado', 'encerrado', 'cancelado'];
 const VALID_RECURRENCE_DAYS = [0, 1, 2, 3, 4, 5, 6];
 
-function canManageEvents(roles: string[]): boolean {
-  return roles.some(r => ['SYSADMIN', 'CHURCH_ADMIN'].includes(r));
+function canManageEvents(roles: string[], isSysAdmin: boolean = false): boolean {
+  return isSysAdmin || roles.some(r => ['SYSADMIN', 'CHURCH_ADMIN'].includes(r));
 }
 
 function extractEventFields(formData: FormData) {
@@ -67,7 +67,7 @@ function buildEventPayload(fields: ReturnType<typeof extractEventFields>, create
 export async function createEvent(formData: FormData) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
-  if (!canManageEvents(user.roles)) return { error: 'Acesso negado.' };
+  if (!canManageEvents(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
 
   const fields = extractEventFields(formData);
   const validationError = validateEventFields(fields);
@@ -93,7 +93,7 @@ export async function createEvent(formData: FormData) {
 export async function updateEvent(eventId: string, formData: FormData) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
-  if (!canManageEvents(user.roles)) return { error: 'Acesso negado.' };
+  if (!canManageEvents(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
   if (!isValidUuid(eventId)) return { error: 'Identificador de evento inválido.' };
 
   const fields = extractEventFields(formData);
@@ -120,7 +120,7 @@ export async function updateEvent(eventId: string, formData: FormData) {
 export async function updateEventStatus(eventId: string, status: EventStatus) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
-  if (!canManageEvents(user.roles)) return { error: 'Acesso negado.' };
+  if (!canManageEvents(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
   if (!isValidUuid(eventId)) return { error: 'Identificador inválido.' };
   if (!VALID_EVENT_STATUSES.includes(status)) return { error: 'Status inválido.' };
 
@@ -162,7 +162,7 @@ export async function deleteEvent(eventId: string) {
 export async function generateRecurringOccurrences(templateId: string, weeksAhead: number) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
-  if (!canManageEvents(user.roles)) return { error: 'Acesso negado.' };
+  if (!canManageEvents(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
   if (!isValidUuid(templateId)) return { error: 'Identificador inválido.' };
   if (!Number.isInteger(weeksAhead) || weeksAhead < 1 || weeksAhead > 52) {
     return { error: 'Número de semanas deve ser entre 1 e 52.' };
@@ -218,7 +218,7 @@ export async function generateRecurringOccurrences(templateId: string, weeksAhea
 export async function cancelEventOccurrence(eventId: string, dateStr: string) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
-  if (!canManageEvents(user.roles)) return { error: 'Acesso negado.' };
+  if (!canManageEvents(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
 
   const supabase = await createClient();
   

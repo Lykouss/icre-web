@@ -25,6 +25,12 @@ export default async function MembrosPage() {
     return <MaintenanceScreen featureName="Membros" />;
   }
 
+  const hasAccess = user?.isSysAdmin || user?.roles.some(r => ['CHURCH_ADMIN', 'LEADER'].includes(r));
+  if (!hasAccess) {
+    const { redirect } = await import('next/navigation');
+    redirect('/dashboard');
+  }
+
   const supabase = await createClient();
 
   const [{ data, error }, { data: cellsData }] = await Promise.all([

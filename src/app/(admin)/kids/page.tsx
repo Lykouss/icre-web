@@ -11,6 +11,12 @@ export default async function KidsPage() {
     return <MaintenanceScreen featureName="Kids" />;
   }
 
+  const hasAccess = user?.isSysAdmin || user?.roles.some(r => ['CHURCH_ADMIN'].includes(r));
+  if (!hasAccess) {
+    const { redirect } = await import('next/navigation');
+    redirect('/dashboard');
+  }
+
   return (
     <div className="p-4 sm:p-8">
       <FirstAccessTracker flagSlug="module_kids" userId={user?.id} />

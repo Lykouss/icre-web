@@ -174,6 +174,12 @@ export default async function PermissionsPage() {
     return <MaintenanceScreen featureName="Permissões" />;
   }
 
+  const hasAccess = user?.isSysAdmin || user?.roles.some(r => ['CHURCH_ADMIN'].includes(r));
+  if (!hasAccess) {
+    const { redirect } = await import('next/navigation');
+    redirect('/dashboard');
+  }
+
   const supabase = await createClient();
 
   const { data: roleData } = await supabase

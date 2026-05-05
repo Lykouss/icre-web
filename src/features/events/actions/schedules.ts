@@ -8,8 +8,8 @@ import type { ScheduleRole } from '@/features/events/types';
 
 const VALID_ROLES: ScheduleRole[] = ['louvor', 'pregador', 'recepcao', 'tecnica'];
 
-function canManageSchedules(roles: string[]): boolean {
-  return roles.some(r => ['SYSADMIN', 'CHURCH_ADMIN', 'LEADER'].includes(r));
+function canManageSchedules(roles: string[], isSysAdmin: boolean = false): boolean {
+  return isSysAdmin || roles.some(r => ['SYSADMIN', 'CHURCH_ADMIN', 'LEADER'].includes(r));
 }
 
 export async function upsertScheduleSlot(
@@ -20,7 +20,7 @@ export async function upsertScheduleSlot(
 ) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
-  if (!canManageSchedules(user.roles)) return { error: 'Acesso negado.' };
+  if (!canManageSchedules(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
   if (!isValidUuid(eventId)) return { error: 'Evento inválido.' };
   if (!VALID_ROLES.includes(role)) return { error: 'Função inválida.' };
   if (memberId && !isValidUuid(memberId)) return { error: 'Membro inválido.' };
@@ -64,7 +64,7 @@ export async function upsertScheduleSlot(
 export async function removeScheduleSlot(scheduleId: string, eventId: string) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
-  if (!canManageSchedules(user.roles)) return { error: 'Acesso negado.' };
+  if (!canManageSchedules(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
   if (!isValidUuid(scheduleId)) return { error: 'Identificador inválido.' };
 
   const supabase = await createClient();

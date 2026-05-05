@@ -18,6 +18,7 @@ export default async function PastoresPage() {
   }
 
   const canManage = user.isSysAdmin || user.roles.some(r => ['CHURCH_ADMIN'].includes(r));
+  if (!canManage) redirect('/dashboard');
 
   // Admin client bypasses RLS to show all pastors (including inactive)
   const admin = await createAdminClient();
