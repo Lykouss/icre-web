@@ -67,8 +67,7 @@ export async function grantAdminRole(userId: string, role: AppRole): Promise<{ e
         .eq('id', userId);
     }
 
-    const supabase = await createClient();
-    await supabase.from('audit_logs').insert({
+    await admin.from('audit_logs').insert({
       entity_name: 'user_roles',
       entity_id:   userId,
       action:      'GRANT_ROLE',
@@ -122,8 +121,7 @@ export async function revokeAdminRole(userId: string, role: AppRole): Promise<{ 
         .eq('id', userId);
     }
 
-    const supabase = await createClient();
-    await supabase.from('audit_logs').insert({
+    await admin.from('audit_logs').insert({
       entity_name: 'user_roles',
       entity_id:   userId,
       action:      'REVOKE_ROLE',
@@ -183,8 +181,7 @@ export async function suspendAdmin(
       console.error('[admin-access] suspendAdmin profile:', profileError.message);
     }
 
-    const supabase = await createClient();
-    await supabase.from('audit_logs').insert({
+    await admin.from('audit_logs').insert({
       entity_name: 'profiles',
       entity_id:   userId,
       action:      'SUSPEND_ACCESS',
@@ -225,8 +222,7 @@ export async function unsuspendAdmin(userId: string): Promise<{ error?: string }
       })
       .eq('id', userId);
 
-    const supabase = await createClient();
-    await supabase.from('audit_logs').insert({
+    await admin.from('audit_logs').insert({
       entity_name: 'profiles',
       entity_id:   userId,
       action:      'UNSUSPEND_ACCESS',
@@ -263,8 +259,7 @@ export async function resetAdminPin(userId: string): Promise<{ error?: string }>
       return { error: 'Falha ao redefinir o PIN.' };
     }
 
-    const supabase = await createClient();
-    await supabase.from('audit_logs').insert({
+    await admin.from('audit_logs').insert({
       entity_name: 'profiles',
       entity_id:   userId,
       action:      'RESET_PIN',
@@ -291,6 +286,7 @@ export async function resetAdminPassword(userId: string): Promise<{ error?: stri
     const { data: authUser } = await admin.auth.admin.getUserById(userId);
     if (!authUser?.user?.email) return { error: 'E-mail do usuário não encontrado.' };
 
+    // Usa o client do usuário apenas para enviar o email de reset (auth API)
     const supabase = await createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(
       authUser.user.email,
@@ -302,7 +298,8 @@ export async function resetAdminPassword(userId: string): Promise<{ error?: stri
       return { error: 'Falha ao enviar e-mail de redefinição.' };
     }
 
-    await supabase.from('audit_logs').insert({
+    // audit_logs agora requer service_role
+    await admin.from('audit_logs').insert({
       entity_name: 'profiles',
       entity_id:   userId,
       action:      'RESET_PASSWORD',
@@ -372,8 +369,7 @@ export async function updateAdminProfile(
       }
     }
 
-    const supabase = await createClient();
-    await supabase.from('audit_logs').insert({
+    await admin.from('audit_logs').insert({
       entity_name: 'profiles',
       entity_id:   userId,
       action:      'UPDATE_ADMIN_PROFILE',

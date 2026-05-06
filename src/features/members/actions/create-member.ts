@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import { canCreateMembers, isValidMemberStatus, isValidPhone } from '@/lib/action-validators';
@@ -46,7 +47,8 @@ export async function createMember(formData: FormData) {
     return { error: 'Falha ao salvar no banco de dados.' };
   }
 
-  await supabase.from('audit_logs').insert({
+  const admin = await createAdminClient();
+  await admin.from('audit_logs').insert({
     entity_name: 'members',
     entity_id: newMember.id,
     action: 'CREATE',
