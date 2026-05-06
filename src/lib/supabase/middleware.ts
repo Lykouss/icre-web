@@ -52,10 +52,9 @@ export async function updateSession(request: NextRequest) {
       const expired = until !== null && until < new Date();
 
       if (expired) {
-        await supabase
-          .from('profiles')
-          .update({ is_suspended: false, suspended_until: null, suspension_reason: null, suspended_by_name: null })
-          .eq('id', user.id);
+        // Usa RPC SECURITY DEFINER para limpar suspensão expirada
+        // (update direto de is_suspended é bloqueado pelo trigger de proteção de campos)
+        await supabase.rpc('clear_expired_suspension', { p_user_id: user.id });
       } else {
         const response = NextResponse.redirect(new URL('/acesso-suspenso', request.url));
         response.cookies.delete('admin_unlocked');
