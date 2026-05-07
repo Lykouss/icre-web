@@ -28,6 +28,7 @@ export async function createPublicRegistration(
   const name      = (formData.get('name')     as string)?.trim();
   const email     = (formData.get('email')    as string)?.trim();
   const phone     = (formData.get('phone')    as string)?.trim();
+  const cpf       = (formData.get('cpf')      as string)?.trim().replace(/\D/g, ''); // Limpar pontuação
   const payMethod = (formData.get('payment_method') as string)?.trim() as 'pix' | 'boleto' | null;
 
   if (!name || name.length < 3) return { error: 'Nome precisa ter ao menos 3 caracteres.' };
@@ -116,6 +117,7 @@ export async function createPublicRegistration(
       payment_status: initialPaymentStatus,
       ip_address:     ipAddress || null,
       device_id:      deviceId || null,
+      cpf:            cpf || null,
       member_id:      memberId // Associa a ficha de membro correta
     })
     .select()
@@ -135,7 +137,7 @@ export async function createPublicRegistration(
   }
 
   try {
-    const customerId = await createOrFindAsaasCustomer(name, email, phone);
+    const customerId = await createOrFindAsaasCustomer(name, email, phone, cpf);
     const description = `Ingresso: ${event.title}`;
     const value = Number(event.ticket_price);
 

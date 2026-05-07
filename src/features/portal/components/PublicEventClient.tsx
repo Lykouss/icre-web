@@ -274,6 +274,29 @@ export function PublicEventClient({ event, spotsLeft, isFull }: Props) {
 
                 {isPaid && (
                   <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">CPF *</label>
+                    <input 
+                      name="cpf" 
+                      type="text" 
+                      required 
+                      placeholder="000.000.000-00" 
+                      className={inputCls}
+                      onChange={(e) => {
+                        // Máscara simples de CPF
+                        let v = e.target.value.replace(/\D/g, '');
+                        if (v.length <= 11) {
+                          v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                          v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                          v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                        }
+                        e.target.value = v;
+                      }}
+                    />
+                  </div>
+                )}
+
+                {isPaid && (
+                  <div>
                     <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Forma de pagamento</label>
                     <div className="grid grid-cols-2 gap-3">
                       <button

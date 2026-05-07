@@ -64,7 +64,8 @@ async function fetchAsaas<T>(endpoint: string, options?: RequestInit): Promise<T
 export async function createOrFindAsaasCustomer(
   name: string,
   email?: string,
-  phone?: string
+  phone?: string,
+  cpfCnpj?: string
 ): Promise<string> {
   if (email) {
     const existing = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
@@ -73,7 +74,7 @@ export async function createOrFindAsaasCustomer(
     if (existing.data.length > 0) return existing.data[0].id;
   }
 
-  const payload: AsaasCustomerPayload = { name, email, phone };
+  const payload: AsaasCustomerPayload = { name, email, phone, cpfCnpj };
   const customer = await fetchAsaas<AsaasCustomerResponse>('/customers', {
     method: 'POST',
     body: JSON.stringify(payload),
