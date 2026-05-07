@@ -67,14 +67,29 @@ export async function createOrFindAsaasCustomer(
   phone?: string,
   cpfCnpj?: string
 ): Promise<string> {
+  let customerId: string | null = null;
+
   if (email) {
     const existing = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
       `/customers?email=${encodeURIComponent(email)}`
     );
-    if (existing.data.length > 0) return existing.data[0].id;
+    if (existing.data.length > 0) {
+      customerId = existing.data[0].id;
+    }
   }
 
   const payload: AsaasCustomerPayload = { name, email, phone, cpfCnpj };
+
+  if (customerId) {
+    // Atualizar cliente existente (garante que o CPF seja inserido se não existia)
+    await fetchAsaas<AsaasCustomerResponse>(`/customers/${customerId}`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    return customerId;
+  }
+
+  // Criar novo cliente
   const customer = await fetchAsaas<AsaasCustomerResponse>('/customers', {
     method: 'POST',
     body: JSON.stringify(payload),
