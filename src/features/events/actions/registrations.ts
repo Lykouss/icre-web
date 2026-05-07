@@ -85,12 +85,24 @@ export async function createPublicRegistration(
   const initialPaymentStatus: PaymentStatus = needsPayment ? 'pendente' : 'gratuito';
 
   // Registrar IP conhecido se usuário estiver logado
-  if (user && ipAddress) {
-      await supabase.from('user_known_ips').upsert({
-          user_id: user.id,
-          ip_address: ipAddress,
-          last_seen: new Date().toISOString()
-      }, { onConflict: 'user_id, ip_address' });
+  let memberId = null;
+  if (user) {
+      if (ipAddress) {
+          await supabase.from('user_known_ips').upsert({
+              user_id: user.id,
+              ip_address: ipAddress,
+              last_seen: new Date().toISOString()
+          }, { onConflict: 'user_id, ip_address' });
+      }
+
+      // Buscar o ID da ficha de membro vinculada a este usuário
+      const { data: memberData } = await supabase
+        .from('members')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      memberId = memberData?.id || null;
   }
 
   const { data: registration, error: insertError } = await supabase
@@ -104,7 +116,7 @@ export async function createPublicRegistration(
       payment_status: initialPaymentStatus,
       ip_address:     ipAddress || null,
       device_id:      deviceId || null,
-      member_id:      user?.id || null // Associa a conta se logado
+      member_id:      memberId // Associa a ficha de membro correta
     })
     .select()
     .single();
