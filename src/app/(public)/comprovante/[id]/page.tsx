@@ -16,7 +16,7 @@ export default async function ComprovantePage({ params }: { params: Promise<{ id
     .select(`
       id, name, email, phone, status, payment_status,
       payment_method, payment_amount, paid_at,
-      asaas_payment_id, asaas_invoice_url,
+      asaas_payment_id, asaas_invoice_url, ticket_signature,
       events!inner ( id, title, date, time, location, type, ticket_price )
     `)
     .eq('id', id)
@@ -24,7 +24,7 @@ export default async function ComprovantePage({ params }: { params: Promise<{ id
 
   if (error || !raw) notFound();
 
-  if (raw.payment_status !== 'pago') {
+  if (raw.status !== 'confirmado') {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-slate-900/60 backdrop-blur-xl border border-white/8 rounded-3xl p-8 text-center">
@@ -33,9 +33,9 @@ export default async function ComprovantePage({ params }: { params: Promise<{ id
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-white mb-2">Pagamento pendente</h1>
+          <h1 className="text-xl font-bold text-white mb-2">Ingresso pendente</h1>
           <p className="text-slate-400 text-sm">
-            Este comprovante estará disponível após a confirmação do pagamento.
+            Este comprovante estará disponível após a confirmação (pagamento ou aprovação).
           </p>
         </div>
       </div>

@@ -64,7 +64,22 @@ export function PublicEventClient({ event, spotsLeft, isFull }: Props) {
     if (isPaid) formData.set('payment_method', paymentMethod);
 
     startTransition(async () => {
-      const result = await createPublicRegistration(event.id, formData);
+      let ipAddress = 'unknown-ip';
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        ipAddress = data.ip;
+      } catch (e) {
+        console.warn('Não foi possível obter o IP.');
+      }
+
+      let deviceId = localStorage.getItem('icre_device_id');
+      if (!deviceId) {
+        deviceId = crypto.randomUUID();
+        localStorage.setItem('icre_device_id', deviceId);
+      }
+
+      const result = await createPublicRegistration(event.id, formData, ipAddress, deviceId);
 
       if (result.error) {
         setError(result.error);

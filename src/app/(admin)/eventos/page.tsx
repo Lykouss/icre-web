@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/server';
 import { EventsPageClient } from '@/features/events/components/EventsPageClient';
 import type { ChurchEvent } from '@/features/events/types';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { ClipboardListIcon, ScanLineIcon } from 'lucide-react';
 
 export default async function EventosPage() {
   const user = await getCurrentUser();
@@ -38,6 +40,22 @@ export default async function EventosPage() {
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Eventos e Calendário</h1>
           <p className="text-slate-500 mt-1">Gerencie cultos, eventos especiais e inscrições.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/eventos/checkin"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-all"
+          >
+            <ScanLineIcon className="w-4 h-4" />
+            Check-in
+          </Link>
+          <Link
+            href="/eventos/historico"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 border border-slate-200 hover:bg-slate-200 transition-all"
+          >
+            <ClipboardListIcon className="w-4 h-4" />
+            Auditoria
+          </Link>
         </div>
       </div>
 

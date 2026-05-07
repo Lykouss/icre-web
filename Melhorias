@@ -1,39 +1,21 @@
-Sige-Web
+Hoje, o foco das mudanças vai ser totalmente nos eventos. Vamos integrar completamente o Asaas,
+criando a página de pagamentos, refazendo a funcionalidade de comprovantes e etc. Detalhes das adições e mudanças:
 
-Sidebar
- - Animação de expansão, no pc, está muito brusca, precisa ser mais suave.
- - O botão que expande/retrai, sobrepõe e se mistura com a logo, quando está retraído.
- - A sidebar deve salvar a informação de estar expandida ou retraída, para cada usuário, e deve manter essa informação, mesmo após o refresh da página.
+Módulo de eventos:
+ - Na criação/edição de eventos, teremos novas opções: Quantidade máxima de inscrição por conta, dispositivo e endereço IP (Usaremos isso para rastrear a quantidade de inscrições)
+ - Antes do evento ir a público, somente SysAdmins terão permissão para fazer inscrições antes da hora, por segurança, além de definir isso nas server actions, definiremos nas RLS.
+ - Para SysAdmins, será possível presentear inscrições de um evento pago, caso aconteça, para o usuário presenteado, deve ser notificado com um estilo de "presente" e não de "compra" e o comprovante deve ser gerado normalmente.
+ - No módulo de eventos, deve existir uma página dedicada para o histórico de eventos, nesse histórico deve conter TODOS os detalhes dos eventos, quem se inscreveu, quando se inscreveu, se esteve presente, quando marcou presença e etc. Esse histórico deve ser imutável e acessível somente para SysAdmins.
+ - Para registrar presença, vamos fazer um estilo de Checkin via QR Code, que será gerado no pdf do comprovante que cada usuário que pagou o evento deve ter. Quando o SysAdmin escanear esse QR Code com a câmera do celular, a presença será registrada automáticamente, com todos os detalhes, hora, data, o SysAdmin que registrou e etc. Faremos o possível para colocar o máximo de segurança possível nessa função e garantir que não aconteça o forjamento de QR Codes.
+ - Devemos criar uma forma de cada QR Code ser único e ter uma assinatura própria para não ocorrer falsificações.
 
-Módulo de Células
-  - Sempre quando alguma alteração for feita, a página tem que atualizar automaticamente, sem precisar dar refresh.
-  - Correção de bug: No modal de adição ou edição de uma célula, em Líderes, mesmo existindo líderes cadastrados no módulo de Liderança, o campo aparece como vazio (Nenhum).
-  - Deve ser adicionado um campo para que seja possível adicionar o "@" da célula do Instagram, e quando o usuário clicar, deve ser redirecionado para a página da célula no Instagram.
+Seção de eventos (Para os usuários):
+ - Consertaremos uma falha, se o usuário acessar a url do evento, mesmo que ele esteja indisponível, ele pode se inscrever normalmente, e isso é uma grande falha, temos que impedir a renderização da página, e bloquear o acesso de qualquer usuário que não seja SysAdmin via RLS.
+ - Vamos refazer completamente a página de inscrição, adicionar mais etapas e verificações de segurança, isso inclui coleta de IP, conta e dispositivo, além de verificação de tentativas bloqueadas. Os campos de formulário também devem ser recalculados de acordo com as regras do evento.
+ - Adicionaremos uma seção "Minhas inscrições", onde o usuário poderá ver seu histórico de inscrições e o pdf do comprovante deve estar disponível para visualização e download.
+ - Na coleta de IP, cada IP diferente que for detectado na conta do usuário, deve ser adicionado aos IPs conhecidos daquela conta.
+ - Após efetuar o pagamento, o pdf com o comprovante que contém o QR Code único para cada usuário, deve ser gerado e disponibilizado para download, vamos criar uma página dedicada para comprovantes do usuário e o acesso à essa página deve ser deixado bem claro após o pagamento e/ou inscrição.
+ - Todos os comprovantes devem ser exibidos na página dedicada, inclusive os de eventos já passados, como exige um certo uso do servidor, faremos um ratelimiting bem rigoroso para o download de comprovantes.
 
-Módulo de Liderança
-  - Sempre quando alguma alteração for feita, a página tem que atualizar automaticamente, sem precisar dar refresh.
-  - Deve ser adicionado um campo para que seja possível interligar o líder à uma célula existente (Essa opção não deve ser obrigatória).
-  - Deve ser adicionado um campo para que seja possível adicionar o "@" do líder do Instagram, e quando o usuário clicar, deve ser redirecionado para a página do líder no Instagram.
-
-Módulo de Galeria (NOVO)
-  - Será um módulo dedicado para gerir TODAS as fotos que tem no site.
-  - Deve ser possível adicionar fotos, editar, excluir e adicionar tags.
-  - Deve ser possível adicionar fotos de eventos, cultos, etc.
-  - Deve ser possível adicionar/acessar/nomear/renomear pastas.
-  - Cada imagem deve ter nome, descrição (Com detalhes de quem adicionou e quando adicionou, peso da imagem e etc.) e tags.
-  - Deve ser possível adicionar/editar/excluir tags.
-  - Muito importante que os limites estejam bem definidos, regras claras e informações do espaço geral ocupado e o espaço individual que cada pasta ocupa.
-  - Avisos sobre o tamanho da imagem, se está muito grande, se está muito pequena, etc.
-  - Avisos sobre limite geral de espaço atingido ou quase atingido.
-  - Para SysAdmins, deve aparecer uma opção de configuração da galeria, que permite ativar ou desativar o upload de imagens, definir o tamanho máximo de upload, definir o tamanho máximo de cada imagem, etc (Essas configurações devem valer para tudo em geral, não apenas para a galeria, pois é possível fazer upload de imagens pelo módulo de Liderança, pelo módulo de Células e pelo módulo do Site Público). Seria interessante ter uma opção semelhante à essa, mas separada, somente para configurar as profiles photos.
-
-Portal (Site)
-
-Seção de Células
-  - No card das células, o endereço deve aparecer completo.
-  - No modal que mostra individualmente as informações da célula selecionada, a imagem deve ter um tamanha já definido para ocupar, pois quando a imagem é grande, ela "quebra" o layout do modal e se torna impossível ver os detalhes da célula.
-  - No card e no modal, se houver, deve aparecer o líder(es) da célula e se possível, a(s) foto(s) do(s) líder(es), e quando o usuário clicar, deve ser redirecionado para a seção de Liderança, e abrir o modal com os detalhes do líder selecionado.
-  - No card e no modal, se houver, deve aparecer o "@" da célula do Instagram, e quando o usuário clicar, deve ser redirecionado para a página da célula no Instagram.
-
-Seção de Liderança
-  - No card e no modal, se houver, deve aparecer a célula que o líder lidera e quando o usuário clicar, deve ser redirecionado para a seção de Células, e abrir o modal com os detalhes da célula selecionada.
+ Faremos uma página de pagamentos com tudo que for necessário com todas opções de pagamentos que temos em mãos (Pix, cartão e etc), na criação do evento, isso deve ser configurável, permitindo que o SysAdmin escolha uma ou mais opções de pagamento que estarão disponíveis para o evento. O mesmo vale para o tipo de inscrição, que poderá ser gratuita ou paga.
+ Na integração com o ASAAS, devemos tomar cuidado para não ocorrer falhas de cache, ou qualquer tipo de falha que possa fazer com que um pagamento seja considerado confirmado e o usuário não tenha recebido o comprovante, isso também envolve a confirmação de pagamento. A segurança deve ser o nosso maior foco nessa etapa. caso você precise que eu realize alguma etapa manual no Asaas, é só fazer o passo a passo bem detalhado e deixar tudo bem claro para mim.

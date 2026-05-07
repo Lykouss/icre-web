@@ -28,8 +28,12 @@ function extractEventFields(formData: FormData) {
   const recurrenceRules = JSON.parse((formData.get('recurrence_rules') as string) || 'null');
   const cancelledDates = JSON.parse((formData.get('cancelled_dates') as string) || 'null');
   const capacity     = parseInt(formData.get('capacity') as string, 10);
+  const maxPerAccount = parseInt(formData.get('max_per_account') as string, 10);
+  const maxPerIp      = parseInt(formData.get('max_per_ip') as string, 10);
+  const maxPerDevice  = parseInt(formData.get('max_per_device') as string, 10);
+  const paymentMethods = JSON.parse((formData.get('payment_methods') as string) || '["pix"]');
 
-  return { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recurrenceRules, cancelledDates, capacity };
+  return { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recurrenceRules, cancelledDates, capacity, maxPerAccount, maxPerIp, maxPerDevice, paymentMethods };
 }
 
 function validateEventFields(fields: ReturnType<typeof extractEventFields>): string | null {
@@ -44,7 +48,7 @@ function validateEventFields(fields: ReturnType<typeof extractEventFields>): str
 }
 
 function buildEventPayload(fields: ReturnType<typeof extractEventFields>, createdBy?: string) {
-  const { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recurrenceRules, cancelledDates, capacity } = fields;
+  const { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recurrenceRules, cancelledDates, capacity, maxPerAccount, maxPerIp, maxPerDevice, paymentMethods } = fields;
 
   return {
     title,
@@ -60,6 +64,10 @@ function buildEventPayload(fields: ReturnType<typeof extractEventFields>, create
     recurrence_rules: isRecurring ? recurrenceRules : null,
     cancelled_dates: cancelledDates || [],
     capacity:       !isNaN(capacity) && capacity > 0 ? capacity : null,
+    max_per_account: !isNaN(maxPerAccount) && maxPerAccount > 0 ? maxPerAccount : 1,
+    max_per_ip:     !isNaN(maxPerIp) && maxPerIp > 0 ? maxPerIp : 2,
+    max_per_device: !isNaN(maxPerDevice) && maxPerDevice > 0 ? maxPerDevice : 2,
+    payment_methods: paymentMethods,
     ...(createdBy ? { created_by: createdBy } : {}),
   };
 }

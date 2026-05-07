@@ -1,62 +1,102 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { generateTicketSignature } from '@/features/events/utils/signature';
 
-const ASAAS_WEBHOOK_TOKEN = process.env.ASAAS_WEBHOOK_TOKEN;
+const ASAAS_WEBHOOK_SECRET = process.env.ASAAS_WEBHOOK_SECRET;
 
-const PAID_STATUSES = new Set(['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH']);
-
-export async function POST(request: NextRequest) {
-  const token = request.headers.get('asaas-access-token');
-  if (ASAAS_WEBHOOK_TOKEN && token !== ASAAS_WEBHOOK_TOKEN) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  let body: Record<string, unknown>;
+export async function POST(request: Request) {
   try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
-  }
+    const asaasToken = request.headers.get('asaas-access-token');
 
-  const event = body.event as string;
-  const payment = body.payment as Record<string, unknown> | undefined;
+    if (ASAAS_WEBHOOK_SECRET && asaasToken !== ASAAS_WEBHOOK_SECRET) {
+      console.warn('[Webhook Asaas] Tentativa de acesso com token inválido:', asaasToken);
+      return NextResponse.json({ error: 'Acesso não autorizado.' }, { status: 401 });
+    }
 
-  if (!payment?.id || !event) {
-    return NextResponse.json({ received: true });
-  }
+    const payload = await request.json();
+    const event = payload.event;
+    const payment = payload.payment;
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  );
+    if (!payment || !payment.id) {
+      return NextResponse.json({ error: 'Payload malformado.' }, { status: 400 });
+    }
 
-  const { data: registration } = await supabase
-    .from('event_registrations')
-    .select('id, event_id')
-    .eq('asaas_payment_id', payment.id as string)
-    .single();
+    const validEvents = ['PAYMENT_RECEIVED', 'PAYMENT_CONFIRMED', 'PAYMENT_DELETED', 'PAYMENT_REFUNDED', 'PAYMENT_OVERDUE'];
+    if (!validEvents.includes(event)) {
+      return NextResponse.json({ received: true, ignored: true, reason: 'Evento não processado no momento.' });
+    }
 
-  if (!registration) {
-    return NextResponse.json({ received: true });
-  }
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { persistSession: false } }
+    );
 
-  if (PAID_STATUSES.has(event.replace('PAYMENT_', ''))) {
-    await supabase
+    const { data: registration, error: fetchError } = await supabase
       .from('event_registrations')
-      .update({
-        status:         'confirmado',
-        payment_status: 'pago',
-        paid_at:        new Date().toISOString(),
-        receipt_url:    `/comprovante/${registration.id}`,
-      })
-      .eq('id', registration.id);
-  } else if (event === 'PAYMENT_OVERDUE' || event === 'PAYMENT_DELETED') {
-    await supabase
-      .from('event_registrations')
-      .update({ payment_status: 'expirado', status: 'cancelado' })
-      .eq('id', registration.id);
-  }
+      .select('id, event_id, status, payment_status, ticket_signature')
+      .eq('asaas_payment_id', payment.id)
+      .single();
 
-  return NextResponse.json({ received: true });
+    if (fetchError || !registration) {
+      console.warn(`[Webhook Asaas] Pagamento ${payment.id} recebido, mas nenhuma inscrição encontrada.`);
+      return NextResponse.json({ error: 'Inscrição não encontrada para este pagamento.' }, { status: 404 });
+    }
+
+    if (event === 'PAYMENT_RECEIVED' || event === 'PAYMENT_CONFIRMED') {
+      if (registration.payment_status === 'pago') {
+        return NextResponse.json({ received: true, alreadyProcessed: true });
+      }
+
+      const signature = registration.ticket_signature || generateTicketSignature(registration.id, registration.event_id);
+      
+      const { error: updError } = await supabase
+        .from('event_registrations')
+        .update({
+          status: 'confirmado',
+          payment_status: 'pago',
+          paid_at: new Date().toISOString(),
+          receipt_url: `/comprovante/${registration.id}`,
+          ticket_signature: signature
+        })
+        .eq('id', registration.id);
+
+      if (updError) throw new Error(`Falha ao atualizar inscrição: ${updError.message}`);
+
+      await supabase.from('event_history').insert({
+        event_id: registration.event_id,
+        action_type: 'webhook_pagamento_confirmado',
+        details: { registration_id: registration.id, payment_id: payment.id }
+      });
+
+      console.log(`[Webhook Asaas] Pagamento confirmado para inscrição ${registration.id}`);
+      
+    } else if (event === 'PAYMENT_DELETED' || event === 'PAYMENT_REFUNDED' || event === 'PAYMENT_OVERDUE') {
+      const newPaymentStatus = event === 'PAYMENT_REFUNDED' ? 'reembolsado' : (event === 'PAYMENT_OVERDUE' ? 'expirado' : 'cancelado');
+      
+      const { error: updError } = await supabase
+        .from('event_registrations')
+        .update({
+          status: 'cancelado',
+          payment_status: newPaymentStatus
+        })
+        .eq('id', registration.id);
+
+      if (updError) throw new Error(`Falha ao atualizar inscrição: ${updError.message}`);
+
+      await supabase.from('event_history').insert({
+        event_id: registration.event_id,
+        action_type: `webhook_pagamento_${newPaymentStatus}`,
+        details: { registration_id: registration.id, payment_id: payment.id }
+      });
+
+      console.log(`[Webhook Asaas] Pagamento ${newPaymentStatus} para inscrição ${registration.id}`);
+    }
+
+    return NextResponse.json({ received: true, processed: true });
+
+  } catch (err: any) {
+    console.error('[Webhook Asaas] Erro fatal:', err);
+    return NextResponse.json({ error: 'Erro interno no servidor.', details: err.message }, { status: 500 });
+  }
 }

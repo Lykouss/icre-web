@@ -25,6 +25,7 @@ interface RegistrationData {
   paid_at: string | null;
   asaas_payment_id: string | null;
   asaas_invoice_url: string | null;
+  ticket_signature?: string | null;
   events: EventData | null;
 }
 
@@ -141,7 +142,18 @@ export function ReceiptClient({ registration }: Props) {
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(22, 163, 74);
-    doc.text('✓ PAGAMENTO CONFIRMADO', 14, y);
+    doc.text('✓ INSENÇÃO/PAGAMENTO CONFIRMADO', 14, y);
+
+    if (registration.ticket_signature && event?.id) {
+       y += 20;
+       const qrData = `${registration.id}:${event.id}:${registration.ticket_signature}`;
+       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
+       doc.addImage(qrUrl, 'PNG', 14, y, 40, 40);
+       doc.setFontSize(10);
+       doc.setTextColor(0);
+       doc.text('Apresente este QR Code no evento.', 60, y + 20);
+       y += 40;
+    }
 
     y += 20;
     doc.setFontSize(8);
@@ -194,6 +206,19 @@ export function ReceiptClient({ registration }: Props) {
           </div>
 
           <div className="p-8 space-y-6">
+            
+            {/* QR Code */}
+            {registration.ticket_signature && event?.id && (
+              <div className="flex flex-col items-center justify-center py-6 bg-white rounded-2xl mb-6">
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${registration.id}:${event.id}:${registration.ticket_signature}`)}`} 
+                  alt="QR Code do Ingresso" 
+                  className="w-48 h-48 mb-3" 
+                />
+                <p className="text-xs font-bold text-slate-800 uppercase tracking-widest text-center">Apresente este QR Code no check-in</p>
+              </div>
+            )}
+
             {/* Participante */}
             <div>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Participante</p>

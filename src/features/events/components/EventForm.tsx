@@ -103,6 +103,10 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
     requires_payment:      initialData?.requires_payment ?? false,
     is_recurring:          initialData?.is_recurring ?? false,
     recurrence_rules:      initialData?.recurrence_rules ?? { type: 'weekly', days: [] },
+    max_per_account:       initialData?.max_per_account ?? 1,
+    max_per_ip:            initialData?.max_per_ip ?? 2,
+    max_per_device:        initialData?.max_per_device ?? 2,
+    payment_methods:       initialData?.payment_methods ?? ['pix'],
   });
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
@@ -173,6 +177,10 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           requires_registration: formData.requires_registration || formData.requires_payment || false,
           is_recurring:         formData.is_recurring,
           recurrence_rules:     formData.is_recurring ? formData.recurrence_rules : null,
+          max_per_account:      formData.max_per_account ? Number(formData.max_per_account) : 1,
+          max_per_ip:           formData.max_per_ip ? Number(formData.max_per_ip) : 2,
+          max_per_device:       formData.max_per_device ? Number(formData.max_per_device) : 2,
+          payment_methods:      formData.payment_methods,
         };
 
         let result;
@@ -428,6 +436,79 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           />
         </Field>
       </div>
+
+      {formData.requires_registration && (
+        <>
+          <SectionDivider label="Limites e Segurança Antifraude" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Field label="Máx. por Conta" hint="Vagas máximas para uma única conta">
+              <input
+                type="number"
+                className={inputCls}
+                value={formData.max_per_account || 1}
+                onChange={e => setFormData(p => ({ ...p, max_per_account: Number(e.target.value) || 1 }))}
+                min="1"
+              />
+            </Field>
+            <Field label="Máx. por IP" hint="Inscrições por endereço IP">
+              <input
+                type="number"
+                className={inputCls}
+                value={formData.max_per_ip || 2}
+                onChange={e => setFormData(p => ({ ...p, max_per_ip: Number(e.target.value) || 1 }))}
+                min="1"
+              />
+            </Field>
+            <Field label="Máx. por Dispositivo" hint="Inscrições por aparelho (Fingerprint)">
+              <input
+                type="number"
+                className={inputCls}
+                value={formData.max_per_device || 2}
+                onChange={e => setFormData(p => ({ ...p, max_per_device: Number(e.target.value) || 1 }))}
+                min="1"
+              />
+            </Field>
+          </div>
+        </>
+      )}
+
+      {formData.requires_payment && (
+        <div className="space-y-3 mt-4">
+          <SectionDivider label="Métodos de Pagamento (Asaas)" />
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+              <input 
+                type="checkbox" 
+                checked={(formData.payment_methods || []).includes('pix')}
+                onChange={e => {
+                  const methods = formData.payment_methods || [];
+                  setFormData(p => ({ 
+                    ...p, 
+                    payment_methods: e.target.checked ? [...methods, 'pix'] : methods.filter(m => m !== 'pix')
+                  }));
+                }}
+                className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+              />
+              PIX
+            </label>
+            <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+              <input 
+                type="checkbox" 
+                checked={(formData.payment_methods || []).includes('boleto')}
+                onChange={e => {
+                  const methods = formData.payment_methods || [];
+                  setFormData(p => ({ 
+                    ...p, 
+                    payment_methods: e.target.checked ? [...methods, 'boleto'] : methods.filter(m => m !== 'boleto')
+                  }));
+                }}
+                className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+              />
+              Boleto
+            </label>
+          </div>
+        </div>
+      )}
 
       <SectionDivider label="Publicação" />
 

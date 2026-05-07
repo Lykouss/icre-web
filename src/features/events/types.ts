@@ -24,6 +24,10 @@ export interface ChurchEvent {
   requires_registration: boolean;
   requires_payment: boolean;
   ticket_price: number | null;
+  max_per_account: number;
+  max_per_ip: number;
+  max_per_device: number;
+  payment_methods: string[];
   publish_at: string | null;
   expires_at: string | null;
   created_by: string | null;
