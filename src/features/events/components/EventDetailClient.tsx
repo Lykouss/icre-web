@@ -316,27 +316,26 @@ export function EventDetailClient({
         {tab === 'presenca' && (
           <div className="animate-in fade-in duration-300 max-w-3xl">
             {canManage && (
-              <form onSubmit={handleCheckIn} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm mb-6">
-                <p className="text-sm font-bold text-slate-700 mb-3">Registrar presença</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <input type="text" value={checkInName} onChange={e => setCheckInName(e.target.value)} placeholder="Nome *" required className={inputClass} />
-                  <select value={checkInMemberId} onChange={e => setCheckInMemberId(e.target.value)} className={inputClass}>
-                    <option value="">Visitante / externo</option>
-                    {members.map(m => <option key={m.id} value={m.id}>{m.full_name}</option>)}
-                  </select>
+              <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm mb-8 text-center">
+                <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v1m0 11v1m5-4h-1m-10 0h-1m8-7a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
                 </div>
-                <div className="flex justify-end mt-3">
-                  <button type="submit" disabled={isPending} className="px-4 py-2 font-semibold bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 text-sm flex items-center gap-2">
-                    {isPending && (
-                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                      </svg>
-                    )}
-                    Check-in
-                  </button>
-                </div>
-              </form>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Check-in via QR Code</h3>
+                <p className="text-slate-500 text-sm mb-6 max-w-sm mx-auto">
+                  Para garantir a segurança e evitar fraudes, o check-in agora é realizado exclusivamente através do scanner de ingressos.
+                </p>
+                <button 
+                  onClick={() => router.push('/eventos/checkin')}
+                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v1m0 11v1m5-4h-1m-10 0h-1m8-7a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  Abrir Scanner de Ingressos
+                </button>
+              </div>
             )}
 
             <div className="space-y-2">
