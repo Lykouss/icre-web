@@ -1,10 +1,10 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { processCheckin } from '../actions/registrations';
 import { useToast } from '@/features/core/components/ToastContext';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Camera, CameraOff, RefreshCw } from 'lucide-react';
 
 interface QrScannerProps {
   onCheckinSuccess?: () => void;
@@ -12,106 +12,164 @@ interface QrScannerProps {
 
 export function QrScanner({ onCheckinSuccess }: QrScannerProps) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const scannerRef = useRef<Html5Qrcode | null>(null);
   const processingRef = useRef(false);
   const lastScannedRef = useRef<string | null>(null);
   const { toast } = useToast();
-  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
+  // Inicializa o scanner assim que o componente monta
   useEffect(() => {
-    // Inicialização do scanner
-    const scanner = new Html5QrcodeScanner(
-      "reader",
-      { 
-        fps: 10, 
-        qrbox: { width: 250, height: 250 }, 
-        supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-        rememberLastUsedCamera: true
-      },
-      /* verbose= */ false
-    );
-
-    async function onScanSuccess(decodedText: string) {
-      if (processingRef.current || decodedText === lastScannedRef.current) return;
-      
-      processingRef.current = true;
-      setIsProcessing(true);
-      lastScannedRef.current = decodedText;
-
-      try {
-        const res = await processCheckin(decodedText);
-        if (res.error) {
-          toast('error', res.error);
-        } else {
-          toast('success', 'Check-in realizado com sucesso!');
-          onCheckinSuccess?.();
-          // Feedback tátil/sonoro (opcional no futuro)
-        }
-      } catch (err) {
-        toast('error', 'Falha ao processar QR Code.');
-      } finally {
-        // Aguarda 3 segundos antes de permitir scan do próximo QR Code
-        setTimeout(() => {
-          processingRef.current = false;
-          setIsProcessing(false);
-          lastScannedRef.current = null;
-        }, 3000);
-      }
-    }
-
-    scanner.render(onScanSuccess, (error) => {
-      // Erros de "QR não encontrado" são comuns durante o scan, ignoramos.
-    });
-
+    const scanner = new Html5Qrcode("reader");
     scannerRef.current = scanner;
 
     return () => {
-      if (scannerRef.current) {
-        scannerRef.current.clear().catch(err => console.error("Erro ao limpar scanner:", err));
+      if (scanner.isScanning) {
+        scanner.stop().catch(console.error);
       }
     };
-  }, [toast, onCheckinSuccess]);
+  }, []);
+
+  const startScanning = async () => {
+    if (!scannerRef.current) return;
+    setError(null);
+
+    try {
+      await scannerRef.current.start(
+        { facingMode: "environment" }, // Usa a câmera traseira
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+        },
+        async (decodedText) => {
+          if (processingRef.current || decodedText === lastScannedRef.current) return;
+          
+          processingRef.current = true;
+          setIsProcessing(true);
+          lastScannedRef.current = decodedText;
+
+          try {
+            const res = await processCheckin(decodedText);
+            if (res.error) {
+              toast('error', res.error);
+            } else {
+              toast('success', 'Check-in realizado!');
+              onCheckinSuccess?.();
+            }
+          } catch (err) {
+            toast('error', 'Erro ao validar QR Code.');
+          } finally {
+            setTimeout(() => {
+              processingRef.current = false;
+              setIsProcessing(false);
+              lastScannedRef.current = null;
+            }, 3000);
+          }
+        },
+        (errorMessage) => {
+          // Ignora erros de scan não encontrado
+        }
+      );
+      setIsScanning(true);
+    } catch (err: any) {
+      console.error("Erro ao iniciar câmera:", err);
+      setError("Não foi possível acessar a câmera. Verifique as permissões.");
+      setIsScanning(false);
+    }
+  };
+
+  const stopScanning = async () => {
+    if (scannerRef.current && scannerRef.current.isScanning) {
+      await scannerRef.current.stop();
+      setIsScanning(false);
+    }
+  };
 
   return (
-    <div className="w-full max-w-md mx-auto relative rounded-3xl overflow-hidden bg-slate-900 shadow-2xl border border-white/10">
-      {isProcessing && (
-        <div className="absolute inset-0 z-20 bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in duration-300">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mb-4" />
-            <Loader2 className="w-6 h-6 text-blue-500 absolute top-5 left-5 animate-pulse" />
+    <div className="w-full max-w-md mx-auto">
+      <div className="relative aspect-square rounded-3xl overflow-hidden bg-slate-900 border-2 border-white/5 shadow-2xl mb-6">
+        {/* Camada de Processamento */}
+        {isProcessing && (
+          <div className="absolute inset-0 z-30 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in">
+            <div className="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mb-4" />
+            <p className="text-xs font-bold text-white tracking-widest uppercase">Validando...</p>
           </div>
-          <p className="text-sm font-bold text-white tracking-wide">Validando ingresso...</p>
-        </div>
-      )}
-      <div id="reader" className="w-full" />
+        )}
+
+        {/* Placeholder / Erro */}
+        {!isScanning && !error && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-8 text-center">
+            <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mb-4">
+              <Camera className="w-10 h-10 text-blue-500" />
+            </div>
+            <p className="text-slate-400 text-sm font-medium">A câmera está desligada</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-8 text-center bg-red-950/20">
+            <CameraOff className="w-12 h-12 text-red-500 mb-4" />
+            <p className="text-red-400 text-sm font-bold">{error}</p>
+          </div>
+        )}
+
+        {/* O Vídeo propriamente dito */}
+        <div id="reader" className="w-full h-full" />
+        
+        {/* Overlay de Guia */}
+        {isScanning && (
+          <div className="absolute inset-0 pointer-events-none z-10">
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border-2 border-blue-500/50 rounded-3xl">
+                <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-500 rounded-tl-xl" />
+                <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-500 rounded-tr-xl" />
+                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-blue-500 rounded-bl-xl" />
+                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-500 rounded-br-xl" />
+             </div>
+             <div className="absolute inset-0 bg-slate-950/40" style={{ clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%, 50% 0%, 50% 50%, 50% 50%, 50% 50%, 50% 50%)' }} />
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {!isScanning ? (
+          <button
+            onClick={startScanning}
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-3"
+          >
+            <Camera className="w-5 h-5" />
+            Ativar Câmera
+          </button>
+        ) : (
+          <button
+            onClick={stopScanning}
+            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3"
+          >
+            <CameraOff className="w-5 h-5" />
+            Desligar Câmera
+          </button>
+        )}
+        
+        {error && (
+          <button
+            onClick={startScanning}
+            className="w-full bg-white/5 hover:bg-white/10 text-white text-xs font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2"
+          >
+            <RefreshCw className="w-3 h-3" />
+            Tentar novamente
+          </button>
+        )}
+      </div>
+
       <style>{`
-        #reader { border: none !important; background: #0f172a !important; }
-        #reader__dashboard_section_csr span { display: none !important; }
-        #reader__dashboard_section_csr button {
-          background-color: #2563eb; 
-          color: white; 
-          padding: 12px 24px; 
-          border-radius: 14px; 
-          font-weight: 700; 
-          font-size: 14px;
-          border: none;
-          margin: 20px auto;
-          display: block;
-          transition: all 0.2s;
-          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-        #reader__dashboard_section_csr button:hover { background-color: #1d4ed8; transform: translateY(-1px); }
-        #reader__dashboard_section_swaplink { display: none !important; }
-        #reader video { border-radius: 24px; object-fit: cover !important; }
-        #reader__camera_selection {
-            background: #1e293b;
-            color: white;
-            border: 1px border-white/10;
-            padding: 8px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            font-size: 12px;
+        #reader video {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
         }
       `}</style>
     </div>
   );
 }
+
