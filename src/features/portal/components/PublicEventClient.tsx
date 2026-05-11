@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { createPublicRegistration, checkAndUpdatePaymentStatus } from '@/features/events/actions/registrations';
-import type { AsaasPaymentInfo } from '@/features/events/types';
+import type { AsaasPaymentInfo, FormField, CustomFormResponses } from '@/features/events/types';
+import { DynamicFormRenderer } from './DynamicFormRenderer';
 
 interface EventData {
   id: string;
@@ -13,6 +14,7 @@ interface EventData {
   time: string | null;
   location: string | null;
   description: string | null;
+  rules?: string | null;
   type: string;
   capacity: number | null;
   is_public: boolean;
@@ -21,15 +23,30 @@ interface EventData {
   requires_registration: boolean;
   requires_payment: boolean;
   banner_url: string | null;
+  custom_form_schema?: FormField[] | null;
 }
 
 interface Props {
   event: EventData;
   spotsLeft: number | null;
   isFull: boolean;
+  isAdminPreview?: boolean;
 }
 
-type Step = 'info' | 'form' | 'payment' | 'success';
+function isValidCpfClient(cpf: string): boolean {
+  const clean = cpf.replace(/\D/g, '');
+  if (clean.length !== 11 || /^(\d)\1{10}$/.test(clean)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += parseInt(clean[i]) * (10 - i);
+  let r = (sum * 10) % 11; if (r >= 10) r = 0;
+  if (r !== parseInt(clean[9])) return false;
+  sum = 0;
+  for (let i = 0; i < 10; i++) sum += parseInt(clean[i]) * (11 - i);
+  r = (sum * 10) % 11; if (r >= 10) r = 0;
+  return r === parseInt(clean[10]);
+}
+
+type Step = 'terms' | 'form' | 'payment' | 'success';
 
 const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const MONTHS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
@@ -44,8 +61,11 @@ function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 }
 
-export function PublicEventClient({ event, spotsLeft, isFull }: Props) {
-  const [step, setStep] = useState<Step>('info');
+export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: Props) {
+  const DRAFT_KEY = `registration_draft_${event.id}`;
+
+  const [step, setStep] = useState<Step>('terms');
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'pix' | 'boleto'>('pix');
   const [paymentInfo, setPaymentInfo] = useState<AsaasPaymentInfo | null>(null);
   const [registrationId, setRegistrationId] = useState<string | null>(null);
@@ -53,46 +73,94 @@ export function PublicEventClient({ event, spotsLeft, isFull }: Props) {
   const [isPending, startTransition] = useTransition();
   const [isCheckingPayment, startCheckPayment] = useTransition();
   const [pixCopied, setPixCopied] = useState(false);
+  const [showProcessingOverlay, setShowProcessingOverlay] = useState(false);
+  const [cpfValue, setCpfValue] = useState('');
+  const [cpfError, setCpfError] = useState('');
+  const [customResponses, setCustomResponses] = useState<CustomFormResponses>({});
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const isSubmittingRef = useRef(false);
+
+  // Draft detection
+  useEffect(() => {
+    try {
+      const draft = localStorage.getItem(DRAFT_KEY);
+      if (draft) setShowDraftModal(true);
+    } catch { /* ignore */ }
+  }, [DRAFT_KEY]);
+
+  const saveDraft = useCallback(() => {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ step, paymentMethod })); } catch { /* ignore */ }
+  }, [DRAFT_KEY, step, paymentMethod]);
+
+  const clearDraft = useCallback(() => {
+    try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+  }, [DRAFT_KEY]);
+
+  // Auto-polling PIX every 10s
+  useEffect(() => {
+    if (step !== 'payment' || !registrationId || !paymentInfo?.pixQrCode) return;
+    const interval = setInterval(async () => {
+      const result = await checkAndUpdatePaymentStatus(registrationId);
+      if (result.paid) { clearDraft(); setStep('success'); }
+    }, 10_000);
+    return () => clearInterval(interval);
+  }, [step, registrationId, paymentInfo?.pixQrCode, clearDraft]);
 
   const isPaid = event.requires_payment && (event.ticket_price ?? 0) > 0;
   const needsRegistration = event.requires_registration || isPaid;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Synchronous lock — prevents double-submit from rapid clicks
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+
     setError('');
-    const formData = new FormData(e.currentTarget);
-    if (isPaid) formData.set('payment_method', paymentMethod);
 
-    startTransition(async () => {
-      let ipAddress = 'unknown-ip';
-      try {
-        const res = await fetch('https://api.ipify.org?format=json');
-        const data = await res.json();
-        ipAddress = data.ip;
-      } catch (e) {
-        console.warn('Não foi possível obter o IP.');
-      }
-
-      let deviceId = localStorage.getItem('icre_device_id');
-      if (!deviceId) {
-        deviceId = crypto.randomUUID();
-        localStorage.setItem('icre_device_id', deviceId);
-      }
-
-      const result = await createPublicRegistration(event.id, formData, ipAddress, deviceId);
-
-      if (result.error) {
-        setError(result.error);
+    // CPF validation client-side
+    if (isPaid && cpfValue) {
+      if (!isValidCpfClient(cpfValue.replace(/\D/g, ''))) {
+        setCpfError('CPF inválido. Verifique os dígitos.');
+        isSubmittingRef.current = false;
         return;
       }
+    }
+    setCpfError('');
 
-      setRegistrationId(result.registrationId ?? null);
+    const formData = new FormData(e.currentTarget);
+    if (isPaid) formData.set('payment_method', paymentMethod);
+    if (Object.keys(customResponses).length > 0) {
+      formData.set('custom_form_responses', JSON.stringify(customResponses));
+    }
 
-      if (result.paymentInfo) {
-        setPaymentInfo(result.paymentInfo);
-        setStep('payment');
-      } else {
-        setStep('success');
+    setShowProcessingOverlay(true);
+    startTransition(async () => {
+      try {
+        let deviceId = localStorage.getItem('icre_device_id');
+        if (!deviceId) {
+          deviceId = crypto.randomUUID();
+          localStorage.setItem('icre_device_id', deviceId);
+        }
+
+        const result = await createPublicRegistration(event.id, formData, undefined, deviceId);
+
+        if (result.error) {
+          setError(result.error);
+          return;
+        }
+
+        setRegistrationId(result.registrationId ?? null);
+        clearDraft();
+
+        if (result.paymentInfo) {
+          setPaymentInfo(result.paymentInfo);
+          setStep('payment');
+        } else {
+          setStep('success');
+        }
+      } finally {
+        isSubmittingRef.current = false;
+        setShowProcessingOverlay(false);
       }
     });
   };
@@ -117,8 +185,10 @@ export function PublicEventClient({ event, spotsLeft, isFull }: Props) {
 
   const inputCls = 'w-full px-4 py-3 bg-slate-800/60 border border-white/10 text-white rounded-2xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500/50 transition-all';
 
+  const formFields: FormField[] = event.custom_form_schema ?? [];
+
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className={`min-h-screen bg-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/8 rounded-full blur-[140px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-600/6 rounded-full blur-[100px]" />
@@ -237,8 +307,31 @@ export function PublicEventClient({ event, spotsLeft, isFull }: Props) {
             </div>
           )}
 
+          {/* === STEP: TERMS === */}
+          {needsRegistration && !isFull && step === 'terms' && (
+            <div className="p-8">
+              <h2 className="text-xl font-bold text-white mb-2">Regras e Termos</h2>
+              <p className="text-slate-400 text-sm mb-6">Leia com atenção antes de prosseguir.</p>
+              <div className="bg-slate-800/60 border border-white/8 rounded-2xl p-5 text-sm text-slate-300 leading-relaxed mb-6 max-h-48 overflow-y-auto">
+                {event.rules || event.description || 'Ao se inscrever, você concorda em comparecer ao evento na data e horário indicados e respeitar todas as orientações da organização.'}
+              </div>
+              <label className="flex items-start gap-3 cursor-pointer mb-6">
+                <input type="checkbox" checked={termsAccepted} onChange={e => setTermsAccepted(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-600 bg-slate-800" />
+                <span className="text-sm text-slate-300">Li e aceito as regras deste evento</span>
+              </label>
+              <button
+                onClick={() => { if (termsAccepted) { saveDraft(); setStep('form'); } }}
+                disabled={!termsAccepted}
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-40"
+              >
+                Avançar
+              </button>
+            </div>
+          )}
+
           {/* === STEP: FORMULÁRIO === */}
-          {needsRegistration && !isFull && step === 'info' && (
+          {needsRegistration && !isFull && step === 'form' && (
             <div className="p-8">
               <h2 className="text-xl font-bold text-white mb-1">Fazer inscrição</h2>
               <p className="text-slate-400 text-sm mb-6">
@@ -266,33 +359,38 @@ export function PublicEventClient({ event, spotsLeft, isFull }: Props) {
                   <input name="email" type="email" required placeholder="seu@email.com" className={inputCls} />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
-                    Telefone <span className="text-slate-600 font-normal normal-case">(opcional)</span>
-                  </label>
-                  <input name="phone" type="tel" placeholder="(XX) XXXXX-XXXX" className={inputCls} />
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">Telefone *</label>
+                  <input name="phone" type="tel" required placeholder="(XX) XXXXX-XXXX" className={inputCls} />
+                  <p className="text-xs text-red-400 mt-1.5 font-semibold">⚠️ Este número será utilizado caso seja necessário realizar estorno.</p>
                 </div>
 
-                {isPaid && (
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">CPF *</label>
-                    <input 
-                      name="cpf" 
-                      type="text" 
-                      required 
-                      placeholder="000.000.000-00" 
-                      className={inputCls}
-                      onChange={(e) => {
-                        // Máscara simples de CPF
-                        let v = e.target.value.replace(/\D/g, '');
-                        if (v.length <= 11) {
-                          v = v.replace(/(\d{3})(\d)/, '$1.$2');
-                          v = v.replace(/(\d{3})(\d)/, '$1.$2');
-                          v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                        }
-                        e.target.value = v;
-                      }}
-                    />
-                  </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">CPF {isPaid ? '*' : '(opcional)'}</label>
+                  <input
+                    name="cpf"
+                    type="text"
+                    required={isPaid}
+                    placeholder="000.000.000-00"
+                    className={inputCls}
+                    value={cpfValue}
+                    onChange={e => {
+                      let v = e.target.value.replace(/\D/g, '');
+                      v = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                      setCpfValue(v);
+                      setCpfError('');
+                    }}
+                  />
+                  {cpfError && <p className="text-xs text-red-400 mt-1 font-semibold">{cpfError}</p>}
+                </div>
+
+                {/* Dynamic form fields */}
+                {formFields.length > 0 && (
+                  <DynamicFormRenderer
+                    fields={formFields}
+                    responses={customResponses}
+                    onChange={(id, val) => setCustomResponses(prev => ({ ...prev, [id]: val }))}
+                    inputCls={inputCls}
+                  />
                 )}
 
                 {isPaid && (
@@ -342,25 +440,21 @@ export function PublicEventClient({ event, spotsLeft, isFull }: Props) {
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 mt-2"
-                >
-                  {isPending ? (
-                    <>
-                      <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                      </svg>
-                      {isPaid ? 'Gerando pagamento...' : 'Confirmando...'}
-                    </>
-                  ) : (
-                    isPaid
-                      ? `Continuar para pagamento — ${formatCurrency(event.ticket_price!)}`
-                      : 'Confirmar inscrição'
-                  )}
-                </button>
+                <div className="flex gap-3 pt-1">
+                  <button type="button" onClick={() => setStep('terms')}
+                    className="px-4 py-3 rounded-2xl border border-white/10 text-slate-400 hover:text-white text-sm font-semibold transition-colors">
+                    Voltar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isPending}
+                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                  >
+                    {isPending ? (
+                      <><svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg> {isPaid ? 'Gerando pagamento...' : 'Confirmando...'}</>
+                    ) : isPaid ? `Continuar — ${formatCurrency(event.ticket_price!)}` : 'Confirmar inscrição'}
+                  </button>
+                </div>
               </form>
             </div>
           )}
@@ -511,18 +605,30 @@ export function PublicEventClient({ event, spotsLeft, isFull }: Props) {
                 }
               </p>
 
-              {registrationId && isPaid && (
-                <a
-                  href={`/comprovante/${registrationId}`}
-                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-500/20 mb-4"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Ver comprovante
-                </a>
-              )}
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-3 mb-6">
+                {registrationId && isPaid && (
+                  <a
+                    href={`/comprovante/${registrationId}`}
+                    className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Ver comprovante
+                  </a>
+                )}
 
+                <Link
+                  href="/minhas-inscricoes/comprovantes"
+                  className="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold px-6 py-3.5 rounded-2xl transition-all border border-white/10"
+                >
+                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                  </svg>
+                  Meus Comprovantes
+                </Link>
+              </div>
+              
               <div className="mt-4">
                 <Link
                   href="/agenda"
@@ -535,6 +641,33 @@ export function PublicEventClient({ event, spotsLeft, isFull }: Props) {
           )}
         </div>
       </div>
+
+      {/* Draft resume modal */}
+      {showDraftModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 max-w-sm w-full">
+            <h3 className="text-white font-bold text-lg mb-2">Inscrição em andamento</h3>
+            <p className="text-slate-400 text-sm mb-5">Você tem uma inscrição em andamento. Deseja continuar de onde parou?</p>
+            <div className="flex gap-3">
+              <button onClick={() => { clearDraft(); setShowDraftModal(false); }} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 text-sm font-semibold hover:bg-white/5">Começar do zero</button>
+              <button onClick={() => { setStep('form'); setShowDraftModal(false); }} className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold">Continuar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Immersive payment processing overlay */}
+      {showProcessingOverlay && (
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="animate-pulse">
+            <div className="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+            </div>
+          </div>
+          <p className="text-white font-bold text-lg">Processando pagamento em ambiente seguro...</p>
+          <p className="text-slate-400 text-sm mt-2">Por favor, aguarde. Não feche esta página.</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,0 +1,153 @@
+1. Módulo de Administração de Eventos (Backend & UI Admin)
+1.1. Inscrições Antecipadas e Proteção de Rota
+
+Bloqueio de Renderização: O componente de página do evento público verificará a coluna status e publish_at. Se o evento estiver como rascunho ou a data de publicação estiver no futuro, o servidor retornará um componente estrito de 404 Not Found para usuários comuns.
+
+Acesso SysAdmin: Se o usuário autenticado possuir a flag de SysAdmin no banco de dados, a página renderizará normalmente, exibindo um banner amarelo no topo informando: "Modo de Visualização Admin: Este evento não está visível para o público". O botão de inscrição funcionará normalmente para testes ou inscrições antecipadas feitas pela administração.
+
+1.2. Sistema de "Presentear Inscrição"
+
+Regra de Negócio: Disponível apenas na dashboard administrativa, dentro da página de detalhes de um evento específico que tenha a flag requires_payment = true.
+
+Fluxo de UI: O SysAdmin clicará no botão "Presentear Inscrição". Um modal solicitará: Nome, E-mail, Telefone e CPF do presenteado.
+
+Banco de Dados: A tabela registrations receberá o registro com status = confirmed, payment_method = gift, amount_paid = 0, is_gift = true, e gifted_by = [ID_DO_SYSADMIN].
+
+Notificação: O sistema enviará um e-mail com um template temático de presente (cores festivas, ícone de laço), informando: "Você foi presenteado com uma inscrição para o evento [Nome] por [Nome do SysAdmin]!", contendo o link direto para baixar o comprovante e o QR Code.
+
+1.3. Construtor de Formulários Dinâmicos
+
+Estrutura de Dados: Na criação do evento (EventForm.tsx), haverá uma nova aba "Formulário Personalizado". Os dados serão salvos em uma coluna JSONB custom_form_schema na tabela events.
+
+Tipos de Campos Suportados rigorosamente definidos:
+
+short_text (Input de texto simples)
+
+long_text (Textarea)
+
+multiple_choice (Radio buttons, permite apenas 1 resposta)
+
+checkboxes (Múltiplas seleções)
+
+dropdown (Select nativo)
+
+Configurações por campo: Propriedades id, label, required (booleano), e options (array de strings para opções). As respostas ficarão na tabela registrations numa coluna JSONB chamada custom_form_responses.
+
+1.4. Reformulação da Tabela de Inscrições
+
+UI Clean: A tabela exibirá apenas: Nome, Status (Confirmado/Pendente/Cancelado), Tipo (Pago/Gratuito/Presente) e Data da Inscrição.
+
+Modal de Detalhes: Ao clicar em uma linha, abrirá um componente lateral (Sheet/Drawer) contendo:
+
+Dados Pessoais (CPF, Telefone, E-mail).
+
+Respostas do Formulário Dinâmico.
+
+Status financeiro Asaas detalhado (ID da transação).
+
+Histórico de rastreamento (IP, Fingerprint do Dispositivo).
+
+Status do Check-in (Pendente ou Realizado com data/hora e nome do validador).
+
+1.5. Histórico Imutável de Eventos
+
+Arquitetura: Uma tabela event_audit_logs será criada.
+
+Gatilhos (Triggers SQL): Toda inserção, atualização ou deleção nas tabelas events e registrations disparará um trigger nativo do PostgreSQL (Supabase) gravando o estado anterior, o estado novo, o ID de quem alterou e a data/hora exata.
+
+Acesso: Página exclusiva /sysadmin/eventos/auditoria, contendo filtros por ID do evento e ID do usuário. Exibição estritamente em modo "Somente Leitura" via RLS. Nenhuma API de frontend poderá dar comando de DELETE ou UPDATE nesta tabela.
+
+2. Site Público: Nova Jornada de Inscrição (Multi-step)
+2.1. Redesign da Vitrine e Página de Eventos
+
+Cards de Eventos Especiais: Eventos marcados com type = especial terão altura dobrada e ocuparão a largura total do grid no topo da tela. A imagem (banner_url) cobrirá todo o fundo. Um gradiente linear preto (de baixo para cima, 80% a 0% de opacidade) garantirá a leitura do título branco e da data.
+
+Botão de Inscrição: A página do evento terá os detalhes na esquerda e um painel fixo na direita (sticky) contendo o valor, vagas restantes e o botão "Inscrever-se", que redirecionará para a rota isolada /agenda/[id]/inscricao.
+
+2.2. Máquina de Estados do Formulário de Inscrição
+
+Etapa 1: Regras do Evento: Exibição do termo de responsabilidade. O botão "Avançar" ficará desabilitado até o usuário marcar o checkbox "Li e aceito as regras".
+
+Etapa 2: Preenchimento (Dinâmico): Renderiza os campos fixos obrigatórios (Nome, E-mail, Telefone, CPF) seguidos pelo formulário gerado a partir do custom_form_schema. O telefone terá um alerta fixo em vermelho: "Atenção: Este número será utilizado caso seja necessário realizar estorno."
+
+Etapa 3: Pagamento (Se aplicável): Seleção do método de pagamento (Pix, Cartão de Crédito, Boleto).
+
+Etapa 4: Confirmação e Comprovante: Tela de sucesso.
+
+2.3. Rastreamento Avançado e Cache de "Continuar Inscrição"
+
+Armazenamento de Progresso: A cada transição de etapa, um objeto JSON será salvo no localStorage com a chave registration_draft_[EVENT_ID]. Se o usuário fechar a aba e voltar, o React detectará o rascunho e exibirá um modal: "Você tem uma inscrição em andamento. Deseja continuar de onde parou?"
+
+Coleta de IPs: Ao finalizar a etapa 2, uma requisição server-side coletará o cabeçalho x-forwarded-for. O banco fará um UPSERT na tabela user_known_ips (colunas: user_id, ip_address, last_seen_at).
+
+3. Integração Financeira Definitiva (Asaas) e Segurança
+3.1. Checkout Transparente Completo
+No lugar de links externos, o usuário pagará dentro do seu site:
+
+Interface Pix: Exibe o QR Code em formato de imagem, um campo de input somente leitura com o código "Copia e Cola" e um botão "Copiar". Haverá um contador regressivo visual (ex: 24 horas). O frontend fará um "polling" silencioso a cada 10 segundos no seu backend para verificar se o status da transação mudou para "CONFIRMED".
+
+Interface Cartão de Crédito: Formulário construído do zero no seu site solicitando: Número do Cartão, Nome do Titular, Validade (MM/AA), CVV e Select de Parcelas (com cálculo de juros caso aplicável). Os dados serão enviados via Server Action diretamente para a API do Asaas, retornando sucesso ou recusa instantânea.
+
+3.2. Tela de Carregamento Imersiva ("Processando...")
+
+Ao submeter dados de pagamento, um Overlay absoluto com fundo preto e opacidade de 80% e backdrop-blur-sm cobrirá 100% da viewport.
+
+No centro, a logo do ICRE pulsará suavemente (animação CSS de escala 0.95 para 1.05). Abaixo dela, o texto branco font-bold: "Processando pagamento em ambiente seguro...". Essa tela bloqueia totalmente interações do usuário para evitar duplo clique.
+
+3.3. Webhooks Idempotentes (Prevenção de Falhas)
+
+A rota /api/webhooks/asaas será blindada. Toda requisição do Asaas será validada via token do cabeçalho asaas-access-token.
+
+Idempotência: Antes de aprovar uma inscrição, o webhook consultará a tabela webhook_processed_events buscando o ID do evento do Asaas (ex: pay_xxxx). Se já existir, retornará status 200 e abortará a execução. Se não existir, processa o pagamento, marca a inscrição como confirmed, dispara o e-mail com PDF e salva o ID do webhook no banco, garantindo que envios duplicados do Asaas não gerem inscrições fantasmas.
+
+4. Sistema de Comprovantes, QR Code e Check-in
+4.1. Criptografia do QR Code Único
+
+Não usaremos apenas o ID da inscrição no QR Code para evitar que alguém adivinhe IDs sequenciais (UUIDs) e crie QR codes falsos.
+
+Assinatura HMAC-SHA256: O conteúdo do QR Code será uma string no formato: [REGISTRATION_ID]:[ASSINATURA]. A assinatura será gerada no backend usando uma chave secreta do servidor combinada com o ID da inscrição e a data de criação.
+
+Ao ler o QR Code, o servidor recalcula a assinatura com o ID recebido. Se não bater exatamente igual, retorna alerta vermelho: "QR Code Inválido ou Forjado".
+
+4.2. Refinamento do Scanner Administrativo
+
+Feedback Tátil e Visual: Ao detectar e validar um QR Code real, o navegador acionará a API de vibração navigator.vibrate([200, 100, 200]) (duas vibrações rápidas).
+
+Tela de Sucesso: A câmera ficará temporariamente ofuscada e um Card sobreporá a tela exibindo: Foto do usuário (se houver), Nome Completo, Tipo de Ingresso, Data e Hora exata da validação e o botão verde amplo "Concluir Check-in".
+
+Proteção contra Duplo Check-in: Se o QR Code lido tiver a coluna checkin_at preenchida no banco de dados, a tela piscará em vermelho, o dispositivo vibrará longamente navigator.vibrate([500]) e exibirá: "Acesso Negado: Este ingresso já foi utilizado no dia [DATA] às [HORA] por [NOME_DO_SYSADMIN_QUE_LEU]".
+
+4.3. Portal de Comprovantes e Rate Limiting
+
+Página "Meus Comprovantes": Rota /minhas-inscricoes/comprovantes. Exibirá uma lista de todos os eventos passados e futuros com status "Confirmado". Terá botões "Visualizar Comprovante" (abre um modal na tela) e "Baixar PDF".
+
+Defesa do Servidor (Rate Limiting Rigoroso): Como a geração de PDF exige processamento (CPU/RAM) com bibliotecas como react-pdf ou puppeteer:
+
+Será criada uma tabela auxiliar pdf_download_logs.
+
+Na Server Action de download, o sistema verifica quantas requisições de download o usuário (por user_id) fez na última hora.
+
+Regra estabelecida: Máximo de 5 downloads ou visualizações de PDF por usuário a cada 60 minutos. Excedendo isso, a requisição sofre um Throw Error amigável: "Limite de downloads atingido. Por favor, tente novamente em alguns minutos para proteger nossos servidores."
+
+5. Configurações Estritas de RLS (Row Level Security)
+Nenhum usuário mal-intencionado com acesso ao token JWT no LocalStorage conseguirá burlar o sistema via Postman/Insomnia devido às seguintes regras aplicadas diretamente no banco de dados (Supabase PostgreSQL):
+
+Tabela events:
+
+SELECT: Somente linhas onde status = 'publicado' E publish_at <= now(). SE possuir role SysAdmin, pode dar SELECT em qualquer linha.
+
+INSERT/UPDATE/DELETE: Apenas role SysAdmin.
+
+Tabela registrations:
+
+SELECT: Usuários comuns só podem ver linhas onde user_id = auth.uid(). SysAdmins veem todas.
+
+INSERT: Usuários só podem inserir com user_id = auth.uid() E se o event_id referenciar um evento válido e público, obedecendo às restrições lógicas criadas numa "Function SQL" (que valida limites de IP, dispositivo, capacidade e expiração do evento no nível do banco, não apenas no JavaScript).
+
+UPDATE: Bloqueado para usuários comuns (eles não podem mudar o próprio status de 'pendente' para 'pago'). O Webhook do Asaas (via Service Role Key segura) ou um SysAdmin podem fazer UPDATE.
+
+DELETE: Usuários só podem deletar a própria inscrição SE o status for 'pendente'. Se for 'pago', operação negada.
+
+Tabela user_known_ips e event_audit_logs:
+
+Totalmente bloqueada para edição manual, operada estritamente por triggers automáticos ou Server Actions com chave administrativa restrita do servidor.

@@ -1,10 +1,10 @@
 'use client'
 
 import React, { useState, useTransition } from 'react';
-import { ChurchEvent, EventType } from '../types';
+import { ChurchEvent, EventType, FormField, FormFieldType, CustomFormSchema } from '../types';
 import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/features/core/components/ToastContext';
-import { Loader2, SaveIcon, SendIcon, XIcon, ImageIcon } from 'lucide-react';
+import { Loader2, SaveIcon, SendIcon, XIcon, ImageIcon, PlusIcon, Trash2Icon, GripVertical, InfoIcon, ClipboardListIcon, PlusCircleIcon } from 'lucide-react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
@@ -80,16 +80,26 @@ function Toggle({
   );
 }
 
+const FIELD_TYPES: { value: FormFieldType; label: string }[] = [
+  { value: 'short_text',      label: 'Texto Curto' },
+  { value: 'long_text',       label: 'Texto Longo' },
+  { value: 'multiple_choice', label: 'Múltipla Escolha' },
+  { value: 'checkboxes',      label: 'Caixas de Seleção' },
+  { value: 'dropdown',        label: 'Lista Suspensa' },
+];
+
 export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
   const supabase = createClient();
   const { toast } = useToast();
   const [isLoading, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState<'info' | 'form'>('info');
 
   const [formData, setFormData] = useState<Partial<ChurchEvent>>({
     title:                 initialData?.title || '',
     type:                  initialData?.type || 'culto',
     status:                initialData?.status || 'rascunho',
     description:           initialData?.description || '',
+    rules:                 initialData?.rules || '',
     date:                  initialData?.date || '',
     time:                  initialData?.time || '',
     location:              initialData?.location || '',
@@ -107,7 +117,30 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
     max_per_ip:            initialData?.max_per_ip ?? 2,
     max_per_device:        initialData?.max_per_device ?? 2,
     payment_methods:       initialData?.payment_methods ?? ['pix'],
+    custom_form_schema:    initialData?.custom_form_schema ?? null,
   });
+
+  // Form builder state
+  const [formFields, setFormFields] = useState<FormField[]>(initialData?.custom_form_schema ?? []);
+
+  const addField = () => {
+    const newField: FormField = {
+      id: `field_${Date.now()}`,
+      type: 'short_text',
+      label: '',
+      required: false,
+      options: [],
+    };
+    setFormFields(prev => [...prev, newField]);
+  };
+
+  const updateField = (id: string, updates: Partial<FormField>) => {
+    setFormFields(prev => prev.map(f => f.id === id ? { ...f, ...updates } : f));
+  };
+
+  const removeField = (id: string) => {
+    setFormFields(prev => prev.filter(f => f.id !== id));
+  };
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [galleryImages, setGalleryImages] = useState<StorageFile[]>([]);
@@ -120,7 +153,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
   const loadGallery = async () => {
     setLoadingGal(true);
     const { data, error } = await supabase.storage.from('site-images').list('', {
-      limit: 100,
+      limit: 1000,
       sortBy: { column: 'created_at', order: 'desc' },
     });
     if (error) { toast('error', 'Erro ao carregar galeria.'); }
@@ -146,6 +179,18 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
 
   const handleDeleteImage = async (name: string) => {
     if (!confirm('Excluir esta imagem permanentemente?')) return;
+    // Check if image is used as banner_url in any event
+    const publicUrl = supabase.storage.from('site-images').getPublicUrl(name).data.publicUrl;
+    const { data: usedInEvent } = await supabase
+      .from('events')
+      .select('id, title')
+      .eq('banner_url', publicUrl)
+      .limit(1)
+      .maybeSingle();
+    if (usedInEvent) {
+      toast('error', `Imagem em uso no evento "${usedInEvent.title}". Remova o banner antes de excluí-la.`);
+      return;
+    }
     const { error } = await supabase.storage.from('site-images').remove([name]);
     if (error) { toast('error', 'Erro ao excluir.'); return; }
     if (formData.banner_url?.includes(name)) setFormData(p => ({ ...p, banner_url: '' }));
@@ -161,9 +206,21 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
   const usedMB = usedBytes / 1024 / 1024;
   const usedPct = Math.min(100, (usedMB / QUOTA_MB) * 100);
 
+  // Recurrence validation: must have at least one day if weekly recurring
+  const recurringWithNoDays =
+    !!formData.is_recurring &&
+    formData.recurrence_rules?.type === 'weekly' &&
+    (formData.recurrence_rules?.days?.length ?? 0) === 0;
+
   const handleSubmit = (targetStatus: 'rascunho' | 'publicado') => {
+    if (targetStatus === 'publicado' && recurringWithNoDays) {
+      toast('error', 'Selecione pelo menos um dia da semana para o evento recorrente.');
+      return;
+    }
     startTransition(async () => {
       try {
+        const cleanedFormFields: CustomFormSchema = formFields
+          .filter(f => f.label.trim().length > 0);
         const payload = {
           ...formData,
           status:               targetStatus,
@@ -173,7 +230,6 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           expires_at:           formData.expires_at || null,
           date:                 formData.date || null,
           time:                 formData.time || null,
-          // inscrição é obrigatória se evento for pago
           requires_registration: formData.requires_registration || formData.requires_payment || false,
           is_recurring:         formData.is_recurring,
           recurrence_rules:     formData.is_recurring ? formData.recurrence_rules : null,
@@ -181,6 +237,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           max_per_ip:           formData.max_per_ip ? Number(formData.max_per_ip) : 2,
           max_per_device:       formData.max_per_device ? Number(formData.max_per_device) : 2,
           payment_methods:      formData.payment_methods,
+          custom_form_schema:   cleanedFormFields.length > 0 ? cleanedFormFields : null,
         };
 
         let result;
@@ -204,6 +261,109 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
 
   return (
     <div className="space-y-5 pb-8">
+
+      {/* Tabs */}
+      <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
+        {(['info', 'form'] as const).map(tab => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 flex justify-center items-center gap-2 text-xs font-semibold py-2 rounded-lg transition-all ${
+              activeTab === tab ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            {tab === 'info' ? <><InfoIcon className="w-4 h-4" /> Informações do Evento</> : <><ClipboardListIcon className="w-4 h-4" /> Formulário Personalizado</>}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'form' && (
+        <div className="space-y-4">
+          <p className="text-xs text-slate-500">Adicione campos extras que os inscritos devem preencher.</p>
+          {formFields.map((field, idx) => (
+            <div key={field.id} className="border border-slate-200 rounded-xl p-4 space-y-3 bg-slate-50">
+              <div className="flex items-center gap-2">
+                <GripVertical className="w-4 h-4 text-slate-300" />
+                <span className="text-xs font-bold text-slate-500">Campo {idx + 1}</span>
+                <button type="button" onClick={() => removeField(field.id)} className="ml-auto text-red-400 hover:text-red-600">
+                  <Trash2Icon className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={labelCls}>Tipo</label>
+                  <select className={inputCls} value={field.type}
+                    onChange={e => updateField(field.id, { type: e.target.value as FormFieldType, options: [] })}>
+                    {FIELD_TYPES.map(ft => <option key={ft.value} value={ft.value}>{ft.label}</option>)}
+                  </select>
+                </div>
+                <div className="flex items-end gap-2">
+                  <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer">
+                    <input type="checkbox" checked={field.required}
+                      onChange={e => updateField(field.id, { required: e.target.checked })}
+                      className="w-4 h-4 text-blue-600 rounded border-slate-300" />
+                    Obrigatório
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label className={labelCls}>Pergunta / Rótulo *</label>
+                <input className={inputCls} value={field.label} placeholder="Ex: Qual seu tamanho de camiseta?"
+                  onChange={e => updateField(field.id, { label: e.target.value })} />
+              </div>
+              {['multiple_choice', 'checkboxes', 'dropdown'].includes(field.type) && (
+                <div>
+                  <label className={labelCls}>Opções</label>
+                  <div className="space-y-2 mt-1">
+                    {(field.options || []).map((opt, oIdx) => (
+                      <div key={oIdx} className="flex items-center gap-2">
+                        <input
+                          className={inputCls}
+                          value={opt}
+                          placeholder={`Opção ${oIdx + 1}`}
+                          onChange={e => {
+                            const newOpts = [...(field.options || [])];
+                            newOpts[oIdx] = e.target.value;
+                            updateField(field.id, { options: newOpts });
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newOpts = (field.options || []).filter((_, i) => i !== oIdx);
+                            updateField(field.id, { options: newOpts });
+                          }}
+                          className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <XIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newOpts = [...(field.options || []), ''];
+                        updateField(field.id, { options: newOpts });
+                      }}
+                      className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 mt-2"
+                    >
+                      <PlusCircleIcon className="w-4 h-4" /> Adicionar opção
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+          <button type="button" onClick={addField}
+            className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-all">
+            <PlusIcon className="w-4 h-4" /> Adicionar Campo
+          </button>
+        </div>
+      )}
+
+      {activeTab === 'info' && (
+        <div className="space-y-5">
 
       {/* Banner */}
       <Field label="Banner do evento">
@@ -381,6 +541,15 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
         />
       </Field>
 
+      <Field label="Regras do Evento (Termos)">
+        <textarea
+          className={`${inputCls} min-h-[88px] resize-y`}
+          value={formData.rules || ''}
+          onChange={e => setFormData(p => ({ ...p, rules: e.target.value }))}
+          placeholder="Ex: Não é permitido entrar de bermuda. Ao se inscrever concorda com nossos termos..."
+        />
+      </Field>
+
       <SectionDivider label="Visibilidade e Inscrição" />
 
       <div className="space-y-2.5">
@@ -532,6 +701,11 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
       </div>
 
       {/* Ações */}
+      {recurringWithNoDays && (
+        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-3 py-2 rounded-xl">
+          ⚠️ Selecione pelo menos um dia da semana para publicar este evento recorrente.
+        </div>
+      )}
       <div className="flex gap-3 pt-2">
         <button
           type="button"
@@ -553,13 +727,17 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
         <button
           type="button"
           onClick={() => handleSubmit('publicado')}
-          disabled={isLoading || !formData.title}
+          disabled={isLoading || !formData.title || recurringWithNoDays}
+          title={recurringWithNoDays ? 'Selecione os dias da semana primeiro' : undefined}
           className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-sm disabled:opacity-40"
         >
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <SendIcon className="w-4 h-4" />}
           {formData.publish_at && formData.publish_at > new Date().toISOString().split('T')[0] ? 'Agendar' : 'Publicar'}
         </button>
       </div>
+
+        </div>
+      )}
 
       {/* Modal galeria */}
       <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>

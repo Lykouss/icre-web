@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server';
+import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import { isValidUuid, isValidPhone, isValidEmail } from '@/lib/action-validators';
@@ -11,16 +12,84 @@ import {
   getAsaasPixQrCode,
   getAsaasPaymentStatus,
 } from '@/lib/asaas-server';
-import type { PaymentStatus, PaymentMethod, AsaasPaymentInfo } from '@/features/events/types';
-import { generateTicketSignature, verifyTicketSignature } from '../utils/signature';
+import type {
+  PaymentStatus,
+  PaymentMethod,
+  AsaasPaymentInfo,
+  CheckinResult,
+  CustomFormResponses,
+} from '@/features/events/types';
+import {
+  generateTicketSignature,
+  verifyTicketSignature,
+  parseAndVerifyQrPayload,
+} from '../utils/signature';
 
-const VALID_PAYMENT_STATUSES: PaymentStatus[] = ['gratuito', 'pendente', 'pago', 'reembolsado', 'expirado'];
-const VALID_PAYMENT_METHODS: PaymentMethod[] = ['pix', 'cartao', 'dinheiro', 'cortesia', 'asaas_pix', 'asaas_boleto'];
+const VALID_PAYMENT_STATUSES: PaymentStatus[] = ['gratuito', 'pendente', 'pago', 'reembolsado', 'expirado', 'cortesia'];
+const VALID_PAYMENT_METHODS: PaymentMethod[] = ['pix', 'cartao', 'dinheiro', 'cortesia', 'gift', 'asaas_pix', 'asaas_boleto'];
+
+// ─── CPF validation (Módulo 11) ───────────────────────────────────────────────
+
+function isValidCpf(cpf: string): boolean {
+  const clean = cpf.replace(/\D/g, '');
+  if (clean.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(clean)) return false;
+
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += parseInt(clean[i]) * (10 - i);
+  let remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(clean[9])) return false;
+
+  sum = 0;
+  for (let i = 0; i < 10; i++) sum += parseInt(clean[i]) * (11 - i);
+  remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  return remainder === parseInt(clean[10]);
+}
+
+// ─── Helper: log event history ────────────────────────────────────────────────
+
+async function logEventHistory(
+  eventId: string,
+  actionType: string,
+  actorId?: string | null,
+  targetUserId?: string | null,
+  details?: Record<string, unknown>
+) {
+  const supabase = await createClient();
+  await supabase.from('event_history').insert({
+    event_id: eventId,
+    action_type: actionType,
+    actor_id: actorId,
+    target_user_id: targetUserId,
+    details: details,
+  });
+}
+
+// ─── Helper: get client IP from headers ───────────────────────────────────────
+
+async function getClientIp(): Promise<string> {
+  try {
+    const hdrs = await headers();
+    return (
+      hdrs.get('x-forwarded-for')?.split(',')[0].trim() ||
+      hdrs.get('x-real-ip') ||
+      'unknown'
+    );
+  } catch {
+    return 'unknown';
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PUBLIC REGISTRATION
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function createPublicRegistration(
   eventId: string,
   formData: FormData,
-  ipAddress?: string,
+  _ipAddressUnused?: string, // kept for back-compat but we now read from headers
   deviceId?: string
 ): Promise<{ error?: string; registrationId?: string; paymentInfo?: AsaasPaymentInfo }> {
   if (!isValidUuid(eventId)) return { error: 'Evento inválido.' };
@@ -28,8 +97,15 @@ export async function createPublicRegistration(
   const name      = (formData.get('name')     as string)?.trim();
   const email     = (formData.get('email')    as string)?.trim();
   const phone     = (formData.get('phone')    as string)?.trim();
-  const cpf       = (formData.get('cpf')      as string)?.trim().replace(/\D/g, ''); // Limpar pontuação
+  const cpf       = (formData.get('cpf')      as string)?.trim().replace(/\D/g, '');
   const payMethod = (formData.get('payment_method') as string)?.trim() as 'pix' | 'boleto' | null;
+
+  // Parse custom form responses
+  let customFormResponses: CustomFormResponses | null = null;
+  const responsesRaw = formData.get('custom_form_responses') as string | null;
+  if (responsesRaw) {
+    try { customFormResponses = JSON.parse(responsesRaw); } catch { /* ignore */ }
+  }
 
   if (!name || name.length < 3) return { error: 'Nome precisa ter ao menos 3 caracteres.' };
   if (!email || !isValidEmail(email)) return { error: 'E-mail inválido.' };
@@ -38,20 +114,34 @@ export async function createPublicRegistration(
   const supabase = await createClient();
   const user = await getCurrentUser();
 
+  // Get IP from server headers (not from client — prevents manipulation)
+  const ipAddress = await getClientIp();
+
   const { data: event } = await supabase
     .from('events')
-    .select('id, title, capacity, ticket_price, requires_payment, requires_registration, status, is_public, max_per_account, max_per_ip, max_per_device')
+    .select('id, title, capacity, ticket_price, requires_payment, requires_registration, status, is_public, max_per_account, max_per_ip, max_per_device, publish_at')
     .eq('id', eventId)
     .single();
 
   if (!event) return { error: 'Evento não encontrado.' };
 
-  // SysAdmin can register before event is public
+  // Access control
   if (event.status !== 'publicado' && !user?.isSysAdmin) {
-     return { error: 'Evento não está disponível para inscrições.' };
+    return { error: 'Evento não está disponível para inscrições.' };
+  }
+  if (event.publish_at && new Date(event.publish_at) > new Date() && !user?.isSysAdmin) {
+    return { error: 'As inscrições para este evento ainda não estão abertas.' };
   }
 
-  // Verificações de limites
+  const needsPayment = event.requires_payment && (event.ticket_price ?? 0) > 0;
+
+  // CPF required for paid events
+  if (needsPayment) {
+    if (!cpf) return { error: 'CPF é obrigatório para eventos pagos.' };
+    if (!isValidCpf(cpf)) return { error: 'CPF inválido. Verifique os dígitos.' };
+  }
+
+  // Capacity check (additional protection — RPC lock handles race condition)
   if (event.capacity) {
     const { count } = await supabase
       .from('event_registrations')
@@ -61,16 +151,29 @@ export async function createPublicRegistration(
     if ((count ?? 0) >= event.capacity) return { error: 'Evento lotado. Não há vagas disponíveis.' };
   }
 
-  if (ipAddress && event.max_per_ip) {
-     const { count } = await supabase.from('event_registrations').select('id', { count: 'exact', head: true }).eq('event_id', eventId).eq('ip_address', ipAddress).in('status', ['confirmado', 'pendente_pagamento']);
-     if ((count ?? 0) >= event.max_per_ip) return { error: 'Limite de inscrições por IP atingido.' };
+  // IP limit check
+  if (ipAddress !== 'unknown' && event.max_per_ip) {
+    const { count } = await supabase
+      .from('event_registrations')
+      .select('id', { count: 'exact', head: true })
+      .eq('event_id', eventId)
+      .eq('ip_address', ipAddress)
+      .in('status', ['confirmado', 'pendente_pagamento']);
+    if ((count ?? 0) >= event.max_per_ip) return { error: 'Limite de inscrições por IP atingido.' };
   }
 
+  // Device limit check
   if (deviceId && event.max_per_device) {
-     const { count } = await supabase.from('event_registrations').select('id', { count: 'exact', head: true }).eq('event_id', eventId).eq('device_id', deviceId).in('status', ['confirmado', 'pendente_pagamento']);
-     if ((count ?? 0) >= event.max_per_device) return { error: 'Limite de inscrições por dispositivo atingido.' };
+    const { count } = await supabase
+      .from('event_registrations')
+      .select('id', { count: 'exact', head: true })
+      .eq('event_id', eventId)
+      .eq('device_id', deviceId)
+      .in('status', ['confirmado', 'pendente_pagamento']);
+    if ((count ?? 0) >= event.max_per_device) return { error: 'Limite de inscrições por dispositivo atingido.' };
   }
 
+  // Duplicate email check
   const { data: duplicate } = await supabase
     .from('event_registrations')
     .select('id')
@@ -78,189 +181,258 @@ export async function createPublicRegistration(
     .eq('email', email)
     .in('status', ['confirmado', 'pendente_pagamento'])
     .maybeSingle();
-
   if (duplicate) return { error: 'Este e-mail já está inscrito neste evento.' };
 
-  const needsPayment = event.requires_payment && (event.ticket_price ?? 0) > 0;
   const initialStatus = needsPayment ? 'pendente_pagamento' : 'confirmado';
   const initialPaymentStatus: PaymentStatus = needsPayment ? 'pendente' : 'gratuito';
 
-  // Registrar IP conhecido se usuário estiver logado
-  let memberId = null;
+  // Log IP for authenticated user
+  let memberId: string | null = null;
   if (user) {
-      if (ipAddress) {
-          await supabase.from('user_known_ips').upsert({
-              user_id: user.id,
-              ip_address: ipAddress,
-              last_seen: new Date().toISOString()
-          }, { onConflict: 'user_id, ip_address' });
-      }
-
-      // Buscar o ID da ficha de membro vinculada a este usuário
-      const { data: memberData } = await supabase
-        .from('members')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      memberId = memberData?.id || null;
+    if (ipAddress !== 'unknown') {
+      await supabase.from('user_known_ips').upsert(
+        { user_id: user.id, ip_address: ipAddress, last_seen_at: new Date().toISOString() },
+        { onConflict: 'user_id, ip_address' }
+      );
+    }
+    const { data: memberData } = await supabase
+      .from('members')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    memberId = memberData?.id || null;
   }
 
-  const { data: registration, error: insertError } = await supabase
-    .from('event_registrations')
-    .insert({
-      event_id:       eventId,
-      name,
-      email:          email || null,
-      phone:          phone || null,
-      status:         initialStatus,
-      payment_status: initialPaymentStatus,
-      ip_address:     ipAddress || null,
-      device_id:      deviceId || null,
-      cpf:            cpf || null,
-      member_id:      memberId // Associa a ficha de membro correta
+  // Insert with row-level lock via RPC
+  const { data: rpcResult, error: rpcError } = await supabase
+    .rpc('insert_registration_with_lock', {
+      p_event_id: eventId,
+      p_name: name,
+      p_email: email,
+      p_phone: phone || null,
+      p_cpf: cpf || null,
+      p_status: initialStatus,
+      p_payment_status: initialPaymentStatus,
+      p_ip_address: ipAddress,
+      p_device_id: deviceId || null,
+      p_member_id: memberId,
+      p_custom_form_responses: customFormResponses,
     })
-    .select()
     .single();
 
-  if (insertError || !registration) {
-    console.error('[createPublicRegistration]', insertError?.message);
+  if (rpcError || !rpcResult) {
+    console.error('[createPublicRegistration] RPC error:', rpcError?.message);
     return { error: 'Falha ao registrar a inscrição.' };
   }
 
-  if (!needsPayment) {
-    const signature = generateTicketSignature(registration.id, eventId);
-    await supabase.from('event_registrations').update({ ticket_signature: signature }).eq('id', registration.id);
-    await logEventHistory(eventId, 'inscrição_gratuita', user?.id, null, { registration_id: registration.id });
-    revalidatePath(`/agenda/${eventId}`);
-    return { registrationId: registration.id };
+  const { registration_id, error_message } = rpcResult as { registration_id: string | null; error_message: string | null };
+
+  if (error_message || !registration_id) {
+    return { error: error_message || 'Falha ao registrar a inscrição.' };
   }
 
+  // Free registration — generate ticket signature and done
+  if (!needsPayment) {
+    const signature = generateTicketSignature(registration_id);
+    await supabase.from('event_registrations').update({ ticket_signature: signature }).eq('id', registration_id);
+    await logEventHistory(eventId, 'inscrição_gratuita', user?.id, null, { registration_id });
+    revalidatePath(`/agenda/${eventId}`);
+    return { registrationId: registration_id };
+  }
+
+  // Paid registration — create Asaas payment
   try {
     const customerId = await createOrFindAsaasCustomer(name, email, phone, cpf);
     const description = `Ingresso: ${event.title}`;
     const value = Number(event.ticket_price);
 
     let payment;
-    let pixInfo: { qrCode?: string; copyPaste?: string } = {};
+    let pixInfo: { qrCode?: string; copyPaste?: string; expirationDate?: string } = {};
 
     if (payMethod === 'boleto') {
-      payment = await createAsaasBoletoPayment(customerId, value, description, registration.id);
+      payment = await createAsaasBoletoPayment(customerId, value, description, registration_id);
     } else {
-      payment = await createAsaasPixPayment(customerId, value, description, registration.id);
+      payment = await createAsaasPixPayment(customerId, value, description, registration_id);
       try {
         const pix = await getAsaasPixQrCode(payment.id);
-        pixInfo = { qrCode: pix.encodedImage, copyPaste: pix.payload };
-      } catch {}
+        pixInfo = { qrCode: pix.encodedImage, copyPaste: pix.payload, expirationDate: pix.expirationDate };
+      } catch { /* PIX QR failed but we have invoiceUrl as fallback */ }
     }
 
     await supabase
       .from('event_registrations')
       .update({
-        asaas_payment_id:  payment.id,
+        asaas_payment_id: payment.id,
         asaas_invoice_url: payment.invoiceUrl,
-        payment_method:    payMethod === 'boleto' ? 'asaas_boleto' : 'asaas_pix',
+        payment_method: payMethod === 'boleto' ? 'asaas_boleto' : 'asaas_pix',
       })
-      .eq('id', registration.id);
+      .eq('id', registration_id);
 
-    await logEventHistory(eventId, 'inscrição_aguardando_pagamento', user?.id, null, { registration_id: registration.id, payment_id: payment.id });
+    await logEventHistory(eventId, 'inscrição_aguardando_pagamento', user?.id, null, { registration_id, payment_id: payment.id });
     revalidatePath(`/agenda/${eventId}`);
 
     return {
-      registrationId: registration.id,
+      registrationId: registration_id,
       paymentInfo: {
-        paymentId:    payment.id,
-        invoiceUrl:   payment.invoiceUrl,
-        pixQrCode:    pixInfo.qrCode,
+        paymentId: payment.id,
+        invoiceUrl: payment.invoiceUrl,
+        pixQrCode: pixInfo.qrCode,
         pixCopyPaste: pixInfo.copyPaste,
-        boletoUrl:    payment.bankSlipUrl,
-        status:       payment.status,
-        value:        payment.value,
-        dueDate:      payment.dueDate,
+        pixExpirationDate: pixInfo.expirationDate,
+        boletoUrl: payment.bankSlipUrl,
+        status: payment.status,
+        value: payment.value,
+        dueDate: payment.dueDate,
       },
     };
   } catch (e) {
     console.error('[createPublicRegistration] Asaas error:', e);
-    await supabase.from('event_registrations').delete().eq('id', registration.id);
-    return { error: 'Falha ao gerar o pagamento. Tente novamente.' };
+    await supabase.from('event_registrations').delete().eq('id', registration_id);
+    return { error: 'Falha ao gerar o pagamento. Tente novamente em instantes.' };
   }
 }
 
-export async function giftRegistration(eventId: string, targetEmail: string, targetName: string) {
-    const user = await getCurrentUser();
-    if (!user || !user.isSysAdmin) return { error: 'Acesso negado.' };
+// ─────────────────────────────────────────────────────────────────────────────
+// GIFT REGISTRATION
+// ─────────────────────────────────────────────────────────────────────────────
 
-    const supabase = await createClient();
-    const { data: event } = await supabase.from('events').select('id, title').eq('id', eventId).single();
-    if (!event) return { error: 'Evento não encontrado.' };
+export async function giftRegistration(
+  eventId: string,
+  targetName: string,
+  targetEmail: string,
+  targetPhone: string,
+  targetCpf: string
+) {
+  const user = await getCurrentUser();
+  if (!user || !user.isSysAdmin) return { error: 'Acesso negado.' };
 
-    const { data: registration, error } = await supabase.from('event_registrations').insert({
-        event_id: eventId,
-        name: targetName,
-        email: targetEmail,
-        status: 'confirmado',
-        payment_status: 'cortesia',
-        gifted_by: user.id
-    }).select().single();
+  const supabase = await createClient();
+  const { data: event } = await supabase
+    .from('events')
+    .select('id, title')
+    .eq('id', eventId)
+    .single();
+  if (!event) return { error: 'Evento não encontrado.' };
 
-    if (error || !registration) return { error: 'Falha ao criar cortesia.' };
+  const { data: registration, error } = await supabase
+    .from('event_registrations')
+    .insert({
+      event_id: eventId,
+      name: targetName,
+      email: targetEmail || null,
+      phone: targetPhone || null,
+      cpf: targetCpf?.replace(/\D/g, '') || null,
+      status: 'confirmado',
+      payment_status: 'cortesia',
+      payment_method: 'gift',
+      amount_paid: 0,
+      is_gift: true,
+      gifted_by: user.id,
+    })
+    .select()
+    .single();
 
-    const signature = generateTicketSignature(registration.id, eventId);
-    await supabase.from('event_registrations').update({ ticket_signature: signature }).eq('id', registration.id);
+  if (error || !registration) return { error: 'Falha ao criar cortesia.' };
 
-    await logEventHistory(eventId, 'inscrição_presenteada', user.id, null, { registration_id: registration.id, target_email: targetEmail });
-    revalidatePath(`/eventos/${eventId}`);
-    return { success: true, registrationId: registration.id };
+  const signature = generateTicketSignature(registration.id);
+  await supabase
+    .from('event_registrations')
+    .update({ ticket_signature: signature })
+    .eq('id', registration.id);
+
+  await logEventHistory(eventId, 'inscrição_presenteada', user.id, null, {
+    registration_id: registration.id,
+    target_email: targetEmail,
+    gifted_by_name: user.fullName,
+  });
+  revalidatePath(`/eventos/${eventId}`);
+  return { success: true, registrationId: registration.id };
 }
 
-export async function processCheckin(qrCodeData: string) {
-    const user = await getCurrentUser();
-    if (!user || !user.isSysAdmin) return { error: 'Acesso negado.' };
+// ─────────────────────────────────────────────────────────────────────────────
+// PROCESS CHECKIN (QR Scanner)
+// ─────────────────────────────────────────────────────────────────────────────
 
-    // qrCodeData assumed format: registration_id:event_id:signature
-    const parts = qrCodeData.split(':');
-    if (parts.length !== 3) return { error: 'QR Code inválido.' };
+export async function processCheckin(qrCodeData: string): Promise<CheckinResult> {
+  const user = await getCurrentUser();
+  if (!user || !user.isSysAdmin) return { success: false, error: 'Acesso negado.' };
 
-    const [registrationId, eventId, signature] = parts;
+  const parsed = parseAndVerifyQrPayload(qrCodeData);
+  if (!parsed.valid) {
+    return { success: false, error: 'QR Code inválido ou forjado.' };
+  }
 
-    if (!isValidUuid(registrationId) || !isValidUuid(eventId)) return { error: 'Formato de QR Code inválido.' };
+  const { registrationId } = parsed;
+  if (!isValidUuid(registrationId)) {
+    return { success: false, error: 'Formato de QR Code inválido.' };
+  }
 
-    if (!verifyTicketSignature(registrationId, eventId, signature)) {
-        return { error: 'Assinatura inválida! Possível QR Code falsificado.' };
+  const supabase = await createClient();
+  const { data: reg, error } = await supabase
+    .from('event_registrations')
+    .select('id, event_id, status, checkin_status, checkin_time, checkin_by, name, email, payment_status, is_gift')
+    .eq('id', registrationId)
+    .single();
+
+  if (error || !reg) return { success: false, error: 'Inscrição não encontrada.' };
+  if (reg.status !== 'confirmado') return { success: false, error: 'Inscrição não está confirmada.' };
+
+  // Already checked in
+  if (reg.checkin_status) {
+    let firstCheckinByName: string | undefined;
+    if (reg.checkin_by) {
+      const { data: adminData } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', reg.checkin_by)
+        .single();
+      firstCheckinByName = adminData?.full_name ?? undefined;
     }
+    return {
+      success: false,
+      alreadyCheckedIn: true,
+      error: 'Este ingresso já foi utilizado.',
+      firstCheckinAt: reg.checkin_time ?? undefined,
+      firstCheckinBy: firstCheckinByName,
+      registrant: {
+        name: reg.name,
+        email: reg.email,
+        payment_status: reg.payment_status,
+        is_gift: reg.is_gift,
+      },
+    };
+  }
 
-    const supabase = await createClient();
-    const { data: reg, error } = await supabase.from('event_registrations').select('id, status, checkin_status').eq('id', registrationId).eq('event_id', eventId).single();
+  // Perform check-in
+  const { error: updError } = await supabase
+    .from('event_registrations')
+    .update({
+      checkin_status: true,
+      checkin_time: new Date().toISOString(),
+      checkin_by: user.id,
+    })
+    .eq('id', registrationId);
 
-    if (error || !reg) return { error: 'Inscrição não encontrada.' };
-    if (reg.status !== 'confirmado') return { error: 'Inscrição não confirmada/paga.' };
-    if (reg.checkin_status) return { error: 'Check-in já realizado.' };
+  if (updError) return { success: false, error: 'Falha ao salvar check-in.' };
 
-    const { error: updError } = await supabase.from('event_registrations').update({
-        checkin_status: true,
-        checkin_time: new Date().toISOString(),
-        checkin_by: user.id
-    }).eq('id', registrationId);
+  await logEventHistory(reg.event_id, 'checkin_realizado', user.id, null, { registration_id: registrationId });
+  revalidatePath(`/eventos/${reg.event_id}`);
 
-    if (updError) return { error: 'Falha ao salvar check-in.' };
-
-    await logEventHistory(eventId, 'checkin_realizado', user.id, null, { registration_id: registrationId });
-    revalidatePath(`/eventos/${eventId}`);
-    return { success: true };
+  return {
+    success: true,
+    registrant: {
+      name: reg.name,
+      email: reg.email,
+      payment_status: reg.payment_status,
+      is_gift: reg.is_gift,
+    },
+  };
 }
 
-async function logEventHistory(eventId: string, actionType: string, actorId?: string | null, targetUserId?: string | null, details?: any) {
-    const supabase = await createClient();
-    await supabase.from('event_history').insert({
-        event_id: eventId,
-        action_type: actionType,
-        actor_id: actorId,
-        target_user_id: targetUserId,
-        details: details
-    });
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// CHECK & UPDATE PAYMENT STATUS
+// ─────────────────────────────────────────────────────────────────────────────
 
-// Check and update payment status logic remains similar, but now creates HMAC signature
 export async function checkAndUpdatePaymentStatus(registrationId: string) {
   if (!isValidUuid(registrationId)) return { error: 'Inscrição inválida.' };
 
@@ -278,17 +450,17 @@ export async function checkAndUpdatePaymentStatus(registrationId: string) {
   const paid = PAID_STATUSES.includes(asaasStatus);
 
   if (paid && reg.status !== 'confirmado') {
-    const signature = reg.ticket_signature || generateTicketSignature(registrationId, reg.event_id);
+    const signature = reg.ticket_signature || generateTicketSignature(registrationId);
     const receiptUrl = `/comprovante/${registrationId}`;
 
     await supabase
       .from('event_registrations')
       .update({
-        status:         'confirmado',
+        status: 'confirmado',
         payment_status: 'pago',
-        paid_at:        new Date().toISOString(),
-        receipt_url:    receiptUrl,
-        ticket_signature: signature
+        paid_at: new Date().toISOString(),
+        receipt_url: receiptUrl,
+        ticket_signature: signature,
       })
       .eq('id', registrationId);
 
@@ -300,9 +472,9 @@ export async function checkAndUpdatePaymentStatus(registrationId: string) {
   return { status: asaasStatus, paid };
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   ADMIN ACTIONS (Restauradas para compatibilidade com painéis existentes)
-   ───────────────────────────────────────────────────────────────────────────── */
+// ─────────────────────────────────────────────────────────────────────────────
+// ADMIN ACTIONS
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function createRegistration(eventId: string, formData: FormData) {
   const user = await getCurrentUser();
@@ -328,32 +500,25 @@ export async function createRegistration(eventId: string, formData: FormData) {
       .eq('member_id', memberId)
       .eq('status', 'confirmado')
       .maybeSingle();
-
     if (duplicate) return { error: 'Este membro já está inscrito neste evento.' };
   }
 
-  const { data: event } = await supabase
-    .from('events')
-    .select('capacity')
-    .eq('id', eventId)
-    .single();
-
+  const { data: event } = await supabase.from('events').select('capacity').eq('id', eventId).single();
   if (event?.capacity) {
     const { count } = await supabase
       .from('event_registrations')
       .select('id', { count: 'exact', head: true })
       .eq('event_id', eventId)
       .eq('status', 'confirmado');
-
     if ((count ?? 0) >= event.capacity) return { error: 'Evento lotado.' };
   }
 
   const { error } = await supabase.from('event_registrations').insert({
-    event_id:       eventId,
+    event_id: eventId,
     name,
-    phone:          phone    || null,
-    member_id:      memberId || null,
-    status:         'confirmado',
+    phone: phone || null,
+    member_id: memberId || null,
+    status: 'confirmado',
     payment_status: 'gratuito',
   });
 
@@ -383,7 +548,6 @@ export async function updateRegistrationPayment(
   if (paymentAmount !== null && (isNaN(paymentAmount) || paymentAmount < 0)) return { error: 'Valor inválido.' };
 
   const supabase = await createClient();
-
   const isPaid = paymentStatus === 'pago';
   const receiptUrl = isPaid ? `/comprovante/${registrationId}` : null;
 
@@ -391,12 +555,12 @@ export async function updateRegistrationPayment(
     .from('event_registrations')
     .update({
       payment_status: paymentStatus,
-      payment_method: paymentMethod  || null,
-      payment_amount: paymentAmount  ?? null,
-      payment_ref:    paymentRef.trim() || null,
-      paid_at:        isPaid ? new Date().toISOString() : null,
-      status:         isPaid ? 'confirmado' : undefined,
-      receipt_url:    receiptUrl,
+      payment_method: paymentMethod || null,
+      payment_amount: paymentAmount ?? null,
+      payment_ref: paymentRef.trim() || null,
+      paid_at: isPaid ? new Date().toISOString() : null,
+      status: isPaid ? 'confirmado' : undefined,
+      receipt_url: receiptUrl,
     })
     .eq('id', registrationId);
 
@@ -450,13 +614,12 @@ export async function checkInAttendance(eventId: string, name: string, memberId?
       .eq('event_id', eventId)
       .eq('member_id', memberId)
       .maybeSingle();
-
     if (existing) return { error: 'Este membro já fez check-in.' };
   }
 
   const { error } = await supabase.from('event_attendance').insert({
-    event_id:  eventId,
-    name:      trimmedName,
+    event_id: eventId,
+    name: trimmedName,
     member_id: memberId || null,
   });
 

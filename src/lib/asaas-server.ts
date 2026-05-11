@@ -2,6 +2,9 @@
 
 const ASAAS_API_KEY = process.env.ASAAS_API_KEY;
 const ASAAS_API_URL = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/api/v3';
+const ASAAS_TIMEOUT_MS = 10_000; // 10 seconds
+
+// ─── Interfaces ─────────────────────────────────────────────────────────────
 
 interface AsaasCustomerPayload {
   name: string;
@@ -13,16 +16,31 @@ interface AsaasCustomerPayload {
 
 interface AsaasPaymentPayload {
   customer: string;
-  billingType: 'PIX' | 'BOLETO';
+  billingType: 'PIX' | 'BOLETO' | 'CREDIT_CARD';
   value: number;
   dueDate: string;
   description: string;
   externalReference?: string;
+  creditCard?: {
+    holderName: string;
+    number: string;
+    expiryMonth: string;
+    expiryYear: string;
+    ccv: string;
+  };
+  creditCardHolderInfo?: {
+    name: string;
+    email: string;
+    cpfCnpj: string;
+    phone: string;
+  };
 }
 
 interface AsaasCustomerResponse {
   id: string;
   name: string;
+  cpfCnpj?: string;
+  email?: string;
 }
 
 interface AsaasPaymentResponse {
@@ -41,25 +59,42 @@ interface AsaasPixQrCodeResponse {
   expirationDate: string;
 }
 
+// ─── Core fetch with AbortController timeout ─────────────────────────────────
+
 async function fetchAsaas<T>(endpoint: string, options?: RequestInit): Promise<T> {
   if (!ASAAS_API_KEY) throw new Error('ASAAS_API_KEY não configurada.');
 
-  const res = await fetch(`${ASAAS_API_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      'access_token': ASAAS_API_KEY,
-      ...(options?.headers ?? {}),
-    },
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), ASAAS_TIMEOUT_MS);
 
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Asaas API error (${res.status}): ${body}`);
+  try {
+    const res = await fetch(`${ASAAS_API_URL}${endpoint}`, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': ASAAS_API_KEY,
+        ...(options?.headers ?? {}),
+      },
+    });
+
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Asaas API error (${res.status}): ${body}`);
+    }
+
+    return res.json() as Promise<T>;
+  } catch (err: any) {
+    if (err?.name === 'AbortError') {
+      throw new Error('Asaas API timeout: a requisição demorou mais de 10 segundos.');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  return res.json() as Promise<T>;
 }
+
+// ─── Customer: CPF-first lookup ──────────────────────────────────────────────
 
 export async function createOrFindAsaasCustomer(
   name: string,
@@ -69,27 +104,51 @@ export async function createOrFindAsaasCustomer(
 ): Promise<string> {
   let customerId: string | null = null;
 
-  if (email) {
-    const existing = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
-      `/customers?email=${encodeURIComponent(email)}`
-    );
-    if (existing.data.length > 0) {
-      customerId = existing.data[0].id;
+  // 1. Primary lookup by CPF/CNPJ (prevents duplicate CPF rejection by Asaas)
+  if (cpfCnpj) {
+    try {
+      const byCpf = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
+        `/customers?cpfCnpj=${encodeURIComponent(cpfCnpj)}`
+      );
+      if (byCpf.data.length > 0) {
+        customerId = byCpf.data[0].id;
+      }
+    } catch {
+      // CPF search failed — proceed to email fallback
     }
   }
 
-  const payload: AsaasCustomerPayload = { name, email, phone, cpfCnpj };
+  // 2. Fallback: lookup by email
+  if (!customerId && email) {
+    try {
+      const byEmail = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
+        `/customers?email=${encodeURIComponent(email)}`
+      );
+      if (byEmail.data.length > 0) {
+        customerId = byEmail.data[0].id;
+      }
+    } catch {
+      // Email search failed — will create new
+    }
+  }
+
+  const payload: AsaasCustomerPayload = {
+    name,
+    email,
+    phone,
+    cpfCnpj,
+  };
 
   if (customerId) {
-    // Atualizar cliente existente (garante que o CPF seja inserido se não existia)
+    // Update existing customer to ensure CPF is recorded
     await fetchAsaas<AsaasCustomerResponse>(`/customers/${customerId}`, {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify(payload),
     });
     return customerId;
   }
 
-  // Criar novo cliente
+  // Create new customer
   const customer = await fetchAsaas<AsaasCustomerResponse>('/customers', {
     method: 'POST',
     body: JSON.stringify(payload),
@@ -97,6 +156,8 @@ export async function createOrFindAsaasCustomer(
 
   return customer.id;
 }
+
+// ─── Payments ────────────────────────────────────────────────────────────────
 
 export async function createAsaasPixPayment(
   customerId: string,

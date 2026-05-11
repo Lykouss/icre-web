@@ -17,24 +17,19 @@ function sanitize(value: string): string {
   return value.trim().replace(/[<>]/g, '');
 }
 
-async function checkRegisterRateLimit(email: string): Promise<boolean> {
+async function checkAndRecordRateLimit(identifier: string, action: string, maxAttempts: number, windowMinutes: number): Promise<boolean> {
   const admin = await createAdminClient();
-  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000).toISOString();
-  const { count } = await admin
-    .from('auth_rate_limits')
-    .select('id', { count: 'exact', head: true })
-    .eq('identifier', email.toLowerCase())
-    .eq('action', 'register')
-    .gte('attempted_at', windowStart);
-  return (count ?? 0) < MAX_REGISTER_ATTEMPTS;
-}
-
-async function recordRegisterAttempt(email: string): Promise<void> {
-  const admin = await createAdminClient();
-  await admin.from('auth_rate_limits').insert({
-    identifier: email.toLowerCase(),
-    action: 'register',
+  const { data, error } = await admin.rpc('rpc_check_and_record_rate_limit', {
+    p_identifier: identifier.toLowerCase(),
+    p_action: action,
+    p_max_attempts: maxAttempts,
+    p_window_minutes: windowMinutes
   });
+  if (error) {
+    console.error(`[RateLimit] RPC Error for ${action}:`, error.message);
+    return false; // Fail secure
+  }
+  return !!data;
 }
 
 export async function registerUser(formData: FormData): Promise<RegisterResult> {
@@ -90,11 +85,10 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
   }
 
   // ── Rate Limiting ─────────────────────────────────────────────
-  const allowed = await checkRegisterRateLimit(email);
+  const allowed = await checkAndRecordRateLimit(email, 'register', MAX_REGISTER_ATTEMPTS, WINDOW_MINUTES);
   if (!allowed) {
     return { error: 'Muitas tentativas de cadastro. Aguarde 1 hora e tente novamente.' };
   }
-  await recordRegisterAttempt(email);
 
   const admin = await createAdminClient();
 
@@ -110,11 +104,10 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
     return { error: 'Este e-mail já está cadastrado.', field: 'email' };
   }
 
-  // ── Cria usuário via adminClient (email já confirmado) ────────
+  // ── Cria usuário via adminClient (email_confirm removido para segurança)
   const { data: createdUser, error: createError } = await admin.auth.admin.createUser({
     email,
     password,
-    email_confirm: true,
     user_metadata: { full_name: fullName },
   });
 
@@ -183,29 +176,7 @@ interface LoginResult {
   error?: string;
 }
 
-async function checkLoginRateLimit(email: string): Promise<{ allowed: boolean; remainingMinutes?: number }> {
-  const admin = await createAdminClient();
-  const windowStart = new Date(Date.now() - LOGIN_WINDOW_MINUTES * 60 * 1000).toISOString();
-  const { count } = await admin
-    .from('auth_rate_limits')
-    .select('id', { count: 'exact', head: true })
-    .eq('identifier', email.toLowerCase())
-    .eq('action', 'login')
-    .gte('attempted_at', windowStart);
-  const attempts = count ?? 0;
-  if (attempts >= MAX_LOGIN_ATTEMPTS) {
-    return { allowed: false, remainingMinutes: LOGIN_WINDOW_MINUTES };
-  }
-  return { allowed: true };
-}
-
-async function recordLoginAttempt(email: string): Promise<void> {
-  const admin = await createAdminClient();
-  await admin.from('auth_rate_limits').insert({
-    identifier: email.toLowerCase(),
-    action: 'login',
-  });
-}
+// checkLoginRateLimit replaced by global checkAndRecordRateLimit
 
 export async function loginUser(
   prevState: LoginResult | null,
@@ -218,16 +189,15 @@ export async function loginUser(
     return { error: 'E-mail ou senha inválidos.' };
   }
 
-  const rateLimit = await checkLoginRateLimit(email);
-  if (!rateLimit.allowed) {
-    return { error: `Muitas tentativas. Aguarde ${rateLimit.remainingMinutes} minutos.` };
+  const allowed = await checkAndRecordRateLimit(email, 'login', MAX_LOGIN_ATTEMPTS, LOGIN_WINDOW_MINUTES);
+  if (!allowed) {
+    return { error: `Muitas tentativas. Aguarde ${LOGIN_WINDOW_MINUTES} minutos.` };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    await recordLoginAttempt(email);
     return { error: 'E-mail ou senha incorretos.' };
   }
 
@@ -246,20 +216,10 @@ export async function requestPasswordReset(
     return { error: 'E-mail inválido.' };
   }
 
-  const admin = await createAdminClient();
-  const windowStart = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const { count } = await admin
-    .from('auth_rate_limits')
-    .select('id', { count: 'exact', head: true })
-    .eq('identifier', email)
-    .eq('action', 'reset_password')
-    .gte('attempted_at', windowStart);
-
-  if ((count ?? 0) >= 3) {
+  const allowed = await checkAndRecordRateLimit(email, 'reset_password', 3, 60);
+  if (!allowed) {
     return { error: 'Muitas solicitações. Aguarde 1 hora.' };
   }
-
-  await admin.from('auth_rate_limits').insert({ identifier: email, action: 'reset_password' });
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -355,6 +315,11 @@ export async function verifyAdminPin(pin: string): Promise<{ error?: string }> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Sessão expirada. Faça login novamente.' };
+
+  const allowed = await checkAndRecordRateLimit(user.id, 'verify_admin_pin', 5, 15);
+  if (!allowed) {
+    return { error: 'Muitas tentativas falhas. O acesso por PIN foi bloqueado temporariamente por 15 minutos.' };
+  }
 
   const { data: profile } = await supabase
     .from('profiles')

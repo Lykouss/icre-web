@@ -1,13 +1,17 @@
 'use client'
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, useRef } from 'react';
 import { useToast } from '@/features/core/components/ToastContext';
 import {
   createRegistration,
   cancelRegistration,
   updateRegistrationPayment,
+  giftRegistration,
 } from '@/features/events/actions/registrations';
-import type { EventRegistration, PaymentStatus, PaymentMethod } from '@/features/events/types';
+import type { EventRegistration, PaymentStatus, PaymentMethod, CustomFormResponses } from '@/features/events/types';
+import { XIcon, GiftIcon, ChevronRightIcon, UserIcon } from 'lucide-react';
+
+// ─── Constants ───────────────────────────────────────────────────────────────
 
 const PAYMENT_STATUS_STYLES: Record<PaymentStatus, string> = {
   gratuito:   'bg-slate-100 text-slate-500',
@@ -15,6 +19,7 @@ const PAYMENT_STATUS_STYLES: Record<PaymentStatus, string> = {
   pago:       'bg-green-100 text-green-700',
   reembolsado:'bg-blue-100 text-blue-700',
   expirado:   'bg-red-100 text-red-700',
+  cortesia:   'bg-purple-100 text-purple-700',
 };
 
 const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
@@ -23,21 +28,20 @@ const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   pago:       'Pago',
   reembolsado:'Reembolsado',
   expirado:   'Expirado',
+  cortesia:   'Cortesia',
 };
 
 const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
-  pix:       'PIX',
-  cartao:    'Cartão',
-  dinheiro:  'Dinheiro',
-  cortesia:  'Cortesia',
-  asaas_pix: 'Asaas PIX',
-  asaas_boleto: 'Asaas Boleto',
+  pix:         'PIX',
+  cartao:      'Cartão',
+  dinheiro:    'Dinheiro',
+  cortesia:    'Cortesia',
+  gift:        'Presente',
+  asaas_pix:   'Asaas PIX',
+  asaas_boleto:'Asaas Boleto',
 };
 
-interface Member {
-  id: string;
-  full_name: string;
-}
+interface Member { id: string; full_name: string; }
 
 interface RegistrationsPanelProps {
   eventId: string;
@@ -47,46 +51,215 @@ interface RegistrationsPanelProps {
   canManage: boolean;
 }
 
-interface PaymentEditState {
-  registrationId: string;
-  paymentStatus: PaymentStatus;
-  paymentMethod: PaymentMethod | null;
-  paymentAmount: string;
-  paymentRef: string;
+function formatDateTime(iso: string) {
+  return new Date(iso).toLocaleString('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
 }
 
 function exportToCSV(registrations: EventRegistration[]) {
-  const header = ['Nome', 'Telefone', 'Status Inscrição', 'Pagamento', 'Método', 'Valor', 'Ref. Pagamento', 'Data Inscrição'];
+  const header = ['Nome','E-mail','CPF','Telefone','Status','Pagamento','Método','Data'];
   const rows = registrations.map(r => [
-    r.name,
-    r.phone ?? '',
-    r.status,
-    PAYMENT_STATUS_LABELS[r.payment_status],
+    r.name, r.email ?? '', r.cpf ?? '', r.phone ?? '',
+    r.status, PAYMENT_STATUS_LABELS[r.payment_status],
     r.payment_method ? PAYMENT_METHOD_LABELS[r.payment_method] : '',
-    r.payment_amount != null ? r.payment_amount.toFixed(2) : '',
-    r.payment_ref ?? '',
     new Date(r.created_at).toLocaleString('pt-BR'),
   ]);
-
   const csv = [header, ...rows].map(row => row.map(v => `"${v}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `inscritos.csv`;
-  a.click();
+  a.href = url; a.download = 'inscritos.csv'; a.click();
   URL.revokeObjectURL(url);
 }
+
+// ─── Registration Detail Sheet ────────────────────────────────────────────────
+
+function RegistrationSheet({
+  reg,
+  onClose,
+  canManage,
+  onCancel,
+}: {
+  reg: EventRegistration;
+  onClose: () => void;
+  canManage: boolean;
+  onCancel: (id: string) => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end">
+      <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-md bg-white shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
+          <div>
+            <h3 className="font-bold text-slate-900">{reg.name}</h3>
+            <p className="text-xs text-slate-400">Detalhes da inscrição</p>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 transition-colors">
+            <XIcon className="w-5 h-5 text-slate-500" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* Status badges */}
+          <div className="flex flex-wrap gap-2">
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${reg.status === 'confirmado' ? 'bg-green-100 text-green-700' : reg.status === 'cancelado' ? 'bg-red-100 text-red-500' : 'bg-amber-100 text-amber-700'}`}>
+              {reg.status === 'confirmado' ? 'Confirmado' : reg.status === 'cancelado' ? 'Cancelado' : 'Aguardando pagamento'}
+            </span>
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${PAYMENT_STATUS_STYLES[reg.payment_status]}`}>
+              {PAYMENT_STATUS_LABELS[reg.payment_status]}
+              {reg.payment_method && ` · ${PAYMENT_METHOD_LABELS[reg.payment_method]}`}
+            </span>
+            {reg.is_gift && (
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-pink-100 text-pink-700 flex items-center gap-1">
+                <GiftIcon className="w-3 h-3" /> Presente
+              </span>
+            )}
+          </div>
+
+          {/* Personal data */}
+          <section>
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Dados Pessoais</h4>
+            <div className="space-y-2 text-sm">
+              {reg.email && <p><span className="font-semibold text-slate-500">E-mail:</span> {reg.email}</p>}
+              {reg.cpf && <p><span className="font-semibold text-slate-500">CPF:</span> {reg.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</p>}
+              {reg.phone && <p><span className="font-semibold text-slate-500">Telefone:</span> {reg.phone}</p>}
+              <p><span className="font-semibold text-slate-500">Inscrito em:</span> {formatDateTime(reg.created_at)}</p>
+            </div>
+          </section>
+
+          {/* Dynamic form responses */}
+          {reg.custom_form_responses && Object.keys(reg.custom_form_responses).length > 0 && (
+            <section>
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Respostas do Formulário</h4>
+              <div className="space-y-3">
+                {Object.entries(reg.custom_form_responses as CustomFormResponses).map(([key, value]) => (
+                  <div key={key} className="bg-slate-50 rounded-xl px-4 py-3">
+                    <p className="text-xs font-semibold text-slate-500 mb-1">{key}</p>
+                    <p className="text-sm text-slate-800">{Array.isArray(value) ? value.join(', ') : value}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Asaas payment info */}
+          {reg.asaas_payment_id && (
+            <section>
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Status Asaas</h4>
+              <div className="bg-slate-50 rounded-xl px-4 py-3 space-y-1 text-sm">
+                <p><span className="font-semibold text-slate-500">ID Transação:</span> <code className="text-xs">{reg.asaas_payment_id}</code></p>
+                {reg.paid_at && <p><span className="font-semibold text-slate-500">Pago em:</span> {formatDateTime(reg.paid_at)}</p>}
+                {reg.asaas_invoice_url && (
+                  <a href={reg.asaas_invoice_url} target="_blank" rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline text-xs">Ver fatura ↗</a>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* IP tracking */}
+          {reg.ip_address && (
+            <section>
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Rastreamento</h4>
+              <div className="bg-slate-50 rounded-xl px-4 py-3 text-sm space-y-1">
+                <p><span className="font-semibold text-slate-500">IP:</span> {reg.ip_address}</p>
+                {reg.device_id && <p><span className="font-semibold text-slate-500">Device ID:</span> <code className="text-xs break-all">{reg.device_id.slice(0, 16)}…</code></p>}
+              </div>
+            </section>
+          )}
+
+          {/* Check-in status */}
+          <section>
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Check-in</h4>
+            <div className={`rounded-xl px-4 py-3 text-sm ${reg.checkin_status ? 'bg-green-50' : 'bg-slate-50'}`}>
+              {reg.checkin_status ? (
+                <div className="text-green-700">
+                  <p className="font-bold">✓ Realizado</p>
+                  {reg.checkin_time && <p className="text-xs mt-1">{formatDateTime(reg.checkin_time)}</p>}
+                </div>
+              ) : (
+                <p className="text-slate-400">Pendente</p>
+              )}
+            </div>
+          </section>
+
+          {/* Actions */}
+          {canManage && reg.status === 'confirmado' && (
+            <button
+              onClick={() => { onCancel(reg.id); onClose(); }}
+              className="w-full py-2.5 rounded-xl border border-red-200 text-red-500 text-sm font-semibold hover:bg-red-50 transition-colors"
+            >
+              Cancelar inscrição
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Gift Modal ───────────────────────────────────────────────────────────────
+
+function GiftModal({ eventId, onClose }: { eventId: string; onClose: () => void }) {
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [cpf, setCpf] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) { toast('error', 'Nome obrigatório.'); return; }
+    startTransition(async () => {
+      const result = await giftRegistration(eventId, name.trim(), email.trim(), phone.trim(), cpf.trim());
+      if (result.error) toast('error', result.error);
+      else { toast('success', 'Inscrição presenteada! E-mail enviado.'); onClose(); }
+    });
+  };
+
+  const inputCls = 'w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm';
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
+            <GiftIcon className="w-5 h-5 text-pink-500" />
+          </div>
+          <div>
+            <h3 className="font-bold text-slate-900">Presentear Inscrição</h3>
+            <p className="text-xs text-slate-400">Cortesia — sem cobrança</p>
+          </div>
+          <button onClick={onClose} className="ml-auto p-1.5 rounded-lg hover:bg-slate-100"><XIcon className="w-4 h-4" /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div><label className="block text-xs font-semibold text-slate-600 mb-1">Nome *</label><input className={inputCls} value={name} onChange={e => setName(e.target.value)} placeholder="Nome completo" required /></div>
+          <div><label className="block text-xs font-semibold text-slate-600 mb-1">E-mail</label><input type="email" className={inputCls} value={email} onChange={e => setEmail(e.target.value)} placeholder="email@exemplo.com" /></div>
+          <div><label className="block text-xs font-semibold text-slate-600 mb-1">Telefone</label><input type="tel" className={inputCls} value={phone} onChange={e => setPhone(e.target.value)} placeholder="(00) 00000-0000" /></div>
+          <div><label className="block text-xs font-semibold text-slate-600 mb-1">CPF</label><input className={inputCls} value={cpf} onChange={e => setCpf(e.target.value)} placeholder="000.000.000-00" /></div>
+          <div className="flex gap-3 pt-1">
+            <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancelar</button>
+            <button type="submit" disabled={isPending} className="flex-1 py-2.5 rounded-xl bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold disabled:opacity-50 flex items-center justify-center gap-2">
+              {isPending ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <GiftIcon className="w-4 h-4" />}
+              Presentear
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Panel ───────────────────────────────────────────────────────────────
 
 export function RegistrationsPanel({ eventId, registrations, members, capacity, canManage }: RegistrationsPanelProps) {
   const { toast, dismiss } = useToast();
   const [isPending, startTransition] = useTransition();
-
-  const [regName, setRegName] = useState('');
-  const [regPhone, setRegPhone] = useState('');
-  const [regMemberId, setRegMemberId] = useState('');
-
-  const [paymentEdit, setPaymentEdit] = useState<PaymentEditState | null>(null);
+  const [selectedReg, setSelectedReg] = useState<EventRegistration | null>(null);
+  const [showGiftModal, setShowGiftModal] = useState(false);
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<PaymentStatus | 'todos'>('todos');
 
@@ -95,30 +268,10 @@ export function RegistrationsPanel({ eventId, registrations, members, capacity, 
 
   const filtered = registrations.filter(r => {
     const term = search.toLowerCase();
-    const matchesSearch = !term || r.name.toLowerCase().includes(term) || r.phone?.includes(term);
+    const matchesSearch = !term || r.name.toLowerCase().includes(term) || r.phone?.includes(term) || r.email?.toLowerCase().includes(term);
     const matchesFilter = filterStatus === 'todos' || r.payment_status === filterStatus;
     return matchesSearch && matchesFilter;
   });
-
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.set('name', regName);
-    formData.set('phone', regPhone);
-    formData.set('member_id', regMemberId);
-    startTransition(async () => {
-      const loadingId = toast('loading', 'Registrando inscrição...');
-      const result = await createRegistration(eventId, formData);
-      dismiss(loadingId);
-      if (result.error) toast('error', result.error);
-      else {
-        toast('success', 'Inscrição realizada!');
-        setRegName('');
-        setRegPhone('');
-        setRegMemberId('');
-      }
-    });
-  };
 
   const handleCancel = (registrationId: string) => {
     startTransition(async () => {
@@ -130,50 +283,17 @@ export function RegistrationsPanel({ eventId, registrations, members, capacity, 
     });
   };
 
-  const openPaymentEdit = (r: EventRegistration) => {
-    setPaymentEdit({
-      registrationId: r.id,
-      paymentStatus:  r.payment_status,
-      paymentMethod:  r.payment_method,
-      paymentAmount:  r.payment_amount != null ? r.payment_amount.toString() : '',
-      paymentRef:     r.payment_ref ?? '',
-    });
-  };
-
-  const handleSavePayment = () => {
-    if (!paymentEdit) return;
-    const amount = paymentEdit.paymentAmount ? parseFloat(paymentEdit.paymentAmount) : null;
-    startTransition(async () => {
-      const loadingId = toast('loading', 'Salvando pagamento...');
-      const result = await updateRegistrationPayment(
-        paymentEdit.registrationId,
-        eventId,
-        paymentEdit.paymentStatus,
-        paymentEdit.paymentMethod,
-        amount,
-        paymentEdit.paymentRef,
-      );
-      dismiss(loadingId);
-      if (result.error) toast('error', result.error);
-      else {
-        toast('success', 'Pagamento atualizado!');
-        setPaymentEdit(null);
-      }
-    });
-  };
-
-  const inputClass = 'w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm';
+  const inputClass = 'px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm';
 
   return (
     <div className="animate-in fade-in duration-300 max-w-4xl">
-
-      {/* Sumário */}
+      {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         {([
-          { label: 'Inscritos',   value: confirmed.length,                                     color: 'text-slate-800' },
-          { label: 'Vagas',       value: capacity ? capacity - confirmed.length : '∞',          color: 'text-slate-800' },
-          { label: 'Pagos',       value: registrations.filter(r => r.payment_status === 'pago').length,     color: 'text-green-700' },
-          { label: 'Pendentes',   value: registrations.filter(r => r.payment_status === 'pendente').length, color: 'text-amber-700' },
+          { label: 'Inscritos',  value: confirmed.length,                                                  color: 'text-slate-800' },
+          { label: 'Vagas',      value: capacity ? capacity - confirmed.length : '∞',                      color: 'text-slate-800' },
+          { label: 'Pagos',      value: registrations.filter(r => r.payment_status === 'pago').length,     color: 'text-green-700' },
+          { label: 'Pendentes',  value: registrations.filter(r => r.payment_status === 'pendente').length, color: 'text-amber-700' },
         ] as const).map(card => (
           <div key={card.label} className="bg-white rounded-2xl border border-slate-200 px-4 py-3 shadow-sm">
             <p className="text-xs text-slate-400 font-medium">{card.label}</p>
@@ -182,170 +302,95 @@ export function RegistrationsPanel({ eventId, registrations, members, capacity, 
         ))}
       </div>
 
-      {/* Formulário nova inscrição */}
+      {/* Action bar */}
       {canManage && (
-        <form onSubmit={handleRegister} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm mb-4">
-          <p className="text-sm font-bold text-slate-700 mb-3">Nova inscrição</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <input type="text" value={regName} onChange={e => setRegName(e.target.value)} placeholder="Nome *" required className={inputClass} />
-            <input type="text" value={regPhone} onChange={e => setRegPhone(e.target.value)} placeholder="Telefone" className={inputClass} />
-            <select value={regMemberId} onChange={e => setRegMemberId(e.target.value)} className={inputClass}>
-              <option value="">Visitante / externo</option>
-              {members.map(m => <option key={m.id} value={m.id}>{m.full_name}</option>)}
-            </select>
-          </div>
-          <div className="flex justify-end mt-3">
-            <button type="submit" disabled={isPending} className="px-4 py-2 font-semibold bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 text-sm flex items-center gap-2">
-              {isPending && <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg>}
-              Adicionar
-            </button>
-          </div>
-        </form>
+        <div className="flex gap-3 mb-4">
+          <button
+            onClick={() => setShowGiftModal(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-50 border border-pink-200 text-pink-700 text-sm font-semibold hover:bg-pink-100 transition-colors"
+          >
+            <GiftIcon className="w-4 h-4" /> Presentear Inscrição
+          </button>
+        </div>
       )}
 
-      {/* Filtros e exportação */}
+      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <input
-          type="text"
-          value={search}
+          type="text" value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Pesquisar por nome ou telefone..."
-          className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          placeholder="Pesquisar por nome, e-mail ou telefone..."
+          className={`flex-1 ${inputClass}`}
         />
-        <select
-          value={filterStatus}
-          onChange={e => setFilterStatus(e.target.value as PaymentStatus | 'todos')}
-          className="px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-        >
-          <option value="todos">Todos os pagamentos</option>
+        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as PaymentStatus | 'todos')} className={inputClass}>
+          <option value="todos">Todos</option>
           {(Object.keys(PAYMENT_STATUS_LABELS) as PaymentStatus[]).map(s => (
             <option key={s} value={s}>{PAYMENT_STATUS_LABELS[s]}</option>
           ))}
         </select>
-        <button
-          onClick={() => exportToCSV(filtered)}
-          className="px-4 py-2 font-semibold bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors text-sm flex items-center gap-2 shrink-0"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
+        <button onClick={() => exportToCSV(filtered)} className="px-4 py-2 font-semibold bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors text-sm shrink-0">
           Exportar CSV
         </button>
       </div>
 
-      {/* Lista */}
+      {/* Table */}
       <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-slate-100">
           <p className="text-xs text-slate-400 font-medium">{filtered.length} inscrições · {occupancy} confirmadas</p>
         </div>
 
         {filtered.length === 0 ? (
-          <p className="text-sm text-slate-400 text-center py-12">Nenhuma inscrição encontrada.</p>
+          <div className="py-12 text-center">
+            <UserIcon className="w-10 h-10 text-slate-200 mx-auto mb-3" />
+            <p className="text-sm text-slate-400">Nenhuma inscrição encontrada.</p>
+          </div>
         ) : (
           <div className="divide-y divide-slate-100">
             {filtered.map(r => (
-              <div key={r.id} className="px-4 py-3 flex items-center justify-between gap-4">
+              <div
+                key={r.id}
+                onClick={() => setSelectedReg(r)}
+                className="px-4 py-3 flex items-center gap-4 hover:bg-slate-50 cursor-pointer transition-colors"
+              >
+                {/* Name */}
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-slate-800 text-sm truncate">{r.name}</p>
-                  {r.phone && <p className="text-xs text-slate-400">{r.phone}</p>}
+                  {r.email && <p className="text-xs text-slate-400 truncate">{r.email}</p>}
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${r.status === 'confirmado' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-500'}`}>
-                    {r.status}
-                  </span>
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${PAYMENT_STATUS_STYLES[r.payment_status]}`}>
-                    {PAYMENT_STATUS_LABELS[r.payment_status]}
-                    {r.payment_method && ` · ${PAYMENT_METHOD_LABELS[r.payment_method]}`}
-                    {r.payment_amount != null && ` · R$ ${r.payment_amount.toFixed(2)}`}
-                  </span>
+                {/* Status */}
+                <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 ${r.status === 'confirmado' ? 'bg-green-100 text-green-700' : r.status === 'cancelado' ? 'bg-red-100 text-red-500' : 'bg-amber-100 text-amber-700'}`}>
+                  {r.status === 'confirmado' ? 'Confirmado' : r.status === 'cancelado' ? 'Cancelado' : 'Pendente'}
+                </span>
 
-                  {canManage && r.status === 'confirmado' && (
-                    <button onClick={() => openPaymentEdit(r)} className="text-xs text-blue-600 hover:text-blue-800 font-semibold">
-                      Pagamento
-                    </button>
-                  )}
-                  {canManage && r.status === 'confirmado' && (
-                    <button onClick={() => handleCancel(r.id)} disabled={isPending} className="text-xs text-red-400 hover:text-red-600 font-semibold disabled:opacity-50">
-                      Cancelar
-                    </button>
-                  )}
-                </div>
+                {/* Type */}
+                <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 ${PAYMENT_STATUS_STYLES[r.payment_status]}`}>
+                  {r.is_gift ? '🎁 Presente' : PAYMENT_STATUS_LABELS[r.payment_status]}
+                </span>
+
+                {/* Date */}
+                <span className="text-xs text-slate-400 shrink-0 hidden sm:block">
+                  {new Date(r.created_at).toLocaleDateString('pt-BR')}
+                </span>
+
+                <ChevronRightIcon className="w-4 h-4 text-slate-300 shrink-0" />
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Modal: Editar pagamento */}
-      {paymentEdit && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Registrar Pagamento</h3>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Status</label>
-                <select
-                  value={paymentEdit.paymentStatus}
-                  onChange={e => setPaymentEdit(p => p ? { ...p, paymentStatus: e.target.value as PaymentStatus } : p)}
-                  className={inputClass}
-                >
-                  {(Object.keys(PAYMENT_STATUS_LABELS) as PaymentStatus[]).map(s => (
-                    <option key={s} value={s}>{PAYMENT_STATUS_LABELS[s]}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Método</label>
-                <select
-                  value={paymentEdit.paymentMethod ?? ''}
-                  onChange={e => setPaymentEdit(p => p ? { ...p, paymentMethod: (e.target.value as PaymentMethod) || null } : p)}
-                  className={inputClass}
-                >
-                  <option value="">Não informado</option>
-                  {(Object.keys(PAYMENT_METHOD_LABELS) as PaymentMethod[]).map(m => (
-                    <option key={m} value={m}>{PAYMENT_METHOD_LABELS[m]}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Valor (R$)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={paymentEdit.paymentAmount}
-                  onChange={e => setPaymentEdit(p => p ? { ...p, paymentAmount: e.target.value } : p)}
-                  placeholder="0,00"
-                  className={inputClass}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Referência / Comprovante</label>
-                <input
-                  type="text"
-                  value={paymentEdit.paymentRef}
-                  onChange={e => setPaymentEdit(p => p ? { ...p, paymentRef: e.target.value } : p)}
-                  placeholder="ID da transação, nº do comprovante..."
-                  className={inputClass}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end gap-3 mt-4">
-              <button onClick={() => setPaymentEdit(null)} className="px-4 py-2 font-medium text-slate-600 hover:bg-slate-100 rounded-xl">
-                Cancelar
-              </button>
-              <button
-                onClick={handleSavePayment}
-                disabled={isPending}
-                className="px-4 py-2 font-semibold bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
-              >
-                {isPending && <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg>}
-                Salvar
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Sheets & Modals */}
+      {selectedReg && (
+        <RegistrationSheet
+          reg={selectedReg}
+          onClose={() => setSelectedReg(null)}
+          canManage={canManage}
+          onCancel={handleCancel}
+        />
+      )}
+      {showGiftModal && (
+        <GiftModal eventId={eventId} onClose={() => setShowGiftModal(false)} />
       )}
     </div>
   );
