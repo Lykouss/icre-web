@@ -104,31 +104,30 @@ export async function createOrFindAsaasCustomer(
 ): Promise<string> {
   let customerId: string | null = null;
 
-  // 1. Primary lookup by CPF/CNPJ (prevents duplicate CPF rejection by Asaas)
   if (cpfCnpj) {
+    const cpfCnpj_limpo = cpfCnpj.replace(/\D/g, '');
     try {
       const byCpf = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
-        `/customers?cpfCnpj=${encodeURIComponent(cpfCnpj)}`
+        `/customers?cpfCnpj=${cpfCnpj_limpo}`
       );
-      if (byCpf.data.length > 0) {
+      if (byCpf.data && byCpf.data.length > 0) {
         customerId = byCpf.data[0].id;
       }
-    } catch {
-      // CPF search failed — proceed to email fallback
+    } catch (e) {
+      // Ignore
     }
   }
 
-  // 2. Fallback: lookup by email
   if (!customerId && email) {
     try {
       const byEmail = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
         `/customers?email=${encodeURIComponent(email)}`
       );
-      if (byEmail.data.length > 0) {
+      if (byEmail.data && byEmail.data.length > 0) {
         customerId = byEmail.data[0].id;
       }
-    } catch {
-      // Email search failed — will create new
+    } catch (e) {
+      // Ignore
     }
   }
 
@@ -136,7 +135,7 @@ export async function createOrFindAsaasCustomer(
     name,
     email,
     phone,
-    cpfCnpj,
+    cpfCnpj: cpfCnpj ? cpfCnpj.replace(/\D/g, '') : undefined,
   };
 
   if (customerId) {
