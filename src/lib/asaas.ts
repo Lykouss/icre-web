@@ -1,107 +1,191 @@
-// src/lib/asaas.ts
+'use server'
 
 const ASAAS_API_KEY = process.env.ASAAS_API_KEY;
 const ASAAS_API_URL = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/api/v3';
 
-if (!ASAAS_API_KEY) {
-  console.warn("ASAAS_API_KEY não está definida nas variáveis de ambiente. Pagamentos não funcionarão.");
-}
-
-// Interfaces Estritas (Sem 'any')
-export interface AsaasCustomer {
-  id?: string;
+interface AsaasCustomerPayload {
   name: string;
   email?: string;
   phone?: string;
-  mobilePhone?: string;
   cpfCnpj?: string;
-  postalCode?: string;
-  address?: string;
-  addressNumber?: string;
-  complement?: string;
-  province?: string;
   externalReference?: string;
-  notificationDisabled?: boolean;
 }
 
-export interface AsaasPaymentPayload {
-  customer: string; // ID do Customer no Asaas
+interface AsaasPaymentPayload {
+  customer: string;
   billingType: 'PIX' | 'BOLETO' | 'CREDIT_CARD';
   value: number;
-  dueDate: string; // YYYY-MM-DD
-  description?: string;
-  externalReference?: string; // ID do evento ou inscrição no Supabase
-  postalService?: boolean;
+  dueDate: string;
+  description: string;
+  externalReference?: string;
 }
 
-export interface AsaasPaymentResponse {
+interface AsaasCustomerResponse {
   id: string;
-  invoiceUrl: string; // Link para o cliente pagar
-  bankSlipUrl?: string; // Link direto pro boleto (se aplicável)
-  pixTransaction?: string; // Payload do PIX copia e cola (vem em outra requisição geralmente)
+  name: string;
+}
+
+interface AsaasPaymentResponse {
+  id: string;
+  invoiceUrl: string;
+  bankSlipUrl?: string;
   value: number;
   netValue: number;
-  status: 'PENDING' | 'RECEIVED' | 'CONFIRMED' | 'OVERDUE' | 'REFUNDED' | 'RECEIVED_IN_CASH' | 'REFUND_REQUESTED' | 'REFUND_IN_PROGRESS' | 'CHARGEBACK_REQUESTED' | 'CHARGEBACK_DISPUTE' | 'AWAITING_CHARGEBACK_REVERSAL' | 'DUNNING_REQUESTED' | 'DUNNING_RECEIVED' | 'AWAITING_RISK_ANALYSIS';
+  status: string;
   dueDate: string;
 }
 
-export interface AsaasPixQrCodeResponse {
-  encodedImage: string; // Base64 da imagem do QR Code
-  payload: string; // PIX Copia e Cola
+interface AsaasPixQrCodeResponse {
+  encodedImage: string;
+  payload: string;
   expirationDate: string;
 }
 
-/**
- * Função utilitária para fazer requisições à API do Asaas
- */
 async function fetchAsaas<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const url = `${ASAAS_API_URL}${endpoint}`;
-  
-  const headers = {
-    'Content-Type': 'application/json',
-    'access_token': ASAAS_API_KEY || '',
-    ...(options?.headers || {})
-  };
+  if (!ASAAS_API_KEY) throw new Error('ASAAS_API_KEY não configurada.');
 
-  const response = await fetch(url, {
-    ...options,
-    headers
-  });
+  // Prevenção de travamento do servidor por instabilidade da API externa
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos max
 
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(`Erro na API do Asaas (${response.status}): ${errorBody}`);
+  try {
+    const res = await fetch(`${ASAAS_API_URL}${endpoint}`, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': ASAAS_API_KEY,
+        ...(options?.headers ?? {}),
+      },
+    });
+
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Asaas API error (${res.status}): ${body}`);
+    }
+
+    return await res.json() as T;
+  } catch (error) {
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+export async function createOrFindAsaasCustomer(
+  name: string,
+  email?: string,
+  phone?: string,
+  cpfCnpj?: string
+): Promise<string> {
+  let customerId: string | null = null;
+
+  // Busca primária obrigatória por CPF/CNPJ para evitar bloqueio do Asaas
+  if (cpfCnpj) {
+    try {
+      const cleanCpf = cpfCnpj.replace(/\D/g, '');
+      const existingCpf = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
+        `/customers?cpfCnpj=${cleanCpf}`
+      );
+      if (existingCpf.data && existingCpf.data.length > 0) {
+        customerId = existingCpf.data[0].id;
+      }
+    } catch (e) {
+      // Ignora erro de busca para permitir fallback ou criação
+    }
   }
 
-  return response.json() as Promise<T>;
-}
+  // Fallback para e-mail apenas se o CPF não encontrou nada
+  if (!customerId && email) {
+    try {
+      const existingEmail = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
+        `/customers?email=${encodeURIComponent(email)}`
+      );
+      if (existingEmail.data && existingEmail.data.length > 0) {
+        customerId = existingEmail.data[0].id;
+      }
+    } catch (e) {
+      // Ignora erro de busca
+    }
+  }
 
-/**
- * Cria um novo cliente (Customer) no Asaas.
- * Necessário antes de gerar qualquer cobrança.
- */
-export async function createAsaasCustomer(customerData: AsaasCustomer): Promise<{ id: string }> {
-  return fetchAsaas<{ id: string }>('/customers', {
+  const payload: AsaasCustomerPayload = { name, email, phone, cpfCnpj };
+
+  if (customerId) {
+    // Atualizar cliente existente
+    await fetchAsaas<AsaasCustomerResponse>(`/customers/${customerId}`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    return customerId;
+  }
+
+  // Criar novo cliente
+  const customer = await fetchAsaas<AsaasCustomerResponse>('/customers', {
     method: 'POST',
-    body: JSON.stringify(customerData)
+    body: JSON.stringify(payload),
   });
+
+  return customer.id;
 }
 
-/**
- * Cria uma nova cobrança (Payment) no Asaas.
- */
-export async function createAsaasPayment(paymentData: AsaasPaymentPayload): Promise<AsaasPaymentResponse> {
+export async function createAsaasPixPayment(
+  customerId: string,
+  value: number,
+  description: string,
+  registrationId: string
+): Promise<AsaasPaymentResponse> {
+  const dueDate = new Date(Date.now() + 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0];
+
+  const payload: AsaasPaymentPayload = {
+    customer: customerId,
+    billingType: 'PIX',
+    value,
+    dueDate,
+    description,
+    externalReference: registrationId,
+  };
+
   return fetchAsaas<AsaasPaymentResponse>('/payments', {
     method: 'POST',
-    body: JSON.stringify(paymentData)
+    body: JSON.stringify(payload),
   });
 }
 
-/**
- * Se a cobrança for PIX, recupera o QR Code e o Copia-e-Cola.
- */
-export async function getAsaasPixQrCode(paymentId: string): Promise<AsaasPixQrCodeResponse> {
-  return fetchAsaas<AsaasPixQrCodeResponse>(`/payments/${paymentId}/pixQrCode`, {
-    method: 'GET'
+export async function createAsaasBoletoPayment(
+  customerId: string,
+  value: number,
+  description: string,
+  registrationId: string
+): Promise<AsaasPaymentResponse> {
+  const dueDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0];
+
+  const payload: AsaasPaymentPayload = {
+    customer: customerId,
+    billingType: 'BOLETO',
+    value,
+    dueDate,
+    description,
+    externalReference: registrationId,
+  };
+
+  return fetchAsaas<AsaasPaymentResponse>('/payments', {
+    method: 'POST',
+    body: JSON.stringify(payload),
   });
+}
+
+export async function getAsaasPixQrCode(
+  paymentId: string
+): Promise<AsaasPixQrCodeResponse> {
+  return fetchAsaas<AsaasPixQrCodeResponse>(`/payments/${paymentId}/pixQrCode`);
+}
+
+export async function getAsaasPaymentStatus(paymentId: string): Promise<string> {
+  const payment = await fetchAsaas<{ status: string }>(`/payments/${paymentId}`);
+  return payment.status;
 }
