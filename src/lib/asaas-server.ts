@@ -64,7 +64,7 @@ async function fetchAsaas<T>(endpoint: string, options?: RequestInit): Promise<T
       throw new Error(`Asaas API error (${res.status}): ${body}`);
     }
 
-    return res.json() as Promise<T>;
+    return await res.json() as T;
   } finally {
     // Garante que o timeout será removido da memória do servidor Vercel sempre
     clearTimeout(timeoutId);
@@ -81,30 +81,22 @@ export async function createOrFindAsaasCustomer(
 
   // Busca primária obrigatória por CPF/CNPJ para evitar bloqueio 400 do Asaas
   if (cpfCnpj) {
-    try {
-      const cleanCpf = cpfCnpj.replace(/\D/g, '');
-      const existingCpf = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
-        `/customers?cpfCnpj=${cleanCpf}`
-      );
-      if (existingCpf.data && existingCpf.data.length > 0) {
-        customerId = existingCpf.data[0].id;
-      }
-    } catch (e) {
-      // Ignora erro de busca
+    const cleanCpf = cpfCnpj.replace(/\D/g, '');
+    const existingCpf = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
+      `/customers?cpfCnpj=${cleanCpf}`
+    );
+    if (existingCpf.data && existingCpf.data.length > 0) {
+      customerId = existingCpf.data[0].id;
     }
   }
 
   // Fallback para e-mail apenas se o CPF não encontrou nada
   if (!customerId && email) {
-    try {
-      const existingEmail = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
-        `/customers?email=${encodeURIComponent(email)}`
-      );
-      if (existingEmail.data && existingEmail.data.length > 0) {
-        customerId = existingEmail.data[0].id;
-      }
-    } catch (e) {
-      // Ignora erro de busca
+    const existingEmail = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
+      `/customers?email=${encodeURIComponent(email)}`
+    );
+    if (existingEmail.data && existingEmail.data.length > 0) {
+      customerId = existingEmail.data[0].id;
     }
   }
 
@@ -113,7 +105,7 @@ export async function createOrFindAsaasCustomer(
   if (customerId) {
     // Atualizar cliente existente com os dados mais recentes (telefone, etc)
     await fetchAsaas<AsaasCustomerResponse>(`/customers/${customerId}`, {
-      method: 'PUT',
+      method: 'POST',
       body: JSON.stringify(payload),
     });
     return customerId;
@@ -184,7 +176,6 @@ export async function getAsaasPixQrCode(
   return fetchAsaas<AsaasPixQrCodeResponse>(`/payments/${paymentId}/pixQrCode`);
 }
 
-export async function getAsaasPaymentStatus(paymentId: string): Promise<string> {
-  const payment = await fetchAsaas<{ status: string }>(`/payments/${paymentId}`);
-  return payment.status;
+export async function getAsaasPayment(paymentId: string): Promise<AsaasPaymentResponse> {
+  return fetchAsaas<AsaasPaymentResponse>(`/payments/${paymentId}`);
 }
