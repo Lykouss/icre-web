@@ -4,7 +4,7 @@ import React, { useState, useTransition } from 'react';
 import { ChurchEvent, EventType } from '../types';
 import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/features/core/components/ToastContext';
-import { Loader2, SaveIcon, SendIcon, XIcon, ImageIcon } from 'lucide-react';
+import { Loader2, SaveIcon, SendIcon, XIcon, ImageIcon, PlusIcon, Trash2Icon } from 'lucide-react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
@@ -41,7 +41,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
 
 function SectionDivider({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-3 py-1">
+    <div className="flex items-center gap-3 py-1 mt-6 mb-2">
       <span className="text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">{label}</span>
       <div className="flex-1 h-px bg-slate-100" />
     </div>
@@ -84,7 +84,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
   const { toast } = useToast();
   const [isLoading, startTransition] = useTransition();
 
-  const [formData, setFormData] = useState<Partial<ChurchEvent>>({
+  const [formData, setFormData] = useState<Partial<ChurchEvent> & { custom_form_schema?: any[] }>({
     title: initialData?.title || '',
     type: initialData?.type || 'culto',
     status: initialData?.status || 'rascunho',
@@ -106,6 +106,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
     max_per_ip: initialData?.max_per_ip ?? 2,
     max_per_device: initialData?.max_per_device ?? 2,
     payment_methods: initialData?.payment_methods ?? ['pix'],
+    custom_form_schema: (initialData as any)?.custom_form_schema || [],
   });
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
@@ -119,7 +120,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
   const loadGallery = async () => {
     setLoadingGal(true);
     const { data, error } = await supabase.storage.from('site-images').list('', {
-      limit: 1000, // Limite ampliado para 1000
+      limit: 1000,
       sortBy: { column: 'created_at', order: 'desc' },
     });
     if (error) { toast('error', 'Erro ao carregar galeria.'); }
@@ -146,7 +147,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
   const handleDeleteImage = async (name: string) => {
     if (!confirm('Excluir esta imagem permanentemente?')) return;
 
-    // Proteção de integridade: Verificar se a imagem está em uso
+    // Verificação estrita de integridade para não deletar banner em uso
     const imageUrl = supabase.storage.from('site-images').getPublicUrl(name).data.publicUrl;
     const { data: linkedEvents, error: checkError } = await supabase
       .from('events')
@@ -179,13 +180,39 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
   const usedMB = usedBytes / 1024 / 1024;
   const usedPct = Math.min(100, (usedMB / QUOTA_MB) * 100);
 
-  // Bloqueio condicional caso recorrência esteja marcada, mas sem dias selecionados
+  // Lógica de Formulários Personalizados
+  const customFields = formData.custom_form_schema || [];
+
+  const addCustomField = () => {
+    setFormData(p => ({
+      ...p,
+      custom_form_schema: [
+        ...(p.custom_form_schema || []),
+        { id: Date.now().toString(), type: 'short_text', label: '', required: false, options: [] }
+      ]
+    }));
+  };
+
+  const updateCustomField = (index: number, updates: any) => {
+    const newFields = [...customFields];
+    newFields[index] = { ...newFields[index], ...updates };
+    setFormData(p => ({ ...p, custom_form_schema: newFields }));
+  };
+
+  const removeCustomField = (index: number) => {
+    const newFields = customFields.filter((_, i) => i !== index);
+    setFormData(p => ({ ...p, custom_form_schema: newFields }));
+  };
+
+  // Validação estrita
   const isRecurrenceInvalid = !!formData.is_recurring && (!formData.recurrence_rules?.days || formData.recurrence_rules.days.length === 0);
   const isSubmitDisabled = isLoading || !formData.title || isRecurrenceInvalid;
 
   const handleSubmit = (targetStatus: 'rascunho' | 'publicado') => {
     startTransition(async () => {
       try {
+        const finalSchema = formData.custom_form_schema?.length ? formData.custom_form_schema : null;
+
         const payload = {
           ...formData,
           status: targetStatus,
@@ -202,6 +229,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           max_per_ip: formData.max_per_ip ? Number(formData.max_per_ip) : 2,
           max_per_device: formData.max_per_device ? Number(formData.max_per_device) : 2,
           payment_methods: formData.payment_methods,
+          custom_form_schema: finalSchema,
         };
 
         let result;
@@ -381,7 +409,6 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-
           <Field label="Local">
             <input
               className={inputCls}
@@ -401,6 +428,83 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           placeholder="Detalhes, convidados, programação..."
         />
       </Field>
+
+      <SectionDivider label="Formulário Personalizado" />
+
+      <div className="space-y-4">
+        <p className="text-sm text-slate-500 mb-2">Adicione perguntas ou campos extras que o usuário deverá preencher no momento da inscrição.</p>
+
+        {customFields.map((field, index) => (
+          <div key={field.id} className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 relative">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <Field label="Pergunta / Nome do Campo">
+                    <input
+                      className={inputCls}
+                      value={field.label}
+                      onChange={e => updateCustomField(index, { label: e.target.value })}
+                      placeholder="Ex: Qual o tamanho da sua camisa?"
+                    />
+                  </Field>
+                  <Field label="Tipo de Resposta">
+                    <select
+                      className={inputCls}
+                      value={field.type}
+                      onChange={e => updateCustomField(index, { type: e.target.value })}
+                    >
+                      <option value="short_text">Texto Curto</option>
+                      <option value="long_text">Texto Longo</option>
+                      <option value="multiple_choice">Múltipla Escolha (Apenas uma)</option>
+                      <option value="checkboxes">Caixa de Seleção (Múltiplas)</option>
+                      <option value="dropdown">Lista Suspensa</option>
+                    </select>
+                  </Field>
+                </div>
+
+                {['multiple_choice', 'checkboxes', 'dropdown'].includes(field.type) && (
+                  <Field label="Opções (separadas por vírgula)">
+                    <input
+                      className={inputCls}
+                      value={field.options?.join(', ') || ''}
+                      onChange={e => updateCustomField(index, { options: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
+                      placeholder="Ex: P, M, G, GG"
+                    />
+                  </Field>
+                )}
+
+                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={field.required}
+                    onChange={e => updateCustomField(index, { required: e.target.checked })}
+                    className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                  />
+                  Resposta Obrigatória
+                </label>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => removeCustomField(index)}
+                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                title="Remover campo"
+              >
+                <Trash2Icon className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={addCustomField}
+          className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all"
+        >
+          <PlusIcon className="w-4 h-4" />
+          Adicionar Campo Extra
+        </button>
+      </div>
 
       <SectionDivider label="Visibilidade e Inscrição" />
 
