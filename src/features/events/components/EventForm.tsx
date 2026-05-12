@@ -4,7 +4,7 @@ import React, { useState, useTransition } from 'react';
 import { ChurchEvent, EventType } from '../types';
 import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/features/core/components/ToastContext';
-import { Loader2, SaveIcon, SendIcon, XIcon, ImageIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+import { Loader2, SaveIcon, SendIcon, XIcon, ImageIcon, PlusIcon, Trash2Icon, PlusCircleIcon, GripVertical } from 'lucide-react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
@@ -463,14 +463,49 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                 </div>
 
                 {['multiple_choice', 'checkboxes', 'dropdown'].includes(field.type) && (
-                  <Field label="Opções (separadas por vírgula)">
-                    <input
-                      className={inputCls}
-                      value={field.options?.join(', ') || ''}
-                      onChange={e => updateCustomField(index, { options: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
-                      placeholder="Ex: P, M, G, GG"
-                    />
-                  </Field>
+                  <div className="space-y-2 mt-4 bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Opções de Resposta</label>
+                    <div className="space-y-2">
+                      {(field.options || []).map((opt: string, oIdx: number) => (
+                        <div key={oIdx} className="flex items-center gap-2 group animate-in fade-in slide-in-from-top-1">
+                          <div className="p-2 text-slate-300 cursor-grab active:cursor-grabbing hover:text-slate-400">
+                            <GripVertical className="w-4 h-4" />
+                          </div>
+                          <input
+                            className={`${inputCls} flex-1`}
+                            value={opt}
+                            placeholder={`Opção ${oIdx + 1}`}
+                            onChange={e => {
+                              const newOpts = [...(field.options || [])];
+                              newOpts[oIdx] = e.target.value;
+                              updateCustomField(index, { options: newOpts });
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newOpts = (field.options || []).filter((_: any, i: number) => i !== oIdx);
+                              updateCustomField(index, { options: newOpts });
+                            }}
+                            className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                            title="Remover Opção"
+                          >
+                            <XIcon className="w-5 h-5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newOpts = [...(field.options || []), ''];
+                        updateCustomField(index, { options: newOpts });
+                      }}
+                      className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors mt-3"
+                    >
+                      <PlusCircleIcon className="w-4 h-4" /> Adicionar nova opção
+                    </button>
+                  </div>
                 )}
 
                 <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer">

@@ -179,3 +179,8 @@ export async function getAsaasPixQrCode(
 export async function getAsaasPayment(paymentId: string): Promise<AsaasPaymentResponse> {
   return fetchAsaas<AsaasPaymentResponse>(`/payments/${paymentId}`);
 }
+
+export async function getAsaasPaymentStatus(paymentId: string): Promise<string> {
+  const payment = await fetchAsaas<{ status: string }>(`/payments/${paymentId}`);
+  return payment.status;
+}
