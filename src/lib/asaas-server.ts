@@ -60,13 +60,13 @@ async function fetchAsaas<T>(endpoint: string, options?: RequestInit): Promise<T
 
     if (!res.ok) {
       const body = await res.text();
-      // Lança o erro para que a Action do frontend saiba que o pagamento falhou e não siga adiante.
+      // Lança o erro para que a Action do frontend saiba que o pagamento falhou
       throw new Error(`Asaas API error (${res.status}): ${body}`);
     }
 
-    return await res.json() as T;
+    return res.json() as Promise<T>;
   } finally {
-    // Garante que o timeout será removido da memória do servidor Vercel sempre
+    // Garante que o timeout será removido da memória do servidor Vercel/Node sempre
     clearTimeout(timeoutId);
   }
 }
@@ -79,33 +79,39 @@ export async function createOrFindAsaasCustomer(
 ): Promise<string> {
   let customerId: string | null = null;
 
-  // Busca primária obrigatória por CPF/CNPJ para evitar bloqueio 400 do Asaas
   if (cpfCnpj) {
-    const cleanCpf = cpfCnpj.replace(/\D/g, '');
-    const existingCpf = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
-      `/customers?cpfCnpj=${cleanCpf}`
-    );
-    if (existingCpf.data && existingCpf.data.length > 0) {
-      customerId = existingCpf.data[0].id;
+    try {
+      const cleanCpf = cpfCnpj.replace(/\D/g, '');
+      const existingCpf = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
+        `/customers?cpfCnpj=${cleanCpf}`
+      );
+      if (existingCpf.data && existingCpf.data.length > 0) {
+        customerId = existingCpf.data[0].id;
+      }
+    } catch (error) {
+      console.warn('Busca por CPF falhou, caindo para fallback ou criação:', error);
     }
   }
 
-  // Fallback para e-mail apenas se o CPF não encontrou nada
   if (!customerId && email) {
-    const existingEmail = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
-      `/customers?email=${encodeURIComponent(email)}`
-    );
-    if (existingEmail.data && existingEmail.data.length > 0) {
-      customerId = existingEmail.data[0].id;
+    try {
+      const existingEmail = await fetchAsaas<{ data: AsaasCustomerResponse[] }>(
+        `/customers?email=${encodeURIComponent(email)}`
+      );
+      if (existingEmail.data && existingEmail.data.length > 0) {
+        customerId = existingEmail.data[0].id;
+      }
+    } catch (error) {
+      console.warn('Busca por e-mail falhou, caindo para criação:', error);
     }
   }
 
-  const payload: AsaasCustomerPayload = { name, email, phone, cpfCnpj: cpfCnpj ? cpfCnpj.replace(/\D/g, '') : undefined };
+  const payload: AsaasCustomerPayload = { name, email, phone, cpfCnpj };
 
   if (customerId) {
-    // Atualizar cliente existente com os dados mais recentes (telefone, etc)
+    // Método PUT corretamente restaurado para atualização de clientes na API v3
     await fetchAsaas<AsaasCustomerResponse>(`/customers/${customerId}`, {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify(payload),
     });
     return customerId;
@@ -174,10 +180,6 @@ export async function getAsaasPixQrCode(
   paymentId: string
 ): Promise<AsaasPixQrCodeResponse> {
   return fetchAsaas<AsaasPixQrCodeResponse>(`/payments/${paymentId}/pixQrCode`);
-}
-
-export async function getAsaasPayment(paymentId: string): Promise<AsaasPaymentResponse> {
-  return fetchAsaas<AsaasPaymentResponse>(`/payments/${paymentId}`);
 }
 
 export async function getAsaasPaymentStatus(paymentId: string): Promise<string> {
