@@ -1,7 +1,12 @@
 import crypto from 'crypto';
 
 // Uses QR_SECRET for HMAC — only registration_id, no dates (avoids timezone bugs)
-const QR_SECRET = process.env.QR_SECRET || process.env.TICKET_SECRET_KEY || 'dev_qr_secret_icre_2026';
+// SECURITY: no hardcoded fallback — missing env var is a fatal misconfiguration
+const _QR_SECRET_RAW = process.env.QR_SECRET ?? process.env.TICKET_SECRET_KEY;
+if (!_QR_SECRET_RAW) {
+  throw new Error('[FATAL] QR_SECRET (ou TICKET_SECRET_KEY) não está configurado nas variáveis de ambiente. Ingressos não podem ser assinados.');
+}
+const QR_SECRET: string = _QR_SECRET_RAW;
 
 /**
  * Generates an HMAC-SHA256 signature for a ticket QR Code.

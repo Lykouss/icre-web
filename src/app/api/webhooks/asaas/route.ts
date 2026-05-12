@@ -7,9 +7,14 @@ const ASAAS_WEBHOOK_SECRET = process.env.ASAAS_WEBHOOK_SECRET;
 export async function POST(request: Request) {
   try {
     // ── 1. Token validation ────────────────────────────────────────────────
+    if (!ASAAS_WEBHOOK_SECRET) {
+      console.error('[Webhook Asaas] ASAAS_WEBHOOK_SECRET não está configurado!');
+      return NextResponse.json({ error: 'Servidor mal configurado.' }, { status: 500 });
+    }
+
     const asaasToken = request.headers.get('asaas-access-token');
 
-    if (ASAAS_WEBHOOK_SECRET && asaasToken !== ASAAS_WEBHOOK_SECRET) {
+    if (asaasToken !== ASAAS_WEBHOOK_SECRET) {
       console.warn('[Webhook Asaas] Token inválido:', asaasToken?.slice(0, 8));
       return NextResponse.json({ error: 'Acesso não autorizado.' }, { status: 401 });
     }
@@ -131,10 +136,10 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ received: true, processed: true });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[Webhook Asaas] Erro fatal:', err);
     return NextResponse.json(
-      { error: 'Erro interno no servidor.', details: err.message },
+      { error: 'Erro interno no servidor.' },
       { status: 500 }
     );
   }

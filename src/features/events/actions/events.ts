@@ -227,6 +227,7 @@ export async function cancelEventOccurrence(eventId: string, dateStr: string) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado.' };
   if (!canManageEvents(user.roles, user.isSysAdmin)) return { error: 'Acesso negado.' };
+  if (!isValidUuid(eventId)) return { error: 'Identificador de evento inválido.' };
 
   const supabase = await createClient();
   

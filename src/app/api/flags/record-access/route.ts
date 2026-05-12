@@ -3,17 +3,22 @@ import { createClient } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { flagSlug, userId } = await req.json();
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!flagSlug || !userId) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const { flagSlug } = await req.json();
+
+    if (!flagSlug || typeof flagSlug !== 'string') {
+      return NextResponse.json({ error: 'Missing or invalid flagSlug' }, { status: 400 });
+    }
 
     await supabase
       .from('user_feature_access')
-      .upsert({ user_id: userId, flag_slug: flagSlug }, { onConflict: 'user_id,flag_slug' });
+      .upsert({ user_id: user.id, flag_slug: flagSlug }, { onConflict: 'user_id,flag_slug' });
 
     return NextResponse.json({ ok: true });
   } catch {
