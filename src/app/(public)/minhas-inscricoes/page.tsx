@@ -16,40 +16,60 @@ export default async function MinhasInscricoesPage() {
     redirect('/login?returnTo=/minhas-inscricoes');
   }
 
-  // ─── Buscar member_id correto via user_id ───────────────────────────────────
-  // member_id em event_registrations referencia members.id, não auth.uid()
-  const { data: memberData } = await supabase
-    .from('members')
-    .select('id')
-    .eq('user_id', user.id)
-    .maybeSingle();
-
-  let registrations: any[] = [];
-
-  if (memberData) {
-    const { data } = await supabase
-      .from('event_registrations')
-      .select(`
+  // ─── Buscar inscrições do usuário ────────────────────────────────────────────
+  // member_id em event_registrations armazena auth.uid() diretamente (ver RLS policy)
+  // Também buscamos por email como fallback (inscrições antes de criar conta)
+  const { data: registrationsByMemberId } = await supabase
+    .from('event_registrations')
+    .select(`
+      id,
+      status,
+      payment_status,
+      payment_method,
+      ticket_signature,
+      event_id,
+      events (
         id,
-        status,
-        payment_status,
-        payment_method,
-        ticket_signature,
-        event_id,
-        events (
-          id,
-          title,
-          date,
-          time,
-          location,
-          banner_url
-        )
-      `)
-      .eq('member_id', memberData.id)
-      .order('created_at', { ascending: false });
+        title,
+        date,
+        time,
+        location,
+        banner_url
+      )
+    `)
+    .eq('member_id', user.id)
+    .order('created_at', { ascending: false });
 
-    registrations = data ?? [];
-  }
+  // Fallback: buscar por email (para inscrições onde o usuário não estava logado)
+  const { data: registrationsByEmail } = user.email
+    ? await supabase
+        .from('event_registrations')
+        .select(`
+          id,
+          status,
+          payment_status,
+          payment_method,
+          ticket_signature,
+          event_id,
+          events (
+            id,
+            title,
+            date,
+            time,
+            location,
+            banner_url
+          )
+        `)
+        .eq('email', user.email)
+        .is('member_id', null)
+        .order('created_at', { ascending: false })
+    : { data: [] };
+
+  // Combinar e desduplicar por id
+  const allRegs = [...(registrationsByMemberId ?? []), ...(registrationsByEmail ?? [])];
+  const seen = new Set<string>();
+  const registrations = allRegs.filter(r => { if (seen.has(r.id)) return false; seen.add(r.id); return true; });
+
 
   const confirmed = registrations.filter(r => r.status === 'confirmado');
   const pending = registrations.filter(r => r.status === 'pendente_pagamento');
@@ -64,7 +84,7 @@ export default async function MinhasInscricoesPage() {
 
       <div className="relative max-w-4xl mx-auto">
         <div className="mb-10">
-          <h1 className="text-3xl font-black text-white mb-2">Meus Comprovantes</h1>
+          <h1 className="text-3xl font-black text-white mb-2">Minhas Inscrições</h1>
           <p className="text-slate-400">Acompanhe seus ingressos e histórico de participação em eventos.</p>
         </div>
 

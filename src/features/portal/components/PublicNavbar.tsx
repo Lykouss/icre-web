@@ -265,7 +265,7 @@ useEffect(() => {
                     <Link href="/minhas-inscricoes" onClick={() => setUserOpen(false)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/6 transition-colors">
                       <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
-                      Meus Comprovantes
+                      Minhas Inscrições
                     </Link>
                     {showAdminButton && (
                       <Link href="/dashboard" onClick={() => setUserOpen(false)}
@@ -361,7 +361,7 @@ useEffect(() => {
                 <Link href="/minhas-inscricoes" onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm text-slate-300 hover:text-white hover:bg-white/6 transition-colors">
                   <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
-                  Meus Comprovantes
+                  Minhas Inscrições
                 </Link>
                 {user.isAdmin && (
                   <Link href="/dashboard" onClick={() => setMobileOpen(false)}

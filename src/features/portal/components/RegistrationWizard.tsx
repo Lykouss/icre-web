@@ -440,7 +440,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     href="/minhas-inscricoes"
                     className="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold px-6 py-3.5 rounded-2xl transition-all border border-white/10"
                   >
-                    Meus Comprovantes
+                    Minhas Inscrições
                   </Link>
                   <Link
                     href="/agenda"

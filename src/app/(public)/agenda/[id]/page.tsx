@@ -57,6 +57,7 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
   const isAdminPreview = user?.isSysAdmin && event.status !== 'publicado';
 
   // Buscar inscrições existentes do usuário logado
+  // member_id em event_registrations armazena auth.uid() diretamente
   let existingRegistrations: Array<{
     id: string;
     status: string;
@@ -66,26 +67,33 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
   }> = [];
 
   if (user) {
-    // Buscar member_id via user_id
-    const { data: memberData } = await supabase
-      .from('members')
-      .select('id')
-      .eq('user_id', user.id)
-      .maybeSingle();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
 
-    if (memberData) {
-      const { data: regs } = await supabase
+    const { data: regs } = await supabase
+      .from('event_registrations')
+      .select('id, status, payment_status, ticket_signature, event_id')
+      .eq('event_id', id)
+      .eq('member_id', user.id);
+
+    existingRegistrations = (regs ?? []).filter(
+      r => r.status === 'confirmado' || r.status === 'pendente_pagamento'
+    );
+
+    // Fallback por email (inscrições feitas sem login)
+    if (existingRegistrations.length === 0 && authUser?.email) {
+      const { data: emailRegs } = await supabase
         .from('event_registrations')
         .select('id, status, payment_status, ticket_signature, event_id')
         .eq('event_id', id)
-        .eq('member_id', memberData.id)
-        .in('status', ['confirmado', 'pendente_pagamento', 'cancelado']);
+        .eq('email', authUser.email)
+        .is('member_id', null);
 
-      existingRegistrations = (regs ?? []).filter(
+      existingRegistrations = (emailRegs ?? []).filter(
         r => r.status === 'confirmado' || r.status === 'pendente_pagamento'
       );
     }
   }
+
 
   return (
     <>

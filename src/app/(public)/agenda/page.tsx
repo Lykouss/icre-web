@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import { getNextEventOccurrence } from '@/lib/event-utils';
+import { getCurrentUser } from '@/features/core/api/get-current-user';
 
 export const revalidate = 60;
 
@@ -44,6 +45,21 @@ export default async function PublicEventsPage() {
     .sort((a, b) => (a.date as string).localeCompare(b.date as string))
     .slice(0, 24);
 
+  const user = await getCurrentUser();
+  let registeredEventIds = new Set<string>();
+
+  if (user) {
+    const { data: regs } = await supabase
+      .from('event_registrations')
+      .select('event_id')
+      .eq('member_id', user.id)
+      .eq('status', 'confirmado');
+
+    if (regs) {
+      regs.forEach(r => registeredEventIds.add(r.event_id));
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-950">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -56,9 +72,9 @@ export default async function PublicEventsPage() {
             <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full">
               Agenda
             </div>
-            <Link href="/minhas-inscricoes/comprovantes" className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2 rounded-full transition-all border border-white/10">
+            <Link href="/minhas-inscricoes" className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2 rounded-full transition-all border border-white/10">
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
-              Meus Comprovantes
+              Minhas Inscrições
             </Link>
           </div>
           <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight mb-4">
@@ -84,6 +100,7 @@ export default async function PublicEventsPage() {
             {events.map(event => {
               const date = event.date ? new Date(event.date + 'T12:00:00') : null;
               const isPaid = event.requires_payment && (event.ticket_price ?? 0) > 0;
+              const isRegistered = registeredEventIds.has(event.id);
 
               return (
                 <Link
@@ -140,6 +157,12 @@ export default async function PublicEventsPage() {
                       {isPaid && (
                         <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg border backdrop-blur-sm bg-amber-500/20 border-amber-500/30 text-amber-300">
                           R$ {Number(event.ticket_price).toFixed(2)}
+                        </span>
+                      )}
+                      {isRegistered && (
+                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg border backdrop-blur-sm bg-emerald-500/20 border-emerald-500/30 text-emerald-300 flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                          Inscrito
                         </span>
                       )}
                     </div>
