@@ -2,9 +2,9 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { isValidUuid } from '@/lib/action-validators';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
-import { PublicEventClient } from '@/features/portal/components/PublicEventClient';
+import { EventDetailsClient } from '@/features/portal/components/EventDetailsClient';
 
-export const revalidate = 30;
+export const revalidate = 0;
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -30,13 +30,12 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
   const supabase = await createClient();
   const user = await getCurrentUser();
 
-  // Fetch the event — admins can see all statuses
+  // Fetch the event
   const query = supabase
     .from('events')
-    .select('id, title, date, time, location, description, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema')
+    .select('id, title, date, time, location, description, rules, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account')
     .eq('id', id);
 
-  // Non-admins can only see published events
   if (!user?.isSysAdmin) {
     query.eq('status', 'publicado').eq('is_public', true);
   }
@@ -44,10 +43,9 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
   const { data: event, error } = await query.single();
 
   if (error || !event) notFound();
-
-  // Draft check: if draft and not SysAdmin → 404
   if (event.status !== 'publicado' && !user?.isSysAdmin) notFound();
 
+  // Contagem de vagas
   const { count } = await supabase
     .from('event_registrations')
     .select('id', { count: 'exact', head: true })
@@ -57,6 +55,37 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
   const spotsLeft = event.capacity ? event.capacity - (count ?? 0) : null;
   const isFull = spotsLeft !== null && spotsLeft <= 0;
   const isAdminPreview = user?.isSysAdmin && event.status !== 'publicado';
+
+  // Buscar inscrições existentes do usuário logado
+  let existingRegistrations: Array<{
+    id: string;
+    status: string;
+    payment_status: string;
+    ticket_signature: string | null;
+    event_id: string;
+  }> = [];
+
+  if (user) {
+    // Buscar member_id via user_id
+    const { data: memberData } = await supabase
+      .from('members')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (memberData) {
+      const { data: regs } = await supabase
+        .from('event_registrations')
+        .select('id, status, payment_status, ticket_signature, event_id')
+        .eq('event_id', id)
+        .eq('member_id', memberData.id)
+        .in('status', ['confirmado', 'pendente_pagamento', 'cancelado']);
+
+      existingRegistrations = (regs ?? []).filter(
+        r => r.status === 'confirmado' || r.status === 'pendente_pagamento'
+      );
+    }
+  }
 
   return (
     <>
@@ -69,11 +98,12 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
           Modo de Visualização Admin · Este evento não está visível para o público ({event.status})
         </div>
       )}
-      <PublicEventClient
+      <EventDetailsClient
         event={event}
         spotsLeft={spotsLeft}
         isFull={isFull}
         isAdminPreview={isAdminPreview}
+        existingRegistrations={existingRegistrations}
       />
     </>
   );

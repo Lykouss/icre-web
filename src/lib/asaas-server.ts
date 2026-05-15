@@ -186,3 +186,19 @@ export async function getAsaasPaymentStatus(paymentId: string): Promise<string> 
   const payment = await fetchAsaas<{ status: string }>(`/payments/${paymentId}`);
   return payment.status;
 }
+
+interface AsaasBoletoDetailResponse {
+  id: string;
+  status: string;
+  value: number;
+  dueDate: string;
+  bankSlipUrl?: string;
+  identificationField?: string; // Código de barras
+  nossoNumero?: string;
+}
+
+export async function getAsaasBoletoDetails(
+  paymentId: string
+): Promise<AsaasBoletoDetailResponse> {
+  return fetchAsaas<AsaasBoletoDetailResponse>(`/payments/${paymentId}`);
+}

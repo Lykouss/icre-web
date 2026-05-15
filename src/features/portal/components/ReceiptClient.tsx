@@ -144,9 +144,10 @@ export function ReceiptClient({ registration }: Props) {
     doc.setTextColor(22, 163, 74);
     doc.text('✓ INSENÇÃO/PAGAMENTO CONFIRMADO', 14, y);
 
-    if (registration.ticket_signature && event?.id) {
+    if (registration.ticket_signature) {
        y += 20;
-       const qrData = `${registration.id}:${event.id}:${registration.ticket_signature}`;
+       // Payload: registrationId:signature (2 partes — compatível com parseAndVerifyQrPayload)
+       const qrData = `${registration.id}:${registration.ticket_signature}`;
        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
        doc.addImage(qrUrl, 'PNG', 14, y, 40, 40);
        doc.setFontSize(10);
@@ -208,10 +209,11 @@ export function ReceiptClient({ registration }: Props) {
           <div className="p-8 space-y-6">
             
             {/* QR Code */}
-            {registration.ticket_signature && event?.id && (
+            {registration.ticket_signature && (
               <div className="flex flex-col items-center justify-center py-6 bg-white rounded-2xl mb-6">
+                {/* Payload: registrationId:signature (2 partes — compatível com parseAndVerifyQrPayload) */}
                 <img 
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${registration.id}:${event.id}:${registration.ticket_signature}`)}`} 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${registration.id}:${registration.ticket_signature}`)}`} 
                   alt="QR Code do Ingresso" 
                   className="w-48 h-48 mb-3" 
                 />
