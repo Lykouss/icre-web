@@ -138,11 +138,25 @@ export function EventDetailClient({
   const inputClass = 'w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm';
   const confirmedCount = registrations.filter(r => r.status === 'confirmado').length;
 
+  const scannerCheckins = registrations.filter(r => r.checkin_status).map(r => ({
+    id: r.id,
+    name: r.name,
+    time: r.checkin_time,
+    type: 'scanner' as const,
+  }));
+  const manualCheckins = attendance.map(a => ({
+    id: a.id,
+    name: a.name,
+    time: (a as any).checked_in_at || (a as any).created_at,
+    type: 'manual' as const,
+  }));
+  const unifiedAttendances = [...scannerCheckins, ...manualCheckins].sort((a, b) => new Date(b.time || 0).getTime() - new Date(a.time || 0).getTime());
+
   const tabs: { id: Tab; label: string; count?: number }[] = [
     { id: 'escala', label: 'Escala' },
     ...(event.type === 'especial' ? [
       { id: 'inscricoes' as Tab, label: 'Inscrições', count: confirmedCount },
-      { id: 'presenca'   as Tab, label: 'Presenças',  count: attendance.length },
+      { id: 'presenca'   as Tab, label: 'Presenças',  count: unifiedAttendances.length },
     ] : []),
     ...(event.is_recurring ? [
       { id: 'recorrencia' as Tab, label: 'Recorrências' }
@@ -338,21 +352,43 @@ export function EventDetailClient({
               </div>
             )}
 
-            <div className="space-y-2">
-              {attendance.length === 0 ? (
-                <p className="text-sm text-slate-400 text-center py-8">Nenhuma presença registrada ainda.</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest">Histórico de Check-ins</h4>
+                <p className="text-xs font-semibold text-slate-400">{unifiedAttendances.length} presenças registradas</p>
+              </div>
+              {unifiedAttendances.length === 0 ? (
+                <div className="bg-white rounded-3xl border border-slate-200 border-dashed p-12 text-center">
+                  <p className="text-slate-400 font-semibold">Nenhuma presença registrada ainda.</p>
+                </div>
               ) : (
-                attendance.map(a => (
-                  <div key={a.id} className="bg-white rounded-xl border border-slate-200 px-4 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700">
+                unifiedAttendances.map(a => (
+                  <div key={a.id} className="bg-white rounded-2xl border border-slate-200 px-5 py-4 flex items-center justify-between hover:border-slate-300 transition-colors shadow-sm">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${a.type === 'scanner' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
                         {a.name.charAt(0).toUpperCase()}
                       </div>
-                      <p className="font-semibold text-slate-800 text-sm">{a.name}</p>
+                      <div>
+                        <p className="font-bold text-slate-800">{a.name}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${a.type === 'scanner' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'}`}>
+                            {a.type === 'scanner' ? 'Ingresso (QR)' : 'Manual'}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs text-slate-400">
-                      {new Date(a.checked_in_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                    </p>
+                    <div className="text-right">
+                      {a.time && (
+                        <p className="text-xs font-semibold text-slate-400">
+                          {new Date(a.time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      )}
+                      {a.time && (
+                        <p className="text-[10px] text-slate-400 mt-0.5">
+                          {new Date(a.time).toLocaleDateString('pt-BR')}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 ))
               )}

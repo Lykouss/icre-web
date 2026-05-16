@@ -325,7 +325,7 @@ export async function giftRegistration(
       status: 'confirmado',
       payment_status: 'cortesia',
       payment_method: 'gift',
-      amount_paid: 0,
+      payment_amount: 0,
       is_gift: true,
       gifted_by: user.id,
     })

@@ -175,13 +175,13 @@ export function ReceiptClient({ registration }: Props) {
 
       <div className="relative max-w-2xl mx-auto px-4 pt-28 pb-16">
         <Link
-          href="/agenda"
+          href="/minhas-inscricoes"
           className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-medium transition-colors mb-8"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Voltar à agenda
+          Minhas Inscrições
         </Link>
 
         {/* Card do comprovante */}

@@ -114,6 +114,65 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
   );
 }
 
+function SpecialEventCard({ event, index }: { event: PublicEvent; index: number }) {
+  const { ref, visible } = useScrollReveal<HTMLDivElement>({ threshold: 0.08 });
+  const [open, setOpen] = useState(false);
+  const date = parseDate(event.date);
+
+  return (
+    <>
+      <div
+        ref={ref}
+        onClick={() => setOpen(true)}
+        className={`group relative overflow-hidden rounded-3xl cursor-pointer transition-all duration-300 ease-out shadow-xl border border-amber-500/20 hover:border-amber-400 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 ${event.isCancelled ? 'opacity-60 grayscale-[50%]' : ''}`}
+        style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transitionDelay: `${index * 70}ms` }}
+      >
+        <div className="absolute inset-0 bg-slate-950" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+          style={event.banner_url ? { backgroundImage: `url(${event.banner_url})` } : { backgroundImage: 'radial-gradient(circle at 50% 50%, #b45309 0%, transparent 100%)' }}
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/80 to-transparent" />
+
+        <div className="relative p-6 sm:p-8 pt-48 flex flex-col items-start gap-3">
+          <div className="flex flex-wrap justify-between w-full items-start gap-2">
+            <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full backdrop-blur-md">
+              ★ Evento Especial
+            </span>
+            {event.isCancelled && (
+              <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-full backdrop-blur-md">
+                Cancelado
+              </span>
+            )}
+          </div>
+          
+          <div className="mt-2">
+            {date && <p className="text-sm text-slate-300 font-bold mb-1">{date.weekday}, {date.full}</p>}
+            <h3 className="text-3xl font-black text-white group-hover:text-amber-400 transition-colors duration-200 leading-tight">{event.title}</h3>
+          </div>
+
+          <div className="flex items-center gap-4 flex-wrap mt-2">
+            {event.time && (
+              <span className="flex items-center gap-1.5 text-sm text-slate-300 font-medium bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 backdrop-blur-sm">
+                <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                {event.time}
+              </span>
+            )}
+            {event.location && (
+              <span className="flex items-center gap-1.5 text-sm text-slate-300 font-medium bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 backdrop-blur-sm">
+                <svg className="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                <span className="truncate max-w-[200px] sm:max-w-xs">{event.location}</span>
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {open && <EventModal event={event} onClose={() => setOpen(false)} />}
+    </>
+  );
+}
+
 function EventCard({ event, index }: { event: PublicEvent; index: number }) {
   const { ref, visible } = useScrollReveal<HTMLDivElement>({ threshold: 0.08 });
   const [open, setOpen] = useState(false);
@@ -124,11 +183,7 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
       <div
         ref={ref}
         onClick={() => setOpen(true)}
-        className={`group flex items-start gap-5 backdrop-blur-sm rounded-2xl p-5 cursor-pointer transition-all duration-300 ease-out ${
-          event.type === 'especial'
-            ? 'bg-amber-950/30 border border-amber-500/30 hover:border-amber-400 hover:-translate-y-1 shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]'
-            : 'bg-slate-900/60 border border-white/8 hover:border-blue-500/30 hover:-translate-y-1'
-        } ${event.isCancelled ? 'opacity-60 grayscale-[50%]' : ''}`}
+        className={`group flex items-start gap-5 backdrop-blur-sm rounded-2xl p-5 cursor-pointer transition-all duration-300 ease-out bg-slate-900/60 border border-white/8 hover:border-blue-500/30 hover:-translate-y-1 ${event.isCancelled ? 'opacity-60 grayscale-[50%]' : ''}`}
         style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transitionDelay: `${index * 70}ms` }}
       >
         {/* Calendário */}
@@ -149,11 +204,6 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
           {date && <p className="text-xs text-slate-500 font-semibold mb-1">{date.weekday}</p>}
           <h3 className="font-bold text-white group-hover:text-blue-300 transition-colors duration-200 truncate">{event.title}</h3>
           <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-            {event.type === 'especial' && (
-              <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-amber-500">
-                ★ Especial
-              </span>
-            )}
             {event.isCancelled && (
               <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-red-500">
                 Cancelado
@@ -213,8 +263,12 @@ export function EventsSection({ content, events }: Props) {
 
         {events.length > 0 ? (
           <>
-            <div className="space-y-3">
-              {events.map((event, i) => <EventCard key={event.id} event={event} index={i} />)}
+            <div className="space-y-4">
+              {events.map((event, i) => (
+                event.type === 'especial' 
+                  ? <SpecialEventCard key={event.id} event={event} index={i} />
+                  : <EventCard key={event.id} event={event} index={i} />
+              ))}
             </div>
             <div className="text-center mt-10 transition-all duration-700 ease-out"
               style={{ opacity: visible ? 1 : 0, transitionDelay: '400ms' }}>

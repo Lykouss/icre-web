@@ -17,9 +17,16 @@ export default async function MinhasInscricoesPage() {
   }
 
   // ─── Buscar inscrições do usuário ────────────────────────────────────────────
-  // member_id em event_registrations armazena auth.uid() diretamente (ver RLS policy)
-  // Também buscamos por email como fallback (inscrições antes de criar conta)
-  const { data: registrationsByMemberId } = await supabase
+  // Precisamos buscar o member_id da tabela members que corresponde a este usuário
+  const { data: memberData } = await supabase
+    .from('members')
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  const memberId = memberData?.id;
+
+  const { data: registrationsByMemberId } = memberId ? await supabase
     .from('event_registrations')
     .select(`
       id,
@@ -37,8 +44,8 @@ export default async function MinhasInscricoesPage() {
         banner_url
       )
     `)
-    .eq('member_id', user.id)
-    .order('created_at', { ascending: false });
+    .eq('member_id', memberId)
+    .order('created_at', { ascending: false }) : { data: [] };
 
   // Fallback: buscar por email (para inscrições onde o usuário não estava logado)
   const { data: registrationsByEmail } = user.email

@@ -73,7 +73,7 @@ export function PaymentPageClient({ payment }: Props) {
       const result = await checkAndUpdatePaymentStatus(payment.registrationId);
       if (result.paid) {
         setPaymentConfirmed(true);
-        setTimeout(() => router.push(`/comprovante/${payment.registrationId}`), 1500);
+        setTimeout(() => router.push('/minhas-inscricoes'), 1500);
       }
     });
   }, [payment.registrationId, router]);
@@ -90,7 +90,7 @@ export function PaymentPageClient({ payment }: Props) {
       const result = await checkAndUpdatePaymentStatus(payment.registrationId);
       if (result.paid) {
         setPaymentConfirmed(true);
-        setTimeout(() => router.push(`/comprovante/${payment.registrationId}`), 1500);
+        setTimeout(() => router.push('/minhas-inscricoes'), 1500);
       } else {
         setCheckError('Pagamento ainda não confirmado. Aguarde alguns instantes.');
       }
