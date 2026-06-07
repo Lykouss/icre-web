@@ -5,6 +5,7 @@ import { FirstAccessTracker } from '@/features/core/components/FirstAccessTracke
 import { NewMemberModal } from '@/features/members/components/NewMemberModal';
 import { MembersTable } from '@/features/members/components/MembersTable';
 import { createClient } from '@/lib/supabase/server';
+import { PageHeader } from '@/features/core/components/AdminSidebarShell';
 
 export interface MemberRow {
   id: string;
@@ -49,13 +50,12 @@ export default async function MembrosPage() {
   return (
     <div className="max-w-7xl mx-auto">
       <FirstAccessTracker flagSlug="module_members" userId={user?.id} />
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Secretaria e Membros</h1>
-          <p className="text-slate-500 mt-1">Gerencie o registro de todas as pessoas da igreja e visitantes.</p>
-        </div>
-        <NewMemberModal cells={cellsData ?? []} />
-      </div>
+      
+      <PageHeader 
+        title="Secretaria e Membros"
+        description="Gerencie o registro de todas as pessoas da igreja e visitantes."
+        action={<NewMemberModal cells={cellsData ?? []} />}
+      />
 
       <MembersTable initialMembers={data ?? []} />
     </div>

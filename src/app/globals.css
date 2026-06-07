@@ -34,4 +34,170 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+
+  /* Portal easing */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
+
+/* ─── Animações Globais Portal ─────────────────────────────── */
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-6px) rotate(1deg); }
+  66%       { transform: translateY(-3px) rotate(-0.5deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+  50%       { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6), 0 0 80px rgba(59, 130, 246, 0.2); }
+}
+
+@keyframes glow-pulse-amber {
+  0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+  50%       { box-shadow: 0 0 40px rgba(245, 158, 11, 0.5), 0 0 70px rgba(245, 158, 11, 0.15); }
+}
+
+@keyframes glow-pulse-red {
+  0%, 100% { box-shadow: 0 0 16px rgba(239, 68, 68, 0.3); }
+  50%       { box-shadow: 0 0 32px rgba(239, 68, 68, 0.5); }
+}
+
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.93) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes badge-appear {
+  from { opacity: 0; transform: scale(0.85) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes draw-line {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 0.7; transform: scale(1.05); }
+}
+
+/* Utility classes */
+.animate-float        { animation: float 4s ease-in-out infinite; }
+.animate-float-slow   { animation: float-slow 6s ease-in-out infinite; }
+.animate-glow-pulse   { animation: glow-pulse 2.5s ease-in-out infinite; }
+.animate-glow-amber   { animation: glow-pulse-amber 2.5s ease-in-out infinite; }
+.animate-glow-red     { animation: glow-pulse-red 2s ease-in-out infinite; }
+.animate-slide-up     { animation: slide-up-fade 0.6s var(--ease-spring) both; }
+.animate-modal-in     { animation: modal-in 0.28s var(--ease-spring) both; }
+.animate-badge        { animation: badge-appear 0.5s var(--ease-spring) both; }
+.animate-breathe      { animation: breathe 3s ease-in-out infinite; }
+.animate-spin-slow    { animation: spin-slow 8s linear infinite; }
+
+/* Shimmer skeleton */
+.shimmer-bg {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.06) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+
+/* Gradient text utility */
+.text-gradient-blue {
+  background: linear-gradient(135deg, #fff 40%, #93c5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scrollbar portal dark */
+.portal-scroll::-webkit-scrollbar       { width: 4px; }
+.portal-scroll::-webkit-scrollbar-track { background: transparent; }
+.portal-scroll::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.2); border-radius: 99px; }
+
+/* ─── Admin System Dark Theme ───────────────────────────────── */
+
+[data-admin="true"] {
+  /* Backgrounds */
+  --admin-bg:            #080d18;
+  --admin-surface:       #0d1526;
+  --admin-surface-alt:   #111d35;
+  --admin-surface-hover: rgba(255,255,255,0.035);
+  --admin-sidebar:       #060b17;
+
+  /* Borders */
+  --admin-border:        rgba(255,255,255,0.07);
+  --admin-border-strong: rgba(255,255,255,0.12);
+
+  /* Text */
+  --admin-text-primary:   #e2e8f0;
+  --admin-text-secondary: #64748b;
+  --admin-text-muted:     #334155;
+
+  /* Accent */
+  --admin-accent:         #2563eb;
+  --admin-accent-dim:     rgba(37,99,235,0.12);
+  --admin-accent-border:  rgba(37,99,235,0.3);
+
+  /* Override shadcn tokens for dark admin scope */
+  --background:           var(--admin-surface);
+  --foreground:           var(--admin-text-primary);
+  --card:                 var(--admin-surface);
+  --card-foreground:      var(--admin-text-primary);
+  --popover:              var(--admin-surface-alt);
+  --popover-foreground:   var(--admin-text-primary);
+  --primary:              var(--admin-accent);
+  --primary-foreground:   #fff;
+  --secondary:            var(--admin-surface-alt);
+  --secondary-foreground: var(--admin-text-primary);
+  --muted:                var(--admin-surface-alt);
+  --muted-foreground:     var(--admin-text-secondary);
+  --accent:               var(--admin-surface-hover);
+  --accent-foreground:    var(--admin-text-primary);
+  --border:               var(--admin-border);
+  --input:                var(--admin-surface-alt);
+  --ring:                 var(--admin-accent);
+  color-scheme: dark;
+}
+
+/* Admin scrollbar */
+[data-admin="true"] ::-webkit-scrollbar         { width: 4px; height: 4px; }
+[data-admin="true"] ::-webkit-scrollbar-track   { background: transparent; }
+[data-admin="true"] ::-webkit-scrollbar-thumb   { background: rgba(255,255,255,0.1); border-radius: 4px; }
+[data-admin="true"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* Admin selection color */
+[data-admin="true"] ::selection { background: rgba(37,99,235,0.35); }
+
+/* Smooth page transitions in admin */
+[data-admin="true"] * { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }

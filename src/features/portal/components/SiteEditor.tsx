@@ -6,6 +6,7 @@ import { saveBlockDraft, publishAllBlocks, toggleBlock } from '@/features/portal
 import { listSiteMedia, uploadSiteMedia, deleteSiteMedia } from '@/features/portal/actions/portal-actions';
 import type { SiteBlock, MissionItem } from '@/features/portal/types';
 import type { SiteMediaItem } from '@/features/portal/actions/portal-actions';
+import { PageHeader } from '@/features/core/components/AdminSidebarShell';
 
 // ── Seções editáveis ─────────────────────────────────────────────
 
@@ -26,14 +27,14 @@ const SECTIONS: SectionMeta[] = [
 
 // ── Primitivos ───────────────────────────────────────────────────
 
-const inputCls = 'w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm text-slate-800 placeholder-slate-400 transition-all';
+const inputCls = 'w-full px-3 py-2 bg-[var(--admin-surface-alt)] border border-[var(--admin-border)] rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm text-slate-200 placeholder-slate-500 transition-all';
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">{label}</label>
+      <label className="block text-[11px] font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">{label}</label>
       {children}
-      {hint && <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{hint}</p>}
+      {hint && <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">{hint}</p>}
     </div>
   );
 }
@@ -41,8 +42,8 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
 function SectionDivider({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3 pt-1">
-      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">{label}</span>
-      <div className="flex-1 h-px bg-slate-100" />
+      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">{label}</span>
+      <div className="flex-1 h-px" style={{ background: 'var(--admin-border)' }} />
     </div>
   );
 }
@@ -103,17 +104,17 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
   return (
     <div className="space-y-2">
       {value && (
-        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+        <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-[var(--admin-border)]" style={{ background: 'var(--admin-bg)' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={value} alt="" className="w-full h-full object-cover" />
-          <button onClick={() => onChange('')} className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg transition-colors">
+          <button onClick={() => onChange('')} className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-md transition-colors">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
       )}
       <div className="flex gap-2">
         <button type="button" onClick={() => { setOpen(true); load(); }}
-          className="flex-1 flex items-center justify-center gap-2 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+          className="flex-1 flex items-center justify-center gap-2 py-2 border border-[var(--admin-border)] rounded-lg text-xs font-semibold text-slate-300 hover:border-blue-500/50 hover:text-blue-400 hover:bg-blue-500/5 transition-colors">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           {value ? 'Trocar' : 'Galeria'}
         </button>
@@ -121,42 +122,42 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden border border-[var(--admin-border-strong)]" style={{ background: 'var(--admin-surface)' }}>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--admin-border)] shrink-0">
               <div>
-                <h3 className="font-bold text-slate-900 text-sm">Galeria de imagens</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Selecione ou envie uma imagem</p>
+                <h3 className="font-bold text-slate-100 text-sm">Galeria de imagens</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Selecione ou envie uma imagem</p>
               </div>
-              <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors">
+              <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:bg-white/5 transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            <div className="px-5 py-3 border-b border-slate-100 shrink-0">
-              <div className="flex justify-between text-xs text-slate-500 mb-1.5">
+            <div className="px-5 py-3 border-b border-[var(--admin-border)] shrink-0">
+              <div className="flex justify-between text-xs text-slate-400 mb-1.5">
                 <span>Armazenamento</span>
-                <span className={usedPct > 85 ? 'text-red-500 font-semibold' : ''}>{usedMB.toFixed(1)} MB / {QUOTA_MB} MB</span>
+                <span className={usedPct > 85 ? 'text-red-400 font-semibold' : ''}>{usedMB.toFixed(1)} MB / {QUOTA_MB} MB</span>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-1.5">
+              <div className="w-full bg-slate-800 rounded-full h-1.5">
                 <div className={`h-1.5 rounded-full transition-all ${usedPct > 85 ? 'bg-red-500' : usedPct > 60 ? 'bg-amber-400' : 'bg-blue-500'}`} style={{ width: `${usedPct}%` }} />
               </div>
             </div>
-            <div className="px-5 py-3 border-b border-slate-100 shrink-0">
-              <label className={`flex items-center justify-center gap-2 py-2.5 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${uploading ? 'border-slate-200 text-slate-400' : 'border-slate-300 hover:border-blue-400 hover:text-blue-600 text-slate-500'}`}>
+            <div className="px-5 py-3 border-b border-[var(--admin-border)] shrink-0">
+              <label className={`flex items-center justify-center gap-2 py-2.5 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${uploading ? 'border-slate-700 text-slate-500' : 'border-slate-700 hover:border-blue-500/50 hover:text-blue-400 text-slate-400'}`}>
                 {uploading ? (
                   <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg><span className="text-xs font-semibold">Enviando...</span></>
                 ) : (
-                  <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg><span className="text-xs font-semibold">Enviar imagem</span><span className="text-xs text-slate-400">JPG, PNG, WebP · Máx. 10 MB</span></>
+                  <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg><span className="text-xs font-semibold">Enviar imagem</span><span className="text-[10px] text-slate-500">JPG, PNG, WebP · Máx. 10 MB</span></>
                 )}
                 <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="sr-only" onChange={handleUpload} disabled={uploading} />
               </label>
-              {error && <p className="mt-2 text-xs text-red-500 font-medium">{error}</p>}
+              {error && <p className="mt-2 text-xs text-red-400 font-medium">{error}</p>}
             </div>
             <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: 'thin' }}>
               {loading ? (
-                <div className="flex justify-center py-10"><svg className="w-6 h-6 animate-spin text-slate-300" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg></div>
+                <div className="flex justify-center py-10"><svg className="w-6 h-6 animate-spin text-slate-600" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg></div>
               ) : items.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 text-slate-400">
+                <div className="flex flex-col items-center justify-center py-10 text-slate-500">
                   <svg className="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                   <p className="text-sm font-medium">Galeria vazia</p>
                 </div>
@@ -164,7 +165,7 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
                 <div className="grid grid-cols-3 gap-3">
                   {items.map(item => (
                     <div key={item.id} onClick={() => { onChange(item.url); setOpen(false); }}
-                      className={`group relative aspect-video rounded-xl overflow-hidden bg-slate-100 border-2 cursor-pointer transition-all ${value === item.url ? 'border-blue-500' : 'border-transparent hover:border-slate-300'}`}
+                      className={`group relative aspect-video rounded-lg overflow-hidden border cursor-pointer transition-all ${value === item.url ? 'border-blue-500' : 'border-transparent hover:border-slate-600'}`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={item.url} alt={item.name} className="w-full h-full object-cover" />
@@ -177,11 +178,11 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
                       )}
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all flex flex-col justify-between p-2 opacity-0 group-hover:opacity-100">
                         <div className="flex justify-end">
-                          <button onClick={e => { e.stopPropagation(); handleDelete(item); }} className="p-1 bg-red-600 text-white rounded-lg">
+                          <button onClick={e => { e.stopPropagation(); handleDelete(item); }} className="p-1 bg-red-600 text-white rounded">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                           </button>
                         </div>
-                        <p className="text-white text-xs">{formatBytes(item.size_bytes)}</p>
+                        <p className="text-white text-[10px]">{formatBytes(item.size_bytes)}</p>
                       </div>
                     </div>
                   ))}
@@ -242,10 +243,10 @@ function MissionForm({ c, set }: { c: Record<string, unknown>; set: (k: string, 
       <SectionDivider label="Pilares" />
       <div className="space-y-3">
         {items.map((item, i) => (
-          <div key={i} className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+          <div key={i} className="border border-[var(--admin-border)] rounded-lg p-3 space-y-2 bg-[var(--admin-surface-alt)]">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-500">Pilar {i + 1}</span>
-              <button onClick={() => removeItem(i)} className="p-1 text-slate-400 hover:text-red-500 transition-colors">
+              <span className="text-[10px] font-semibold text-slate-500 uppercase">Pilar {i + 1}</span>
+              <button onClick={() => removeItem(i)} className="p-1 text-slate-500 hover:text-red-400 transition-colors">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
               </button>
             </div>
@@ -255,7 +256,7 @@ function MissionForm({ c, set }: { c: Record<string, unknown>; set: (k: string, 
           </div>
         ))}
         <button onClick={addItem}
-          className="w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-slate-300 rounded-xl text-sm text-slate-500 hover:border-slate-400 hover:text-slate-700 transition-colors">
+          className="w-full flex items-center justify-center gap-2 py-2 border border-dashed border-[var(--admin-border)] rounded-lg text-sm text-slate-400 hover:border-slate-500 hover:text-slate-300 transition-colors">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
           Adicionar pilar
         </button>
@@ -372,91 +373,28 @@ export function SiteEditor({ blocks: initialBlocks }: SiteEditorProps) {
   const c = activeContent;
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-white">
-
-      {/* ── Sidebar ── */}
-      <aside className="w-52 shrink-0 bg-slate-950 flex flex-col border-r border-slate-800">
-        <div className="px-4 py-4 border-b border-slate-800">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Seções do site</p>
-        </div>
-
-        <nav className="flex-1 overflow-y-auto py-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#334155 transparent' }}>
-          {SECTIONS.map(s => {
-            const b = blocks.find(bl => bl.type === s.key);
-            const active = activeKey === s.key;
-            return (
-              <button key={s.key} onClick={() => setActiveKey(s.key)}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-150 ${active ? 'bg-blue-600/15 border-r-2 border-blue-500' : 'border-r-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
-              >
-                <span className={active ? 'text-blue-400' : 'text-slate-500'}>{s.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className={`text-xs font-semibold truncate ${active ? 'text-blue-300' : ''}`}>{s.label}</p>
-                  {b && (
-                    <p className={`text-xs mt-0.5 ${b.is_active ? 'text-emerald-500' : 'text-slate-600'}`}>
-                      {b.is_active ? 'Visível' : 'Oculto'}
-                    </p>
-                  )}
-                </div>
-              </button>
-            );
-          })}
-        </nav>
-
-        <div className="p-3 border-t border-slate-800">
-          <a href="/" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-            Ver site ao vivo
-          </a>
-        </div>
-      </aside>
-
-      {/* ── Área de edição ── */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0 gap-4">
-          <div className="min-w-0">
-            <h2 className="font-bold text-slate-900 truncate">{SECTIONS.find(s => s.key === activeKey)?.label}</h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              {activeBlock?.is_active ? 'Visível no site' : 'Oculto no site'}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            {activeBlock && (
-              <button onClick={handleToggle} disabled={isPending}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors disabled:opacity-50 ${
-                  activeBlock.is_active
-                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                    : 'border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100'
-                }`}
-              >
-                {activeBlock.is_active
-                  ? <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                  : <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
-                }
-                {activeBlock.is_active ? 'Visível' : 'Oculto'}
-              </button>
-            )}
-
+    <div className="flex flex-col h-[calc(100vh-8rem)] min-h-[600px] -m-2 md:m-0">
+      <PageHeader 
+        title="Editor do Site"
+        description="Gerencie o conteúdo do portal público da ICRE."
+        action={
+          <div className="flex items-center gap-2">
             {hasUnsaved && (
-              <span className="flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1.5 font-medium">
+              <span className="hidden sm:flex items-center gap-1.5 text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-md px-2 py-1 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                Não salvo
+                Rascunho
               </span>
             )}
-
             <button onClick={handleSave} disabled={isPending}
-              className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition-colors disabled:opacity-50">
+              className="flex items-center gap-1.5 px-4 py-2 bg-[var(--admin-surface-alt)] hover:bg-white/5 border border-[var(--admin-border)] text-slate-200 text-[13px] font-semibold rounded-lg transition-colors disabled:opacity-50">
               {isPending
                 ? <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
                 : <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
               }
               Salvar rascunho
             </button>
-
             <button onClick={handlePublish} disabled={isPublishing}
-              className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors disabled:opacity-50">
+              className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold rounded-lg transition-colors disabled:opacity-50 shadow-sm">
               {isPublishing
                 ? <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
                 : <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
@@ -464,33 +402,86 @@ export function SiteEditor({ blocks: initialBlocks }: SiteEditorProps) {
               Publicar site
             </button>
           </div>
+        }
+      />
+
+      <div className="flex-1 flex overflow-hidden rounded-xl border border-[var(--admin-border)] shadow-sm" style={{ background: 'var(--admin-surface)' }}>
+        {/* ── Coluna 1: Navegação ── */}
+        <aside className="w-48 shrink-0 flex flex-col border-r border-[var(--admin-border)]" style={{ background: 'var(--admin-bg)' }}>
+          <div className="px-4 py-3 border-b border-[var(--admin-border)]">
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Seções</p>
+          </div>
+          <nav className="flex-1 overflow-y-auto py-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#334155 transparent' }}>
+            {SECTIONS.map(s => {
+              const b = blocks.find(bl => bl.type === s.key);
+              const active = activeKey === s.key;
+              return (
+                <button key={s.key} onClick={() => setActiveKey(s.key)}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-150 ${active ? 'bg-blue-500/10 border-r-2 border-blue-500' : 'border-r-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
+                >
+                  <span className={active ? 'text-blue-400' : 'text-slate-500'}>{s.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-xs font-medium truncate ${active ? 'text-blue-300' : ''}`}>{s.label}</p>
+                    {b && (
+                      <p className={`text-[10px] mt-0.5 ${b.is_active ? 'text-emerald-400' : 'text-slate-600'}`}>
+                        {b.is_active ? 'Visível' : 'Oculto'}
+                      </p>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
+
+        {/* ── Coluna 2: Formulário ── */}
+        <div className="w-[380px] shrink-0 flex flex-col border-r border-[var(--admin-border)]" style={{ background: 'var(--admin-surface)' }}>
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--admin-border)] shrink-0">
+            <div>
+              <h2 className="font-semibold text-slate-200 text-sm truncate">{SECTIONS.find(s => s.key === activeKey)?.label}</h2>
+            </div>
+            {activeBlock && (
+              <label className="flex items-center gap-2 cursor-pointer">
+                <span className="text-[11px] font-medium text-slate-400">{activeBlock.is_active ? 'Visível' : 'Oculto'}</span>
+                <div className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors" style={{ background: activeBlock.is_active ? '#3b82f6' : 'var(--admin-border-strong)' }}>
+                  <input type="checkbox" className="sr-only" checked={activeBlock.is_active} onChange={handleToggle} disabled={isPending} />
+                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${activeBlock.is_active ? 'translate-x-4' : 'translate-x-1'}`} />
+                </div>
+              </label>
+            )}
+          </div>
+          <div className="flex-1 overflow-y-auto px-5 py-5" style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}>
+            {!activeBlock ? (
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
+                <p className="text-xs font-semibold text-amber-400">Bloco não encontrado no banco de dados.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {activeKey === 'hero'    && <HeroForm c={c} set={set} />}
+                {activeKey === 'about'   && <AboutForm c={c} set={set} />}
+                {activeKey === 'mission' && <MissionForm c={c} set={set} />}
+                {activeKey === 'pastors' && <SimpleHeaderForm c={c} set={set} titlePlaceholder="Nossa Liderança" subtitlePlaceholder="Conheça quem guia nossa comunidade" hint="Os pastores são cadastrados no módulo de Liderança." />}
+                {activeKey === 'cells'   && <SimpleHeaderForm c={c} set={set} titlePlaceholder="Nossas Células" subtitlePlaceholder="Encontre uma célula perto de você" hint="As células são gerenciadas no módulo de Células." />}
+                {activeKey === 'events'  && <SimpleHeaderForm c={c} set={set} titlePlaceholder="Próximos Eventos" subtitlePlaceholder="Venha participar" hint="Os eventos são gerenciados no módulo de Eventos." />}
+                {activeKey === 'youtube' && <YoutubeForm c={c} set={set} />}
+                {activeKey === 'contact' && <ContactForm c={c} set={set} />}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Formulário */}
-        <div className="flex-1 overflow-y-auto px-6 py-6" style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}>
-          {!activeBlock ? (
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
-              <p className="text-sm font-semibold text-amber-800">Bloco não encontrado no banco de dados.</p>
-              <p className="text-xs text-amber-600 mt-1">Execute a migration SQL para criar os blocos iniciais com os defaults.</p>
-            </div>
-          ) : (
-            <div className="max-w-xl space-y-5">
-              {activeKey === 'hero'    && <HeroForm c={c} set={set} />}
-              {activeKey === 'about'   && <AboutForm c={c} set={set} />}
-              {activeKey === 'mission' && <MissionForm c={c} set={set} />}
-              {activeKey === 'pastors' && <SimpleHeaderForm c={c} set={set} titlePlaceholder="Nossa Liderança" subtitlePlaceholder="Conheça quem guia nossa comunidade" hint="Os pastores são cadastrados no módulo de Liderança. Aqui você configura apenas o título desta seção." />}
-              {activeKey === 'cells'   && <SimpleHeaderForm c={c} set={set} titlePlaceholder="Nossas Células" subtitlePlaceholder="Encontre uma célula perto de você" hint="As células são gerenciadas no módulo de Células. Aqui você configura apenas o título desta seção." />}
-              {activeKey === 'events'  && <SimpleHeaderForm c={c} set={set} titlePlaceholder="Próximos Eventos" subtitlePlaceholder="Venha participar" hint="Os eventos são gerenciados no módulo de Eventos. Aqui você configura apenas o título desta seção." />}
-              {activeKey === 'youtube' && <YoutubeForm c={c} set={set} />}
-              {activeKey === 'contact' && <ContactForm c={c} set={set} />}
-            </div>
-          )}
-        </div>
-
-        <div className="px-6 py-3 border-t border-slate-100 shrink-0 bg-slate-50/50">
-          <p className="text-xs text-slate-400">
-            <strong>Rascunho</strong> salva localmente e no banco sem afetar o site. <strong>Publicar</strong> torna as alterações visíveis ao público.
-          </p>
+        {/* ── Coluna 3: Live Preview ── */}
+        <div className="hidden lg:flex flex-1 flex-col relative" style={{ background: 'var(--admin-bg)' }}>
+          <div className="absolute top-0 left-0 right-0 h-10 bg-gradient-to-b from-[var(--admin-bg)] to-transparent pointer-events-none z-10 flex items-center justify-center">
+            <span className="bg-[var(--admin-surface-alt)] border border-[var(--admin-border)] px-3 py-1 rounded-full text-[10px] font-semibold text-slate-400 shadow-sm mt-2">
+              Preview em tempo real
+            </span>
+          </div>
+          <iframe 
+            src="/" 
+            title="Live Preview" 
+            className="w-full h-full border-none opacity-90"
+          />
         </div>
       </div>
     </div>

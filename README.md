@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ICRE Web
 
-## Getting Started
+Este é um projeto desenvolvido em [Next.js](https://nextjs.org/) utilizando Tailwind CSS, Supabase e integração com o gateway de pagamento Asaas.
 
-First, run the development server:
+---
 
+## 🚀 Como Começar (Setup Local)
+
+Siga os passos abaixo para rodar o projeto na sua máquina:
+
+### 1. Pré-requisitos
+Certifique-se de ter o **Node.js** (versão 18+ recomendada) e o **npm** instalados.
+
+### 2. Instalação das Dependências
+Clone o repositório e, no diretório raiz do projeto, instale as dependências:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Configuração das Variáveis de Ambiente
+O projeto necessita de chaves de API e configurações específicas para funcionar. 
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Duplique o arquivo `.env.example` e renomeie-o para `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+2. Abra o arquivo `.env.local` e preencha as variáveis de ambiente com os dados de desenvolvimento/sandbox fornecidos.
+   > **Nota:** Nunca comite o arquivo `.env.local` para o repositório (ele já está configurado no `.gitignore`).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Executando o Servidor de Desenvolvimento
+Inicie o servidor local:
+```bash
+npm run dev
+```
 
-## Learn More
+Abra [http://localhost:3000](http://localhost:3000) no seu navegador para visualizar o resultado.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Diretrizes de Contribuição (Git & Branches)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Para manter o código organizado e seguro, siga o fluxo de trabalho abaixo:
 
-## Deploy on Vercel
+1. **Nunca envie commits diretamente para a branch `main`.**
+2. Crie uma nova branch a partir da `main` para as suas alterações:
+   ```bash
+   git checkout -b feature/suas-alteracoes-frontend
+   ```
+3. Realize as alterações no frontend e faça os commits com mensagens claras.
+4. Envie sua branch para o repositório remoto:
+   ```bash
+   git push origin feature/suas-alteracoes-frontend
+   ```
+5. Abra um **Pull Request (PR)** no GitHub apontando da sua branch para a `main`.
+6. Aguarde a revisão de código antes de realizar o merge.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📦 Estrutura de Pastas Principal
+
+* `src/components/ui/` - Componentes reutilizáveis de interface (Shadcn UI).
+* `src/features/` - Funcionalidades organizadas por módulos (Portal, Core, etc.).
+* `public/` - Arquivos estáticos (imagens, ícones).

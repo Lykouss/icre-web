@@ -13,26 +13,19 @@ export function MaintenanceScreen({ featureName = 'Este recurso' }: MaintenanceS
       <motion.div 
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-        className="max-w-md w-full bg-white dark:bg-slate-900 shadow-2xl shadow-blue-500/10 rounded-[2.5rem] p-10 md:p-14 text-center relative overflow-hidden ring-1 ring-slate-200 dark:ring-white/10"
+        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+        className="max-w-md w-full shadow-2xl rounded-2xl p-10 md:p-14 text-center relative overflow-hidden"
+        style={{ background: 'var(--admin-surface)', border: '1px solid var(--admin-border)' }}
       >
-        {/* Decorative elements */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl" />
         
         <div className="relative">
-          <div className="w-24 h-24 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-500/10 dark:to-amber-500/5 rounded-3xl mx-auto flex items-center justify-center mb-8 shadow-inner ring-1 ring-amber-200/50 dark:ring-amber-500/20">
+          <div className="w-20 h-20 bg-blue-500/10 rounded-2xl mx-auto flex items-center justify-center mb-6 ring-1 ring-blue-500/20">
             <motion.svg 
-              animate={{ 
-                rotate: [0, 5, -5, 0],
-                scale: [1, 1.05, 1]
-              }}
-              transition={{ 
-                duration: 4, 
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="w-12 h-12 text-amber-500" 
+              animate={{ rotate: [0, -10, 10, -10, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="w-10 h-10 text-blue-400" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -42,30 +35,23 @@ export function MaintenanceScreen({ featureName = 'Este recurso' }: MaintenanceS
             </motion.svg>
           </div>
 
-          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
-            {featureName} em Manutenção
+          <h2 className="text-2xl font-bold text-slate-100 mb-3 tracking-tight">
+            Em Manutenção
           </h2>
           
-          <p className="text-slate-500 dark:text-slate-400 mb-10 leading-relaxed text-lg">
-            Estamos polindo este módulo para garantir a melhor experiência possível. 
+          <p className="text-slate-400 mb-8 leading-relaxed text-sm">
+            Estamos polindo o módulo <strong>{featureName}</strong> para garantir a melhor experiência possível. 
             Em breve tudo estará de volta ao normal!
           </p>
 
           <a 
             href="/dashboard"
-            className="group relative inline-flex items-center justify-center px-10 py-4 font-bold bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-blue-500/20 transition-all duration-300 active:scale-95"
+            className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <span className="relative flex items-center gap-2">
-              <svg className="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Voltar ao Início
-            </span>
+            Voltar ao Início
           </a>
         </div>
       </motion.div>
     </div>
   );
 }
-
