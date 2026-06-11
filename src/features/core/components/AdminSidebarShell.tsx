@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { AdminSidebar } from '@/features/core/components/AdminSidebar';
 import { UserMenu } from '@/features/core/components/UserMenu';
+import { ThemeToggle } from '@/features/core/components/ThemeToggle';
 import { AppRole } from '@/features/core/api/get-current-user';
 import type { FlagResult } from '@/features/core/api/get-feature-flag';
 
@@ -33,11 +34,11 @@ export function PageHeader({ title, description, action, badge }: PageHeaderProp
     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
       <div className="min-w-0">
         <div className="flex items-center gap-3 mb-1">
-          <h1 className="text-2xl font-bold text-slate-100 tracking-tight leading-tight">{title}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight leading-tight">{title}</h1>
           {badge}
         </div>
         {description && (
-          <p className="text-sm text-slate-500 leading-relaxed max-w-2xl">{description}</p>
+          <p className="text-sm text-gray-500 leading-relaxed max-w-2xl font-medium">{description}</p>
         )}
       </div>
       {action && (
@@ -123,16 +124,19 @@ export function AdminSidebarShell({ user, flags, children }: Props) {
           </div>
 
           {/* Right: user menu */}
-          <UserMenu
-            fullName={user.fullName}
-            roles={user.roles}
-            photoUrl={user.photoUrl}
-          />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <UserMenu
+              fullName={user.fullName}
+              roles={user.roles}
+              photoUrl={user.photoUrl}
+            />
+          </div>
         </header>
 
         {/* Page content */}
         <main
-          className="flex-1 overflow-y-auto p-5 md:p-8"
+          className="flex-1 overflow-y-auto p-5 md:p-8 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-slate-50 transition-colors duration-300"
         >
           {children}
         </main>

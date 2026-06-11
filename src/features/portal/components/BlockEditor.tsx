@@ -64,7 +64,7 @@ function ColorField({ label, value, fallback, onChange }: {
   return (
     <Field label={label}>
       <div className="flex gap-2">
-        <input type="color" value={value || fallback} onChange={e => onChange(e.target.value)} className="w-9 h-9 rounded-lg border border-slate-200 cursor-pointer p-0.5 bg-white" />
+        <input type="color" value={value || fallback} onChange={e => onChange(e.target.value)} className="w-9 h-9 rounded-lg border border-slate-200 cursor-pointer p-0.5 bg-white dark:bg-slate-800" />
         <input className={`${inputCls} flex-1`} value={value ?? ''} onChange={e => onChange(e.target.value)} />
       </div>
     </Field>
@@ -167,7 +167,7 @@ function MediaPicker({ value, onChange }: MediaPickerProps) {
         <button
           type="button"
           onClick={handleOpen}
-          className="flex-1 flex items-center justify-center gap-2 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -185,7 +185,7 @@ function MediaPicker({ value, onChange }: MediaPickerProps) {
       {/* Modal da galeria */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
               <div>
@@ -220,7 +220,7 @@ function MediaPicker({ value, onChange }: MediaPickerProps) {
 
             {/* Upload */}
             <div className="px-5 py-3 border-b border-slate-100 shrink-0">
-              <label className={`flex items-center justify-center gap-2 py-2.5 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${uploading ? 'border-slate-200 bg-slate-50 text-slate-400' : 'border-slate-300 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600 text-slate-500'}`}>
+              <label className={`flex items-center justify-center gap-2 py-2.5 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${uploading ? 'border-slate-200 bg-slate-50 text-slate-400' : 'border-slate-300 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 text-slate-500'}`}>
                 {uploading ? (
                   <>
                     <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -322,7 +322,7 @@ function AlignIcon({ value }: { value: BlockAlignment }) {
 
 function LayoutPanel({ layout, onChange }: { layout: BlockLayout; onChange: (l: BlockLayout) => void }) {
   const set = <K extends keyof BlockLayout>(key: K, value: BlockLayout[K]) => onChange({ ...layout, [key]: value });
-  const seg = (active: boolean) => `flex-1 flex items-center justify-center py-1.5 rounded-md text-xs font-semibold transition-colors ${active ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`;
+  const seg = (active: boolean) => `flex-1 flex items-center justify-center py-1.5 rounded-md text-xs font-semibold transition-colors ${active ? 'bg-white dark:bg-slate-800 text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`;
 
   const alignOptions: BlockAlignment[] = ['left', 'center', 'right'];
   const alignLabels: Record<BlockAlignment, string> = { left: 'Esq.', center: 'Centro', right: 'Dir.' };
@@ -611,7 +611,7 @@ export function BlockEditor({ block, onClose, onContentChange }: BlockEditorProp
           <button
             key={tab}
             onClick={() => setActiveSection(tab)}
-            className={`flex-1 py-2.5 text-xs font-semibold transition-colors ${activeSection === tab ? 'text-blue-600 border-b-2 border-blue-500' : 'text-slate-400 hover:text-slate-600'}`}
+            className={`flex-1 py-2.5 text-xs font-semibold transition-colors ${activeSection === tab ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500' : 'text-slate-400 hover:text-slate-600'}`}
           >
             {tab === 'content' ? 'Conteúdo' : 'Layout'}
           </button>

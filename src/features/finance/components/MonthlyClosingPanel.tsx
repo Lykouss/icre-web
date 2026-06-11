@@ -127,21 +127,21 @@ export function MonthlyClosingPanel({ summaries, transactions }: MonthlyClosingP
 
   if (summaries.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 text-center text-slate-400">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 shadow-sm p-8 text-center text-slate-400">
         <p className="font-medium">Nenhum lançamento encontrado para gerar fechamentos.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 shadow-sm">
       <div className="p-5 border-b border-slate-100">
         <h2 className="text-lg font-bold text-slate-800">Fechamento de Caixa</h2>
         <p className="text-sm text-slate-500 mt-0.5">Feche meses conferidos para impedir novos lançamentos.</p>
       </div>
 
       {error && (
-        <div className="mx-5 mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+        <div className="mx-5 mt-4 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-xl px-4 py-2.5">
           {error}
         </div>
       )}
@@ -164,9 +164,9 @@ export function MonthlyClosingPanel({ summaries, transactions }: MonthlyClosingP
                   )}
                 </div>
                 <div className="flex gap-4 mt-1 text-xs text-slate-500">
-                  <span className="text-emerald-600">↑ {formatCurrency(summary.totalIncome)}</span>
-                  <span className="text-red-600">↓ {formatCurrency(summary.totalExpense)}</span>
-                  <span className={`font-semibold ${summary.balance >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                  <span className="text-emerald-600 dark:text-emerald-400">↑ {formatCurrency(summary.totalIncome)}</span>
+                  <span className="text-red-600 dark:text-red-400">↓ {formatCurrency(summary.totalExpense)}</span>
+                  <span className={`font-semibold ${summary.balance >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}`}>
                     = {formatCurrency(summary.balance)}
                   </span>
                 </div>

@@ -478,7 +478,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
               {paymentInfo.pixQrCode && (
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-center">
-                    <div className="bg-white p-4 rounded-2xl">
+                    <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={`data:image/png;base64,${paymentInfo.pixQrCode}`}
@@ -649,7 +649,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
             <h3 className="text-white font-bold text-lg mb-2">Inscrição em andamento</h3>
             <p className="text-slate-400 text-sm mb-5">Você tem uma inscrição em andamento. Deseja continuar de onde parou?</p>
             <div className="flex gap-3">
-              <button onClick={() => { clearDraft(); setShowDraftModal(false); }} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 text-sm font-semibold hover:bg-white/5">Começar do zero</button>
+              <button onClick={() => { clearDraft(); setShowDraftModal(false); }} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 text-sm font-semibold hover:bg-white dark:hover:bg-slate-800/5">Começar do zero</button>
               <button onClick={() => { setStep('form'); setShowDraftModal(false); }} className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold">Continuar</button>
             </div>
           </div>

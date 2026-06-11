@@ -135,7 +135,7 @@ export function EventDetailClient({
     });
   };
 
-  const inputClass = 'w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm';
+  const inputClass = 'w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm';
   const confirmedCount = registrations.filter(r => r.status === 'confirmado').length;
 
   const scannerCheckins = registrations.filter(r => r.checkin_status).map(r => ({
@@ -164,7 +164,7 @@ export function EventDetailClient({
   ];
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
       <div className="flex border-b border-slate-200">
         {tabs.map(t => (
           <button
@@ -172,7 +172,7 @@ export function EventDetailClient({
             onClick={() => setTab(t.id)}
             className={`px-5 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors flex items-center gap-2 ${
               tab === t.id
-                ? 'border-blue-600 text-blue-600 bg-blue-50/50'
+                ? 'border-blue-600 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20/50'
                 : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50'
             }`}
           >
@@ -187,13 +187,13 @@ export function EventDetailClient({
       <div className="p-6 md:p-8 bg-slate-50 min-h-[400px]">
 
         {tab === 'recorrencia' && event.is_recurring && (
-          <div className="animate-in fade-in duration-300 max-w-2xl bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <div className="animate-in fade-in duration-300 max-w-2xl bg-white dark:bg-slate-800 border border-slate-200 rounded-2xl p-6 shadow-sm">
             <h3 className="text-lg font-bold text-slate-800 mb-4">Gerenciar Recorrência</h3>
             <p className="text-sm text-slate-500 mb-6">Aqui você pode visualizar a próxima ocorrência dinâmica deste evento e cancelar ocorrências específicas.</p>
             
-            <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center justify-between mb-6">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 p-4 rounded-xl flex items-center justify-between mb-6">
               <div>
-                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">Próxima Ocorrência</p>
+                <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-1">Próxima Ocorrência</p>
                 {getNextEventOccurrence(event as any).nextDate ? (
                    <p className="text-lg font-black text-slate-800">
                      {new Date(getNextEventOccurrence(event as any).nextDate + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}
@@ -209,14 +209,14 @@ export function EventDetailClient({
                   <button 
                     onClick={handleCancelOccurrence}
                     disabled={isPending}
-                    className="px-4 py-2 bg-white text-red-600 border border-red-200 font-bold text-sm rounded-xl hover:bg-red-50 hover:border-red-300 transition-all disabled:opacity-50"
+                    className="px-4 py-2 bg-white dark:bg-slate-800 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/30 font-bold text-sm rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 transition-all disabled:opacity-50"
                   >
                     Cancelar este dia
                   </button>
                   {onEdit && (
                     <button 
                       onClick={onEdit}
-                      className="px-4 py-2 bg-white text-blue-600 border border-blue-200 font-bold text-sm rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all"
+                      className="px-4 py-2 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/40 font-bold text-sm rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 transition-all"
                     >
                       Editar Regras
                     </button>
@@ -227,10 +227,10 @@ export function EventDetailClient({
 
             {event.cancelled_dates && event.cancelled_dates.length > 0 && (
               <div className="mt-8">
-                <p className="text-sm font-bold text-slate-700 mb-3 text-red-600">Dias Cancelados:</p>
+                <p className="text-sm font-bold text-slate-700 mb-3 text-red-600 dark:text-red-400">Dias Cancelados:</p>
                 <div className="flex flex-wrap gap-2">
                   {event.cancelled_dates.map(d => (
-                    <span key={d} className="px-3 py-1 bg-red-50 border border-red-100 text-red-600 text-sm font-semibold rounded-lg line-through decora">
+                    <span key={d} className="px-3 py-1 bg-red-50 dark:bg-red-900/20 border border-red-100 text-red-600 dark:text-red-400 text-sm font-semibold rounded-lg line-through decora">
                       {new Date(d + 'T12:00:00').toLocaleDateString('pt-BR')}
                     </span>
                   ))}
@@ -246,7 +246,7 @@ export function EventDetailClient({
               {ROLES.map(role => {
                 const slot = getSlot(role.id);
                 return (
-                  <div key={role.id} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                  <div key={role.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 p-4 shadow-sm">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <span className="text-xl">{role.icon}</span>
@@ -254,11 +254,11 @@ export function EventDetailClient({
                       </div>
                       {canManage && (
                         <div className="flex gap-2">
-                          <button onClick={() => openEdit(role.id)} className="text-xs text-blue-600 hover:text-blue-800 font-semibold">
+                          <button onClick={() => openEdit(role.id)} className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 font-semibold">
                             {slot ? 'Editar' : 'Escalar'}
                           </button>
                           {slot && (
-                            <button onClick={() => handleRemoveSlot(slot.id)} disabled={isPending} className="text-xs text-red-400 hover:text-red-600 font-semibold disabled:opacity-50">
+                            <button onClick={() => handleRemoveSlot(slot.id)} disabled={isPending} className="text-xs text-red-400 hover:text-red-600 dark:hover:text-red-400 font-semibold disabled:opacity-50">
                               Remover
                             </button>
                           )}
@@ -280,7 +280,7 @@ export function EventDetailClient({
 
             {editingRole && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-                <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-sm p-6">
                   <h3 className="text-lg font-bold text-slate-900 mb-4">
                     Escalar para {ROLES.find(r => r.id === editingRole)?.label}
                   </h3>
@@ -330,9 +330,9 @@ export function EventDetailClient({
         {tab === 'presenca' && (
           <div className="animate-in fade-in duration-300 max-w-3xl">
             {canManage && (
-              <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm mb-8 text-center">
+              <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 p-8 shadow-sm mb-8 text-center">
                 <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v1m0 11v1m5-4h-1m-10 0h-1m8-7a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
@@ -358,20 +358,20 @@ export function EventDetailClient({
                 <p className="text-xs font-semibold text-slate-400">{unifiedAttendances.length} presenças registradas</p>
               </div>
               {unifiedAttendances.length === 0 ? (
-                <div className="bg-white rounded-3xl border border-slate-200 border-dashed p-12 text-center">
+                <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 border-dashed p-12 text-center">
                   <p className="text-slate-400 font-semibold">Nenhuma presença registrada ainda.</p>
                 </div>
               ) : (
                 unifiedAttendances.map(a => (
-                  <div key={a.id} className="bg-white rounded-2xl border border-slate-200 px-5 py-4 flex items-center justify-between hover:border-slate-300 transition-colors shadow-sm">
+                  <div key={a.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 px-5 py-4 flex items-center justify-between hover:border-slate-300 transition-colors shadow-sm">
                     <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${a.type === 'scanner' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${a.type === 'scanner' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 text-emerald-700 dark:text-emerald-300'}`}>
                         {a.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
                         <p className="font-bold text-slate-800">{a.name}</p>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${a.type === 'scanner' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'}`}>
+                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${a.type === 'scanner' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30'}`}>
                             {a.type === 'scanner' ? 'Ingresso (QR)' : 'Manual'}
                           </span>
                         </div>

@@ -64,16 +64,16 @@ function Toggle({
       type="button"
       onClick={() => onChange(!checked)}
       className={`flex items-center justify-between w-full px-4 py-3 rounded-xl border-2 transition-all text-left ${checked
-          ? 'border-blue-400 bg-blue-50'
-          : 'border-slate-200 hover:border-slate-300 bg-white'
+          ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20'
+          : 'border-slate-200 hover:border-slate-300 bg-white dark:bg-slate-800'
         }`}
     >
       <div>
-        <p className={`text-sm font-semibold ${checked ? 'text-blue-700' : 'text-slate-700'}`}>{label}</p>
+        <p className={`text-sm font-semibold ${checked ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700'}`}>{label}</p>
         <p className="text-xs text-slate-400 mt-0.5">{description}</p>
       </div>
       <div className={`relative w-11 h-6 rounded-full flex-shrink-0 transition-colors ${checked ? 'bg-blue-600' : 'bg-slate-300'}`}>
-        <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
+        <div className={`absolute top-0.5 w-5 h-5 bg-white dark:bg-slate-800 rounded-full shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
       </div>
     </button>
   );
@@ -272,7 +272,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
             <button
               type="button"
               onClick={() => setFormData(p => ({ ...p, banner_url: '' }))}
-              className="flex items-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-700 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-700 dark:hover:text-red-300 transition-colors"
             >
               <XIcon className="w-3.5 h-3.5" /> Remover imagem
             </button>
@@ -280,10 +280,10 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
         ) : (
           <div
             onClick={() => { setIsGalleryOpen(true); loadGallery(); }}
-            className="relative h-44 w-full border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 group transition-all"
+            className="relative h-44 w-full border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 group transition-all"
           >
             <ImageIcon className="w-8 h-8 text-slate-300 group-hover:text-blue-400 mb-2 transition-colors" />
-            <span className="text-sm text-slate-400 group-hover:text-blue-600 font-medium transition-colors">Selecionar da galeria</span>
+            <span className="text-sm text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 font-medium transition-colors">Selecionar da galeria</span>
           </div>
         )}
       </Field>
@@ -343,7 +343,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
             </Field>
           </div>
         ) : (
-          <div className="space-y-4 p-4 border border-blue-100 bg-blue-50/50 rounded-xl">
+          <div className="space-y-4 p-4 border border-blue-100 dark:border-blue-900/30 bg-blue-50 dark:bg-blue-900/20/50 rounded-xl">
             <div className="flex gap-4">
               <Field label="Tipo de Recorrência">
                 <select
@@ -382,7 +382,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                           const newDays = active ? daysList.filter((d: number) => d !== idx) : [...daysList, idx];
                           setFormData(p => ({ ...p, recurrence_rules: { ...p.recurrence_rules, type: 'weekly', days: newDays } }));
                         }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${active ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-100'}`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${active ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-800 border border-slate-200 text-slate-500 hover:bg-slate-100'}`}
                       >
                         {day}
                       </button>
@@ -463,7 +463,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                 </div>
 
                 {['multiple_choice', 'checkboxes', 'dropdown'].includes(field.type) && (
-                  <div className="space-y-2 mt-4 bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                  <div className="space-y-2 mt-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 shadow-sm">
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Opções de Resposta</label>
                     <div className="space-y-2">
                       {(field.options || []).map((opt: string, oIdx: number) => (
@@ -487,7 +487,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                               const newOpts = (field.options || []).filter((_: any, i: number) => i !== oIdx);
                               updateCustomField(index, { options: newOpts });
                             }}
-                            className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                            className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                             title="Remover Opção"
                           >
                             <XIcon className="w-5 h-5" />
@@ -501,7 +501,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                         const newOpts = [...(field.options || []), ''];
                         updateCustomField(index, { options: newOpts });
                       }}
-                      className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors mt-3"
+                      className="flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 px-4 py-2 rounded-lg transition-colors mt-3"
                     >
                       <PlusCircleIcon className="w-4 h-4" /> Adicionar nova opção
                     </button>
@@ -513,7 +513,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                     type="checkbox"
                     checked={field.required}
                     onChange={e => updateCustomField(index, { required: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                    className="w-4 h-4 text-blue-600 dark:text-blue-400 rounded border-slate-300 focus:ring-blue-500"
                   />
                   Resposta Obrigatória
                 </label>
@@ -522,7 +522,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
               <button
                 type="button"
                 onClick={() => removeCustomField(index)}
-                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                 title="Remover campo"
               >
                 <Trash2Icon className="w-5 h-5" />
@@ -534,7 +534,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
         <button
           type="button"
           onClick={addCustomField}
-          className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all"
+          className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
         >
           <PlusIcon className="w-4 h-4" />
           Adicionar Campo Extra
@@ -647,7 +647,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                     payment_methods: e.target.checked ? [...methods, 'pix'] : methods.filter(m => m !== 'pix')
                   }));
                 }}
-                className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                className="w-4 h-4 text-blue-600 dark:text-blue-400 rounded border-slate-300 focus:ring-blue-500"
               />
               PIX
             </label>
@@ -662,7 +662,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                     payment_methods: e.target.checked ? [...methods, 'boleto'] : methods.filter(m => m !== 'boleto')
                   }));
                 }}
-                className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                className="w-4 h-4 text-blue-600 dark:text-blue-400 rounded border-slate-300 focus:ring-blue-500"
               />
               Boleto
             </label>
@@ -705,7 +705,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           type="button"
           onClick={() => handleSubmit('rascunho')}
           disabled={isSubmitDisabled}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm disabled:opacity-40"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-white dark:bg-slate-800 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm disabled:opacity-40"
         >
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <SaveIcon className="w-4 h-4 text-slate-400" />}
           Rascunho
@@ -725,7 +725,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
       <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
         <DialogContent className="max-w-3xl p-0 overflow-hidden" showCloseButton={false}>
           <DialogTitle className="sr-only">Galeria de Imagens</DialogTitle>
-          <div className="bg-white rounded-2xl shadow-2xl w-full flex flex-col max-h-[85vh]">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full flex flex-col max-h-[85vh]">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
               <div>
                 <h3 className="font-bold text-slate-900">Galeria de imagens</h3>
@@ -753,7 +753,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
             </div>
 
             <div className="px-6 py-3 border-b border-slate-100 shrink-0">
-              <label className={`flex items-center justify-center gap-2 py-3 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${isUploading ? 'border-slate-200 text-slate-400' : 'border-slate-300 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 text-slate-500'}`}>
+              <label className={`flex items-center justify-center gap-2 py-3 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${isUploading ? 'border-slate-200 text-slate-400' : 'border-slate-300 hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-slate-500'}`}>
                 {isUploading ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-sm font-semibold">Enviando...</span></>
                 ) : (

@@ -16,7 +16,7 @@ function getStatusConfig(event: ChurchEvent): { label: string; cls: string } {
   const now = new Date();
   const isExpired = event.expires_at ? new Date(event.expires_at) < now : false;
 
-  if (event.status === 'cancelado') return { label: 'Cancelado', cls: 'bg-red-50 text-red-600 border-red-200' };
+  if (event.status === 'cancelado') return { label: 'Cancelado', cls: 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/30' };
   if (event.status === 'encerrado' || isExpired) return { label: 'Encerrado', cls: 'bg-slate-100 text-slate-500 border-slate-200' };
   if (event.status === 'rascunho') return { label: 'Rascunho', cls: 'bg-amber-50 text-amber-600 border-amber-200' };
   if (event.publish_at && new Date(event.publish_at) > now) return { label: 'Agendado', cls: 'bg-violet-50 text-violet-600 border-violet-200' };
@@ -31,7 +31,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
   return (
     <div
       onClick={() => onClick(event)}
-      className="group bg-white border border-slate-200 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-lg hover:shadow-slate-200/80 transition-all duration-200"
+      className="group bg-white dark:bg-slate-800 border border-slate-200 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-lg hover:shadow-slate-200/80 transition-all duration-200"
     >
       {/* Banner */}
       <div className="relative h-40 bg-slate-50 border-b border-slate-100 overflow-hidden">
@@ -54,9 +54,9 @@ export function EventCard({ event, onClick }: EventCardProps) {
         {/* Data flutuante */}
         {date && (
           <div className="absolute bottom-3 left-3">
-            <div className="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl px-3 py-1.5 text-center shadow-sm">
+            <div className="bg-white dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200 rounded-xl px-3 py-1.5 text-center shadow-sm">
               <p className="text-base font-black text-slate-900 leading-none">{date.getDate().toString().padStart(2, '0')}</p>
-              <p className="text-[10px] font-bold text-blue-600 uppercase">{MONTHS_SHORT[date.getMonth()]}</p>
+              <p className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase">{MONTHS_SHORT[date.getMonth()]}</p>
             </div>
           </div>
         )}
@@ -67,7 +67,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
             {status.label}
           </span>
           {isPaid && (
-            <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700">
+            <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-300">
               R$ {Number(event.ticket_price).toFixed(2)}
             </span>
           )}
@@ -78,7 +78,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
       <div className="p-4">
         <div className="flex items-center gap-1.5 mb-2 flex-wrap">
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-            event.type === 'culto' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+            event.type === 'culto' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' : 'bg-purple-100 text-purple-700'
           }`}>
             {event.type === 'culto' ? 'Culto' : 'Especial'}
           </span>
@@ -94,7 +94,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
           )}
         </div>
 
-        <h3 className="font-bold text-slate-900 text-sm leading-snug mb-3 group-hover:text-blue-700 transition-colors line-clamp-2">
+        <h3 className="font-bold text-slate-900 text-sm leading-snug mb-3 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors line-clamp-2">
           {event.title}
         </h3>
 

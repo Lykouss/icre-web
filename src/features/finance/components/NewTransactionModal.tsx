@@ -69,8 +69,8 @@ export function NewTransactionModal({ categories, members }: NewTransactionModal
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-2xl z-10">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-slate-100 sticky top-0 bg-white dark:bg-slate-800 rounded-t-2xl z-10">
           <h2 className="text-xl font-bold text-slate-900">Novo Lançamento</h2>
           <button
             onClick={handleClose}
@@ -88,7 +88,7 @@ export function NewTransactionModal({ categories, members }: NewTransactionModal
             <button type="button" onClick={() => setSelectedType('entrada')}
               className={`py-3 rounded-xl font-semibold border-2 transition-all ${
                 selectedType === 'entrada'
-                  ? 'bg-emerald-50 border-emerald-500 text-emerald-700'
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 text-emerald-700 dark:text-emerald-300'
                   : 'border-slate-200 text-slate-500 hover:border-slate-300'
               }`}>
               ↑ Entrada
@@ -96,7 +96,7 @@ export function NewTransactionModal({ categories, members }: NewTransactionModal
             <button type="button" onClick={() => setSelectedType('saida')}
               className={`py-3 rounded-xl font-semibold border-2 transition-all ${
                 selectedType === 'saida'
-                  ? 'bg-red-50 border-red-500 text-red-700'
+                  ? 'bg-red-50 dark:bg-red-900/20 border-red-500 text-red-700 dark:text-red-300'
                   : 'border-slate-200 text-slate-500 hover:border-slate-300'
               }`}>
               ↓ Saída

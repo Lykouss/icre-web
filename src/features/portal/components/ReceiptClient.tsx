@@ -210,7 +210,7 @@ export function ReceiptClient({ registration }: Props) {
             
             {/* QR Code */}
             {registration.ticket_signature && (
-              <div className="flex flex-col items-center justify-center py-6 bg-white rounded-2xl mb-6">
+              <div className="flex flex-col items-center justify-center py-6 bg-white dark:bg-slate-800 rounded-2xl mb-6">
                 {/* Payload: registrationId:signature (2 partes — compatível com parseAndVerifyQrPayload) */}
                 <img 
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${registration.id}:${registration.ticket_signature}`)}`} 
@@ -224,7 +224,7 @@ export function ReceiptClient({ registration }: Props) {
             {/* Participante */}
             <div>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Participante</p>
-              <div className="bg-white/4 border border-white/8 rounded-2xl divide-y divide-white/6 overflow-hidden">
+              <div className="bg-white dark:bg-slate-800/4 border border-white/8 rounded-2xl divide-y divide-white/6 overflow-hidden">
                 <InfoRow label="Nome" value={registration.name} />
                 {registration.email && <InfoRow label="E-mail" value={registration.email} />}
                 {registration.phone && <InfoRow label="Telefone" value={registration.phone} />}
@@ -234,7 +234,7 @@ export function ReceiptClient({ registration }: Props) {
             {/* Evento */}
             <div>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Evento</p>
-              <div className="bg-white/4 border border-white/8 rounded-2xl divide-y divide-white/6 overflow-hidden">
+              <div className="bg-white dark:bg-slate-800/4 border border-white/8 rounded-2xl divide-y divide-white/6 overflow-hidden">
                 {event?.date && <InfoRow label="Data" value={`${formatDate(event.date)}${event.time ? ` · ${event.time.slice(0, 5)}` : ''}`} />}
                 {event?.location && <InfoRow label="Local" value={event.location} />}
                 <InfoRow label="Tipo" value={event?.type === 'culto' ? 'Culto' : 'Evento Especial'} />
@@ -244,7 +244,7 @@ export function ReceiptClient({ registration }: Props) {
             {/* Pagamento */}
             <div>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Pagamento</p>
-              <div className="bg-white/4 border border-white/8 rounded-2xl divide-y divide-white/6 overflow-hidden">
+              <div className="bg-white dark:bg-slate-800/4 border border-white/8 rounded-2xl divide-y divide-white/6 overflow-hidden">
                 <InfoRow
                   label="Valor"
                   value={formatCurrency(registration.payment_amount ?? event?.ticket_price ?? null)}
@@ -283,7 +283,7 @@ export function ReceiptClient({ registration }: Props) {
                 href={registration.asaas_invoice_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-semibold py-3.5 rounded-2xl transition-all"
+                className="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-slate-800/5 hover:bg-white dark:hover:bg-slate-800/10 border border-white/10 text-slate-300 font-semibold py-3.5 rounded-2xl transition-all"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

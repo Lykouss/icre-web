@@ -107,7 +107,7 @@ export function TransactionList({ transactions, isSysAdmin }: TransactionListPro
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 shadow-sm">
       <div className="p-4 border-b border-slate-100 flex flex-col gap-3">
         <div className="flex flex-col sm:flex-row gap-3">
           <input
@@ -168,7 +168,7 @@ export function TransactionList({ transactions, isSysAdmin }: TransactionListPro
                   <td className="px-5 py-3.5 text-slate-500 whitespace-nowrap">{formatDate(t.date)}</td>
                   <td className="px-5 py-3.5">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${
-                      t.type === 'entrada' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
+                      t.type === 'entrada' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
                     }`}>
                       {t.type === 'entrada' ? '↑' : '↓'} {t.category}
                     </span>
@@ -183,7 +183,7 @@ export function TransactionList({ transactions, isSysAdmin }: TransactionListPro
                     )}
                   </td>
                   <td className={`px-5 py-3.5 text-right font-semibold whitespace-nowrap ${
-                    t.type === 'entrada' ? 'text-emerald-600' : 'text-red-600'
+                    t.type === 'entrada' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
                   }`}>
                     {t.type === 'entrada' ? '+' : '-'} {formatCurrency(t.amount)}
                   </td>

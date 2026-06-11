@@ -130,20 +130,20 @@ const accentMap: Record<string, {
     level:      'text-violet-700',
   },
   blue: {
-    cardActive: 'border-blue-200 bg-blue-50/60',
+    cardActive: 'border-blue-200 dark:border-blue-900/40 bg-blue-50 dark:bg-blue-900/20/60',
     badge:      'bg-blue-600 text-white',
-    icon:       'bg-blue-100 text-blue-600',
+    icon:       'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400',
     iconRing:   'ring-blue-200',
     bar:        'bg-blue-500',
-    level:      'text-blue-700',
+    level:      'text-blue-700 dark:text-blue-300',
   },
   emerald: {
-    cardActive: 'border-emerald-200 bg-emerald-50/60',
+    cardActive: 'border-emerald-200 dark:border-emerald-900/40 bg-emerald-50 dark:bg-emerald-900/20/60',
     badge:      'bg-emerald-600 text-white',
-    icon:       'bg-emerald-100 text-emerald-600',
+    icon:       'bg-emerald-100 text-emerald-600 dark:text-emerald-400',
     iconRing:   'ring-emerald-200',
     bar:        'bg-emerald-500',
-    level:      'text-emerald-700',
+    level:      'text-emerald-700 dark:text-emerald-300',
   },
   amber: {
     cardActive: 'border-amber-200 bg-amber-50/60',
@@ -219,7 +219,7 @@ export default async function PermissionsPage() {
               className={`relative rounded-2xl border transition-all duration-200 ${
                 isMyRole
                   ? `${colors.cardActive} shadow-sm`
-                  : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm'
+                  : 'bg-white dark:bg-slate-800 border-slate-200 hover:border-slate-300 hover:shadow-sm'
               }`}
             >
               {/* "Seu cargo" badge */}

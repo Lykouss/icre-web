@@ -13,15 +13,15 @@ interface InfoRowProps {
   iconColor?: string;
 }
 
-function InfoRow({ icon, label, value, href, iconBg = 'bg-blue-50 border-blue-100', iconColor = 'text-blue-600' }: InfoRowProps) {
+function InfoRow({ icon, label, value, href, iconBg = 'bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-900/30', iconColor = 'text-blue-600 dark:text-blue-400' }: InfoRowProps) {
   const inner = (
     <div className="group flex items-start gap-4">
       <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-200 ${iconBg} ${iconColor}`}>
         {icon}
       </div>
       <div className="pt-0.5">
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{label}</p>
-        <p className="text-gray-700 font-medium text-sm leading-snug">{value}</p>
+        <p className="text-xs font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-1">{label}</p>
+        <p className="text-gray-700 dark:text-slate-300 font-medium text-sm leading-snug">{value}</p>
       </div>
     </div>
   );
@@ -40,17 +40,17 @@ export function ContactSection({ content }: { content: ContactContent }) {
   const { ref, visible } = useScrollReveal({ threshold: 0.12 });
 
   return (
-    <section id="contato" className="relative py-24 px-6 bg-white overflow-hidden" data-theme="light">
+    <section id="contato" className="relative py-24 px-6 bg-white dark:bg-slate-800 overflow-hidden" data-theme="light">
       <div
         ref={ref}
         className={`relative max-w-6xl mx-auto transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
       >
         {/* Header */}
         <div className="text-center mb-14">
-          <span className="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full mb-5">
+          <span className="inline-block text-xs font-bold text-blue-600 dark:text-blue-400 tracking-widest uppercase bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 px-3 py-1.5 rounded-full mb-5">
             Contato
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight">
             {content.title || 'Venha nos Visitar'}
           </h2>
           <div className="mt-4 flex justify-center">
@@ -61,7 +61,7 @@ export function ContactSection({ content }: { content: ContactContent }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
 
           {/* Esquerda — Info */}
-          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8">
+          <div className="bg-gray-50 dark:bg-slate-900/80 border border-gray-200 dark:border-slate-700 rounded-2xl p-8">
             <div className="space-y-6">
               {content.address && (
                 <InfoRow
@@ -74,8 +74,8 @@ export function ContactSection({ content }: { content: ContactContent }) {
                   label="Endereço"
                   value={content.address}
                   href={content.maps_url || undefined}
-                  iconBg="bg-emerald-50 border-emerald-100"
-                  iconColor="text-emerald-600"
+                  iconBg="bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-900/30"
+                  iconColor="text-emerald-600 dark:text-emerald-400"
                 />
               )}
               {content.phone && (
@@ -102,8 +102,8 @@ export function ContactSection({ content }: { content: ContactContent }) {
                   label="E-mail"
                   value={content.email}
                   href={`mailto:${content.email}`}
-                  iconBg="bg-blue-50 border-blue-100"
-                  iconColor="text-blue-600"
+                  iconBg="bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-900/30"
+                  iconColor="text-blue-600 dark:text-blue-400"
                 />
               )}
               {content.schedule && (
@@ -123,7 +123,7 @@ export function ContactSection({ content }: { content: ContactContent }) {
           </div>
 
           {/* Direita — Mapa */}
-          <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-sm aspect-video lg:aspect-auto lg:h-80 bg-gray-100 flex items-center justify-center">
+          <div className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-slate-700 shadow-sm aspect-video lg:aspect-auto lg:h-80 bg-gray-100 dark:bg-slate-800 flex items-center justify-center">
             {content.maps_url ? (
               <iframe
                 src={content.maps_url}
@@ -133,15 +133,15 @@ export function ContactSection({ content }: { content: ContactContent }) {
                 title="Localização da ICRE"
               />
             ) : (
-              <div className="flex flex-col items-center gap-4 text-gray-400 p-8 text-center">
+              <div className="flex flex-col items-center gap-4 text-gray-400 dark:text-slate-500 p-8 text-center">
                 <div className="w-14 h-14 bg-gray-200 rounded-xl flex items-center justify-center">
-                  <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-7 h-7 text-gray-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-600">Mapa não configurado</p>
-                  <p className="text-xs text-gray-400 mt-1">Adicione o link do Google Maps no painel</p>
+                  <p className="text-sm font-semibold text-gray-600 dark:text-slate-400">Mapa não configurado</p>
+                  <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Adicione o link do Google Maps no painel</p>
                 </div>
               </div>
             )}
@@ -150,12 +150,12 @@ export function ContactSection({ content }: { content: ContactContent }) {
       </div>
 
       {/* Footer */}
-      <div className="relative max-w-6xl mx-auto mt-16 pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+      <div className="relative max-w-6xl mx-auto mt-16 pt-8 border-t border-gray-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400 dark:text-slate-500">
         <p>© {new Date().getFullYear()} Igreja de Cristo Rocha Eterna. Todos os direitos reservados.</p>
         <div className="flex items-center gap-6">
-          <Link href="/termos" className="hover:text-gray-700 transition-colors duration-200">Termos de Uso</Link>
-          <Link href="/privacidade" className="hover:text-gray-700 transition-colors duration-200">Privacidade</Link>
-          <Link href="/login" className="hover:text-gray-700 transition-colors duration-200">Área do Membro</Link>
+          <Link href="/termos" className="hover:text-gray-700 dark:hover:text-slate-300 transition-colors duration-200">Termos de Uso</Link>
+          <Link href="/privacidade" className="hover:text-gray-700 dark:hover:text-slate-300 transition-colors duration-200">Privacidade</Link>
+          <Link href="/login" className="hover:text-gray-700 dark:hover:text-slate-300 transition-colors duration-200">Área do Membro</Link>
         </div>
       </div>
     </section>

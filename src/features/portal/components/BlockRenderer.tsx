@@ -168,7 +168,7 @@ function MissionBlock({ content, layout }: { content: MissionContent; layout: Re
       <h2 className="text-4xl font-bold text-slate-900 mb-12">{content.title}</h2>
       <div className="grid md:grid-cols-3 gap-8 w-full">
         {(content.items ?? []).map((item, i) => (
-          <div key={i} className={`bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col ${FLEX_ALIGN[layout.alignment]} ${TEXT_ALIGN[layout.alignment]}`}>
+          <div key={i} className={`bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col ${FLEX_ALIGN[layout.alignment]} ${TEXT_ALIGN[layout.alignment]}`}>
             <div className="text-5xl mb-4">{item.icon}</div>
             <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
             <p className="text-slate-600 leading-relaxed">{item.text}</p>
@@ -192,15 +192,15 @@ function EventsBlock({ content, layout, events }: { content: EventsContent; layo
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {events.map(event => (
             <Link key={event.id} href={`/agenda/${event.id}`} className="group bg-slate-50 rounded-3xl p-6 border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
-              <div className="text-xs font-bold text-blue-600 uppercase tracking-wide mb-2">
+              <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-2">
                 {event.date
                   ? new Date(event.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })
                   : 'Em breve'}
                 {event.time && ` · ${event.time.slice(0, 5)}`}
               </div>
-              <h3 className="font-bold text-slate-900 text-lg mb-2 group-hover:text-blue-700 transition-colors">{event.title}</h3>
+              <h3 className="font-bold text-slate-900 text-lg mb-2 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">{event.title}</h3>
               {event.location && <p className="text-sm text-slate-500">{event.location}</p>}
-              <div className="mt-4 text-sm font-semibold text-blue-600 flex items-center gap-1">
+              <div className="mt-4 text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1">
                 Ver detalhes
                 <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -248,7 +248,7 @@ function ContactBlock({ content, layout }: { content: ContactContent; layout: Re
         <div className="space-y-6">
           {content.address && (
             <div className="flex gap-4">
-              <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 shrink-0">
+              <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 </svg>

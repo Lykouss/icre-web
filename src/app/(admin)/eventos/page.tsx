@@ -44,7 +44,7 @@ export default async function EventosPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/eventos/checkin"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-900/40 hover:bg-emerald-100 transition-all"
           >
             <ScanLineIcon className="w-4 h-4" />
             Check-in

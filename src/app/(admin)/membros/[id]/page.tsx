@@ -71,7 +71,7 @@ export default async function MemberProfilePage({ params }: { params: Promise<{ 
         Voltar para Lista
       </Link>
 
-      <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center gap-6 mb-6 relative overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center gap-6 mb-6 relative overflow-hidden">
         {!hasEditPermission && (
           <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-amber-400 to-orange-500" />
         )}

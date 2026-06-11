@@ -52,15 +52,15 @@ function StatCard({ icon, value, suffix, label, index, active }: {
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transitionDelay: `${index * 100}ms` }}
     >
       {index < 2 && (
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 h-10 w-px bg-gray-200" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 h-10 w-px bg-gray-200 dark:bg-slate-700" />
       )}
-      <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-50 border border-blue-100 rounded-xl text-blue-600 mb-3 mx-auto">
+      <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400 mb-3 mx-auto transition-colors">
         {icon}
       </div>
-      <div className="text-4xl sm:text-5xl font-black text-gray-900 tabular-nums leading-none">
+      <div className="text-4xl sm:text-5xl font-black text-gray-900 dark:text-white tabular-nums leading-none transition-colors">
         {count}{suffix}
       </div>
-      <p className="text-sm text-gray-500 mt-2 font-medium">{label}</p>
+      <p className="text-sm text-gray-500 dark:text-slate-400 mt-2 font-medium transition-colors">{label}</p>
     </div>
   );
 }
@@ -72,7 +72,7 @@ function PillarCard({ item, index }: { item: MissionItem; index: number }) {
   return (
     <div
       ref={ref}
-      className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-out"
+      className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-out"
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transitionDelay: `${index * 80}ms` }}
     >
       <div className={`w-11 h-11 ${color.bg} border ${color.border} rounded-xl flex items-center justify-center ${color.text} mb-5`}>
@@ -80,8 +80,8 @@ function PillarCard({ item, index }: { item: MissionItem; index: number }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3l14 9-14 9V3z" />
         </svg>
       </div>
-      <h3 className="text-base font-bold text-gray-900 mb-2 leading-tight">{item.title}</h3>
-      <p className="text-gray-500 leading-relaxed text-sm">{item.text}</p>
+      <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2 leading-tight transition-colors">{item.title}</h3>
+      <p className="text-gray-500 dark:text-slate-400 leading-relaxed text-sm transition-colors">{item.text}</p>
     </div>
   );
 }
@@ -97,7 +97,7 @@ export function MissionSection({ content }: Props) {
   const items = (content.items ?? []) as MissionItem[];
 
   return (
-    <section id="missao" className="relative py-24 px-6 bg-gray-50 overflow-hidden" data-theme="light">
+    <section id="missao" className="relative py-24 px-6 bg-gray-50 dark:bg-slate-900/80 overflow-hidden transition-colors duration-300" data-theme="light">
       <div className="relative max-w-6xl mx-auto">
 
         {/* Header */}
@@ -106,10 +106,10 @@ export function MissionSection({ content }: Props) {
           className="text-center mb-16 transition-all duration-700 ease-out"
           style={{ opacity: headerVisible ? 1 : 0, transform: headerVisible ? 'translateY(0)' : 'translateY(20px)' }}
         >
-          <span className="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full mb-5">
+          <span className="inline-block text-xs font-bold text-blue-600 dark:text-blue-400 tracking-widest uppercase bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 px-3 py-1.5 rounded-full mb-5 transition-colors">
             Propósito
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight transition-colors">
             {content.title || 'Nossa Missão'}
           </h2>
           <div className="mt-4 flex justify-center">
@@ -120,7 +120,7 @@ export function MissionSection({ content }: Props) {
         {/* Stats */}
         <div
           ref={statsRef}
-          className="grid grid-cols-3 gap-0 mb-16 p-8 bg-white border border-gray-200 rounded-2xl shadow-sm"
+          className="grid grid-cols-3 gap-0 mb-16 p-8 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-sm transition-colors"
         >
           <StatCard icon={STAT_ICONS[0]} value={500} suffix="+" label="Membros ativos" index={0} active={statsVisible} />
           <StatCard icon={STAT_ICONS[1]} value={4}   suffix=""  label="Células ativas"  index={1} active={statsVisible} />

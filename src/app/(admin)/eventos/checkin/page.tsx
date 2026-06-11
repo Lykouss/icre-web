@@ -18,7 +18,7 @@ export default async function CheckinPage() {
         </p>
       </div>
 
-      <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100">
         <QrScanner />
       </div>
     </div>

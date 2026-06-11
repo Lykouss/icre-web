@@ -101,7 +101,7 @@ export function PublicRegistrationForm({ eventId }: PublicRegistrationFormProps)
       <p className="text-sm text-slate-500 mb-6">Preencha seus dados para garantir sua vaga.</p>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-2xl mb-4">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 text-red-700 dark:text-red-300 text-sm px-4 py-3 rounded-2xl mb-4">
           {error}
         </div>
       )}

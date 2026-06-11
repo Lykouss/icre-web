@@ -52,7 +52,7 @@ export function EventHistoryClient({ initialHistory }: { initialHistory: History
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       <div className="p-4 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row gap-4 items-center justify-between">
         <input
           type="text"
@@ -68,7 +68,7 @@ export function EventHistoryClient({ initialHistory }: { initialHistory: History
       
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
-          <thead className="bg-white border-b border-slate-200 text-slate-500 font-semibold uppercase text-xs tracking-wider">
+          <thead className="bg-white dark:bg-slate-800 border-b border-slate-200 text-slate-500 font-semibold uppercase text-xs tracking-wider">
             <tr>
               <th className="px-6 py-4">Data/Hora</th>
               <th className="px-6 py-4">Ação</th>

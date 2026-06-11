@@ -14,12 +14,12 @@ function Section({ number, title, children }: SectionProps) {
   return (
     <div>
       <div className="flex items-start gap-4 mb-3">
-        <span className="shrink-0 w-8 h-8 rounded-lg bg-blue-600/10 text-blue-400 text-xs font-black flex items-center justify-center mt-0.5">
+        <span className="shrink-0 w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 text-blue-600 text-xs font-black flex items-center justify-center mt-0.5">
           {number}
         </span>
-        <h2 className="text-xl font-bold text-white">{title}</h2>
+        <h2 className="text-xl font-bold text-gray-900">{title}</h2>
       </div>
-      <div className="ml-12 text-slate-400 leading-relaxed space-y-3">
+      <div className="ml-12 text-gray-600 leading-relaxed space-y-3">
         {children}
       </div>
     </div>
@@ -28,16 +28,17 @@ function Section({ number, title, children }: SectionProps) {
 
 export default function PrivacidadePage() {
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-blue-950/60 to-slate-950 pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative bg-white border-b border-gray-100 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-50 rounded-full blur-3xl" />
+        </div>
 
         <div className="relative max-w-3xl mx-auto px-6 pt-32 pb-16">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm font-medium transition-colors mb-10"
+            className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-800 text-sm font-bold transition-colors mb-10"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -45,17 +46,17 @@ export default function PrivacidadePage() {
             Voltar ao início
           </Link>
 
-          <div className="inline-flex items-center gap-2 bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-6">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
             Documento legal
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-4">
+          <h1 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight leading-tight mb-4">
             Política de<br />Privacidade
           </h1>
-          <p className="text-slate-400 text-sm">
+          <p className="text-gray-500 text-sm font-medium">
             Última atualização: março de 2026
           </p>
         </div>
@@ -63,7 +64,7 @@ export default function PrivacidadePage() {
 
       {/* Conteúdo */}
       <div className="max-w-3xl mx-auto px-6 pb-24">
-        <div className="w-full h-px bg-white/5 mb-16" />
+        <div className="w-full h-px bg-gray-200 mb-16" />
 
         <div className="space-y-12">
           <Section number="1" title="Quem somos">
@@ -170,7 +171,7 @@ export default function PrivacidadePage() {
             </ul>
             <p className="mt-4">
               Para exercer qualquer desses direitos, acesse{' '}
-              <Link href="/minha-conta" className="text-blue-400 hover:text-blue-300 underline transition-colors">
+              <Link href="/minha-conta" className="text-blue-600 hover:text-blue-700 underline transition-colors">
                 Minha Conta
               </Link>{' '}
               ou entre em contato conosco.
@@ -203,15 +204,15 @@ export default function PrivacidadePage() {
           </Section>
         </div>
 
-        <div className="mt-20 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <p className="text-slate-500 text-sm">
+        <div className="mt-20 pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <p className="text-gray-500 text-sm font-medium">
             © {new Date().getFullYear()} Igreja de Cristo Rocha Eterna
           </p>
           <div className="flex items-center gap-6 text-sm">
-            <Link href="/termos" className="text-slate-500 hover:text-slate-300 transition-colors">
+            <Link href="/termos" className="text-gray-500 hover:text-gray-800 font-medium transition-colors">
               Termos de Uso
             </Link>
-            <Link href="/" className="text-slate-500 hover:text-slate-300 transition-colors">
+            <Link href="/" className="text-gray-500 hover:text-gray-800 font-medium transition-colors">
               Voltar ao início
             </Link>
           </div>

@@ -71,11 +71,11 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
         Voltar para Eventos
       </Link>
 
-      <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm mb-6">
+      <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm mb-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${typedEvent.type === 'culto' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
+              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${typedEvent.type === 'culto' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' : 'bg-purple-100 text-purple-700'}`}>
                 {typedEvent.type === 'culto' ? 'Culto' : 'Evento Especial'}
               </span>
               {typedEvent.is_public && (

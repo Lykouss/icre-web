@@ -40,7 +40,7 @@ export default async function FlagsPage() {
         <div className="space-y-1">
           <Link
             href="/sysadmin"
-            className="group inline-flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-blue-600 mb-2 transition-all gap-2"
+            className="group inline-flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 mb-2 transition-all gap-2"
           >
             <svg className="w-3.5 h-3.5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -55,7 +55,7 @@ export default async function FlagsPage() {
 
         <div className="flex items-center gap-3">
            <div className="flex flex-col items-end">
-              <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full ring-1 ring-emerald-200 shrink-0">
+              <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-full ring-1 ring-emerald-200 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Sincronização Realtime
               </div>
@@ -66,7 +66,7 @@ export default async function FlagsPage() {
 
       {/* ── Stats ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Módulos Ativos</span>
           <div className="text-4xl font-black text-slate-900">{activeCount}</div>
           <div className="mt-4 flex items-center gap-1.5">
@@ -74,15 +74,15 @@ export default async function FlagsPage() {
              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Em produção agora</p>
           </div>
         </div>
-        <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Sob Manutenção</span>
-          <div className="text-4xl font-black text-red-600">{maintenanceCount}</div>
+          <div className="text-4xl font-black text-red-600 dark:text-red-400">{maintenanceCount}</div>
           <div className="mt-4 flex items-center gap-1.5">
              <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Acesso restrito</p>
           </div>
         </div>
-        <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Fase Experimental</span>
           <div className="text-4xl font-black text-violet-600">{devCount}</div>
           <div className="mt-4 flex items-center gap-1.5">

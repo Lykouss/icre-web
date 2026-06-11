@@ -83,10 +83,10 @@ export function EventDetailsClient({
   const canRegisterAgain = maxPerAccount === null || maxPerAccount > 1;
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${isAdminPreview ? 'pt-10' : ''}`}>
+    <div className={`min-h-screen bg-gray-50 dark:bg-slate-900/80 ${isAdminPreview ? 'pt-10' : ''}`}>
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-100/60 rounded-full blur-[140px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-100 dark:bg-blue-900/40/60 rounded-full blur-[140px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-50/60 rounded-full blur-[100px]" />
       </div>
 
@@ -94,7 +94,7 @@ export function EventDetailsClient({
         {/* Back */}
         <Link
           href="/agenda"
-          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 text-sm font-bold transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white text-sm font-bold transition-colors mb-8"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -104,7 +104,7 @@ export function EventDetailsClient({
 
         {/* Banner */}
         {event.banner_url && (
-          <div className="relative w-full aspect-video rounded-3xl overflow-hidden mb-8 border border-gray-200 shadow-sm">
+          <div className="relative w-full aspect-video rounded-3xl overflow-hidden mb-8 border border-gray-200 dark:border-slate-700 shadow-sm">
             <Image src={event.banner_url} alt={event.title} fill className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent" />
           </div>
@@ -113,65 +113,65 @@ export function EventDetailsClient({
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4 flex-wrap">
-            <span className={`text-xs font-bold px-3 py-1.5 rounded-full border bg-white shadow-sm ${
+            <span className={`text-xs font-bold px-3 py-1.5 rounded-full border bg-white dark:bg-slate-800 shadow-sm ${
               event.type === 'culto'
-                ? 'border-blue-200 text-blue-700'
+                ? 'border-blue-200 dark:border-blue-900/40 text-blue-700 dark:text-blue-300'
                 : 'border-violet-200 text-violet-700'
             }`}>
               {event.type === 'culto' ? 'Culto' : 'Evento Especial'}
             </span>
             {isPaid && (
-              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-white border border-amber-200 text-amber-700 shadow-sm">
+              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-white dark:bg-slate-800 border border-amber-200 text-amber-700 shadow-sm">
                 {formatCurrency(event.ticket_price!)}
               </span>
             )}
             {isFull && needsRegistration && (
-              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-white border border-red-200 text-red-600 shadow-sm">
+              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-white dark:bg-slate-800 border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 shadow-sm">
                 Lotado
               </span>
             )}
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-4">
             {event.title}
           </h1>
 
           {event.description && (
-            <p className="text-gray-600 leading-relaxed text-base">{event.description}</p>
+            <p className="text-gray-600 dark:text-slate-400 leading-relaxed text-base">{event.description}</p>
           )}
 
           {/* Meta info */}
           <div className="flex flex-wrap gap-5 mt-6">
             {event.date && (
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-8 h-8 bg-white border border-gray-200 shadow-sm rounded-xl flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-slate-400">
+                <div className="w-8 h-8 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm rounded-xl flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <span className="font-medium text-gray-800">{formatDate(event.date)}{event.time && ` · ${event.time.slice(0, 5)}`}</span>
+                <span className="font-medium text-gray-800 dark:text-slate-200">{formatDate(event.date)}{event.time && ` · ${event.time.slice(0, 5)}`}</span>
               </div>
             )}
             {event.location && (
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-8 h-8 bg-white border border-gray-200 shadow-sm rounded-xl flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-slate-400">
+                <div className="w-8 h-8 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm rounded-xl flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
                 </div>
-                <span className="font-medium text-gray-800">{event.location}</span>
+                <span className="font-medium text-gray-800 dark:text-slate-200">{event.location}</span>
               </div>
             )}
             {spotsLeft !== null && (
               <div className="flex items-center gap-2 text-sm">
-                <div className={`w-8 h-8 bg-white border shadow-sm rounded-xl flex items-center justify-center shrink-0 ${
-                  isFull ? 'border-red-200' : 'border-emerald-200'
+                <div className={`w-8 h-8 bg-white dark:bg-slate-800 border shadow-sm rounded-xl flex items-center justify-center shrink-0 ${
+                  isFull ? 'border-red-200 dark:border-red-900/30' : 'border-emerald-200 dark:border-emerald-900/40'
                 }`}>
                   <svg className={`w-4 h-4 ${isFull ? 'text-red-500' : 'text-emerald-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
-                <span className={`font-semibold ${isFull ? 'text-red-600' : 'text-gray-800'}`}>
+                <span className={`font-semibold ${isFull ? 'text-red-600 dark:text-red-400' : 'text-gray-800 dark:text-slate-200'}`}>
                   {isFull ? 'Evento lotado' : `${spotsLeft} vaga${spotsLeft !== 1 ? 's' : ''} disponível`}
                 </span>
               </div>
@@ -181,23 +181,23 @@ export function EventDetailsClient({
 
         {/* Regras */}
         {(event.rules || event.description) && needsRegistration && (
-          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden mb-6 shadow-sm">
+          <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl overflow-hidden mb-6 shadow-sm">
             <button
               onClick={() => setRulesExpanded(v => !v)}
-              className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 dark:hover:bg-slate-900/80 transition-colors"
             >
-              <span className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span className="text-sm font-bold text-gray-700 dark:text-slate-300 flex items-center gap-2">
+                <svg className="w-4 h-4 text-gray-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Regras e Termos do Evento
               </span>
-              <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${rulesExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-4 h-4 text-gray-400 dark:text-slate-500 transition-transform duration-200 ${rulesExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             {rulesExpanded && (
-              <div className="px-6 pb-5 text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-4 bg-gray-50">
+              <div className="px-6 pb-5 text-sm text-gray-600 dark:text-slate-400 leading-relaxed border-t border-gray-100 pt-4 bg-gray-50 dark:bg-slate-900/80">
                 {event.rules || event.description}
               </div>
             )}
@@ -205,31 +205,31 @@ export function EventDetailsClient({
         )}
 
         {/* Card de ação */}
-        <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-xl shadow-gray-200/50 space-y-4">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-3xl p-8 shadow-xl shadow-gray-200/50 space-y-4">
 
           {/* --- Evento sem inscrição necessária --- */}
           {!needsRegistration && (
             <div className="text-center py-4">
-              <div className="w-14 h-14 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <svg className="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-gray-900 mb-1">Evento aberto ao público</h2>
-              <p className="text-gray-500 text-sm font-medium">Não é necessário fazer inscrição. Venha participar!</p>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Evento aberto ao público</h2>
+              <p className="text-gray-500 dark:text-slate-400 text-sm font-medium">Não é necessário fazer inscrição. Venha participar!</p>
             </div>
           )}
 
           {/* --- Evento lotado --- */}
           {needsRegistration && isFull && !hasConfirmed && !hasPendingPayment && (
             <div className="text-center py-4">
-              <div className="w-14 h-14 bg-red-50 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 bg-red-50 dark:bg-red-900/20 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <svg className="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-gray-900 mb-1">Evento lotado</h2>
-              <p className="text-gray-500 text-sm font-medium">Fique de olho nos próximos eventos da nossa agenda.</p>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Evento lotado</h2>
+              <p className="text-gray-500 dark:text-slate-400 text-sm font-medium">Fique de olho nos próximos eventos da nossa agenda.</p>
             </div>
           )}
 
@@ -260,13 +260,13 @@ export function EventDetailsClient({
           {/* --- Inscrito confirmado --- */}
           {hasConfirmed && !hasPendingPayment && (
             <div className="flex flex-col gap-3">
-              <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+              <div className="flex items-start gap-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-900/40 rounded-2xl p-4">
                 <svg className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
                   <p className="text-sm font-bold text-emerald-800">Você já está inscrito!</p>
-                  <p className="text-xs text-emerald-600 font-medium mt-0.5">
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">
                     {confirmedRegistrations.length === 1 ? 'Sua inscrição foi confirmada.' : `Você tem ${confirmedRegistrations.length} inscrições confirmadas.`}
                   </p>
                 </div>
@@ -289,7 +289,7 @@ export function EventDetailsClient({
               {confirmedRegistrations.length > 1 && (
                 <Link
                   href="/minhas-inscricoes"
-                  className="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-bold py-3 rounded-2xl transition-all border border-gray-200"
+                  className="w-full flex items-center justify-center gap-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-slate-300 text-sm font-bold py-3 rounded-2xl transition-all border border-gray-200 dark:border-slate-700"
                 >
                   Ver todos os comprovantes ({confirmedRegistrations.length})
                 </Link>
@@ -299,7 +299,7 @@ export function EventDetailsClient({
               {canRegisterAgain && !limitReached && !isFull && (
                 <Link
                   href={`/agenda/${event.id}/inscrever`}
-                  className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-600 text-sm font-bold py-3 rounded-2xl transition-all border border-gray-300 shadow-sm"
+                  className="w-full flex items-center justify-center gap-2 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-900/80 text-gray-600 dark:text-slate-400 text-sm font-bold py-3 rounded-2xl transition-all border border-gray-300 dark:border-slate-600 shadow-sm"
                 >
                   Inscrever-se novamente
                 </Link>

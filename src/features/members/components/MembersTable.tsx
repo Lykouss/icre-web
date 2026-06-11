@@ -51,7 +51,7 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
 
   return (
     <div>
-      <div className="bg-white p-4 rounded-t-2xl border border-slate-200 border-b-0 flex flex-col sm:flex-row items-center gap-3">
+      <div className="bg-white dark:bg-slate-800 p-4 rounded-t-2xl border border-slate-200 border-b-0 flex flex-col sm:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
           <svg className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -61,7 +61,7 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Pesquisar por nome, contato ou endereço..."
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors text-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-slate-800 transition-colors text-sm"
           />
         </div>
 
@@ -82,7 +82,7 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-b-2xl overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 rounded-b-2xl overflow-hidden shadow-sm">
         <div className="px-6 py-3 border-b border-slate-100 flex items-center justify-between">
           <p className="text-xs text-slate-400 font-medium">
             {filtered.length === initialMembers.length
@@ -136,7 +136,7 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
                     <td className="px-6 py-4 text-slate-500">{member.phone ?? '—'}</td>
                     <td className="px-6 py-4">
                       {member.cell_name ? (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-bold border border-blue-100 dark:border-blue-900/30">
                           {member.cell_name}
                         </span>
                       ) : (
@@ -154,7 +154,7 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
                       ) : (
                         <Link
                           href={`/membros/${member.id}`}
-                          className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors"
+                          className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 font-semibold text-sm transition-colors"
                         >
                           Ver Perfil
                           <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

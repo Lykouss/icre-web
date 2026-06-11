@@ -168,7 +168,7 @@ export function QrScanner({ onCheckinSuccess }: QrScannerProps) {
         {error && (
           <button
             onClick={startScanning}
-            className="w-full bg-white/5 hover:bg-white/10 text-white text-xs font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2"
+            className="w-full bg-white dark:bg-slate-800/5 hover:bg-white dark:hover:bg-slate-800/10 text-white text-xs font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2"
           >
             <RefreshCw className="w-3 h-3" />
             Tentar novamente

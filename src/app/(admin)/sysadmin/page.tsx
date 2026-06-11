@@ -25,8 +25,8 @@ export default async function SysAdminPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         
         {/* 1. Módulos e Feature Flags (O PRIMEIRO QUE VAMOS FAZER) */}
-        <Link href="/sysadmin/flags" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col h-full">
-          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+        <Link href="/sysadmin/flags" className="group bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col h-full">
+          <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
             </svg>
@@ -35,14 +35,14 @@ export default async function SysAdminPage() {
           <p className="text-sm text-slate-500 flex-grow">
             Ligue ou desligue partes do sistema (Feature Flags) e libere testes antecipados para usuários VIPs.
           </p>
-          <div className="mt-4 flex items-center text-sm font-semibold text-blue-600">
+          <div className="mt-4 flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400">
             Acessar painel <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
           </div>
         </Link>
 
         {/* 2. Gestão de Acessos e Segurança */}
-        <Link href="/sysadmin/acessos" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col h-full">
-          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+        <Link href="/sysadmin/acessos" className="group bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col h-full">
+          <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
@@ -51,13 +51,13 @@ export default async function SysAdminPage() {
           <p className="text-sm text-slate-500 grow">
             Controle de cargos (RBAC), concessão e revogação de acessos administrativos.
           </p>
-          <div className="mt-4 flex items-center text-sm font-semibold text-blue-600">
+          <div className="mt-4 flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400">
             Acessar painel <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
           </div>
         </Link>
 
         {/* 3. Configurações da Instituição */}
-        <div className="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200 opacity-80 flex flex-col h-full cursor-not-allowed">
+        <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 opacity-80 flex flex-col h-full cursor-not-allowed">
           <div className="absolute top-4 right-4 bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-md">Em breve</div>
           <div className="w-12 h-12 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center mb-4">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,7 +71,7 @@ export default async function SysAdminPage() {
         </div>
 
         {/* 4. Integrações e APIs */}
-        <div className="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200 opacity-80 flex flex-col h-full cursor-not-allowed">
+        <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 opacity-80 flex flex-col h-full cursor-not-allowed">
           <div className="absolute top-4 right-4 bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-md">Em breve</div>
           <div className="w-12 h-12 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center mb-4">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,8 +85,8 @@ export default async function SysAdminPage() {
         </div>
 
         {/* 5. Saúde do Sistema */}
-        <Link href="/sysadmin/banco" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col h-full">
-          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+        <Link href="/sysadmin/banco" className="group bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col h-full">
+          <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
             </svg>
@@ -95,7 +95,7 @@ export default async function SysAdminPage() {
           <p className="text-sm text-slate-500 flex-grow">
             Monitoramento de registros, armazenamento, módulos ativos e atividade recente do sistema.
           </p>
-          <div className="mt-4 flex items-center text-sm font-semibold text-blue-600">
+          <div className="mt-4 flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400">
             Acessar painel <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
           </div>
         </Link>

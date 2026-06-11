@@ -42,7 +42,7 @@ export default async function DbHealthPage() {
       </div>
 
       {'error' in result ? (
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-red-700 text-sm">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-2xl p-6 text-red-700 dark:text-red-300 text-sm">
           {result.error}
         </div>
       ) : (

@@ -14,15 +14,19 @@ export const metadata: Metadata = {
   manifest: "/manifest.json", // Link para o manifesto PWA
 };
 
+import { ThemeProvider } from "@/features/core/components/ThemeProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased`}>
-        {children}
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className={`${inter.className} bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 antialiased transition-colors duration-300`}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

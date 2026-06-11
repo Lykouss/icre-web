@@ -45,7 +45,7 @@ export function RecurringPanel({ items, categories }: RecurringPanelProps) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 shadow-sm">
       <div className="p-5 border-b border-slate-100 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-bold text-slate-800">Lançamentos Recorrentes</h2>
@@ -72,11 +72,11 @@ export function RecurringPanel({ items, categories }: RecurringPanelProps) {
           <div className="grid grid-cols-2 gap-3">
             <button type="button" onClick={() => setSelectedType('entrada')}
               className={`py-2.5 rounded-xl font-semibold border-2 text-sm transition-all ${
-                selectedType === 'entrada' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-slate-200 text-slate-500'
+                selectedType === 'entrada' ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 text-emerald-700 dark:text-emerald-300' : 'border-slate-200 text-slate-500'
               }`}>↑ Entrada</button>
             <button type="button" onClick={() => setSelectedType('saida')}
               className={`py-2.5 rounded-xl font-semibold border-2 text-sm transition-all ${
-                selectedType === 'saida' ? 'bg-red-50 border-red-500 text-red-700' : 'border-slate-200 text-slate-500'
+                selectedType === 'saida' ? 'bg-red-50 dark:bg-red-900/20 border-red-500 text-red-700 dark:text-red-300' : 'border-slate-200 text-slate-500'
               }`}>↓ Saída</button>
           </div>
 
@@ -84,12 +84,12 @@ export function RecurringPanel({ items, categories }: RecurringPanelProps) {
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">Título *</label>
               <input name="title" required placeholder="Ex: Aluguel do salão"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">Categoria *</label>
               <select name="category" required
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Selecione</option>
                 {filteredCategories.map(c => (
                   <option key={c.id} value={c.name}>{c.name}</option>
@@ -99,17 +99,17 @@ export function RecurringPanel({ items, categories }: RecurringPanelProps) {
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">Valor (R$) *</label>
               <input name="amount" type="number" step="0.01" min="0.01" required placeholder="0,00"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">Dia do mês *</label>
               <input name="day_of_month" type="number" min="1" max="31" required placeholder="Ex: 10"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{error}</p>
+            <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-xl px-4 py-2">{error}</p>
           )}
 
           <div className="flex gap-3">
@@ -140,7 +140,7 @@ export function RecurringPanel({ items, categories }: RecurringPanelProps) {
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-semibold text-slate-800">{item.title}</span>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-semibold ${
-                    item.type === 'entrada' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
+                    item.type === 'entrada' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
                   }`}>
                     {item.type === 'entrada' ? '↑' : '↓'} {item.category}
                   </span>
@@ -160,7 +160,7 @@ export function RecurringPanel({ items, categories }: RecurringPanelProps) {
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                     item.active
                       ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                      : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100'
                   }`}
                 >
                   {item.active ? 'Desativar' : 'Ativar'}

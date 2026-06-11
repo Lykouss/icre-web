@@ -5,6 +5,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { ThemeToggle } from '@/features/core/components/ThemeToggle';
+
+export interface UserInfo {
+  fullName: string;
+  photoUrl: string | null;
+  isAdmin: boolean;
+}
 
 interface NavUser {
   fullName: string;
@@ -227,6 +234,10 @@ useEffect(() => {
 
           {/* Direita */}
           <div className="flex items-center gap-2 shrink-0">
+            <div className="hidden sm:block">
+              <ThemeToggle />
+            </div>
+
             {!user && (
               <>
                 <Link href="/login" className={`hidden sm:block text-sm font-semibold px-3 py-1.5 rounded-xl transition-all duration-200 ${text} ${hover}`}>

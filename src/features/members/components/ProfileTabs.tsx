@@ -183,11 +183,11 @@ export function ProfileTabs({ member, cells, logs = [], hasEditPermission, canSe
 
   const displayedLogs = filteredLogs.slice(0, logLimit);
 
-  const inputClass = 'w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-slate-100 disabled:text-slate-500';
+  const inputClass = 'w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-slate-100 disabled:text-slate-500';
   const saveButtonClass = 'bg-slate-900 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-slate-800 transition-colors disabled:opacity-50 flex items-center gap-2 shadow-sm';
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
       <div className="flex border-b border-slate-200 overflow-x-auto">
         {tabs.map(tab => (
           <button
@@ -195,7 +195,7 @@ export function ProfileTabs({ member, cells, logs = [], hasEditPermission, canSe
             onClick={() => setActiveTab(tab.id)}
             className={`px-5 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
               activeTab === tab.id
-                ? 'border-blue-600 text-blue-600 bg-blue-50/50'
+                ? 'border-blue-600 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20/50'
                 : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50'
             }`}
           >
@@ -347,8 +347,8 @@ export function ProfileTabs({ member, cells, logs = [], hasEditPermission, canSe
                         !hasEditPermission ? 'cursor-default opacity-70' : ''
                       } ${
                         isSelected
-                          ? 'border-blue-500 bg-blue-50 shadow-sm'
-                          : 'border-slate-200 bg-white hover:border-slate-300'
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-sm'
+                          : 'border-slate-200 bg-white dark:bg-slate-800 hover:border-slate-300'
                       }`}
                     >
                       {isSelected && (
@@ -392,7 +392,7 @@ export function ProfileTabs({ member, cells, logs = [], hasEditPermission, canSe
             <form onSubmit={handleNotesSubmit}>
               <fieldset disabled={!hasEditPermission}>
                 <textarea
-                  className="w-full h-48 p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none resize-none disabled:bg-slate-100 disabled:text-slate-500"
+                  className="w-full h-48 p-4 bg-white dark:bg-slate-800 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none resize-none disabled:bg-slate-100 disabled:text-slate-500"
                   placeholder="Ex: Em acompanhamento familiar devido a..."
                   value={notesValue}
                   onChange={e => setNotesValue(e.target.value)}
@@ -429,12 +429,12 @@ export function ProfileTabs({ member, cells, logs = [], hasEditPermission, canSe
                 placeholder="Pesquisar por responsável ou ação..."
                 value={logSearch}
                 onChange={e => setLogSearch(e.target.value)}
-                className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="flex-1 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               />
               <select
                 value={logFilter}
                 onChange={e => setLogFilter(e.target.value)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               >
                 <option value="ALL">Todas as ações</option>
                 <option value="CREATE">Criação</option>
@@ -442,7 +442,7 @@ export function ProfileTabs({ member, cells, logs = [], hasEditPermission, canSe
               </select>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl divide-y divide-slate-50">
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 rounded-2xl divide-y divide-slate-50">
               {displayedLogs.length === 0 ? (
                 <div className="py-12 text-center text-slate-400 text-sm">Nenhum registro encontrado.</div>
               ) : (
@@ -467,7 +467,7 @@ export function ProfileTabs({ member, cells, logs = [], hasEditPermission, canSe
               <div className="mt-4 text-center">
                 <button
                   onClick={() => setLogLimit(prev => prev + 10)}
-                  className="text-sm text-blue-600 hover:underline font-medium"
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
                 >
                   Ver mais {filteredLogs.length - logLimit} registros
                 </button>

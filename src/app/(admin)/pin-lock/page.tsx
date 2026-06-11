@@ -40,7 +40,7 @@ export default function PinLockPage() {
               inputMode="numeric"
               required
               autoFocus
-              className="w-full text-center tracking-[1em] text-3xl font-mono px-4 py-4 bg-white/5 border border-white/10 text-white rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500/50 outline-none transition-all placeholder:text-slate-600"
+              className="w-full text-center tracking-[1em] text-3xl font-mono px-4 py-4 bg-white dark:bg-slate-800/5 border border-white/10 text-white rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500/50 outline-none transition-all placeholder:text-slate-600"
               placeholder="••••"
             />
 

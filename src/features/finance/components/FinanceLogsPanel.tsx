@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { FinanceLog } from '@/features/finance/types';
 
 const ACTION_LABELS: Record<string, { label: string; color: string }> = {
-  CREATE_TRANSACTION: { label: 'Novo Lançamento', color: 'bg-emerald-50 text-emerald-700' },
-  DELETE_TRANSACTION: { label: 'Exclusão', color: 'bg-red-50 text-red-700' },
-  CLOSE_MONTH: { label: 'Fechamento de Caixa', color: 'bg-blue-50 text-blue-700' },
+  CREATE_TRANSACTION: { label: 'Novo Lançamento', color: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' },
+  DELETE_TRANSACTION: { label: 'Exclusão', color: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300' },
+  CLOSE_MONTH: { label: 'Fechamento de Caixa', color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' },
 };
 
 interface FinanceLogsPanelProps {
@@ -63,7 +63,7 @@ export function FinanceLogsPanel({ logs }: FinanceLogsPanelProps) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 shadow-sm">
       <div className="p-5 border-b border-slate-100">
         <h2 className="text-lg font-bold text-slate-800">Audit Trail</h2>
         <p className="text-sm text-slate-500 mt-0.5">
@@ -131,7 +131,7 @@ export function FinanceLogsPanel({ logs }: FinanceLogsPanelProps) {
             <div className="p-4 text-center border-t border-slate-100">
               <button
                 onClick={() => setLimit(l => l + 10)}
-                className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+                className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 transition-colors"
               >
                 Ver mais ({filtered.length - limit} restantes)
               </button>

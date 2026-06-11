@@ -66,7 +66,7 @@ export function FinancePageTabs({
             onClick={() => setActiveTab(tab.id)}
             className={`px-5 py-2.5 text-sm font-semibold rounded-t-lg transition-colors border-b-2 -mb-px whitespace-nowrap ${
               activeTab === tab.id
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >

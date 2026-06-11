@@ -129,7 +129,7 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
                 <h3 className="font-bold text-slate-100 text-sm">Galeria de imagens</h3>
                 <p className="text-xs text-slate-500 mt-0.5">Selecione ou envie uma imagem</p>
               </div>
-              <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:bg-white/5 transition-colors">
+              <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:bg-white dark:hover:bg-slate-800/5 transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -386,7 +386,7 @@ export function SiteEditor({ blocks: initialBlocks }: SiteEditorProps) {
               </span>
             )}
             <button onClick={handleSave} disabled={isPending}
-              className="flex items-center gap-1.5 px-4 py-2 bg-[var(--admin-surface-alt)] hover:bg-white/5 border border-[var(--admin-border)] text-slate-200 text-[13px] font-semibold rounded-lg transition-colors disabled:opacity-50">
+              className="flex items-center gap-1.5 px-4 py-2 bg-[var(--admin-surface-alt)] hover:bg-white dark:hover:bg-slate-800/5 border border-[var(--admin-border)] text-slate-200 text-[13px] font-semibold rounded-lg transition-colors disabled:opacity-50">
               {isPending
                 ? <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
                 : <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
@@ -417,7 +417,7 @@ export function SiteEditor({ blocks: initialBlocks }: SiteEditorProps) {
               const active = activeKey === s.key;
               return (
                 <button key={s.key} onClick={() => setActiveKey(s.key)}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-150 ${active ? 'bg-blue-500/10 border-r-2 border-blue-500' : 'border-r-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-150 ${active ? 'bg-blue-500/10 border-r-2 border-blue-500' : 'border-r-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-white dark:hover:bg-slate-800/5'}`}
                 >
                   <span className={active ? 'text-blue-400' : 'text-slate-500'}>{s.icon}</span>
                   <div className="flex-1 min-w-0">
@@ -445,7 +445,7 @@ export function SiteEditor({ blocks: initialBlocks }: SiteEditorProps) {
                 <span className="text-[11px] font-medium text-slate-400">{activeBlock.is_active ? 'Visível' : 'Oculto'}</span>
                 <div className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors" style={{ background: activeBlock.is_active ? '#3b82f6' : 'var(--admin-border-strong)' }}>
                   <input type="checkbox" className="sr-only" checked={activeBlock.is_active} onChange={handleToggle} disabled={isPending} />
-                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${activeBlock.is_active ? 'translate-x-4' : 'translate-x-1'}`} />
+                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white dark:bg-slate-800 transition-transform ${activeBlock.is_active ? 'translate-x-4' : 'translate-x-1'}`} />
                 </div>
               </label>
             )}

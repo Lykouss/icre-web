@@ -461,7 +461,7 @@ function SidebarContent({
                 onClick={async () => {
                   const supabase = createClient();
                   await supabase.auth.signOut();
-                  useRouter();
+                  window.location.href = '/login';
                 }}
                 title="Sair"
                 className="p-1.5 rounded text-slate-600 hover:text-red-400 hover:bg-red-500/8 transition-colors shrink-0"
@@ -483,9 +483,13 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
   const router = useRouter();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     const saved = localStorage.getItem('sige_sidebar_collapsed');
-    if (saved) setIsCollapsed(saved === 'true');
+    if (saved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsCollapsed(saved === 'true');
+    }
   }, []);
 
   const handleCollapseToggle = useCallback(() => {
