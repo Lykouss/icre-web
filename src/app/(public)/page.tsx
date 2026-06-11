@@ -71,47 +71,24 @@ export default async function PublicHomePage() {
 
   return (
     <main>
-      {/* Hero — sempre visível, data-theme aplicado dentro do HeroSection */}
+      {/* Hero — data-theme="dark" definido dentro do HeroSection */}
       <HeroSection content={hero.content} />
 
-      {about.visible && (
-        <div data-theme="dark">
-          <AboutSection content={about.content} />
-        </div>
-      )}
+      {/* As seções abaixo definem data-theme="light" internamente */}
+      {about.visible && <AboutSection content={about.content} />}
 
-      {mission.visible && (
-        <div data-theme="dark">
-          <MissionSection content={mission.content} />
-        </div>
-      )}
+      {mission.visible && <MissionSection content={mission.content} />}
 
-      {pastSec.visible && (
-        <div data-theme="dark">
-          <PastorsSection content={pastSec.content} pastors={pastors} />
-        </div>
-      )}
+      {pastSec.visible && <PastorsSection content={pastSec.content} pastors={pastors} />}
 
-      <div data-theme="dark">
-        <CellsSection content={cellSec.content} cells={cells} />
-      </div>
+      <CellsSection content={cellSec.content} cells={cells} />
 
-      {evSec.visible && (
-        <div data-theme="dark">
-          <EventsSection content={evSec.content} events={events} />
-        </div>
-      )}
+      {evSec.visible && <EventsSection content={evSec.content} events={events} />}
 
-      {ytSec.visible && (
-        <div data-theme="dark">
-          <YoutubeSection content={ytSec.content} />
-        </div>
-      )}
+      {ytSec.visible && <YoutubeSection content={ytSec.content} />}
 
       {/* Contato — sempre visível (tem rodapé integrado) */}
-      <div data-theme="dark">
-        <ContactSection content={contact.content} />
-      </div>
+      <ContactSection content={contact.content} />
     </main>
   );
 }

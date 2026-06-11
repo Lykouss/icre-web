@@ -30,75 +30,75 @@ function StepIllustration({ id }: { id: StepId }) {
     case 'name':
       return (
         <svg className={base} viewBox="0 0 64 64" fill="none">
-          <circle cx="32" cy="22" r="12" className="fill-blue-500/20 stroke-blue-400" strokeWidth="1.5" />
-          <circle cx="32" cy="22" r="6" className="fill-blue-400/30" />
-          <path d="M10 52c0-12.15 9.85-22 22-22s22 9.85 22 22" className="stroke-blue-400" strokeWidth="1.5" strokeLinecap="round" />
-          <circle cx="44" cy="18" r="3" className="fill-blue-300/40 stroke-blue-300" strokeWidth="1" />
-          <circle cx="20" cy="26" r="2" className="fill-blue-500/40" />
+          <circle cx="32" cy="22" r="12" className="fill-blue-50 stroke-blue-500" strokeWidth="1.5" />
+          <circle cx="32" cy="22" r="6" className="fill-blue-200" />
+          <path d="M10 52c0-12.15 9.85-22 22-22s22 9.85 22 22" className="stroke-blue-500" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="44" cy="18" r="3" className="fill-blue-300 stroke-blue-400" strokeWidth="1" />
+          <circle cx="20" cy="26" r="2" className="fill-blue-400" />
         </svg>
       );
     case 'email':
       return (
         <svg className={base} viewBox="0 0 64 64" fill="none">
-          <rect x="8" y="16" width="48" height="34" rx="6" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
-          <path d="M8 22l24 16 24-16" className="stroke-blue-400" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M8 42l16-12M56 42L40 30" className="stroke-blue-300/40" strokeWidth="1" strokeLinecap="round" />
-          <circle cx="49" cy="15" r="5" className="fill-blue-400" />
+          <rect x="8" y="16" width="48" height="34" rx="6" className="fill-blue-50 stroke-blue-500" strokeWidth="1.5" />
+          <path d="M8 22l24 16 24-16" className="stroke-blue-500" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M8 42l16-12M56 42L40 30" className="stroke-blue-300" strokeWidth="1" strokeLinecap="round" />
+          <circle cx="49" cy="15" r="5" className="fill-blue-500" />
           <path d="M47 15h4M49 13v4" className="stroke-white" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       );
     case 'phone':
       return (
         <svg className={base} viewBox="0 0 64 64" fill="none">
-          <rect x="18" y="6" width="28" height="52" rx="6" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
-          <rect x="24" y="12" width="16" height="10" rx="2" className="fill-blue-400/20" />
-          <circle cx="32" cy="50" r="3" className="fill-blue-400/50" />
-          <path d="M26 28h12M26 34h8" className="stroke-blue-300/60" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M42 10c4 4 4 10 0 14" className="stroke-blue-300/50" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M46 6c6 6 6 16 0 22" className="stroke-blue-200/30" strokeWidth="1.5" strokeLinecap="round" />
+          <rect x="18" y="6" width="28" height="52" rx="6" className="fill-blue-50 stroke-blue-500" strokeWidth="1.5" />
+          <rect x="24" y="12" width="16" height="10" rx="2" className="fill-blue-100" />
+          <circle cx="32" cy="50" r="3" className="fill-blue-400" />
+          <path d="M26 28h12M26 34h8" className="stroke-blue-300" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M42 10c4 4 4 10 0 14" className="stroke-blue-300" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M46 6c6 6 6 16 0 22" className="stroke-blue-200" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       );
     case 'birthdate':
       return (
         <svg className={base} viewBox="0 0 64 64" fill="none">
-          <rect x="8" y="18" width="48" height="38" rx="6" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
-          <path d="M8 28h48" className="stroke-blue-400/60" strokeWidth="1.5" />
-          <rect x="20" y="10" width="4" height="14" rx="2" className="fill-blue-400" />
-          <rect x="40" y="10" width="4" height="14" rx="2" className="fill-blue-400" />
-          <circle cx="22" cy="38" r="3" className="fill-blue-400/40" />
-          <circle cx="32" cy="38" r="3" className="fill-blue-400" />
-          <circle cx="42" cy="38" r="3" className="fill-blue-400/40" />
-          <circle cx="22" cy="48" r="3" className="fill-blue-400/40" />
-          <circle cx="32" cy="48" r="3" className="fill-blue-400/40" />
+          <rect x="8" y="18" width="48" height="38" rx="6" className="fill-blue-50 stroke-blue-500" strokeWidth="1.5" />
+          <path d="M8 28h48" className="stroke-blue-400" strokeWidth="1.5" />
+          <rect x="20" y="10" width="4" height="14" rx="2" className="fill-blue-500" />
+          <rect x="40" y="10" width="4" height="14" rx="2" className="fill-blue-500" />
+          <circle cx="22" cy="38" r="3" className="fill-blue-300" />
+          <circle cx="32" cy="38" r="3" className="fill-blue-500" />
+          <circle cx="42" cy="38" r="3" className="fill-blue-300" />
+          <circle cx="22" cy="48" r="3" className="fill-blue-300" />
+          <circle cx="32" cy="48" r="3" className="fill-blue-300" />
         </svg>
       );
     case 'address':
       return (
         <svg className={base} viewBox="0 0 64 64" fill="none">
-          <path d="M32 6C22.06 6 14 14.06 14 24c0 14 18 34 18 34s18-20 18-34C50 14.06 41.94 6 32 6z" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
-          <circle cx="32" cy="24" r="7" className="fill-blue-400/30 stroke-blue-400" strokeWidth="1.5" />
-          <circle cx="32" cy="24" r="3" className="fill-blue-400" />
-          <path d="M46 52c4 1.5 6 3.5 6 5.5C52 60 43 62 32 62s-20-2-20-4.5c0-2 2-4 6-5.5" className="stroke-blue-300/50" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M32 6C22.06 6 14 14.06 14 24c0 14 18 34 18 34s18-20 18-34C50 14.06 41.94 6 32 6z" className="fill-blue-50 stroke-blue-500" strokeWidth="1.5" />
+          <circle cx="32" cy="24" r="7" className="fill-blue-100 stroke-blue-500" strokeWidth="1.5" />
+          <circle cx="32" cy="24" r="3" className="fill-blue-500" />
+          <path d="M46 52c4 1.5 6 3.5 6 5.5C52 60 43 62 32 62s-20-2-20-4.5c0-2 2-4 6-5.5" className="stroke-blue-300" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       );
     case 'password':
       return (
         <svg className={base} viewBox="0 0 64 64" fill="none">
-          <rect x="12" y="28" width="40" height="28" rx="6" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
-          <path d="M20 28V22a12 12 0 0124 0v6" className="stroke-blue-400" strokeWidth="1.5" strokeLinecap="round" />
-          <circle cx="32" cy="42" r="5" className="fill-blue-400/40 stroke-blue-400" strokeWidth="1.5" />
-          <path d="M32 42v5" className="stroke-blue-400" strokeWidth="2" strokeLinecap="round" />
-          <circle cx="18" cy="22" r="2" className="fill-blue-300/40" />
-          <circle cx="46" cy="22" r="2" className="fill-blue-300/40" />
+          <rect x="12" y="28" width="40" height="28" rx="6" className="fill-blue-50 stroke-blue-500" strokeWidth="1.5" />
+          <path d="M20 28V22a12 12 0 0124 0v6" className="stroke-blue-500" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="32" cy="42" r="5" className="fill-blue-200 stroke-blue-500" strokeWidth="1.5" />
+          <path d="M32 42v5" className="stroke-blue-500" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="18" cy="22" r="2" className="fill-blue-300" />
+          <circle cx="46" cy="22" r="2" className="fill-blue-300" />
         </svg>
       );
     case 'terms':
       return (
         <svg className={base} viewBox="0 0 64 64" fill="none">
-          <rect x="10" y="6" width="44" height="52" rx="6" className="fill-blue-500/15 stroke-blue-400" strokeWidth="1.5" />
-          <path d="M20 20h24M20 28h24M20 36h16" className="stroke-blue-400/60" strokeWidth="1.5" strokeLinecap="round" />
-          <circle cx="44" cy="46" r="10" className="fill-slate-900 stroke-emerald-400" strokeWidth="2" />
-          <path d="M39 46l3 3 6-6" className="stroke-emerald-400" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="10" y="6" width="44" height="52" rx="6" className="fill-blue-50 stroke-blue-500" strokeWidth="1.5" />
+          <path d="M20 20h24M20 28h24M20 36h16" className="stroke-blue-400" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="44" cy="46" r="10" className="fill-white stroke-emerald-500" strokeWidth="2" />
+          <path d="M39 46l3 3 6-6" className="stroke-emerald-500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       );
   }
@@ -120,16 +120,16 @@ function EyeIcon({ open }: { open: boolean }) {
 function TermsContent() {
   return (
     <>
-      <p className="font-semibold text-slate-300">1. Aceitação dos Termos</p>
+      <p className="font-bold text-gray-800">1. Aceitação dos Termos</p>
       <p>Ao criar uma conta, você concorda com estes Termos de Uso e com nossa Política de Privacidade.</p>
-      <p className="font-semibold text-slate-300">2. Uso do Sistema</p>
+      <p className="font-bold text-gray-800">2. Uso do Sistema</p>
       <p>O sistema SIGE-ICRE é destinado exclusivamente a membros e visitantes da Igreja de Cristo Rocha Eterna. O uso indevido pode resultar no cancelamento da conta.</p>
-      <p className="font-semibold text-slate-300">3. Dados Pessoais</p>
+      <p className="font-bold text-gray-800">3. Dados Pessoais</p>
       <p>Coletamos nome, e-mail, telefone, data de nascimento e endereço para gerenciamento eclesial. Seus dados não serão compartilhados com terceiros.</p>
-      <p className="font-semibold text-slate-300">4. Responsabilidades</p>
+      <p className="font-bold text-gray-800">4. Responsabilidades</p>
       <p>Você é responsável por manter a confidencialidade de sua senha e por todas as atividades realizadas em sua conta.</p>
       <p>
-        <Link href="/termos" target="_blank" className="text-blue-400 hover:underline">
+        <Link href="/termos" target="_blank" className="text-blue-600 hover:underline">
           Leia os termos completos →
         </Link>
       </p>
@@ -327,17 +327,21 @@ export default function RegisterPage() {
   ].join(' ');
 
   const inputClass =
-    'w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-slate-600';
+    'w-full bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-400';
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-blue-50 blur-3xl opacity-50" />
+        <div className="absolute -bottom-[30%] -left-[10%] w-[70%] h-[70%] rounded-full bg-emerald-50 blur-3xl opacity-50" />
+      </div>
 
       <div className="relative w-full max-w-lg animate-[fadeSlideUp_0.4s_ease_both]">
         <div className="flex items-center justify-between mb-8">
           <Link
             href="/login"
-            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors text-sm font-medium"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -345,18 +349,18 @@ export default function RegisterPage() {
             Voltar
           </Link>
           <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="ICRE" width={24} height={24} className="brightness-0 invert opacity-60" />
-            <span className="text-slate-500 text-sm font-medium">ICRE</span>
+            <Image src="/logo.svg" alt="ICRE" width={24} height={24} className="opacity-80" />
+            <span className="text-gray-600 text-sm font-bold">ICRE</span>
           </div>
         </div>
 
         {/* Barra de progresso */}
         <div className="mb-8">
-          <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
+          <div className="flex items-center justify-between text-xs text-gray-500 mb-2 font-medium">
             <span>Passo {currentStep + 1} de {STEPS.length}</span>
             <span>{Math.round(progress)}% concluído</span>
           </div>
-          <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
             <div
               className="h-full bg-blue-500 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
@@ -371,20 +375,20 @@ export default function RegisterPage() {
                   i < currentStep
                     ? 'bg-blue-500 w-5'
                     : i === currentStep
-                    ? 'bg-blue-400 w-3 ring-2 ring-blue-400/30'
-                    : 'bg-slate-700 w-1.5'
+                    ? 'bg-blue-400 w-3 ring-2 ring-blue-100'
+                    : 'bg-gray-300 w-1.5'
                 }`}
               />
             ))}
           </div>
         </div>
 
-        <div className="bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-3xl p-8 shadow-2xl min-h-[420px] flex flex-col overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-xl shadow-gray-200/50 min-h-[420px] flex flex-col overflow-hidden">
           <div className={contentClass}>
             <StepIllustration id={step.id} />
 
-            <h2 className="text-2xl font-bold text-white mb-1 text-center">{step.title}</h2>
-            <p className="text-slate-400 text-sm mb-8 text-center">{step.subtitle}</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1 text-center">{step.title}</h2>
+            <p className="text-gray-500 text-sm mb-8 text-center">{step.subtitle}</p>
 
             <div onKeyDown={handleKeyDown} className="space-y-4">
               {step.id === 'name' && (
@@ -419,7 +423,7 @@ export default function RegisterPage() {
                   ref={el => { inputRef.current = el; }}
                   type="date" max={new Date().toISOString().split('T')[0]}
                   value={values.birthDate ?? ''} onChange={e => set('birthDate', e.target.value)}
-                  className={`${inputClass} [color-scheme:dark]`}
+                  className={inputClass}
                 />
               )}
 
@@ -445,7 +449,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowPass(v => !v)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                       aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}
                     >
                       <EyeIcon open={showPass} />
@@ -459,13 +463,13 @@ export default function RegisterPage() {
                           <div
                             key={i}
                             className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                              i <= strength.score ? strength.color : 'bg-slate-700'
+                              i <= strength.score ? strength.color : 'bg-gray-200'
                             }`}
                           />
                         ))}
                       </div>
-                      <p className="text-xs text-slate-400">
-                        Força: <span className="font-semibold text-white">{strength.label}</span>
+                      <p className="text-xs text-gray-500">
+                        Força: <span className="font-bold text-gray-900">{strength.label}</span>
                       </p>
                     </div>
                   )}
@@ -480,7 +484,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowConfirm(v => !v)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                       aria-label={showConfirm ? 'Ocultar confirmação' : 'Mostrar confirmação'}
                     >
                       <EyeIcon open={showConfirm} />
@@ -489,7 +493,7 @@ export default function RegisterPage() {
 
                   {values.confirmPass && (
                     <p className={`text-xs font-medium flex items-center gap-1.5 ${
-                      values.password === values.confirmPass ? 'text-emerald-400' : 'text-red-400'
+                      values.password === values.confirmPass ? 'text-emerald-600' : 'text-red-500'
                     }`}>
                       {values.password === values.confirmPass ? (
                         <>
@@ -513,7 +517,7 @@ export default function RegisterPage() {
 
               {step.id === 'terms' && (
                 <div className="space-y-4">
-                  <div className="bg-slate-800 rounded-2xl p-4 h-48 overflow-y-auto text-xs text-slate-400 leading-relaxed space-y-3 border border-slate-700">
+                  <div className="bg-gray-50 rounded-2xl p-4 h-48 overflow-y-auto text-xs text-gray-600 leading-relaxed space-y-3 border border-gray-200 portal-scroll">
                     <TermsContent />
                   </div>
                   <label className="flex items-start gap-3 cursor-pointer group">
@@ -527,7 +531,7 @@ export default function RegisterPage() {
                       <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
                         values.termsAccepted === 'true'
                           ? 'bg-blue-600 border-blue-600'
-                          : 'bg-transparent border-slate-600 group-hover:border-slate-400'
+                          : 'bg-white border-gray-300 group-hover:border-gray-400'
                       }`}>
                         {values.termsAccepted === 'true' && (
                           <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -536,13 +540,13 @@ export default function RegisterPage() {
                         )}
                       </div>
                     </div>
-                    <span className="text-sm text-slate-300 leading-relaxed">
+                    <span className="text-sm text-gray-600 leading-relaxed font-medium">
                       Li e aceito os{' '}
-                      <Link href="/termos" target="_blank" className="text-blue-400 hover:underline">
+                      <Link href="/termos" target="_blank" className="text-blue-600 hover:underline">
                         Termos de Uso
                       </Link>{' '}
                       e a{' '}
-                      <Link href="/privacidade" target="_blank" className="text-blue-400 hover:underline">
+                      <Link href="/privacidade" target="_blank" className="text-blue-600 hover:underline">
                         Política de Privacidade
                       </Link>
                     </span>
@@ -551,7 +555,7 @@ export default function RegisterPage() {
               )}
 
               {(error || serverError) && (
-                <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl animate-[fadeSlideUp_0.2s_ease_both]">
+                <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl animate-[fadeSlideUp_0.2s_ease_both] font-medium">
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -567,7 +571,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={goBack}
                 disabled={phase !== 'idle'}
-                className="flex items-center gap-2 px-5 py-3.5 text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 rounded-2xl transition-all text-sm font-semibold disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-3.5 text-gray-500 hover:text-gray-900 border border-gray-300 hover:border-gray-400 rounded-2xl transition-all text-sm font-bold disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -580,7 +584,7 @@ export default function RegisterPage() {
               type="button"
               onClick={goNext}
               disabled={isPending || phase !== 'idle'}
-              className="flex-1 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/20"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm shadow-md shadow-blue-500/20"
             >
               {isPending ? (
                 <>
@@ -610,7 +614,7 @@ export default function RegisterPage() {
         </div>
 
         {step.id === 'phone' || step.id === 'address' ? (
-          <p className="text-center text-xs text-slate-600 mt-4">
+          <p className="text-center text-xs text-gray-500 font-medium mt-4">
             Campo opcional — você pode preencher depois no seu perfil
           </p>
         ) : null}

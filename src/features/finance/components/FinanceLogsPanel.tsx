@@ -6,7 +6,7 @@ import { FinanceLog } from '@/features/finance/types';
 const ACTION_LABELS: Record<string, { label: string; color: string }> = {
   CREATE_TRANSACTION: { label: 'Novo Lançamento', color: 'bg-emerald-50 text-emerald-700' },
   DELETE_TRANSACTION: { label: 'Exclusão', color: 'bg-red-50 text-red-700' },
-  CLOSE_MONTH:        { label: 'Fechamento de Caixa', color: 'bg-blue-50 text-blue-700' },
+  CLOSE_MONTH: { label: 'Fechamento de Caixa', color: 'bg-blue-50 text-blue-700' },
 };
 
 interface FinanceLogsPanelProps {
@@ -52,7 +52,7 @@ export function FinanceLogsPanel({ logs }: FinanceLogsPanelProps) {
     }
 
     if (log.action === 'CLOSE_MONTH') {
-      const MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
       const monthName = MONTHS[(Number(data.month) - 1)] ?? data.month;
       const balance = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
         .format(Number(data.balance));
