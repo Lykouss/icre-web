@@ -37,9 +37,11 @@ const config = {
           light: "#FCD34D",
         },
         slate: {
-          50: "#F8FAFC",
-          100: "#F1F5F9",
-          900: "#0F172A",
+          50: "#F3F5F8", // Menos luminoso, mais confortável
+          100: "#E2E8F0",
+          800: "#0D1424", // Mais vivo e escuro
+          900: "#070B14", // Mais profundo
+          950: "#03060C", // Extra escuro para fundos principais
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",

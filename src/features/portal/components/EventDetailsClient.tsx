@@ -86,8 +86,8 @@ export function EventDetailsClient({
     <div className={`min-h-screen bg-gray-50 dark:bg-slate-900/80 ${isAdminPreview ? 'pt-10' : ''}`}>
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-100 dark:bg-blue-900/40/60 rounded-full blur-[140px]" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-50/60 rounded-full blur-[100px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-100 dark:bg-blue-900/30 rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-50/60 dark:bg-indigo-900/20 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative max-w-3xl mx-auto px-4 pt-28 pb-16">

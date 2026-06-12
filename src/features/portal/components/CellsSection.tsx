@@ -19,7 +19,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
     <button
       ref={ref}
       onClick={onClick}
-      className="group flex flex-col text-left bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-out w-full"
+      className="group flex flex-col text-left bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20 hover:-translate-y-2 hover:border-blue-200 dark:hover:border-blue-800/50 transition-all duration-300 ease-out w-full"
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transitionDelay: `${index * 60}ms` }}
     >
       {/* Imagem */}
