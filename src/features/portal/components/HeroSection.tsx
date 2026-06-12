@@ -4,6 +4,26 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { HeroContent } from '@/features/portal/types';
 
+function TypewriterText({ text }: { text: string }) {
+  const [displayed, setDisplayed] = useState('');
+  useEffect(() => {
+    let i = 0;
+    setDisplayed('');
+    const timer = setInterval(() => {
+      i++;
+      setDisplayed(text.substring(0, i));
+      if (i >= text.length) clearInterval(timer);
+    }, 90);
+    return () => clearInterval(timer);
+  }, [text]);
+  
+  return (
+    <span className="italic">
+      {displayed}
+    </span>
+  );
+}
+
 export function HeroSection({ content }: { content: HeroContent }) {
   const [mounted, setMounted] = useState(false);
   const [scrollY, setScrollY] = useState(0);
@@ -66,7 +86,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
 
         {/* Título */}
         <h1
-          className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight tracking-tight text-white mb-6 transition-all duration-700 ease-out"
+          className="text-6xl sm:text-7xl lg:text-[5.5rem] font-black leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-400 mb-6 transition-all duration-700 ease-out py-2"
           style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(28px)', transitionDelay: '100ms' }}
         >
           {content.title || 'Bem-vindo à ICRE'}
@@ -78,7 +98,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
             className="text-lg sm:text-xl text-white/60 max-w-lg mx-auto mb-12 leading-relaxed transition-all duration-700 ease-out"
             style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(16px)', transitionDelay: '200ms' }}
           >
-            {content.subtitle}
+            <TypewriterText text={content.subtitle} />
           </p>
         )}
 

@@ -84,22 +84,22 @@ export default async function MinhasInscricoesPage() {
   const hasAny = registrations.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-28 pb-16 px-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-28 pb-16 px-4">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-blue-50/80 rounded-full blur-[120px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-blue-50/80 dark:bg-blue-900/20 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative max-w-4xl mx-auto">
         <div className="mb-10">
-          <h1 className="text-3xl font-black text-gray-900 mb-2">Minhas Inscrições</h1>
-          <p className="text-gray-500 font-medium">Acompanhe seus ingressos e histórico de participação em eventos.</p>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2">Minhas Inscrições</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">Acompanhe seus ingressos e histórico de participação em eventos.</p>
         </div>
 
         {!hasAny ? (
-          <div className="bg-white border border-gray-200 rounded-3xl p-12 text-center shadow-sm">
-            <TicketIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Nenhuma inscrição encontrada</h2>
-            <p className="text-gray-500 font-medium mb-6">Você ainda não se inscreveu em nenhum evento.</p>
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center shadow-sm">
+            <TicketIcon className="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Nenhuma inscrição encontrada</h2>
+            <p className="text-slate-500 dark:text-slate-400 font-medium mb-6">Você ainda não se inscreveu em nenhum evento.</p>
             <Link href="/agenda" className="inline-flex bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md shadow-blue-500/20">
               Ver agenda de eventos
             </Link>
@@ -120,10 +120,10 @@ export default async function MinhasInscricoesPage() {
                     const event = reg.events as any;
                     if (!event) return null;
                     return (
-                      <div key={reg.id} className="bg-white border border-amber-200 rounded-2xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center shadow-sm">
+                      <div key={reg.id} className="bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center shadow-sm">
                         <div className="flex-1">
-                          <h3 className="text-base font-bold text-gray-900 mb-2">{event.title}</h3>
-                          <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                          <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">{event.title}</h3>
+                          <div className="flex flex-wrap gap-4 text-sm text-slate-500 dark:text-slate-400">
                             {event.date && (
                               <div className="flex items-center gap-1.5">
                                 <CalendarIcon className="w-3.5 h-3.5 text-gray-400" />
@@ -140,7 +140,7 @@ export default async function MinhasInscricoesPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-3 w-full md:w-auto flex-shrink-0">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold border border-amber-200 dark:border-amber-800/50">
                             <ClockIcon className="w-3 h-3" />
                             Aguardando Pagamento
                           </span>
@@ -171,10 +171,10 @@ export default async function MinhasInscricoesPage() {
                     const event = reg.events as any;
                     if (!event) return null;
                     return (
-                      <div key={reg.id} className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center hover:border-blue-200 hover:shadow-sm transition-all">
+                      <div key={reg.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-sm transition-all">
                         <div className="flex-1">
-                          <h3 className="text-base font-bold text-gray-900 mb-2">{event.title}</h3>
-                          <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                          <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">{event.title}</h3>
+                          <div className="flex flex-wrap gap-4 text-sm text-slate-500 dark:text-slate-400">
                             {event.date && (
                               <div className="flex items-center gap-1.5">
                                 <CalendarIcon className="w-3.5 h-3.5 text-gray-400" />
@@ -191,7 +191,7 @@ export default async function MinhasInscricoesPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-3 w-full md:w-auto flex-shrink-0">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-bold border border-emerald-200 dark:border-emerald-800/50">
                             ✓ Confirmado
                           </span>
                           {reg.ticket_signature && (
@@ -223,11 +223,11 @@ export default async function MinhasInscricoesPage() {
                     const event = reg.events as any;
                     if (!event) return null;
                     return (
-                      <div key={reg.id} className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center opacity-60">
+                      <div key={reg.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center opacity-60 dark:opacity-50">
                         <div className="flex-1">
-                          <h3 className="text-base font-bold text-gray-400 mb-1 line-through">{event.title}</h3>
+                          <h3 className="text-base font-bold text-slate-400 dark:text-slate-500 mb-1 line-through">{event.title}</h3>
                         </div>
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-bold border border-slate-200 dark:border-slate-700">
                           Cancelada
                         </span>
                       </div>
