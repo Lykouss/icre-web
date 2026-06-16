@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redefinição de Senha — ICRE</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f1f5f9;
+      color: #1e293b;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      max-width: 580px;
+      margin: 40px auto;
+      padding: 0 16px 40px;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1a1f3d 100%);
+      border-radius: 16px 16px 0 0;
+      padding: 32px 36px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #f59e0b, #ef4444, transparent);
+    }
+    .brand-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1.5px solid rgba(245, 158, 11, 0.25);
+      border-radius: 16px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-name {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #94a3b8;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .brand-full {
+      font-size: 14px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    /* ── Body ── */
+    .body {
+      background: #ffffff;
+      padding: 40px 36px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #c2410c;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #f97316;
+      border-radius: 50%;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    p {
+      font-size: 15px;
+      color: #475569;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .highlight {
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    /* ── CTA Button ── */
+    .cta-wrapper {
+      text-align: center;
+      margin: 32px 0;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      color: #ffffff !important;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 14px 36px;
+      border-radius: 12px;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 24px rgba(37, 99, 235, 0.35);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 28px 0;
+    }
+
+    /* ── Link fallback ── */
+    .link-fallback {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+    }
+    .link-fallback p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+    .link-fallback a {
+      font-size: 12px;
+      color: #3b82f6;
+      word-break: break-all;
+    }
+
+    /* ── Alert box ── */
+    .alert-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+    }
+    .alert-box p {
+      font-size: 13px;
+      color: #991b1b;
+      margin: 0;
+    }
+
+    /* ── Steps ── */
+    .steps {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 24px 0;
+    }
+    .steps-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .step:last-child { margin-bottom: 0; }
+    .step-num {
+      width: 22px;
+      height: 22px;
+      background: #1d4ed8;
+      color: white;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-text {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      background: #0f172a;
+      border-radius: 0 0 16px 16px;
+      padding: 24px 36px;
+      text-align: center;
+    }
+    .footer p {
+      font-size: 11px;
+      color: #475569;
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+    .footer a {
+      color: #64748b;
+      text-decoration: none;
+    }
+    .footer-divider {
+      width: 40px;
+      height: 1px;
+      background: #1e293b;
+      margin: 14px auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Header -->
+    <div class="header">
+      <div class="brand-icon">
+        <!-- ícone de cadeado/chave -->
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+        </svg>
+      </div>
+      <p class="brand-name">ICRE</p>
+      <p class="brand-full">Igreja Cristã Reformada Evangélica</p>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+      <span class="badge">
+        <span class="badge-dot"></span>
+        Redefinição de Senha
+      </span>
+
+      <h1>Redefinir sua<br/>senha de acesso</h1>
+
+      <p>
+        Recebemos uma solicitação para redefinir a senha da conta vinculada a este endereço de e-mail no
+        <span class="highlight">Portal ICRE</span>. Clique no botão abaixo para criar uma nova senha.
+      </p>
+
+      <div class="cta-wrapper">
+        <a href="{{ .ConfirmationURL }}" class="cta-btn">
+          🔑 Redefinir minha senha
+        </a>
+      </div>
+
+      <!-- Passo a passo -->
+      <div class="steps">
+        <p class="steps-title">Como funciona</p>
+        <div class="step">
+          <div class="step-num">1</div>
+          <p class="step-text">Clique no botão acima para acessar a página de redefinição de senha.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <p class="step-text">Escolha uma nova senha segura (mínimo 6 caracteres).</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <p class="step-text">Sua senha será atualizada e você poderá fazer login normalmente.</p>
+        </div>
+      </div>
+
+      <div class="alert-box">
+        <p>⚠️ Este link expira em <strong>1 hora</strong>. Se você não solicitou a redefinição de senha, ignore este e-mail — sua conta permanecerá segura.</p>
+      </div>
+
+      <hr class="divider" />
+
+      <p style="font-size: 13px; color: #94a3b8;">
+        Se o botão não funcionar, copie e cole o link abaixo no seu navegador:
+      </p>
+      <div class="link-fallback">
+        <p>Link de redefinição:</p>
+        <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-divider"></div>
+      <p>ICRE · Sistema de Gestão Eclesiástica</p>
+      <p>Este e-mail foi enviado automaticamente. Não responda a esta mensagem.</p>
+      <p style="margin-top: 10px;">
+        <a href="https://icre-woad.vercel.app/">icre-woad.vercel.app</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

@@ -50,6 +50,13 @@ function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 }
 
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '';
+  const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  const d = new Date(dateStr + 'T12:00:00');
+  return `${d.getDate()} de ${MONTHS[d.getMonth()]}. de ${d.getFullYear()}`;
+}
+
 const STEPS_FREE = ['Termos', 'Dados', 'Sucesso'] as const;
 const STEPS_PAID = ['Termos', 'Dados', 'Pagamento', 'Sucesso'] as const;
 
@@ -87,7 +94,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
     setTimeout(() => {
       setCurrentStep(index);
       setAnimating(false);
-    }, 200);
+    }, 220);
   }, [animating]);
 
   const nextStep = useCallback(() => {
@@ -141,10 +148,9 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
         setRegistrationId(result.registrationId ?? null);
 
         if (result.paymentInfo && result.registrationId) {
-          // Redirecionar para página de pagamento dedicada
           router.push(`/agenda/${event.id}/pagamento/${result.registrationId}`);
         } else {
-          goTo(stepIds.length - 1, 'forward'); // sucesso
+          goTo(stepIds.length - 1, 'forward');
         }
       } finally {
         isSubmittingRef.current = false;
@@ -153,318 +159,401 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
     });
   };
 
-  const inputCls = 'w-full px-4 py-3 bg-slate-800/60 border border-white/10 text-white rounded-2xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500/50 transition-all';
+  const inputCls = 'w-full px-4 py-3.5 bg-slate-800/80 border border-white/10 text-white rounded-xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500/40 transition-all';
+
+  // Stepper completo (sem o "Sucesso")
+  const visibleSteps = stepLabels.slice(0, -1);
 
   return (
     <div className={`min-h-screen bg-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/8 rounded-full blur-[140px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-blue-700/5 rounded-full blur-[160px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-indigo-700/4 rounded-full blur-[100px]" />
       </div>
 
-      <div className="relative max-w-xl mx-auto px-4 pt-28 pb-16">
-        {/* Back to event */}
-        <Link
-          href={`/agenda/${event.id}`}
-          className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-medium transition-colors mb-8"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Voltar para {event.title}
-        </Link>
+      <div className="relative max-w-xl mx-auto px-4 pt-24 pb-16">
+
+        {/* Header institucional */}
+        <div className="flex items-center gap-3 mb-8">
+          <Link
+            href={`/agenda/${event.id}`}
+            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+            title="Voltar ao evento"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          </Link>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em]">ICRE — Portal de Inscrições</p>
+            <h1 className="text-sm font-bold text-slate-200 truncate">{event.title}</h1>
+          </div>
+          {isPaid && (
+            <div className="shrink-0 bg-blue-600/10 border border-blue-500/20 rounded-xl px-3 py-1.5">
+              <p className="text-xs font-black text-blue-300">{formatCurrency(event.ticket_price!)}</p>
+            </div>
+          )}
+        </div>
 
         {/* Stepper */}
         {stepId !== 'success' && (
-          <div className="flex items-center gap-2 mb-8">
-            {stepLabels.slice(0, -1).map((label, i) => {
-              const isActive = i === currentStep;
-              const isDone = i < currentStep;
-              return (
-                <React.Fragment key={label}>
-                  <div className="flex items-center gap-2">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
-                      isDone ? 'bg-emerald-500 text-white' :
-                      isActive ? 'bg-blue-600 text-white ring-2 ring-blue-500/30' :
-                      'bg-slate-800 text-slate-500'
-                    }`}>
-                      {isDone ? (
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                        </svg>
-                      ) : i + 1}
+          <div className="bg-slate-900/50 border border-white/6 rounded-2xl p-4 mb-6">
+            <div className="flex items-center gap-0">
+              {visibleSteps.map((label, i) => {
+                const isActive = i === currentStep;
+                const isDone = i < currentStep;
+                return (
+                  <React.Fragment key={label}>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black transition-all duration-300 ${
+                        isDone ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' :
+                        isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-400/30' :
+                        'bg-slate-800 text-slate-500 border border-white/6'
+                      }`}>
+                        {isDone ? (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : i + 1}
+                      </div>
+                      <span className={`text-[10px] font-bold uppercase tracking-wide transition-colors ${
+                        isActive ? 'text-white' : isDone ? 'text-emerald-400' : 'text-slate-600'
+                      }`}>{label}</span>
                     </div>
-                    <span className={`text-xs font-semibold hidden sm:block transition-colors ${
-                      isActive ? 'text-white' : isDone ? 'text-emerald-400' : 'text-slate-600'
-                    }`}>{label}</span>
-                  </div>
-                  {i < stepLabels.length - 2 && (
-                    <div className={`flex-1 h-px transition-colors duration-500 ${isDone ? 'bg-emerald-500/50' : 'bg-slate-800'}`} />
-                  )}
-                </React.Fragment>
-              );
-            })}
+                    {i < visibleSteps.length - 1 && (
+                      <div className={`flex-1 h-px mb-5 mx-2 transition-colors duration-500 ${isDone ? 'bg-emerald-500/40' : 'bg-slate-800'}`} />
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
           </div>
         )}
 
         {/* Card animado */}
         <div
-          className="transition-all duration-200"
+          className="transition-all duration-220"
           style={{
             opacity: animating ? 0 : 1,
             transform: animating
-              ? `translateX(${direction === 'forward' ? '20px' : '-20px'})`
+              ? `translateX(${direction === 'forward' ? '16px' : '-16px'})`
               : 'translateX(0)',
           }}
         >
-          <div className="bg-slate-900/60 backdrop-blur-xl border border-white/8 rounded-3xl overflow-hidden shadow-2xl">
+          <div className="bg-slate-900/70 backdrop-blur-xl border border-white/8 rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
 
             {/* ─── STEP: TERMS ─── */}
             {stepId === 'terms' && (
-              <div className="p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <div>
+                {/* Header do card */}
+                <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/60 border-b border-white/6 px-7 py-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-blue-500/15 border border-blue-500/25 rounded-xl flex items-center justify-center shrink-0">
+                      <svg className="w-4.5 h-4.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Passo 1 de {visibleSteps.length}</p>
+                      <h2 className="text-base font-black text-white">Regras e Termos</h2>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-7">
+                  {/* Info do evento */}
+                  {(event.date || event.location) && (
+                    <div className="flex flex-wrap gap-3 mb-5">
+                      {event.date && (
+                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                          <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          {formatDate(event.date)}{event.time ? ` · ${event.time.slice(0,5)}` : ''}
+                        </div>
+                      )}
+                      {event.location && (
+                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                          <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          </svg>
+                          {event.location}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="bg-slate-800/60 border border-white/6 rounded-xl p-5 text-sm text-slate-300 leading-relaxed mb-5 max-h-48 overflow-y-auto portal-scroll">
+                    {event.rules || event.description || 'Ao se inscrever, você concorda em comparecer ao evento na data e horário indicados e respeitar todas as orientações da organização.'}
+                  </div>
+
+                  <label className="flex items-start gap-3 cursor-pointer mb-6 group p-3 rounded-xl hover:bg-white/3 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={termsAccepted}
+                      onChange={e => setTermsAccepted(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-600 bg-slate-800 accent-blue-500 shrink-0"
+                    />
+                    <span className="text-sm text-slate-300 group-hover:text-white transition-colors leading-snug">
+                      Li e aceito as regras e termos deste evento
+                    </span>
+                  </label>
+
+                  <button
+                    onClick={() => { if (termsAccepted) nextStep(); }}
+                    disabled={!termsAccepted}
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                  >
+                    Continuar
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
                     </svg>
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-white">Regras e Termos</h2>
-                    <p className="text-xs text-slate-400">{event.title}</p>
-                  </div>
+                  </button>
                 </div>
-
-                <div className="bg-slate-800/60 border border-white/8 rounded-2xl p-5 text-sm text-slate-300 leading-relaxed mb-6 max-h-52 overflow-y-auto">
-                  {event.rules || event.description || 'Ao se inscrever, você concorda em comparecer ao evento na data e horário indicados e respeitar todas as orientações da organização.'}
-                </div>
-
-                <label className="flex items-start gap-3 cursor-pointer mb-6 group">
-                  <input
-                    type="checkbox"
-                    checked={termsAccepted}
-                    onChange={e => setTermsAccepted(e.target.checked)}
-                    className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-600 bg-slate-800 accent-blue-500"
-                  />
-                  <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Li e aceito as regras deste evento</span>
-                </label>
-
-                <button
-                  onClick={() => { if (termsAccepted) nextStep(); }}
-                  disabled={!termsAccepted}
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  Avançar
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
               </div>
             )}
 
             {/* ─── STEP: FORM ─── */}
             {stepId === 'form' && (
-              <div className="p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-violet-500/10 border border-violet-500/20 rounded-xl flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-white">Seus dados</h2>
-                    <p className="text-xs text-slate-400">
-                      {isPaid ? `Garanta sua vaga — ${formatCurrency(event.ticket_price!)}` : 'Preencha para confirmar sua presença'}
-                    </p>
+              <div>
+                <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/60 border-b border-white/6 px-7 py-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-violet-500/15 border border-violet-500/25 rounded-xl flex items-center justify-center shrink-0">
+                      <svg className="w-4.5 h-4.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Passo 2 de {visibleSteps.length}</p>
+                      <h2 className="text-base font-black text-white">Dados do Participante</h2>
+                    </div>
                   </div>
                 </div>
 
-                {error && (
-                  <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl mb-5">
-                    <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {error}
-                  </div>
-                )}
-
-                <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">Nome completo *</label>
-                    <input name="name" type="text" required placeholder="Seu nome completo" className={inputCls} />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">E-mail *</label>
-                    <input name="email" type="email" required placeholder="seu@email.com" className={inputCls} />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">Telefone *</label>
-                    <input name="phone" type="tel" required placeholder="(XX) XXXXX-XXXX" className={inputCls} />
-                    {isPaid && <p className="text-xs text-amber-400/80 mt-1.5">⚠️ Usado para estorno se necessário.</p>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">CPF {isPaid ? '*' : '(opcional)'}</label>
-                    <input
-                      name="cpf"
-                      type="text"
-                      required={isPaid}
-                      placeholder="000.000.000-00"
-                      className={inputCls}
-                      value={cpfValue}
-                      onChange={e => {
-                        let v = e.target.value.replace(/\D/g, '');
-                        v = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                        setCpfValue(v);
-                        setCpfError('');
-                      }}
-                    />
-                    {cpfError && <p className="text-xs text-red-400 mt-1 font-semibold">{cpfError}</p>}
-                  </div>
-
-                  {formFields.length > 0 && (
-                    <DynamicFormRenderer
-                      fields={formFields}
-                      responses={customResponses}
-                      onChange={(id, val) => setCustomResponses(prev => ({ ...prev, [id]: val }))}
-                      inputCls={inputCls}
-                    />
-                  )}
-
-                  {/* Seleção de método de pagamento no step de dados */}
-                  {isPaid && (
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Forma de pagamento</label>
-                      <div className="grid grid-cols-3 gap-3">
-                        {/* PIX */}
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('pix')}
-                          className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${
-                            paymentMethod === 'pix' ? 'border-blue-500 bg-blue-500/10' : 'border-white/10 hover:border-white/20'
-                          }`}
-                        >
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${paymentMethod === 'pix' ? 'bg-blue-500' : 'bg-slate-700'}`}>
-                            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M11.9999 2L3 7v10l9 5 9-5V7l-9-5zM12 4.236L18.764 8 12 11.764 5.236 8 12 4.236zM4 9.236l7 3.888V19.764L4 15.888V9.236zm9 10.528V13.124l7-3.888v6.652L13 19.764z"/>
-                            </svg>
-                          </div>
-                          <span className={`text-xs font-bold ${paymentMethod === 'pix' ? 'text-white' : 'text-slate-400'}`}>PIX</span>
-                        </button>
-
-                        {/* Boleto */}
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('boleto')}
-                          className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${
-                            paymentMethod === 'boleto' ? 'border-blue-500 bg-blue-500/10' : 'border-white/10 hover:border-white/20'
-                          }`}
-                        >
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${paymentMethod === 'boleto' ? 'bg-blue-500' : 'bg-slate-700'}`}>
-                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </div>
-                          <span className={`text-xs font-bold ${paymentMethod === 'boleto' ? 'text-white' : 'text-slate-400'}`}>Boleto</span>
-                        </button>
-
-                        {/* Cartão (Em breve) */}
-                        <div className="relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-white/6 opacity-50 cursor-not-allowed">
-                          <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-slate-700">
-                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                          </div>
-                          <span className="text-xs font-bold text-slate-500">Cartão</span>
-                          <span className="absolute -top-2 right-1 bg-slate-700 text-slate-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full">Em breve</span>
-                        </div>
-                      </div>
+                <div className="p-7">
+                  {error && (
+                    <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-500/20 text-red-400 text-sm px-4 py-3.5 rounded-xl mb-5">
+                      <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>{error}</span>
                     </div>
                   )}
 
-                  <div className="flex gap-3 pt-1">
-                    <button
-                      type="button"
-                      onClick={prevStep}
-                      className="px-4 py-3 rounded-2xl border border-white/10 text-slate-400 hover:text-white text-sm font-semibold transition-colors"
-                    >
-                      Voltar
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isPending}
-                      className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
-                    >
-                      {isPending ? (
-                        <>
-                          <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                          </svg>
-                          {isPaid ? 'Gerando pagamento...' : 'Confirmando...'}
-                        </>
-                      ) : isPaid ? `Ir para pagamento — ${formatCurrency(event.ticket_price!)}` : 'Confirmar inscrição'}
-                    </button>
-                  </div>
-                </form>
+                  <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Nome completo *</label>
+                      <input name="name" type="text" required placeholder="Seu nome completo" className={inputCls} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">E-mail *</label>
+                      <input name="email" type="email" required placeholder="seu@email.com" className={inputCls} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Telefone *</label>
+                      <input name="phone" type="tel" required placeholder="(XX) XXXXX-XXXX" className={inputCls} />
+                      {isPaid && <p className="text-xs text-amber-400/80 mt-1.5 flex items-center gap-1"><span>⚠️</span> Necessário para eventuais estornos.</p>}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+                        CPF {isPaid ? '*' : <span className="text-slate-600 normal-case font-normal">(opcional)</span>}
+                      </label>
+                      <input
+                        name="cpf"
+                        type="text"
+                        required={isPaid}
+                        placeholder="000.000.000-00"
+                        className={inputCls}
+                        value={cpfValue}
+                        onChange={e => {
+                          let v = e.target.value.replace(/\D/g, '');
+                          v = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                          setCpfValue(v);
+                          setCpfError('');
+                        }}
+                      />
+                      {cpfError && <p className="text-xs text-red-400 mt-1 font-semibold">{cpfError}</p>}
+                    </div>
+
+                    {formFields.length > 0 && (
+                      <DynamicFormRenderer
+                        fields={formFields}
+                        responses={customResponses}
+                        onChange={(id, val) => setCustomResponses(prev => ({ ...prev, [id]: val }))}
+                        inputCls={inputCls}
+                      />
+                    )}
+
+                    {/* Método de pagamento */}
+                    {isPaid && (
+                      <div className="pt-1">
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Forma de Pagamento</label>
+                        <div className="grid grid-cols-2 gap-3">
+                          {/* PIX */}
+                          <button
+                            type="button"
+                            onClick={() => setPaymentMethod('pix')}
+                            className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
+                              paymentMethod === 'pix'
+                                ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
+                                : 'border-white/8 hover:border-white/16 bg-slate-800/40'
+                            }`}
+                          >
+                            {paymentMethod === 'pix' && (
+                              <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                                </svg>
+                              </div>
+                            )}
+                            <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'pix' ? 'bg-blue-500' : 'bg-slate-700'}`}>
+                              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M11.9999 2L3 7v10l9 5 9-5V7l-9-5zM12 4.236L18.764 8 12 11.764 5.236 8 12 4.236zM4 9.236l7 3.888V19.764L4 15.888V9.236zm9 10.528V13.124l7-3.888v6.652L13 19.764z"/>
+                              </svg>
+                            </div>
+                            <div>
+                              <p className={`text-sm font-black ${paymentMethod === 'pix' ? 'text-white' : 'text-slate-300'}`}>PIX</p>
+                              <p className="text-[10px] text-slate-500">Aprovação imediata</p>
+                            </div>
+                          </button>
+
+                          {/* Boleto */}
+                          <button
+                            type="button"
+                            onClick={() => setPaymentMethod('boleto')}
+                            className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
+                              paymentMethod === 'boleto'
+                                ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
+                                : 'border-white/8 hover:border-white/16 bg-slate-800/40'
+                            }`}
+                          >
+                            {paymentMethod === 'boleto' && (
+                              <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                                </svg>
+                              </div>
+                            )}
+                            <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'boleto' ? 'bg-blue-500' : 'bg-slate-700'}`}>
+                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <p className={`text-sm font-black ${paymentMethod === 'boleto' ? 'text-white' : 'text-slate-300'}`}>Boleto</p>
+                              <p className="text-[10px] text-slate-500">Até 3 dias úteis</p>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={prevStep}
+                        className="px-5 py-3.5 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 text-sm font-semibold transition-all"
+                      >
+                        Voltar
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isPending}
+                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                      >
+                        {isPending ? (
+                          <>
+                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                            </svg>
+                            {isPaid ? 'Gerando cobrança...' : 'Confirmando...'}
+                          </>
+                        ) : isPaid ? (
+                          <>Pagar {formatCurrency(event.ticket_price!)} <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
+                        ) : (
+                          <>Confirmar Inscrição <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             )}
 
             {/* ─── STEP: SUCCESS ─── */}
             {stepId === 'success' && (
-              <div className="p-8 text-center">
-                <div className="relative inline-flex items-center justify-center mb-6">
-                  <div className="absolute w-24 h-24 rounded-full bg-emerald-500/10 animate-ping" style={{ animationDuration: '2s' }} />
-                  <div className="relative w-20 h-20 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl flex items-center justify-center">
-                    <svg className="w-10 h-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
+              <div>
+                {/* Header de sucesso */}
+                <div className="bg-gradient-to-br from-emerald-900/30 to-slate-900/60 border-b border-emerald-500/15 px-7 py-6 text-center">
+                  <div className="relative inline-flex items-center justify-center mb-3">
+                    <div className="absolute w-20 h-20 rounded-full bg-emerald-500/10 animate-ping" style={{ animationDuration: '2.5s' }} />
+                    <div className="relative w-16 h-16 bg-emerald-500/15 border border-emerald-500/25 rounded-2xl flex items-center justify-center">
+                      <svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
                   </div>
+                  <h2 className="text-xl font-black text-white">Inscrição Confirmada</h2>
+                  <p className="text-emerald-400/80 text-xs font-semibold uppercase tracking-widest mt-1">Registro efetuado com sucesso</p>
                 </div>
 
-                <h2 className="text-2xl font-black text-white mb-2">Inscrição confirmada!</h2>
-                <p className="text-slate-400 text-sm mb-8 max-w-sm mx-auto">
-                  Sua presença foi registrada com sucesso. Te esperamos no evento!
-                </p>
+                <div className="p-7">
+                  <p className="text-slate-400 text-sm leading-relaxed mb-6 text-center">
+                    Sua presença no evento <span className="text-white font-semibold">{event.title}</span> foi registrada. Te esperamos!
+                  </p>
 
-                <div className="flex flex-col gap-3">
-                  {registrationId && (
+                  <div className="space-y-3">
+                    {registrationId && (
+                      <Link
+                        href={`/comprovante/${registrationId}`}
+                        className="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/20"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                        </svg>
+                        Ver Comprovante
+                      </Link>
+                    )}
                     <Link
-                      href={`/comprovante/${registrationId}`}
-                      className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
+                      href="/minhas-inscricoes"
+                      className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold px-6 py-3.5 rounded-xl transition-all border border-white/8"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                      </svg>
-                      Ver comprovante
+                      Minhas Inscrições
                     </Link>
-                  )}
-                  <Link
-                    href="/minhas-inscricoes"
-                    className="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold px-6 py-3.5 rounded-2xl transition-all border border-white/10"
-                  >
-                    Minhas Inscrições
-                  </Link>
-                  <Link
-                    href="/agenda"
-                    className="text-slate-500 hover:text-slate-300 text-sm font-medium transition-colors"
-                  >
-                    Ver outros eventos
-                  </Link>
+                    <Link
+                      href="/agenda"
+                      className="block text-center text-slate-500 hover:text-slate-300 text-sm font-medium transition-colors py-1"
+                    >
+                      Ver outros eventos
+                    </Link>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
+
+        {/* Rodapé */}
+        <div className="mt-6 flex items-center justify-center gap-2">
+          <div className="w-px h-4 bg-white/10" />
+          <p className="text-xs text-slate-600">ICRE · Portal de Eventos · Ambiente Seguro</p>
+          <div className="w-px h-4 bg-white/10" />
+        </div>
       </div>
 
       {/* Processing overlay */}
       {showProcessingOverlay && (
-        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
-          <div className="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto animate-pulse">
-            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/85 backdrop-blur-sm">
+          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-5 mx-auto shadow-2xl shadow-blue-500/40">
+            <svg className="w-8 h-8 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
             </svg>
           </div>
-          <p className="text-white font-bold text-lg">Processando sua inscrição...</p>
-          <p className="text-slate-400 text-sm mt-2">Por favor, aguarde. Não feche esta página.</p>
+          <p className="text-white font-bold text-lg">Processando inscrição...</p>
+          <p className="text-slate-400 text-sm mt-1">Por favor, não feche esta página.</p>
         </div>
       )}
     </div>

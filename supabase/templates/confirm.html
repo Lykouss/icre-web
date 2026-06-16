@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirme seu e-mail — ICRE</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f1f5f9;
+      color: #1e293b;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      max-width: 580px;
+      margin: 40px auto;
+      padding: 0 16px 40px;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      border-radius: 16px 16px 0 0;
+      padding: 32px 36px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #3b82f6, #06b6d4, transparent);
+    }
+    .brand-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1.5px solid rgba(59, 130, 246, 0.3);
+      border-radius: 16px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-name {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #94a3b8;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .brand-full {
+      font-size: 14px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    /* ── Body ── */
+    .body {
+      background: #ffffff;
+      padding: 40px 36px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #1d4ed8;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #3b82f6;
+      border-radius: 50%;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    p {
+      font-size: 15px;
+      color: #475569;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .highlight {
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    /* ── CTA Button ── */
+    .cta-wrapper {
+      text-align: center;
+      margin: 32px 0;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      color: #ffffff !important;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 14px 36px;
+      border-radius: 12px;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 24px rgba(37, 99, 235, 0.35);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 28px 0;
+    }
+
+    /* ── Link fallback ── */
+    .link-fallback {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+    }
+    .link-fallback p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+    .link-fallback a {
+      font-size: 12px;
+      color: #3b82f6;
+      word-break: break-all;
+    }
+
+    /* ── Info box ── */
+    .info-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+    }
+    .info-box p {
+      font-size: 13px;
+      color: #166534;
+      margin: 0;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      background: #0f172a;
+      border-radius: 0 0 16px 16px;
+      padding: 24px 36px;
+      text-align: center;
+    }
+    .footer p {
+      font-size: 11px;
+      color: #475569;
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+    .footer a {
+      color: #64748b;
+      text-decoration: none;
+    }
+    .footer-divider {
+      width: 40px;
+      height: 1px;
+      background: #1e293b;
+      margin: 14px auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Header -->
+    <div class="header">
+      <div class="brand-icon">
+        <!-- ícone de escudo/verificação -->
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+      </div>
+      <p class="brand-name">ICRE</p>
+      <p class="brand-full">Igreja Cristã Reformada Evangélica</p>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+      <span class="badge">
+        <span class="badge-dot"></span>
+        Verificação de E-mail
+      </span>
+
+      <h1>Confirme seu<br/>endereço de e-mail</h1>
+
+      <p>
+        Olá! Sua conta no <span class="highlight">Portal ICRE</span> foi criada com sucesso.
+        Para ativá-la e ter acesso completo ao sistema, confirme seu endereço de e-mail clicando no botão abaixo.
+      </p>
+
+      <div class="cta-wrapper">
+        <a href="{{ .ConfirmationURL }}" class="cta-btn">
+          ✓ Confirmar E-mail
+        </a>
+      </div>
+
+      <div class="info-box">
+        <p>🔒 Este link é seguro e expira em <strong>1 hora</strong>. Se você não criou uma conta, ignore este e-mail.</p>
+      </div>
+
+      <hr class="divider" />
+
+      <p style="font-size: 13px; color: #94a3b8;">
+        Se o botão não funcionar, copie e cole o link abaixo no seu navegador:
+      </p>
+      <div class="link-fallback">
+        <p>Link de confirmação:</p>
+        <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-divider"></div>
+      <p>ICRE · Sistema de Gestão Eclesiástica</p>
+      <p>Este e-mail foi enviado automaticamente. Não responda a esta mensagem.</p>
+      <p style="margin-top: 10px;">
+        <a href="https://icre-woad.vercel.app/">icre-woad.vercel.app</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
