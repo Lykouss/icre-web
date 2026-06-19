@@ -158,7 +158,7 @@ export default async function MinhasInscricoesPage() {
                 />
                 <div className="grid gap-3">
                   {pending.map(reg => {
-                    const event = reg.events as EventShape | null;
+                    const event = reg.events as unknown as EventShape | null;
                     if (!event) return null;
                     return (
                       <RegistrationCard
@@ -183,7 +183,7 @@ export default async function MinhasInscricoesPage() {
                 />
                 <div className="grid gap-3">
                   {confirmed.map(reg => {
-                    const event = reg.events as EventShape | null;
+                    const event = reg.events as unknown as EventShape | null;
                     if (!event) return null;
                     return (
                       <RegistrationCard
@@ -208,7 +208,7 @@ export default async function MinhasInscricoesPage() {
                 />
                 <div className="grid gap-3">
                   {cancelled.map(reg => {
-                    const event = reg.events as EventShape | null;
+                    const event = reg.events as unknown as EventShape | null;
                     if (!event) return null;
                     return (
                       <RegistrationCard
