@@ -25,6 +25,50 @@ import {
   parseAndVerifyQrPayload,
 } from '../utils/signature';
 
+// ─── Health check do Asaas antes de processar pagamento ───────────────────
+
+async function checkAsaasHealth(): Promise<boolean> {
+  const apiKey = process.env.ASAAS_API_KEY;
+  const apiUrl = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/api/v3';
+  if (!apiKey) return false;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const res = await fetch(`${apiUrl}/finance/balance`, {
+      signal: controller.signal,
+      headers: { 'access_token': apiKey, 'Content-Type': 'application/json' },
+    });
+    clearTimeout(timeout);
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+// ─── Rollback seguro com retry ───────────────────────────────────────────
+
+async function safeRollbackRegistration(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  registrationId: string,
+  reason: string
+): Promise<void> {
+  // Tentativa 1: deletar
+  const { error } = await supabase
+    .from('event_registrations')
+    .delete()
+    .eq('id', registrationId);
+
+  if (error) {
+    // Falha no delete: marcar como cancelado para evitar inscrição zumbi
+    console.error(`[rollback] delete failed (${reason}), marking as cancelled:`, error.message);
+    await supabase
+      .from('event_registrations')
+      .update({ status: 'cancelado', payment_status: 'expirado' })
+      .eq('id', registrationId)
+      .eq('status', 'pendente_pagamento'); // garantia extra
+  }
+}
+
 const VALID_PAYMENT_STATUSES: PaymentStatus[] = ['gratuito', 'pendente', 'pago', 'reembolsado', 'expirado', 'cortesia'];
 const VALID_PAYMENT_METHODS: PaymentMethod[] = ['pix', 'cartao', 'dinheiro', 'cortesia', 'gift', 'asaas_pix', 'asaas_boleto'];
 
@@ -240,7 +284,17 @@ export async function createPublicRegistration(
     return { registrationId: registration_id };
   }
 
-  // Paid registration — create Asaas payment
+  // Paid registration — health check + create Asaas payment
+  // 1. Verificar disponibilidade do Asaas ANTES de criar a inscrição
+  const asaasOk = await checkAsaasHealth();
+  if (!asaasOk) {
+    // Rollback imediato: não vale deixar inscrição pendente sem pagamento
+    await safeRollbackRegistration(supabase, registration_id, 'asaas_health_check_failed');
+    return {
+      error: 'O sistema de pagamentos está temporáriamente indisponível. Sua inscrição não foi cobrada. Por favor, tente novamente em alguns minutos.',
+    };
+  }
+
   try {
     const customerId = await createOrFindAsaasCustomer(name, email, phone, cpf);
     const description = `Ingresso: ${event.title}`;
@@ -253,13 +307,17 @@ export async function createPublicRegistration(
       payment = await createAsaasBoletoPayment(customerId, value, description, registration_id);
     } else {
       payment = await createAsaasPixPayment(customerId, value, description, registration_id);
+      // QR Code é opcional — falha aqui não é fatal, invoiceUrl funciona como fallback
       try {
         const pix = await getAsaasPixQrCode(payment.id);
         pixInfo = { qrCode: pix.encodedImage, copyPaste: pix.payload, expirationDate: pix.expirationDate };
-      } catch { /* PIX QR failed but we have invoiceUrl as fallback */ }
+      } catch (qrErr) {
+        console.warn('[createPublicRegistration] PIX QR Code falhou (usando invoiceUrl como fallback):', qrErr);
+      }
     }
 
-    await supabase
+    // UPDATE atômico: só avança o status após ter o payment.id
+    const { error: updateErr } = await supabase
       .from('event_registrations')
       .update({
         asaas_payment_id: payment.id,
@@ -267,6 +325,15 @@ export async function createPublicRegistration(
         payment_method: payMethod === 'boleto' ? 'asaas_boleto' : 'asaas_pix',
       })
       .eq('id', registration_id);
+
+    if (updateErr) {
+      // O pagamento foi criado no Asaas mas não associamos — log crítico
+      console.error('[createPublicRegistration] CRITICAL: Asaas payment created but DB update failed:', updateErr.message, { registration_id, payment_id: payment.id });
+      // Não deletar: o usuário pode ter sido cobrado. Marcar para reconciliação manual.
+      return {
+        error: 'Houve um problema ao registrar seu pagamento. Não será cobrado novamente. Entre em contato com a ICRE informando o código: ' + registration_id.slice(0, 8).toUpperCase(),
+      };
+    }
 
     await logEventHistory(eventId, 'inscrição_aguardando_pagamento', user?.id, null, { registration_id, payment_id: payment.id });
     revalidatePath(`/agenda/${eventId}`);
@@ -286,9 +353,20 @@ export async function createPublicRegistration(
       },
     };
   } catch (e) {
-    console.error('[createPublicRegistration] Asaas error:', e);
-    await supabase.from('event_registrations').delete().eq('id', registration_id);
-    return { error: 'Falha ao gerar o pagamento. Tente novamente em instantes.' };
+    const errMsg = e instanceof Error ? e.message : String(e);
+    console.error('[createPublicRegistration] Asaas error:', errMsg);
+
+    // Rollback seguro com retry e fallback para cancelamento
+    await safeRollbackRegistration(supabase, registration_id, errMsg);
+
+    // Diferenciar tipos de erro para mensagem mais útil
+    if (errMsg.includes('timeout') || errMsg.includes('abort')) {
+      return { error: 'O sistema de pagamentos demorou muito para responder. Sua inscrição foi cancelada e você não será cobrado. Tente novamente.' };
+    }
+    if (errMsg.includes('401') || errMsg.includes('403')) {
+      return { error: 'Erro de configuração no sistema de pagamentos. Contate a ICRE.' };
+    }
+    return { error: 'Falha ao gerar o pagamento. Sua inscrição foi cancelada e você não será cobrado. Tente novamente em instantes.' };
   }
 }
 

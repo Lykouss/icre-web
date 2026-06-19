@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import React from 'react';
 
 export const revalidate = 0;
 export const metadata = { title: 'Minhas Inscrições — ICRE' };
@@ -322,9 +323,6 @@ function RegistrationCard({
 
   const isCancelled = variant === 'cancelled';
 
-  // Ícone do tipo de evento
-  const eventTypeIcon = event.type === 'culto' ? '⛪' : '🎟️';
-
   const cardStyles = {
     confirmed: 'bg-slate-900/60 border-white/8 hover:border-white/14 hover:bg-slate-900/80',
     pending:   'bg-amber-500/4 border-amber-500/12 hover:border-amber-500/20',
@@ -336,13 +334,7 @@ function RegistrationCard({
       <div className="p-5 flex flex-col md:flex-row gap-4 items-start md:items-center">
 
         {/* Ícone do evento */}
-        <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 text-lg ${
-          variant === 'confirmed' ? 'bg-slate-800/80 border border-white/8' :
-          variant === 'pending'   ? 'bg-amber-500/10 border border-amber-500/15' :
-          'bg-slate-800/40 border border-white/5'
-        }`}>
-          {eventTypeIcon}
-        </div>
+        <EventTypeIcon type={event.type ?? ''} variant={variant} />
 
         {/* Informações */}
         <div className="flex-1 min-w-0">
@@ -417,6 +409,46 @@ function RegistrationCard({
         </div>
 
       </div>
+    </div>
+  );
+}
+
+// ─── Componente: EventTypeIcon ──────────────────────────────────────────────
+
+function EventTypeIcon({
+  type,
+  variant,
+}: {
+  type: string;
+  variant: 'confirmed' | 'pending' | 'cancelled';
+}) {
+  const bgStyles = {
+    confirmed: 'bg-slate-800/80 border border-white/8',
+    pending:   'bg-amber-500/10 border border-amber-500/15',
+    cancelled: 'bg-slate-800/40 border border-white/5',
+  };
+
+  const isCulto = type === 'culto' || type === 'culto_especial';
+
+  return (
+    <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${bgStyles[variant]}`}>
+      {isCulto ? (
+        // Ilustração: cruz/culto
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="10" y="2" width="4" height="20" rx="1.5" fill={variant === 'pending' ? '#f59e0b' : variant === 'cancelled' ? '#475569' : '#60a5fa'} opacity="0.9"/>
+          <rect x="4" y="8" width="16" height="4" rx="1.5" fill={variant === 'pending' ? '#f59e0b' : variant === 'cancelled' ? '#475569' : '#60a5fa'} opacity="0.9"/>
+        </svg>
+      ) : (
+        // Ilustração: ingresso/evento
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a2 2 0 0 0 0 4v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1a2 2 0 0 0 0-4V8z"
+            fill={variant === 'pending' ? '#f59e0b' : variant === 'cancelled' ? '#475569' : '#818cf8'}
+            opacity="0.85"
+          />
+          <line x1="9" y1="6" x2="9" y2="18" stroke={variant === 'cancelled' ? '#334155' : '#0f172a'} strokeWidth="1.5" strokeDasharray="2 2"/>
+        </svg>
+      )}
     </div>
   );
 }
