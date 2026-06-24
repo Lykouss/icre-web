@@ -86,8 +86,8 @@ function OpenTicketModal({
         setError(result.error ?? 'Erro no upload.');
         continue;
       }
-      const { signedUrl, path } = result.data;
-      const uploadRes = await supabase.storage.from('support_attachments').uploadToSignedUrl(path, signedUrl, file);
+      const { token, path } = result.data;
+      const uploadRes = await supabase.storage.from('support_attachments').uploadToSignedUrl(path, token, file);
       if (uploadRes.error) {
         setError('Erro ao enviar arquivo: ' + uploadRes.error.message);
         continue;
@@ -315,8 +315,8 @@ function ChatInterface({
     for (const file of files.slice(0, remaining)) {
       const result = await getSignedUploadUrl(file.name, file.type);
       if (result.error || !result.data) continue;
-      const { signedUrl, path } = result.data;
-      const res = await supabase.storage.from('support_attachments').uploadToSignedUrl(path, signedUrl, file);
+      const { token, path } = result.data;
+      const res = await supabase.storage.from('support_attachments').uploadToSignedUrl(path, token, file);
       if (!res.error) urls.push(path);
     }
 

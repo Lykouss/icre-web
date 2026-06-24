@@ -241,7 +241,7 @@ export async function closeUserTicket(ticketId: string): Promise<ActionResult> {
 export async function getSignedUploadUrl(
   fileName: string,
   fileType: string
-): Promise<ActionResult<{ signedUrl: string; path: string }>> {
+): Promise<ActionResult<{ token: string; path: string }>> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Não autenticado.' };
@@ -263,7 +263,7 @@ export async function getSignedUploadUrl(
     return { error: 'Erro ao preparar upload.' };
   }
 
-  return { data: { signedUrl: data.signedUrl, path } };
+  return { data: { token: data.token, path } };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
