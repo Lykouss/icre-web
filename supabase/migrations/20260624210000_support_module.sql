@@ -3,6 +3,7 @@
 -- 2026-06-24
 -- Criação das tabelas, Storage buckets, RLS policies, RPCs e índices para o
 -- módulo completo de suporte ao usuário.
+-- IDEMPOTENTE: seguro de re-executar mesmo que objetos já existam.
 -- =============================================================================
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -220,6 +221,13 @@ GRANT EXECUTE ON FUNCTION public.rpc_get_tickets_for_archive_cleanup() TO servic
 -- 9. RLS Policies — support_tickets
 -- ─────────────────────────────────────────────────────────────────────────────
 
+DROP POLICY IF EXISTS "tickets_select_own"   ON public.support_tickets;
+DROP POLICY IF EXISTS "tickets_select_admin" ON public.support_tickets;
+DROP POLICY IF EXISTS "tickets_insert_own"   ON public.support_tickets;
+DROP POLICY IF EXISTS "tickets_update_own"   ON public.support_tickets;
+DROP POLICY IF EXISTS "tickets_update_admin" ON public.support_tickets;
+DROP POLICY IF EXISTS "tickets_no_delete"    ON public.support_tickets;
+
 -- Usuário lê apenas os seus próprios tickets
 CREATE POLICY "tickets_select_own"
   ON public.support_tickets FOR SELECT
@@ -267,6 +275,13 @@ REVOKE ALL ON public.support_tickets FROM anon;
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 10. RLS Policies — support_ticket_messages
 -- ─────────────────────────────────────────────────────────────────────────────
+
+DROP POLICY IF EXISTS "msgs_select_own_ticket"  ON public.support_ticket_messages;
+DROP POLICY IF EXISTS "msgs_select_admin"        ON public.support_ticket_messages;
+DROP POLICY IF EXISTS "msgs_insert_own"          ON public.support_ticket_messages;
+DROP POLICY IF EXISTS "msgs_insert_admin"        ON public.support_ticket_messages;
+DROP POLICY IF EXISTS "msgs_update_read_admin"   ON public.support_ticket_messages;
+DROP POLICY IF EXISTS "msgs_no_delete"           ON public.support_ticket_messages;
 
 -- Usuário lê mensagens do seu ticket
 CREATE POLICY "msgs_select_own_ticket"
@@ -331,6 +346,10 @@ REVOKE ALL ON public.support_ticket_messages FROM anon;
 -- 11. RLS Policies — feedback
 -- ─────────────────────────────────────────────────────────────────────────────
 
+DROP POLICY IF EXISTS "feedback_insert_own"   ON public.feedback;
+DROP POLICY IF EXISTS "feedback_select_admin" ON public.feedback;
+DROP POLICY IF EXISTS "feedback_no_delete"    ON public.feedback;
+
 -- Usuário insere apenas para si mesmo
 CREATE POLICY "feedback_insert_own"
   ON public.feedback FOR INSERT
@@ -380,6 +399,10 @@ ON CONFLICT (id) DO NOTHING;
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 13. Storage RLS Policies — support_attachments
 -- ─────────────────────────────────────────────────────────────────────────────
+
+DROP POLICY IF EXISTS "support_attach_upload"    ON storage.objects;
+DROP POLICY IF EXISTS "support_attach_download"  ON storage.objects;
+DROP POLICY IF EXISTS "support_attach_no_delete" ON storage.objects;
 
 -- Upload: usuário autenticado pode fazer upload para pasta própria
 CREATE POLICY "support_attach_upload"
