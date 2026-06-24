@@ -251,6 +251,25 @@ function OpenTicketModal({
   );
 }
 
+// ─── Avatar Component ─────────────────────────────────────────────────────────
+
+function MsgAvatar({ name, avatarUrl, isAdmin }: { name: string; avatarUrl?: string | null; isAdmin: boolean }) {
+  const initials = name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+  const bg = isAdmin ? 'rgba(37,99,235,0.25)' : 'rgba(100,116,139,0.25)';
+  return (
+    <div
+      className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-[11px] font-bold text-white overflow-hidden"
+      style={{ background: bg, border: `1.5px solid ${isAdmin ? 'rgba(37,99,235,0.4)' : 'rgba(100,116,139,0.4)'}` }}
+    >
+      {avatarUrl
+        // eslint-disable-next-line @next/next/no-img-element
+        ? <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+        : initials
+      }
+    </div>
+  );
+}
+
 // ─── Chat Interface ───────────────────────────────────────────────────────────
 
 function ChatInterface({
@@ -288,11 +307,25 @@ function ChatInterface({
     }
   }, [messages, ticket.id]);
 
-  // Realtime subscription
+  // Realtime: ao receber um INSERT, buscamos a mensagem completa (com profiles) do banco
   useEffect(() => {
     const supabase = createClient();
+
+    async function fetchAndAppend(msgId: string) {
+      const { data } = await supabase
+        .from('support_ticket_messages')
+        .select('*, profiles(full_name, avatar_url)')
+        .eq('id', msgId)
+        .single();
+      if (!data) return;
+      setMessages(prev => {
+        if (prev.some(m => m.id === data.id)) return prev;
+        return [...prev, data as TicketMessageWithSender];
+      });
+    }
+
     const channel = supabase
-      .channel(`ticket_messages_${ticket.id}`)
+      .channel(`ticket_chat_${ticket.id}`)
       .on(
         'postgres_changes',
         {
@@ -301,15 +334,26 @@ function ChatInterface({
           table:  'support_ticket_messages',
           filter: `ticket_id=eq.${ticket.id}`,
         },
+        payload => { fetchAndAppend((payload.new as { id: string }).id); }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event:  'UPDATE',
+          schema: 'public',
+          table:  'support_ticket_messages',
+          filter: `ticket_id=eq.${ticket.id}`,
+        },
         payload => {
-          const newMsg = payload.new as TicketMessageWithSender;
-          setMessages(prev => {
-            if (prev.some(m => m.id === newMsg.id)) return prev;
-            return [...prev, newMsg];
-          });
+          const updated = payload.new as TicketMessageWithSender;
+          setMessages(prev => prev.map(m => m.id === updated.id ? { ...m, ...updated } : m));
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          // Subscription confirmed
+        }
+      });
 
     return () => { supabase.removeChannel(channel); };
   }, [ticket.id]);
@@ -340,12 +384,18 @@ function ChatInterface({
     e.preventDefault();
     if (!inputValue.trim() && uploadedUrls.length === 0) return;
     setError('');
+    const contentToSend = inputValue;
+    const urlsToSend = uploadedUrls;
+    setInputValue('');
+    setUploadedUrls([]);
     startTransition(async () => {
-      const result = await sendUserMessage(ticket.id, inputValue, uploadedUrls);
-      if (result.error) { setError(result.error); return; }
-      setInputValue('');
-      setUploadedUrls([]);
-      
+      const result = await sendUserMessage(ticket.id, contentToSend, urlsToSend);
+      if (result.error) {
+        setError(result.error);
+        setInputValue(contentToSend);
+        setUploadedUrls(urlsToSend);
+        return;
+      }
       if (result.data) {
         setMessages(prev => {
           if (prev.some(m => m.id === result.data!.id)) return prev;
@@ -403,7 +453,7 @@ function ChatInterface({
 
       {/* Messages */}
       <div
-        className="flex-1 overflow-y-auto px-5 py-4 space-y-4 portal-scroll"
+        className="flex-1 overflow-y-auto px-4 py-4 space-y-3 portal-scroll"
         style={{ background: 'rgba(6,11,23,0.8)', border: '1px solid rgba(255,255,255,0.06)', borderTop: 'none', borderBottom: 'none' }}
       >
         {messages.length === 0 && (
@@ -416,29 +466,52 @@ function ChatInterface({
 
         {messages.map((msg, i) => {
           const isOwn = msg.sender_id === userId && !msg.is_admin;
+          const senderName = msg.is_admin ? 'Suporte ICRE' : (msg.profiles?.full_name ?? 'Usuário');
+          const avatarUrl = (msg.profiles as { full_name: string; avatar_url?: string | null } | null)?.avatar_url;
           const showDate =
             i === 0 ||
             new Date(msg.created_at).toDateString() !==
               new Date(messages[i - 1].created_at).toDateString();
+          const showAvatar =
+            i === messages.length - 1 ||
+            messages[i + 1]?.sender_id !== msg.sender_id ||
+            messages[i + 1]?.is_admin !== msg.is_admin;
 
           return (
             <React.Fragment key={msg.id}>
               {showDate && (
-                <div className="flex items-center gap-3 my-2">
+                <div className="flex items-center gap-3 my-3">
                   <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
                   <span className="text-[10px] text-slate-600 font-medium">{formatDate(msg.created_at)}</span>
                   <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
                 </div>
               )}
-              <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                <div className="max-w-[75%] space-y-1">
-                  {!isOwn && (
-                    <p className="text-[10px] font-semibold text-blue-400 px-1">
-                      {msg.is_admin ? 'Suporte ICRE' : (msg.profiles?.full_name ?? 'Usuário')}
+
+              <div className={`flex items-end gap-2 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                {/* Avatar esquerda (não-próprio) */}
+                {!isOwn && (
+                  <div className="w-8 shrink-0">
+                    {showAvatar
+                      ? <MsgAvatar name={senderName} avatarUrl={avatarUrl} isAdmin={msg.is_admin} />
+                      : <div className="w-8" />
+                    }
+                  </div>
+                )}
+
+                <div className="max-w-[72%] space-y-0.5">
+                  {/* Nome do remetente */}
+                  {!isOwn && showAvatar && (
+                    <p className={`text-[10px] font-semibold px-1 ${msg.is_admin ? 'text-blue-400' : 'text-slate-400'}`}>
+                      {senderName}
                     </p>
                   )}
+                  {isOwn && showAvatar && (
+                    <p className="text-[10px] font-semibold text-slate-400 px-1 text-right">Você</p>
+                  )}
+
+                  {/* Bolha da mensagem */}
                   <div
-                    className="px-4 py-3 rounded-2xl text-[13px] leading-relaxed"
+                    className="px-4 py-2.5 rounded-2xl text-[13px] leading-relaxed"
                     style={
                       isOwn
                         ? { background: 'rgba(37,99,235,0.25)', color: '#dbeafe', border: '1px solid rgba(37,99,235,0.3)', borderBottomRightRadius: '4px' }
@@ -457,10 +530,22 @@ function ChatInterface({
                       </div>
                     )}
                   </div>
+
+                  {/* Timestamp */}
                   <p className={`text-[10px] text-slate-700 px-1 ${isOwn ? 'text-right' : 'text-left'}`}>
                     {formatTime(msg.created_at)}
                   </p>
                 </div>
+
+                {/* Avatar direita (próprio) */}
+                {isOwn && (
+                  <div className="w-8 shrink-0">
+                    {showAvatar
+                      ? <MsgAvatar name="Você" avatarUrl={null} isAdmin={false} />
+                      : <div className="w-8" />
+                    }
+                  </div>
+                )}
               </div>
             </React.Fragment>
           );
