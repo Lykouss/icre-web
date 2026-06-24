@@ -130,8 +130,8 @@ export function AdminTicketView({
     for (const file of files.slice(0, 3 - uploadedUrls.length)) {
       const result = await getSignedUploadUrl(file.name, file.type);
       if (result.error || !result.data) continue;
-      const { signedUrl, path } = result.data;
-      const res = await supabase.storage.from('support_attachments').uploadToSignedUrl(path, signedUrl, file);
+      const { token, path } = result.data;
+      const res = await supabase.storage.from('support_attachments').uploadToSignedUrl(path, token, file);
       if (!res.error) urls.push(path);
     }
     setUploadedUrls(prev => [...prev, ...urls]);
