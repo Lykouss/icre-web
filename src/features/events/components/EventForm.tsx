@@ -26,15 +26,15 @@ function formatBytes(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
-const inputCls = 'w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm text-slate-800 placeholder-slate-400 transition-all';
-const labelCls = 'block text-xs font-semibold text-slate-600 mb-1.5';
+const inputCls = 'w-full px-3 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm transition-all bg-[var(--admin-surface-alt)] border-[var(--admin-border)] text-[var(--admin-text-primary)] placeholder-slate-500';
+const labelCls = 'block text-xs font-semibold mb-1.5 text-[var(--admin-text-secondary)]';
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <div>
       <label className={labelCls}>{label}</label>
       {children}
-      {hint && <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">{hint}</p>}
+      {hint && <p className="text-[11px] mt-1.5 leading-relaxed text-[var(--admin-text-muted)]">{hint}</p>}
     </div>
   );
 }
@@ -42,8 +42,8 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
 function SectionDivider({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3 py-1 mt-6 mb-2">
-      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">{label}</span>
-      <div className="flex-1 h-px bg-slate-100" />
+      <span className="text-xs font-bold uppercase tracking-widest whitespace-nowrap text-[var(--admin-text-muted)]">{label}</span>
+      <div className="flex-1 h-px bg-[var(--admin-border)]" />
     </div>
   );
 }
@@ -64,15 +64,15 @@ function Toggle({
       type="button"
       onClick={() => onChange(!checked)}
       className={`flex items-center justify-between w-full px-4 py-3 rounded-xl border-2 transition-all text-left ${checked
-          ? 'border-blue-400 bg-blue-50'
-          : 'border-slate-200 hover:border-slate-300 bg-white'
+          ? 'border-blue-500/50 bg-blue-500/10'
+          : 'border-[var(--admin-border)] hover:bg-white/5 bg-[var(--admin-surface)]'
         }`}
     >
       <div>
-        <p className={`text-sm font-semibold ${checked ? 'text-blue-700' : 'text-slate-700'}`}>{label}</p>
-        <p className="text-xs text-slate-400 mt-0.5">{description}</p>
+        <p className={`text-sm font-semibold ${checked ? 'text-blue-400' : 'text-[var(--admin-text-primary)]'}`}>{label}</p>
+        <p className="text-xs mt-0.5 text-[var(--admin-text-secondary)]">{description}</p>
       </div>
-      <div className={`relative w-11 h-6 rounded-full flex-shrink-0 transition-colors ${checked ? 'bg-blue-600' : 'bg-slate-300'}`}>
+      <div className={`relative w-11 h-6 rounded-full flex-shrink-0 transition-colors ${checked ? 'bg-blue-600' : 'bg-slate-700'}`}>
         <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
       </div>
     </button>
@@ -259,7 +259,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
         {formData.banner_url ? (
           <div className="space-y-2">
             <div
-              className="relative h-44 w-full rounded-2xl overflow-hidden border border-slate-200 cursor-pointer group"
+              className="relative h-44 w-full rounded-2xl overflow-hidden border cursor-pointer group border-[var(--admin-border)]"
               onClick={() => { setIsGalleryOpen(true); loadGallery(); }}
             >
               <Image src={formData.banner_url} alt="Banner" fill className="object-cover" />
@@ -272,7 +272,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
             <button
               type="button"
               onClick={() => setFormData(p => ({ ...p, banner_url: '' }))}
-              className="flex items-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-700 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-semibold text-red-400 hover:text-red-300 transition-colors"
             >
               <XIcon className="w-3.5 h-3.5" /> Remover imagem
             </button>
@@ -280,10 +280,10 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
         ) : (
           <div
             onClick={() => { setIsGalleryOpen(true); loadGallery(); }}
-            className="relative h-44 w-full border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 group transition-all"
+            className="relative h-44 w-full border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-500/10 group transition-all border-[var(--admin-border)] bg-[var(--admin-surface-alt)]"
           >
-            <ImageIcon className="w-8 h-8 text-slate-300 group-hover:text-blue-400 mb-2 transition-colors" />
-            <span className="text-sm text-slate-400 group-hover:text-blue-600 font-medium transition-colors">Selecionar da galeria</span>
+            <ImageIcon className="w-8 h-8 group-hover:text-blue-400 mb-2 transition-colors text-slate-500" />
+            <span className="text-sm font-medium transition-colors text-[var(--admin-text-muted)] group-hover:text-blue-400">Selecionar da galeria</span>
           </div>
         )}
       </Field>
@@ -329,6 +329,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
               <input
                 type="date"
                 className={inputCls}
+                style={{ colorScheme: 'dark' }}
                 value={formData.date || ''}
                 onChange={e => setFormData(p => ({ ...p, date: e.target.value }))}
               />
@@ -337,13 +338,14 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
               <input
                 type="time"
                 className={inputCls}
+                style={{ colorScheme: 'dark' }}
                 value={formData.time || ''}
                 onChange={e => setFormData(p => ({ ...p, time: e.target.value }))}
               />
             </Field>
           </div>
         ) : (
-          <div className="space-y-4 p-4 border border-blue-100 bg-blue-50/50 rounded-xl">
+          <div className="space-y-4 p-4 border rounded-xl border-blue-500/30 bg-blue-500/5">
             <div className="flex gap-4">
               <Field label="Tipo de Recorrência">
                 <select
@@ -362,6 +364,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                 <input
                   type="time"
                   className={inputCls}
+                  style={{ colorScheme: 'dark' }}
                   value={formData.time || ''}
                   onChange={e => setFormData(p => ({ ...p, time: e.target.value }))}
                 />
@@ -382,7 +385,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                           const newDays = active ? daysList.filter((d: number) => d !== idx) : [...daysList, idx];
                           setFormData(p => ({ ...p, recurrence_rules: { ...p.recurrence_rules, type: 'weekly', days: newDays } }));
                         }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${active ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-100'}`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${active ? 'bg-blue-600 text-white' : 'border hover:bg-white/5 bg-[var(--admin-surface)] border-[var(--admin-border)] text-[var(--admin-text-secondary)]'}`}
                       >
                         {day}
                       </button>
@@ -435,7 +438,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
         <p className="text-sm text-slate-500 mb-2">Adicione perguntas ou campos extras que o usuário deverá preencher no momento da inscrição.</p>
 
         {customFields.map((field, index) => (
-          <div key={field.id} className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 relative">
+          <div key={field.id} className="p-4 rounded-xl space-y-3 relative border" style={{ background: 'var(--admin-surface-alt)', borderColor: 'var(--admin-border)' }}>
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -705,9 +708,10 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           type="button"
           onClick={() => handleSubmit('rascunho')}
           disabled={isSubmitDisabled}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm disabled:opacity-40"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm disabled:opacity-40 border hover:bg-white/5"
+          style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)', color: 'var(--admin-text-primary)' }}
         >
-          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <SaveIcon className="w-4 h-4 text-slate-400" />}
+          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <SaveIcon className="w-4 h-4" style={{ color: 'var(--admin-text-muted)' }} />}
           Rascunho
         </button>
         <button
@@ -725,26 +729,27 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
       <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
         <DialogContent className="max-w-3xl p-0 overflow-hidden" showCloseButton={false}>
           <DialogTitle className="sr-only">Galeria de Imagens</DialogTitle>
-          <div className="bg-white rounded-2xl shadow-2xl w-full flex flex-col max-h-[85vh]">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+          <div className="rounded-2xl shadow-2xl w-full flex flex-col max-h-[85vh] border" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+            <div className="flex items-center justify-between px-6 py-4 border-b shrink-0" style={{ borderColor: 'var(--admin-border)' }}>
               <div>
-                <h3 className="font-bold text-slate-900">Galeria de imagens</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Selecione ou envie uma imagem</p>
+                <h3 className="font-bold" style={{ color: 'var(--admin-text-primary)' }}>Galeria de imagens</h3>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--admin-text-secondary)' }}>Selecione ou envie uma imagem</p>
               </div>
               <button
                 onClick={() => setIsGalleryOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg transition-colors hover:bg-white/5"
+                style={{ color: 'var(--admin-text-muted)' }}
               >
                 <XIcon className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="px-6 py-3 border-b border-slate-100 shrink-0">
-              <div className="flex justify-between text-xs font-medium text-slate-500 mb-2">
+            <div className="px-6 py-3 border-b shrink-0" style={{ borderColor: 'var(--admin-border)' }}>
+              <div className="flex justify-between text-xs font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>
                 <span>Armazenamento utilizado</span>
-                <span className={usedPct > 85 ? 'text-red-500 font-semibold' : ''}>{usedMB.toFixed(1)} MB / {QUOTA_MB} MB</span>
+                <span className={usedPct > 85 ? 'text-red-400 font-semibold' : ''}>{usedMB.toFixed(1)} MB / {QUOTA_MB} MB</span>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-1.5">
+              <div className="w-full rounded-full h-1.5" style={{ background: 'var(--admin-surface-alt)' }}>
                 <div
                   className={`h-1.5 rounded-full transition-all ${usedPct > 85 ? 'bg-red-500' : usedPct > 60 ? 'bg-amber-400' : 'bg-blue-500'}`}
                   style={{ width: `${usedPct}%` }}
@@ -752,12 +757,12 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
               </div>
             </div>
 
-            <div className="px-6 py-3 border-b border-slate-100 shrink-0">
-              <label className={`flex items-center justify-center gap-2 py-3 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${isUploading ? 'border-slate-200 text-slate-400' : 'border-slate-300 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 text-slate-500'}`}>
+            <div className="px-6 py-3 border-b shrink-0" style={{ borderColor: 'var(--admin-border)' }}>
+              <label className={`flex items-center justify-center gap-2 py-3 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${isUploading ? 'border-[var(--admin-border)] text-slate-500' : 'border-[var(--admin-border)] hover:border-blue-400 hover:text-blue-400 hover:bg-blue-500/10 text-[var(--admin-text-secondary)]'}`}>
                 {isUploading ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-sm font-semibold">Enviando...</span></>
                 ) : (
-                  <><ImageIcon className="w-4 h-4" /><span className="text-sm font-semibold">Enviar imagem</span><span className="text-xs text-slate-400">JPG, PNG, WebP · Máx. 10 MB</span></>
+                  <><ImageIcon className="w-4 h-4" /><span className="text-sm font-semibold">Enviar imagem</span><span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>JPG, PNG, WebP · Máx. 10 MB</span></>
                 )}
                 <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="sr-only" onChange={handleUploadImage} disabled={isUploading} />
               </label>

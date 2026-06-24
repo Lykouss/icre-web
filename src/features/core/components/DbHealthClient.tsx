@@ -47,17 +47,18 @@ function TableIcon({ icon }: { icon: string }) {
 
 function StatCard({ stat }: { stat: TableStat }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all group">
+    <div className="rounded-2xl border p-5 transition-all group" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
       <div className="flex items-start justify-between mb-4">
-        <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+             style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-secondary)' }}>
           <TableIcon icon={stat.icon} />
         </div>
-        <span className="text-2xl font-black text-slate-900 tabular-nums">
+        <span className="text-2xl font-black tabular-nums" style={{ color: 'var(--admin-text-primary)' }}>
           {stat.count.toLocaleString('pt-BR')}
         </span>
       </div>
-      <p className="text-sm font-medium text-slate-600">{stat.label}</p>
-      <p className="text-xs text-slate-400 mt-0.5">{stat.name}</p>
+      <p className="text-sm font-medium" style={{ color: 'var(--admin-text-secondary)' }}>{stat.label}</p>
+      <p className="text-xs mt-0.5" style={{ color: 'var(--admin-text-muted)' }}>{stat.name}</p>
     </div>
   );
 }
@@ -69,19 +70,19 @@ function BucketCard({ bucket }: { bucket: BucketStat }) {
     pct > 60 ? 'bg-amber-500' :
     'bg-blue-500';
   const labelColor =
-    pct > 85 ? 'text-red-600' :
-    pct > 60 ? 'text-amber-600' :
-    'text-slate-500';
+    pct > 85 ? 'text-red-400' :
+    pct > 60 ? 'text-amber-400' :
+    'text-slate-300';
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+    <div className="rounded-2xl border p-5" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
       <div className="flex items-center justify-between mb-3">
-        <p className="text-sm font-semibold text-slate-800">{bucket.label}</p>
-        <span className="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">
+        <p className="text-sm font-semibold" style={{ color: 'var(--admin-text-primary)' }}>{bucket.label}</p>
+        <span className="text-xs font-medium px-2 py-1 rounded-lg" style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-secondary)' }}>
           {bucket.fileCount} arquivo{bucket.fileCount !== 1 ? 's' : ''}
         </span>
       </div>
-      <div className="w-full bg-slate-100 rounded-full h-2 mb-2">
+      <div className="w-full rounded-full h-2 mb-2" style={{ background: 'var(--admin-surface-alt)' }}>
         <div
           className={`h-2 rounded-full transition-all duration-700 ${barColor}`}
           style={{ width: `${pct}%` }}
@@ -89,10 +90,11 @@ function BucketCard({ bucket }: { bucket: BucketStat }) {
       </div>
       <div className="flex items-center justify-between text-xs">
         <span className={`font-semibold ${labelColor}`}>{formatBytes(bucket.usedBytes)}</span>
-        <span className="text-slate-400">de {formatBytes(bucket.quotaBytes)}</span>
+        <span style={{ color: 'var(--admin-text-muted)' }}>de {formatBytes(bucket.quotaBytes)}</span>
       </div>
       {pct > 85 && (
-        <div className="mt-3 flex items-center gap-1.5 text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+        <div className="mt-3 flex items-center gap-1.5 text-xs text-red-400 border rounded-lg px-3 py-2"
+          style={{ background: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
           <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
@@ -105,19 +107,18 @@ function BucketCard({ bucket }: { bucket: BucketStat }) {
 
 function ModuleRow({ mod }: { mod: ModuleStat }) {
   return (
-    <div className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 transition-colors rounded-xl">
+    <div className="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/50 transition-colors">
       <div className="flex items-center gap-3">
-        <div className={`w-2 h-2 rounded-full shrink-0 ${mod.is_active ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+        <div className={`w-2 h-2 rounded-full shrink-0 ${mod.is_active ? 'bg-emerald-500' : 'bg-slate-600'}`} />
         <div>
-          <p className="text-sm font-medium text-slate-800">{mod.name}</p>
-          <p className="text-xs text-slate-400">{mod.slug}</p>
+          <p className="text-sm font-medium" style={{ color: 'var(--admin-text-primary)' }}>{mod.name}</p>
+          <p className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{mod.slug}</p>
         </div>
       </div>
-      <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-        mod.is_active
-          ? 'bg-emerald-100 text-emerald-700'
-          : 'bg-slate-100 text-slate-500'
-      }`}>
+      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full" style={{
+        background: mod.is_active ? 'rgba(16, 185, 129, 0.1)' : 'var(--admin-surface-alt)',
+        color: mod.is_active ? '#34d399' : 'var(--admin-text-muted)'
+      }}>
         {mod.is_active ? 'Ativo' : 'Inativo'}
       </span>
     </div>
@@ -126,21 +127,21 @@ function ModuleRow({ mod }: { mod: ModuleStat }) {
 
 function LogRow({ log }: { log: RecentAuditLog }) {
   return (
-    <div className="flex items-center gap-4 px-4 py-3 hover:bg-slate-50 transition-colors rounded-xl">
+    <div className="flex items-center gap-4 px-4 py-3 rounded-xl" style={{ background: 'var(--admin-surface-alt)' }}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-slate-800 truncate">
+          <p className="text-sm font-semibold truncate" style={{ color: 'var(--admin-text-primary)' }}>
             {ACTION_LABELS[log.action] ?? log.action}
           </p>
-          <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md shrink-0">
+          <span className="text-xs px-2 py-0.5 rounded-md shrink-0" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--admin-text-muted)' }}>
             {log.entity_name}
           </span>
         </div>
-        <p className="text-xs text-slate-400 mt-0.5">
+        <p className="text-xs mt-0.5" style={{ color: 'var(--admin-text-secondary)' }}>
           {log.actor_name} · {log.actor_role}
         </p>
       </div>
-      <p className="text-xs text-slate-400 whitespace-nowrap shrink-0">
+      <p className="text-[11px] whitespace-nowrap shrink-0" style={{ color: 'var(--admin-text-muted)' }}>
         {new Date(log.created_at).toLocaleString('pt-BR', {
           day: '2-digit', month: '2-digit',
           hour: '2-digit', minute: '2-digit',
@@ -176,35 +177,35 @@ export function DbHealthClient({ data }: DbHealthClientProps) {
       {/* Cards de resumo */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Total de usuários',  value: data.totalUsers.toLocaleString('pt-BR'),    color: 'text-blue-700',    bg: 'bg-blue-50 border-blue-200'    },
-          { label: 'Total de registros', value: totalRecords.toLocaleString('pt-BR'),       color: 'text-slate-700',   bg: 'bg-white border-slate-200'     },
-          { label: 'Storage total',      value: formatBytes(totalStorage),                  color: 'text-purple-700',  bg: 'bg-purple-50 border-purple-200' },
-          { label: 'Módulos ativos',     value: `${activeModules}/${data.modules.length}`,  color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
+          { label: 'Total de usuários',  value: data.totalUsers.toLocaleString('pt-BR'),    color: '#60a5fa', bg: 'rgba(59, 130, 246, 0.1)'    },
+          { label: 'Total de registros', value: totalRecords.toLocaleString('pt-BR'),       color: '#94a3b8', bg: 'var(--admin-surface-alt)'     },
+          { label: 'Storage total',      value: formatBytes(totalStorage),                  color: '#c084fc', bg: 'rgba(168, 85, 247, 0.1)' },
+          { label: 'Módulos ativos',     value: `${activeModules}/${data.modules.length}`,  color: '#34d399', bg: 'rgba(16, 185, 129, 0.1)' },
         ].map(card => (
-          <div key={card.label} className={`rounded-2xl border p-5 shadow-sm ${card.bg}`}>
-            <p className="text-xs font-medium text-slate-500">{card.label}</p>
-            <p className={`text-2xl font-black mt-1 ${card.color}`}>{card.value}</p>
+          <div key={card.label} className="rounded-2xl p-5" style={{ background: card.bg }}>
+            <p className="text-xs font-medium" style={{ color: 'var(--admin-text-secondary)' }}>{card.label}</p>
+            <p className="text-2xl font-black mt-1" style={{ color: card.color }}>{card.value}</p>
           </div>
         ))}
       </div>
 
       {/* Abas */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="flex border-b border-slate-100 overflow-x-auto">
+      <div className="rounded-2xl border overflow-hidden" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+        <div className="flex overflow-x-auto border-b" style={{ borderColor: 'var(--admin-border)' }}>
           {tabs.map(t => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
               className={`flex items-center gap-2 px-5 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 -mb-px transition-colors ${
                 tab === t.id
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
+                  ? 'border-blue-500 text-blue-400'
+                  : 'border-transparent text-slate-400 hover:text-slate-300'
               }`}
             >
               {t.label}
               {t.count !== undefined && (
-                <span className={`text-xs px-1.5 py-0.5 rounded-md font-bold ${
-                  tab === t.id ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold ${
+                  tab === t.id ? 'bg-blue-500/20 text-blue-400' : 'bg-white/5 text-slate-400'
                 }`}>
                   {t.count}
                 </span>
@@ -213,7 +214,7 @@ export function DbHealthClient({ data }: DbHealthClientProps) {
           ))}
         </div>
 
-        <div className="p-4">
+        <div className="p-4 min-h-[400px]">
 
           {/* Tabelas */}
           {tab === 'tabelas' && (
@@ -231,9 +232,9 @@ export function DbHealthClient({ data }: DbHealthClientProps) {
 
           {/* Módulos */}
           {tab === 'modulos' && (
-            <div className="divide-y divide-slate-50">
+            <div className="space-y-1">
               {data.modules.length === 0 ? (
-                <p className="text-sm text-slate-400 text-center py-8">Nenhum módulo encontrado.</p>
+                <p className="text-sm text-center py-8" style={{ color: 'var(--admin-text-muted)' }}>Nenhum módulo encontrado.</p>
               ) : (
                 data.modules.map(mod => <ModuleRow key={mod.slug} mod={mod} />)
               )}
@@ -242,9 +243,9 @@ export function DbHealthClient({ data }: DbHealthClientProps) {
 
           {/* Logs */}
           {tab === 'logs' && (
-            <div className="divide-y divide-slate-50">
+            <div className="space-y-2">
               {data.recentLogs.length === 0 ? (
-                <p className="text-sm text-slate-400 text-center py-8">Nenhuma atividade recente.</p>
+                <p className="text-sm text-center py-8" style={{ color: 'var(--admin-text-muted)' }}>Nenhuma atividade recente.</p>
               ) : (
                 data.recentLogs.map(log => <LogRow key={log.id} log={log} />)
               )}

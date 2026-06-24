@@ -89,15 +89,15 @@ function RegistrationSheet({
 }) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-white shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
+      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-md shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 border-l" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+        <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 z-10" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
           <div>
-            <h3 className="font-bold text-slate-900">{reg.name}</h3>
-            <p className="text-xs text-slate-400">Detalhes da inscrição</p>
+            <h3 className="font-bold" style={{ color: 'var(--admin-text-primary)' }}>{reg.name}</h3>
+            <p className="text-xs" style={{ color: 'var(--admin-text-secondary)' }}>Detalhes da inscrição</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 transition-colors">
-            <XIcon className="w-5 h-5 text-slate-500" />
+          <button onClick={onClose} className="p-2 rounded-xl transition-colors hover:bg-white/5">
+            <XIcon className="w-5 h-5" style={{ color: 'var(--admin-text-muted)' }} />
           </button>
         </div>
 
@@ -120,24 +120,24 @@ function RegistrationSheet({
 
           {/* Personal data */}
           <section>
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Dados Pessoais</h4>
-            <div className="space-y-2 text-sm">
-              {reg.email && <p><span className="font-semibold text-slate-500">E-mail:</span> {reg.email}</p>}
-              {reg.cpf && <p><span className="font-semibold text-slate-500">CPF:</span> {reg.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</p>}
-              {reg.phone && <p><span className="font-semibold text-slate-500">Telefone:</span> {reg.phone}</p>}
-              <p><span className="font-semibold text-slate-500">Inscrito em:</span> {formatDateTime(reg.created_at)}</p>
+            <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--admin-text-muted)' }}>Dados Pessoais</h4>
+            <div className="space-y-2 text-sm" style={{ color: 'var(--admin-text-primary)' }}>
+              {reg.email && <p><span className="font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>E-mail:</span> {reg.email}</p>}
+              {reg.cpf && <p><span className="font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>CPF:</span> {reg.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</p>}
+              {reg.phone && <p><span className="font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>Telefone:</span> {reg.phone}</p>}
+              <p><span className="font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>Inscrito em:</span> {formatDateTime(reg.created_at)}</p>
             </div>
           </section>
 
           {/* Dynamic form responses */}
           {reg.custom_form_responses && Object.keys(reg.custom_form_responses).length > 0 && (
             <section>
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Respostas do Formulário</h4>
+              <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--admin-text-muted)' }}>Respostas do Formulário</h4>
               <div className="space-y-3">
                 {Object.entries(reg.custom_form_responses as CustomFormResponses).map(([key, value]) => (
-                  <div key={key} className="bg-slate-50 rounded-xl px-4 py-3">
-                    <p className="text-xs font-semibold text-slate-500 mb-1">{key}</p>
-                    <p className="text-sm text-slate-800">{Array.isArray(value) ? value.join(', ') : value}</p>
+                  <div key={key} className="rounded-xl px-4 py-3" style={{ background: 'var(--admin-surface-alt)' }}>
+                    <p className="text-xs font-semibold mb-1" style={{ color: 'var(--admin-text-secondary)' }}>{key}</p>
+                    <p className="text-sm" style={{ color: 'var(--admin-text-primary)' }}>{Array.isArray(value) ? value.join(', ') : value}</p>
                   </div>
                 ))}
               </div>
@@ -147,13 +147,13 @@ function RegistrationSheet({
           {/* Asaas payment info */}
           {reg.asaas_payment_id && (
             <section>
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Status Asaas</h4>
-              <div className="bg-slate-50 rounded-xl px-4 py-3 space-y-1 text-sm">
-                <p><span className="font-semibold text-slate-500">ID Transação:</span> <code className="text-xs">{reg.asaas_payment_id}</code></p>
-                {reg.paid_at && <p><span className="font-semibold text-slate-500">Pago em:</span> {formatDateTime(reg.paid_at)}</p>}
+              <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--admin-text-muted)' }}>Status Asaas</h4>
+              <div className="rounded-xl px-4 py-3 space-y-1 text-sm" style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-primary)' }}>
+                <p><span className="font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>ID Transação:</span> <code className="text-xs">{reg.asaas_payment_id}</code></p>
+                {reg.paid_at && <p><span className="font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>Pago em:</span> {formatDateTime(reg.paid_at)}</p>}
                 {reg.asaas_invoice_url && (
                   <a href={reg.asaas_invoice_url} target="_blank" rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-xs">Ver fatura ↗</a>
+                    className="hover:underline text-xs" style={{ color: '#60a5fa' }}>Ver fatura ↗</a>
                 )}
               </div>
             </section>
@@ -162,25 +162,25 @@ function RegistrationSheet({
           {/* IP tracking */}
           {reg.ip_address && (
             <section>
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Rastreamento</h4>
-              <div className="bg-slate-50 rounded-xl px-4 py-3 text-sm space-y-1">
-                <p><span className="font-semibold text-slate-500">IP:</span> {reg.ip_address}</p>
-                {reg.device_id && <p><span className="font-semibold text-slate-500">Device ID:</span> <code className="text-xs break-all">{reg.device_id.slice(0, 16)}…</code></p>}
+              <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--admin-text-muted)' }}>Rastreamento</h4>
+              <div className="rounded-xl px-4 py-3 text-sm space-y-1" style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-primary)' }}>
+                <p><span className="font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>IP:</span> {reg.ip_address}</p>
+                {reg.device_id && <p><span className="font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>Device ID:</span> <code className="text-xs break-all">{reg.device_id.slice(0, 16)}…</code></p>}
               </div>
             </section>
           )}
 
           {/* Check-in status */}
           <section>
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Check-in</h4>
-            <div className={`rounded-xl px-4 py-3 text-sm ${reg.checkin_status ? 'bg-green-50' : 'bg-slate-50'}`}>
+            <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--admin-text-muted)' }}>Check-in</h4>
+            <div className={`rounded-xl px-4 py-3 text-sm`} style={{ background: reg.checkin_status ? 'rgba(16, 185, 129, 0.1)' : 'var(--admin-surface-alt)' }}>
               {reg.checkin_status ? (
-                <div className="text-green-700">
+                <div style={{ color: '#34d399' }}>
                   <p className="font-bold">✓ Realizado</p>
                   {reg.checkin_time && <p className="text-xs mt-1">{formatDateTime(reg.checkin_time)}</p>}
                 </div>
               ) : (
-                <p className="text-slate-400">Pendente</p>
+                <p style={{ color: 'var(--admin-text-muted)' }}>Pendente</p>
               )}
             </div>
           </section>
@@ -220,29 +220,29 @@ function GiftModal({ eventId, onClose }: { eventId: string; onClose: () => void 
     });
   };
 
-  const inputCls = 'w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm';
+  const inputCls = 'w-full px-3 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-[var(--admin-surface-alt)] border-[var(--admin-border)] text-[var(--admin-text-primary)]';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4">
+      <div className="rounded-2xl shadow-xl w-full max-w-sm p-6 border" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
-            <GiftIcon className="w-5 h-5 text-pink-500" />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(236, 72, 153, 0.1)' }}>
+            <GiftIcon className="w-5 h-5" style={{ color: '#f472b6' }} />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900">Presentear Inscrição</h3>
-            <p className="text-xs text-slate-400">Cortesia — sem cobrança</p>
+            <h3 className="font-bold" style={{ color: 'var(--admin-text-primary)' }}>Presentear Inscrição</h3>
+            <p className="text-xs" style={{ color: 'var(--admin-text-secondary)' }}>Cortesia — sem cobrança</p>
           </div>
-          <button onClick={onClose} className="ml-auto p-1.5 rounded-lg hover:bg-slate-100"><XIcon className="w-4 h-4" /></button>
+          <button onClick={onClose} className="ml-auto p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: 'var(--admin-text-muted)' }}><XIcon className="w-4 h-4" /></button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-3">
-          <div><label className="block text-xs font-semibold text-slate-600 mb-1">Nome *</label><input className={inputCls} value={name} onChange={e => setName(e.target.value)} placeholder="Nome completo" required /></div>
-          <div><label className="block text-xs font-semibold text-slate-600 mb-1">E-mail</label><input type="email" className={inputCls} value={email} onChange={e => setEmail(e.target.value)} placeholder="email@exemplo.com" /></div>
-          <div><label className="block text-xs font-semibold text-slate-600 mb-1">Telefone</label><input type="tel" className={inputCls} value={phone} onChange={e => setPhone(e.target.value)} placeholder="(00) 00000-0000" /></div>
-          <div><label className="block text-xs font-semibold text-slate-600 mb-1">CPF</label><input className={inputCls} value={cpf} onChange={e => setCpf(e.target.value)} placeholder="000.000.000-00" /></div>
+          <div><label className="block text-xs font-semibold mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Nome *</label><input className={inputCls} value={name} onChange={e => setName(e.target.value)} placeholder="Nome completo" required /></div>
+          <div><label className="block text-xs font-semibold mb-1" style={{ color: 'var(--admin-text-secondary)' }}>E-mail</label><input type="email" className={inputCls} value={email} onChange={e => setEmail(e.target.value)} placeholder="email@exemplo.com" /></div>
+          <div><label className="block text-xs font-semibold mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Telefone</label><input type="tel" className={inputCls} value={phone} onChange={e => setPhone(e.target.value)} placeholder="(00) 00000-0000" /></div>
+          <div><label className="block text-xs font-semibold mb-1" style={{ color: 'var(--admin-text-secondary)' }}>CPF</label><input className={inputCls} value={cpf} onChange={e => setCpf(e.target.value)} placeholder="000.000.000-00" /></div>
           <div className="flex gap-3 pt-1">
-            <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancelar</button>
-            <button type="submit" disabled={isPending} className="flex-1 py-2.5 rounded-xl bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold disabled:opacity-50 flex items-center justify-center gap-2">
+            <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-xl border text-sm font-semibold transition-colors hover:bg-white/5" style={{ borderColor: 'var(--admin-border)', color: 'var(--admin-text-secondary)' }}>Cancelar</button>
+            <button type="submit" disabled={isPending} className="flex-1 py-2.5 rounded-xl text-white text-sm font-bold disabled:opacity-50 flex items-center justify-center gap-2" style={{ background: '#db2777' }}>
               {isPending ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <GiftIcon className="w-4 h-4" />}
               Presentear
             </button>
@@ -283,21 +283,21 @@ export function RegistrationsPanel({ eventId, registrations, members, capacity, 
     });
   };
 
-  const inputClass = 'px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm';
+  const inputClass = 'px-4 py-2 border rounded-xl focus:outline-none focus:border-blue-500 text-sm transition-all bg-[var(--admin-surface-alt)] border-[var(--admin-border)] text-[var(--admin-text-primary)]';
 
   return (
     <div className="animate-in fade-in duration-300 max-w-4xl">
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         {([
-          { label: 'Inscritos',  value: confirmed.length,                                                  color: 'text-slate-800' },
-          { label: 'Vagas',      value: capacity ? capacity - confirmed.length : '∞',                      color: 'text-slate-800' },
-          { label: 'Pagos',      value: registrations.filter(r => r.payment_status === 'pago').length,     color: 'text-green-700' },
-          { label: 'Pendentes',  value: registrations.filter(r => r.payment_status === 'pendente').length, color: 'text-amber-700' },
+          { label: 'Inscritos',  value: confirmed.length,                                                  color: 'var(--admin-text-primary)' },
+          { label: 'Vagas',      value: capacity ? capacity - confirmed.length : '∞',                      color: 'var(--admin-text-primary)' },
+          { label: 'Pagos',      value: registrations.filter(r => r.payment_status === 'pago').length,     color: '#34d399' },
+          { label: 'Pendentes',  value: registrations.filter(r => r.payment_status === 'pendente').length, color: '#fbbf24' },
         ] as const).map(card => (
-          <div key={card.label} className="bg-white rounded-2xl border border-slate-200 px-4 py-3 shadow-sm">
-            <p className="text-xs text-slate-400 font-medium">{card.label}</p>
-            <p className={`text-2xl font-bold mt-1 ${card.color}`}>{card.value}</p>
+          <div key={card.label} className="rounded-2xl border px-4 py-3 shadow-sm" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+            <p className="text-xs font-medium" style={{ color: 'var(--admin-text-muted)' }}>{card.label}</p>
+            <p className="text-2xl font-bold mt-1" style={{ color: card.color }}>{card.value}</p>
           </div>
         ))}
       </div>
@@ -307,7 +307,8 @@ export function RegistrationsPanel({ eventId, registrations, members, capacity, 
         <div className="flex gap-3 mb-4">
           <button
             onClick={() => setShowGiftModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-50 border border-pink-200 text-pink-700 text-sm font-semibold hover:bg-pink-100 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-semibold transition-colors hover:bg-white/5"
+            style={{ borderColor: 'rgba(236, 72, 153, 0.3)', color: '#f472b6', background: 'rgba(236, 72, 153, 0.05)' }}
           >
             <GiftIcon className="w-4 h-4" /> Presentear Inscrição
           </button>
@@ -328,52 +329,52 @@ export function RegistrationsPanel({ eventId, registrations, members, capacity, 
             <option key={s} value={s}>{PAYMENT_STATUS_LABELS[s]}</option>
           ))}
         </select>
-        <button onClick={() => exportToCSV(filtered)} className="px-4 py-2 font-semibold bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors text-sm shrink-0">
+        <button onClick={() => exportToCSV(filtered)} className="px-4 py-2 font-semibold rounded-xl transition-colors text-sm shrink-0 hover:bg-white/5" style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-primary)' }}>
           Exportar CSV
         </button>
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-        <div className="px-4 py-3 border-b border-slate-100">
-          <p className="text-xs text-slate-400 font-medium">{filtered.length} inscrições · {occupancy} confirmadas</p>
+      <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+        <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--admin-border)' }}>
+          <p className="text-xs font-medium" style={{ color: 'var(--admin-text-muted)' }}>{filtered.length} inscrições · {occupancy} confirmadas</p>
         </div>
 
         {filtered.length === 0 ? (
           <div className="py-12 text-center">
-            <UserIcon className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-            <p className="text-sm text-slate-400">Nenhuma inscrição encontrada.</p>
+            <UserIcon className="w-10 h-10 mx-auto mb-3" style={{ color: 'var(--admin-border)' }} />
+            <p className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>Nenhuma inscrição encontrada.</p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y" style={{ borderColor: 'var(--admin-border)' }}>
             {filtered.map(r => (
               <div
                 key={r.id}
                 onClick={() => setSelectedReg(r)}
-                className="px-4 py-3 flex items-center gap-4 hover:bg-slate-50 cursor-pointer transition-colors"
+                className="px-4 py-3 flex items-center gap-4 cursor-pointer transition-colors hover:bg-white/5"
               >
                 {/* Name */}
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-slate-800 text-sm truncate">{r.name}</p>
-                  {r.email && <p className="text-xs text-slate-400 truncate">{r.email}</p>}
+                  <p className="font-semibold text-sm truncate" style={{ color: 'var(--admin-text-primary)' }}>{r.name}</p>
+                  {r.email && <p className="text-xs truncate" style={{ color: 'var(--admin-text-secondary)' }}>{r.email}</p>}
                 </div>
 
                 {/* Status */}
-                <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 ${r.status === 'confirmado' ? 'bg-green-100 text-green-700' : r.status === 'cancelado' ? 'bg-red-100 text-red-500' : 'bg-amber-100 text-amber-700'}`}>
+                <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 ${r.status === 'confirmado' ? 'bg-green-500/10 text-green-400' : r.status === 'cancelado' ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'}`}>
                   {r.status === 'confirmado' ? 'Confirmado' : r.status === 'cancelado' ? 'Cancelado' : 'Pendente'}
                 </span>
 
                 {/* Type */}
-                <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 ${PAYMENT_STATUS_STYLES[r.payment_status]}`}>
+                <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0`} style={{ background: 'var(--admin-surface-alt)' }}>
                   {r.is_gift ? '🎁 Presente' : PAYMENT_STATUS_LABELS[r.payment_status]}
                 </span>
 
                 {/* Date */}
-                <span className="text-xs text-slate-400 shrink-0 hidden sm:block">
+                <span className="text-xs shrink-0 hidden sm:block" style={{ color: 'var(--admin-text-muted)' }}>
                   {new Date(r.created_at).toLocaleDateString('pt-BR')}
                 </span>
 
-                <ChevronRightIcon className="w-4 h-4 text-slate-300 shrink-0" />
+                <ChevronRightIcon className="w-4 h-4 shrink-0" style={{ color: 'var(--admin-text-muted)' }} />
               </div>
             ))}
           </div>

@@ -11,11 +11,13 @@ import type { ChurchEvent, EventSchedule, EventRegistration, EventAttendance, Sc
 import { getNextEventOccurrence } from '@/lib/event-utils';
 import { cancelEventOccurrence } from '@/features/events/actions/events';
 
-const ROLES: { id: ScheduleRole; label: string; icon: string }[] = [
-  { id: 'louvor',   label: 'Louvor',   icon: '🎵' },
-  { id: 'pregador', label: 'Pregador', icon: '📖' },
-  { id: 'recepcao', label: 'Recepção', icon: '🤝' },
-  { id: 'tecnica',  label: 'Técnica',  icon: '🎛️' },
+import { Music, BookOpen, Users, Settings, QrCode, ScanLine } from 'lucide-react';
+
+const ROLES: { id: ScheduleRole; label: string; icon: React.ElementType }[] = [
+  { id: 'louvor',   label: 'Louvor',   icon: Music },
+  { id: 'pregador', label: 'Pregador', icon: BookOpen },
+  { id: 'recepcao', label: 'Recepção', icon: Users },
+  { id: 'tecnica',  label: 'Técnica',  icon: Settings },
 ];
 
 interface Member {
@@ -135,7 +137,7 @@ export function EventDetailClient({
     });
   };
 
-  const inputClass = 'w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm';
+  const inputClass = 'w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-colors bg-[var(--admin-surface-alt)] border-[var(--admin-border)] text-[var(--admin-text-primary)]';
   const confirmedCount = registrations.filter(r => r.status === 'confirmado').length;
 
   const scannerCheckins = registrations.filter(r => r.checkin_status).map(r => ({
@@ -164,43 +166,44 @@ export function EventDetailClient({
   ];
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="flex border-b border-slate-200">
+    <div className="rounded-3xl border shadow-sm overflow-hidden" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+      <div className="flex border-b" style={{ borderColor: 'var(--admin-border)' }}>
         {tabs.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`px-5 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors flex items-center gap-2 ${
-              tab === t.id
-                ? 'border-blue-600 text-blue-600 bg-blue-50/50'
-                : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50'
-            }`}
+            className="px-5 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors flex items-center gap-2"
+            style={{ 
+              borderColor: tab === t.id ? '#3b82f6' : 'transparent',
+              color: tab === t.id ? '#60a5fa' : 'var(--admin-text-secondary)',
+              background: tab === t.id ? 'rgba(59, 130, 246, 0.05)' : 'transparent'
+            }}
           >
             {t.label}
             {t.count !== undefined && (
-              <span className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-0.5 rounded-full">{t.count}</span>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-muted)' }}>{t.count}</span>
             )}
           </button>
         ))}
       </div>
 
-      <div className="p-6 md:p-8 bg-slate-50 min-h-[400px]">
+      <div className="p-6 md:p-8 min-h-[400px]">
 
         {tab === 'recorrencia' && event.is_recurring && (
-          <div className="animate-in fade-in duration-300 max-w-2xl bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <h3 className="text-lg font-bold text-slate-800 mb-4">Gerenciar Recorrência</h3>
-            <p className="text-sm text-slate-500 mb-6">Aqui você pode visualizar a próxima ocorrência dinâmica deste evento e cancelar ocorrências específicas.</p>
+          <div className="animate-in fade-in duration-300 max-w-2xl border rounded-2xl p-6 shadow-sm" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+            <h3 className="text-lg font-bold mb-4" style={{ color: 'var(--admin-text-primary)' }}>Gerenciar Recorrência</h3>
+            <p className="text-sm mb-6" style={{ color: 'var(--admin-text-secondary)' }}>Aqui você pode visualizar a próxima ocorrência dinâmica deste evento e cancelar ocorrências específicas.</p>
             
-            <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center justify-between mb-6">
+            <div className="border p-4 rounded-xl flex items-center justify-between mb-6" style={{ background: 'rgba(59, 130, 246, 0.05)', borderColor: 'rgba(59, 130, 246, 0.2)' }}>
               <div>
-                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">Próxima Ocorrência</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#60a5fa' }}>Próxima Ocorrência</p>
                 {getNextEventOccurrence(event as any).nextDate ? (
-                   <p className="text-lg font-black text-slate-800">
+                   <p className="text-lg font-black" style={{ color: 'var(--admin-text-primary)' }}>
                      {new Date(getNextEventOccurrence(event as any).nextDate + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}
-                     {getNextEventOccurrence(event as any).isCancelled && <span className="ml-3 text-red-500 text-sm italic font-semibold">(Cancelado)</span>}
+                     {getNextEventOccurrence(event as any).isCancelled && <span className="ml-3 text-sm italic font-semibold" style={{ color: '#f87171' }}>(Cancelado)</span>}
                    </p>
                 ) : (
-                   <p className="text-sm text-slate-500">Nenhuma data prevista nas próximas semanas.</p>
+                   <p className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>Nenhuma data prevista nas próximas semanas.</p>
                 )}
               </div>
               
@@ -209,14 +212,16 @@ export function EventDetailClient({
                   <button 
                     onClick={handleCancelOccurrence}
                     disabled={isPending}
-                    className="px-4 py-2 bg-white text-red-600 border border-red-200 font-bold text-sm rounded-xl hover:bg-red-50 hover:border-red-300 transition-all disabled:opacity-50"
+                    className="px-4 py-2 border font-bold text-sm rounded-xl transition-all disabled:opacity-50"
+                    style={{ background: 'var(--admin-surface)', color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.2)' }}
                   >
                     Cancelar este dia
                   </button>
                   {onEdit && (
                     <button 
                       onClick={onEdit}
-                      className="px-4 py-2 bg-white text-blue-600 border border-blue-200 font-bold text-sm rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all"
+                      className="px-4 py-2 border font-bold text-sm rounded-xl transition-all"
+                      style={{ background: 'var(--admin-surface)', color: '#60a5fa', borderColor: 'rgba(59, 130, 246, 0.2)' }}
                     >
                       Editar Regras
                     </button>
@@ -227,10 +232,11 @@ export function EventDetailClient({
 
             {event.cancelled_dates && event.cancelled_dates.length > 0 && (
               <div className="mt-8">
-                <p className="text-sm font-bold text-slate-700 mb-3 text-red-600">Dias Cancelados:</p>
+                <p className="text-sm font-bold mb-3" style={{ color: '#f87171' }}>Dias Cancelados:</p>
                 <div className="flex flex-wrap gap-2">
                   {event.cancelled_dates.map(d => (
-                    <span key={d} className="px-3 py-1 bg-red-50 border border-red-100 text-red-600 text-sm font-semibold rounded-lg line-through decora">
+                    <span key={d} className="px-3 py-1 border text-sm font-semibold rounded-lg line-through decora"
+                      style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#fca5a5', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
                       {new Date(d + 'T12:00:00').toLocaleDateString('pt-BR')}
                     </span>
                   ))}
@@ -246,19 +252,21 @@ export function EventDetailClient({
               {ROLES.map(role => {
                 const slot = getSlot(role.id);
                 return (
-                  <div key={role.id} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                  <div key={role.id} className="rounded-2xl border p-4 shadow-sm" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
                     <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">{role.icon}</span>
-                        <span className="font-bold text-slate-700 text-sm">{role.label}</span>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl flex items-center justify-center border" style={{ background: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.2)' }}>
+                          <role.icon className="w-4 h-4" style={{ color: '#60a5fa' }} />
+                        </div>
+                        <span className="font-bold text-sm" style={{ color: 'var(--admin-text-primary)' }}>{role.label}</span>
                       </div>
                       {canManage && (
                         <div className="flex gap-2">
-                          <button onClick={() => openEdit(role.id)} className="text-xs text-blue-600 hover:text-blue-800 font-semibold">
+                          <button onClick={() => openEdit(role.id)} className="text-xs font-semibold" style={{ color: '#60a5fa' }}>
                             {slot ? 'Editar' : 'Escalar'}
                           </button>
                           {slot && (
-                            <button onClick={() => handleRemoveSlot(slot.id)} disabled={isPending} className="text-xs text-red-400 hover:text-red-600 font-semibold disabled:opacity-50">
+                            <button onClick={() => handleRemoveSlot(slot.id)} disabled={isPending} className="text-xs font-semibold disabled:opacity-50" style={{ color: '#f87171' }}>
                               Remover
                             </button>
                           )}
@@ -267,11 +275,11 @@ export function EventDetailClient({
                     </div>
                     {slot?.members ? (
                       <div>
-                        <p className="font-semibold text-slate-900 text-sm">{slot.members.full_name}</p>
-                        {slot.notes && <p className="text-xs text-slate-400 mt-0.5">{slot.notes}</p>}
+                        <p className="font-semibold text-sm" style={{ color: 'var(--admin-text-primary)' }}>{slot.members.full_name}</p>
+                        {slot.notes && <p className="text-xs mt-0.5" style={{ color: 'var(--admin-text-secondary)' }}>{slot.notes}</p>}
                       </div>
                     ) : (
-                      <p className="text-sm text-slate-400 italic">Não escalado</p>
+                      <p className="text-sm italic" style={{ color: 'var(--admin-text-muted)' }}>Não escalado</p>
                     )}
                   </div>
                 );
@@ -279,29 +287,29 @@ export function EventDetailClient({
             </div>
 
             {editingRole && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-                <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
-                  <h3 className="text-lg font-bold text-slate-900 mb-4">
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4">
+                <div className="rounded-2xl shadow-xl w-full max-w-sm p-6 border" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+                  <h3 className="text-lg font-bold mb-4" style={{ color: 'var(--admin-text-primary)' }}>
                     Escalar para {ROLES.find(r => r.id === editingRole)?.label}
                   </h3>
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1">Membro</label>
+                      <label className="block text-sm font-semibold mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Membro</label>
                       <select value={selectedMember} onChange={e => setSelectedMember(e.target.value)} className={inputClass}>
                         <option value="">Selecionar...</option>
                         {members.map(m => <option key={m.id} value={m.id}>{m.full_name}</option>)}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1">Observações</label>
+                      <label className="block text-sm font-semibold mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Observações</label>
                       <input type="text" value={slotNotes} onChange={e => setSlotNotes(e.target.value)} placeholder="Ex: Guitarra base" className={inputClass} />
                     </div>
                   </div>
                   <div className="flex justify-end gap-3 mt-4">
-                    <button onClick={() => setEditingRole(null)} className="px-4 py-2 font-medium text-slate-600 hover:bg-slate-100 rounded-xl">
+                    <button onClick={() => setEditingRole(null)} className="px-4 py-2 font-medium rounded-xl transition-colors hover:bg-white/5" style={{ color: 'var(--admin-text-secondary)' }}>
                       Cancelar
                     </button>
-                    <button onClick={handleSaveSlot} disabled={isPending} className="px-4 py-2 font-semibold bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2">
+                    <button onClick={handleSaveSlot} disabled={isPending} className="px-4 py-2 font-semibold text-white rounded-xl disabled:opacity-50 flex items-center gap-2" style={{ background: 'var(--admin-accent)' }}>
                       {isPending && (
                         <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -330,23 +338,20 @@ export function EventDetailClient({
         {tab === 'presenca' && (
           <div className="animate-in fade-in duration-300 max-w-3xl">
             {canManage && (
-              <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm mb-8 text-center">
-                <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v1m0 11v1m5-4h-1m-10 0h-1m8-7a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
+              <div className="rounded-3xl border p-8 shadow-sm mb-8 text-center" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border" style={{ background: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.2)' }}>
+                  <QrCode className="w-8 h-8" style={{ color: '#60a5fa' }} />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Check-in via QR Code</h3>
-                <p className="text-slate-500 text-sm mb-6 max-w-sm mx-auto">
+                <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--admin-text-primary)' }}>Check-in via QR Code</h3>
+                <p className="text-sm mb-6 max-w-sm mx-auto" style={{ color: 'var(--admin-text-secondary)' }}>
                   Para garantir a segurança e evitar fraudes, o check-in agora é realizado exclusivamente através do scanner de ingressos.
                 </p>
                 <button 
                   onClick={() => router.push('/eventos/checkin')}
-                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
+                  className="inline-flex items-center gap-2 text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-lg"
+                  style={{ background: 'var(--admin-accent)' }}
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v1m0 11v1m5-4h-1m-10 0h-1m8-7a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
+                  <ScanLine className="w-5 h-5" />
                   Abrir Scanner de Ingressos
                 </button>
               </div>
@@ -354,24 +359,24 @@ export function EventDetailClient({
 
             <div className="space-y-3">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest">Histórico de Check-ins</h4>
-                <p className="text-xs font-semibold text-slate-400">{unifiedAttendances.length} presenças registradas</p>
+                <h4 className="text-sm font-bold uppercase tracking-widest" style={{ color: 'var(--admin-text-secondary)' }}>Histórico de Check-ins</h4>
+                <p className="text-xs font-semibold" style={{ color: 'var(--admin-text-muted)' }}>{unifiedAttendances.length} presenças registradas</p>
               </div>
               {unifiedAttendances.length === 0 ? (
-                <div className="bg-white rounded-3xl border border-slate-200 border-dashed p-12 text-center">
-                  <p className="text-slate-400 font-semibold">Nenhuma presença registrada ainda.</p>
+                <div className="rounded-3xl border border-dashed p-12 text-center" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+                  <p className="font-semibold" style={{ color: 'var(--admin-text-muted)' }}>Nenhuma presença registrada ainda.</p>
                 </div>
               ) : (
                 unifiedAttendances.map(a => (
-                  <div key={a.id} className="bg-white rounded-2xl border border-slate-200 px-5 py-4 flex items-center justify-between hover:border-slate-300 transition-colors shadow-sm">
+                  <div key={a.id} className="rounded-2xl border px-5 py-4 flex items-center justify-between transition-colors shadow-sm" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
                     <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${a.type === 'scanner' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${a.type === 'scanner' ? 'bg-blue-500/10 text-blue-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
                         {a.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-bold text-slate-800">{a.name}</p>
+                        <p className="font-bold" style={{ color: 'var(--admin-text-primary)' }}>{a.name}</p>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${a.type === 'scanner' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'}`}>
+                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md border ${a.type === 'scanner' ? 'bg-blue-500/5 text-blue-400 border-blue-500/20' : 'bg-emerald-500/5 text-emerald-400 border-emerald-500/20'}`}>
                             {a.type === 'scanner' ? 'Ingresso (QR)' : 'Manual'}
                           </span>
                         </div>
@@ -379,12 +384,12 @@ export function EventDetailClient({
                     </div>
                     <div className="text-right">
                       {a.time && (
-                        <p className="text-xs font-semibold text-slate-400">
+                        <p className="text-xs font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>
                           {new Date(a.time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       )}
                       {a.time && (
-                        <p className="text-[10px] text-slate-400 mt-0.5">
+                        <p className="text-[10px] mt-0.5" style={{ color: 'var(--admin-text-muted)' }}>
                           {new Date(a.time).toLocaleDateString('pt-BR')}
                         </p>
                       )}

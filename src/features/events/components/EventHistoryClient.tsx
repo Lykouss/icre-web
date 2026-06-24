@@ -44,31 +44,31 @@ export function EventHistoryClient({ initialHistory }: { initialHistory: History
   };
 
   const getActionColor = (action: string) => {
-    if (action.includes('confirmado') || action.includes('checkin') || action.includes('gratuita')) return 'bg-emerald-100 text-emerald-800';
-    if (action.includes('cancelado') || action.includes('expirado') || action.includes('reembolsado')) return 'bg-red-100 text-red-800';
-    if (action.includes('aguardando')) return 'bg-amber-100 text-amber-800';
-    if (action.includes('presente')) return 'bg-purple-100 text-purple-800';
-    return 'bg-slate-100 text-slate-800';
+    if (action.includes('confirmado') || action.includes('checkin') || action.includes('gratuita')) return 'bg-emerald-500/10 text-emerald-400';
+    if (action.includes('cancelado') || action.includes('expirado') || action.includes('reembolsado')) return 'bg-red-500/10 text-red-400';
+    if (action.includes('aguardando')) return 'bg-amber-500/10 text-amber-400';
+    if (action.includes('presente')) return 'bg-purple-500/10 text-purple-400';
+    return 'bg-slate-500/10 text-slate-400';
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="p-4 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row gap-4 items-center justify-between">
+    <div className="rounded-2xl border shadow-sm overflow-hidden" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+      <div className="p-4 border-b flex flex-col sm:flex-row gap-4 items-center justify-between" style={{ background: 'var(--admin-surface-alt)', borderColor: 'var(--admin-border)' }}>
         <input
           type="text"
           placeholder="Buscar no histórico..."
           value={filter}
           onChange={e => setFilter(e.target.value)}
-          className="w-full sm:max-w-md px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+          className="w-full sm:max-w-md px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all bg-[var(--admin-surface)] border-[var(--admin-border)] text-[var(--admin-text-primary)]"
         />
-        <div className="text-sm font-medium text-slate-500">
+        <div className="text-sm font-medium" style={{ color: 'var(--admin-text-muted)' }}>
           {filtered.length} registro(s) encontrado(s)
         </div>
       </div>
       
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
-          <thead className="bg-white border-b border-slate-200 text-slate-500 font-semibold uppercase text-xs tracking-wider">
+          <thead className="border-b font-semibold uppercase text-xs tracking-wider" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)', color: 'var(--admin-text-secondary)' }}>
             <tr>
               <th className="px-6 py-4">Data/Hora</th>
               <th className="px-6 py-4">Ação</th>
@@ -77,17 +77,17 @@ export function EventHistoryClient({ initialHistory }: { initialHistory: History
               <th className="px-6 py-4">Detalhes Adicionais</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-slate-700">
+          <tbody className="divide-y" style={{ borderColor: 'var(--admin-border)', color: 'var(--admin-text-primary)' }}>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-slate-400">
+                <td colSpan={5} className="px-6 py-8 text-center" style={{ color: 'var(--admin-text-muted)' }}>
                   Nenhum registro encontrado.
                 </td>
               </tr>
             ) : (
               filtered.map(record => (
-                <tr key={record.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-slate-500 font-medium">
+                <tr key={record.id} className="transition-colors hover:bg-white/5">
+                  <td className="px-6 py-4 whitespace-nowrap font-medium" style={{ color: 'var(--admin-text-secondary)' }}>
                     {format(new Date(record.created_at), "dd/MM/yyyy HH:mm:ss", { locale: ptBR })}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -95,17 +95,17 @@ export function EventHistoryClient({ initialHistory }: { initialHistory: History
                       {getActionLabel(record.action_type)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 font-semibold text-slate-800">
+                  <td className="px-6 py-4 font-semibold" style={{ color: 'var(--admin-text-primary)' }}>
                     {record.events?.title || 'Desconhecido'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {record.actor?.full_name ? (
-                      <span className="text-slate-700">{record.actor.full_name}</span>
+                      <span style={{ color: 'var(--admin-text-secondary)' }}>{record.actor.full_name}</span>
                     ) : (
-                      <span className="text-slate-400 italic">Sistema/Webhook</span>
+                      <span className="italic" style={{ color: 'var(--admin-text-muted)' }}>Sistema/Webhook</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 max-w-xs truncate text-slate-500 font-mono text-xs">
+                  <td className="px-6 py-4 max-w-xs truncate font-mono text-xs" style={{ color: 'var(--admin-text-muted)' }}>
                     {record.details ? JSON.stringify(record.details) : '-'}
                   </td>
                 </tr>

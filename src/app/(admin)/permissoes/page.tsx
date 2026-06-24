@@ -115,52 +115,18 @@ const ROLES_DATA = [
 
 const accentMap: Record<string, {
   cardActive: string;
-  badge: string;
-  icon: string;
-  iconRing: string;
+  badgeBg: string;
+  badgeColor: string;
+  iconBg: string;
+  iconColor: string;
   bar: string;
-  level: string;
+  levelColor: string;
 }> = {
-  violet: {
-    cardActive: 'border-violet-200 bg-violet-50/60',
-    badge:      'bg-violet-600 text-white',
-    icon:       'bg-violet-100 text-violet-600',
-    iconRing:   'ring-violet-200',
-    bar:        'bg-violet-500',
-    level:      'text-violet-700',
-  },
-  blue: {
-    cardActive: 'border-blue-200 bg-blue-50/60',
-    badge:      'bg-blue-600 text-white',
-    icon:       'bg-blue-100 text-blue-600',
-    iconRing:   'ring-blue-200',
-    bar:        'bg-blue-500',
-    level:      'text-blue-700',
-  },
-  emerald: {
-    cardActive: 'border-emerald-200 bg-emerald-50/60',
-    badge:      'bg-emerald-600 text-white',
-    icon:       'bg-emerald-100 text-emerald-600',
-    iconRing:   'ring-emerald-200',
-    bar:        'bg-emerald-500',
-    level:      'text-emerald-700',
-  },
-  amber: {
-    cardActive: 'border-amber-200 bg-amber-50/60',
-    badge:      'bg-amber-500 text-white',
-    icon:       'bg-amber-100 text-amber-600',
-    iconRing:   'ring-amber-200',
-    bar:        'bg-amber-400',
-    level:      'text-amber-700',
-  },
-  slate: {
-    cardActive: 'border-slate-200 bg-slate-50',
-    badge:      'bg-slate-600 text-white',
-    icon:       'bg-slate-100 text-slate-600',
-    iconRing:   'ring-slate-200',
-    bar:        'bg-slate-400',
-    level:      'text-slate-600',
-  },
+  violet: { cardActive: 'border-violet-500/30', badgeBg: 'rgba(139,92,246,0.15)', badgeColor: '#c4b5fd', iconBg: 'rgba(139,92,246,0.12)', iconColor: '#c4b5fd', bar: '#8b5cf6', levelColor: '#c4b5fd' },
+  blue:   { cardActive: 'border-blue-500/30',   badgeBg: 'rgba(37,99,235,0.15)',  badgeColor: '#93c5fd', iconBg: 'rgba(37,99,235,0.12)',  iconColor: '#93c5fd', bar: '#3b82f6', levelColor: '#93c5fd' },
+  emerald:{ cardActive: 'border-emerald-500/30', badgeBg: 'rgba(16,185,129,0.15)', badgeColor: '#6ee7b7', iconBg: 'rgba(16,185,129,0.12)', iconColor: '#6ee7b7', bar: '#10b981', levelColor: '#6ee7b7' },
+  amber:  { cardActive: 'border-amber-500/30',  badgeBg: 'rgba(245,158,11,0.15)', badgeColor: '#fbbf24', iconBg: 'rgba(245,158,11,0.12)', iconColor: '#fbbf24', bar: '#f59e0b', levelColor: '#fbbf24' },
+  slate:  { cardActive: 'border-slate-500/30',  badgeBg: 'rgba(100,116,139,0.15)', badgeColor: '#94a3b8', iconBg: 'rgba(100,116,139,0.12)', iconColor: '#94a3b8', bar: '#64748b', levelColor: '#94a3b8' },
 };
 
 /* ─── Page ──────────────────────────────────────────────────────── */
@@ -200,8 +166,8 @@ export default async function PermissionsPage() {
 
       {/* ── Header ── */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Níveis de Acesso</h1>
-        <p className="text-slate-500 mt-1.5 text-base leading-relaxed max-w-xl">
+        <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Níveis de Acesso</h1>
+        <p className="text-sm mt-1.5 max-w-xl leading-relaxed" style={{ color: 'var(--admin-text-secondary)' }}>
           Entenda as permissões atribuídas a cada cargo e o que cada função da equipe pode visualizar ou editar.
         </p>
       </div>
@@ -216,65 +182,57 @@ export default async function PermissionsPage() {
           return (
             <div
               key={role.id}
-              className={`relative rounded-2xl border transition-all duration-200 ${
-                isMyRole
-                  ? `${colors.cardActive} shadow-sm`
-                  : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm'
+              className={`relative rounded-2xl border-2 transition-all duration-200 ${
+                isMyRole ? colors.cardActive : ''
               }`}
+              style={{
+                background: isMyRole ? `${colors.bar}0a` : 'var(--admin-surface)',
+                borderColor: isMyRole ? `${colors.bar}50` : 'var(--admin-border)',
+              }}
             >
-              {/* "Seu cargo" badge */}
               {isMyRole && (
-                <div className={`absolute top-0 right-0 text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-bl-xl rounded-tr-2xl ${colors.badge}`}>
+                <div className="absolute top-0 right-0 text-[9px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-bl-xl rounded-tr-2xl"
+                  style={{ background: colors.badgeBg, color: colors.badgeColor }}>
                   Seu cargo
                 </div>
               )}
 
               <div className="p-6">
                 <div className="flex items-start gap-4">
-
-                  {/* Icon */}
-                  <div className={`w-11 h-11 shrink-0 rounded-xl flex items-center justify-center ring-1 ${colors.icon} ${colors.iconRing}`}>
+                  <div className="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center"
+                    style={{ background: colors.iconBg, color: colors.iconColor, border: `1px solid ${colors.bar}30` }}>
                     {role.icon}
                   </div>
 
-                  {/* Content */}
                   <div className="flex-1 min-w-0">
-
-                    {/* Title row */}
                     <div className="flex items-baseline gap-2 flex-wrap mb-0.5">
-                      <h2 className="text-base font-bold text-slate-900">{role.title}</h2>
-                      <span className="text-xs font-medium text-slate-400">{role.subtitle}</span>
+                      <h2 className="text-[15px] font-bold text-slate-100">{role.title}</h2>
+                      <span className="text-[11px] font-medium" style={{ color: 'var(--admin-text-muted)' }}>{role.subtitle}</span>
                     </div>
 
-                    {/* Description */}
-                    <p className="text-sm text-slate-500 mb-4 leading-relaxed">{role.description}</p>
+                    <p className="text-[12px] mb-4 leading-relaxed" style={{ color: 'var(--admin-text-secondary)' }}>{role.description}</p>
 
-                    {/* Level bar */}
                     <div className="flex items-center gap-3 mb-5">
-                      <span className="text-xs font-medium text-slate-400 shrink-0">Nível de acesso</span>
-                      <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${colors.bar}`}
-                          style={{ width: `${levelPct}%` }}
-                        />
+                      <span className="text-[11px] font-medium shrink-0" style={{ color: 'var(--admin-text-muted)' }}>Nível de acesso</span>
+                      <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--admin-surface-alt)' }}>
+                        <div className="h-full rounded-full transition-all duration-500" style={{ width: `${levelPct}%`, background: colors.bar }} />
                       </div>
-                      <span className={`text-xs font-bold shrink-0 tabular-nums ${colors.level}`}>{levelPct}/100</span>
+                      <span className="text-[11px] font-bold shrink-0 tabular-nums" style={{ color: colors.levelColor }}>{levelPct}/100</span>
                     </div>
 
-                    {/* Permissions grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                       {role.permissions.map((perm, idx) => (
                         <div key={idx} className="flex items-start gap-2">
                           {perm.granted ? (
-                            <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                             </svg>
                           ) : (
-                            <svg className="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 text-red-500/60 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                           )}
-                          <span className={`text-sm ${perm.granted ? 'text-slate-700' : 'text-slate-400'}`}>
+                          <span className="text-[12px] leading-relaxed" style={{ color: perm.granted ? 'var(--admin-text-primary)' : 'var(--admin-text-muted)' }}>
                             {perm.label}
                           </span>
                         </div>
@@ -289,7 +247,7 @@ export default async function PermissionsPage() {
       </div>
 
       {/* ── Footer note ── */}
-      <p className="mt-8 text-xs text-slate-400 text-center">
+      <p className="mt-8 text-[11px] text-center" style={{ color: 'var(--admin-text-muted)' }}>
         As permissões são definidas pelos administradores do sistema e podem ser ajustadas conforme necessário.
       </p>
     </div>

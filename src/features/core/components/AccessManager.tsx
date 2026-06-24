@@ -242,7 +242,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
     });
   };
 
-  const inputCls = 'w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500';
+  const inputCls = 'w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all bg-[var(--admin-surface-alt)] border-[var(--admin-border)] text-[var(--admin-text-primary)]';
 
   return (
     <>
@@ -250,32 +250,38 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
 
         {/* ── Lista ── */}
         <div className="flex-1 min-w-0 space-y-4">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3">
+          <div className="p-4 rounded-2xl border flex flex-col sm:flex-row gap-3 transition-colors"
+               style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
             <div className="relative flex-1">
-              <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--admin-text-muted)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input type="text" value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Buscar por nome ou e-mail..."
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full pl-9 pr-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all"
+                style={{ background: 'var(--admin-surface-alt)', borderColor: 'var(--admin-border)', color: 'var(--admin-text-primary)' }} />
             </div>
             <div className="flex gap-2">
               {(['all', 'admins', 'members'] as const).map(f => (
                 <button key={f} onClick={() => setFilter(f)}
-                  className={`px-3 py-2 rounded-xl text-xs font-semibold transition-colors ${filter === f ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                  className="px-3 py-2 rounded-xl text-xs font-semibold transition-colors"
+                  style={{ 
+                    background: filter === f ? 'var(--admin-accent)' : 'var(--admin-surface-alt)',
+                    color: filter === f ? '#fff' : 'var(--admin-text-secondary)'
+                  }}>
                   {f === 'all' ? 'Todos' : f === 'admins' ? 'Administradores' : 'Membros'}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-3 border-b border-slate-100">
-              <p className="text-xs text-slate-400 font-medium">{filtered.length} usuários</p>
+          <div className="rounded-2xl border overflow-hidden" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+            <div className="px-6 py-3 border-b" style={{ borderColor: 'var(--admin-border)' }}>
+              <p className="text-xs font-medium" style={{ color: 'var(--admin-text-muted)' }}>{filtered.length} usuários</p>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y" style={{ borderColor: 'var(--admin-border)' }}>
               {filtered.length === 0 ? (
-                <div className="px-6 py-12 text-center text-slate-400 text-sm">Nenhum usuário encontrado.</div>
+                <div className="px-6 py-12 text-center text-sm" style={{ color: 'var(--admin-text-muted)' }}>Nenhum usuário encontrado.</div>
               ) : filtered.map(u => {
                 const isAdmin    = u.roles.some(r => ['CHURCH_ADMIN', 'FINANCE_ADMIN', 'LEADER', 'SYSADMIN'].includes(r));
                 const isSysAdmin = u.roles.includes('SYSADMIN');
@@ -285,11 +291,12 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
 
                 return (
                   <div key={u.id} onClick={() => openPanel(u)}
-                    className={`px-6 py-4 flex items-center gap-4 cursor-pointer transition-colors ${isSelected ? 'bg-blue-50' : 'hover:bg-slate-50'}`}>
+                    className="px-6 py-4 flex items-center gap-4 cursor-pointer transition-colors"
+                    style={{ background: isSelected ? 'var(--admin-surface-alt)' : 'transparent' }}>
                     <div className="relative shrink-0">
                       <Avatar photoUrl={u.photo_url} name={u.full_name} size="md" />
                       {u.is_suspended && (
-                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
+                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full border-2 border-slate-900 flex items-center justify-center">
                           <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" />
                           </svg>
@@ -298,20 +305,20 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-semibold text-slate-900 text-sm">{u.full_name}</p>
-                        {u.is_suspended && <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">Suspenso</span>}
+                        <p className="font-semibold text-sm" style={{ color: 'var(--admin-text-primary)' }}>{u.full_name}</p>
+                        {u.is_suspended && <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171' }}>Suspenso</span>}
                         {pendingOnboarding && onboarding && (
                           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${onboarding.color}`}>{onboarding.label}</span>
                         )}
                       </div>
-                      <p className="text-xs text-slate-400 mt-0.5">{u.email}</p>
-                      {u.church_role && <p className="text-xs text-slate-500 mt-0.5">{u.church_role}</p>}
+                      <p className="text-xs mt-0.5" style={{ color: 'var(--admin-text-muted)' }}>{u.email}</p>
+                      {u.church_role && <p className="text-xs mt-0.5" style={{ color: 'var(--admin-text-secondary)' }}>{u.church_role}</p>}
                       <div className="flex flex-wrap gap-1 mt-1.5">
                         {u.roles.length > 0 ? u.roles.map(role => (
-                          <span key={role} className={`text-xs font-semibold px-2 py-0.5 rounded-full ${ROLE_COLORS[role] ?? 'bg-slate-100 text-slate-600'}`}>
+                          <span key={role} className={`text-xs font-semibold px-2 py-0.5 rounded-full ${ROLE_COLORS[role] ?? 'bg-white/5 text-slate-400'}`}>
                             {ROLE_LABELS[role] ?? role}
                           </span>
-                        )) : <span className="text-xs text-slate-400 italic">Sem cargo</span>}
+                        )) : <span className="text-xs italic" style={{ color: 'var(--admin-text-muted)' }}>Sem cargo</span>}
                       </div>
                     </div>
                     <div className="shrink-0" onClick={e => e.stopPropagation()}>
@@ -346,21 +353,22 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
 
         {/* ── Painel lateral ── */}
         {selectedUser && (
-          <div className="w-96 shrink-0 bg-white rounded-3xl border border-slate-200 shadow-sm sticky top-6 max-h-[calc(100vh-6rem)] flex flex-col overflow-hidden">
-            <div className="px-6 py-5 border-b border-slate-100">
+          <div className="w-96 shrink-0 rounded-3xl border shadow-sm sticky top-6 max-h-[calc(100vh-6rem)] flex flex-col overflow-hidden"
+            style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+            <div className="px-6 py-5 border-b" style={{ borderColor: 'var(--admin-border)' }}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <Avatar photoUrl={selectedUser.photo_url} name={selectedUser.full_name} size="lg" />
                   <div className="min-w-0">
-                    <p className="font-bold text-slate-900 leading-tight">{selectedUser.full_name}</p>
-                    <p className="text-xs text-slate-400 mt-0.5 truncate">{selectedUser.email}</p>
-                    {selectedUser.church_role && <p className="text-xs text-slate-500 mt-0.5">{selectedUser.church_role}</p>}
+                    <p className="font-bold leading-tight" style={{ color: 'var(--admin-text-primary)' }}>{selectedUser.full_name}</p>
+                    <p className="text-xs mt-0.5 truncate" style={{ color: 'var(--admin-text-muted)' }}>{selectedUser.email}</p>
+                    {selectedUser.church_role && <p className="text-xs mt-0.5" style={{ color: 'var(--admin-text-secondary)' }}>{selectedUser.church_role}</p>}
                     {selectedUser.is_suspended && (
-                      <span className="inline-block mt-1 text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">Suspenso</span>
+                      <span className="inline-block mt-1 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171' }}>Suspenso</span>
                     )}
                   </div>
                 </div>
-                <button onClick={() => setSelectedUser(null)} className="text-slate-400 hover:text-slate-600 shrink-0">
+                <button onClick={() => setSelectedUser(null)} className="shrink-0" style={{ color: 'var(--admin-text-muted)' }}>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -369,10 +377,10 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
 
               {/* Info de suspensão */}
               {selectedUser.is_suspended && selectedUser.suspension_reason && (
-                <div className="mt-3 bg-red-50 border border-red-200 rounded-xl p-3 text-xs space-y-1">
-                  <p className="font-semibold text-red-700">Motivo da suspensão:</p>
-                  <p className="text-red-600">{selectedUser.suspension_reason}</p>
-                  <p className="text-red-400">
+                <div className="mt-3 border rounded-xl p-3 text-xs space-y-1" style={{ background: 'rgba(239, 68, 68, 0.05)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+                  <p className="font-semibold" style={{ color: '#fca5a5' }}>Motivo da suspensão:</p>
+                  <p style={{ color: '#f87171' }}>{selectedUser.suspension_reason}</p>
+                  <p style={{ color: '#ef4444' }}>
                     Por {selectedUser.suspended_by_name}
                     {selectedUser.suspended_until && ` · até ${new Date(selectedUser.suspended_until).toLocaleDateString('pt-BR')}`}
                     {!selectedUser.suspended_until && ' · indefinido'}
@@ -380,14 +388,18 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                 </div>
               )}
 
-              <div className="flex gap-1 mt-4 bg-slate-100 rounded-xl p-1">
+              <div className="flex gap-1 mt-4 rounded-xl p-1" style={{ background: 'var(--admin-surface-alt)' }}>
                 {([
                   { id: 'info', label: 'Gestão' },
                   { id: 'edit', label: 'Editar' },
                   { id: 'logs', label: 'Logs' },
                 ] as { id: PanelTab; label: string }[]).map(tab => (
                   <button key={tab.id} onClick={() => handleTabChange(tab.id)}
-                    className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors ${panelTab === tab.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                    className="flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors"
+                    style={{ 
+                      background: panelTab === tab.id ? 'var(--admin-surface)' : 'transparent',
+                      color: panelTab === tab.id ? 'var(--admin-text-primary)' : 'var(--admin-text-secondary)'
+                    }}>
                     {tab.label}
                   </button>
                 ))}
@@ -400,10 +412,10 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
               {panelTab === 'info' && (
                 <div className="p-5 space-y-3">
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Cargos</p>
+                    <p className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: 'var(--admin-text-muted)' }}>Cargos</p>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedUser.roles.length > 0 ? selectedUser.roles.map(role => (
-                        <span key={role} className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${ROLE_COLORS[role] ?? 'bg-slate-100 text-slate-600'}`}>
+                        <span key={role} className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${ROLE_COLORS[role] ?? 'bg-white/5 text-slate-400'}`}>
                           {ROLE_LABELS[role] ?? role}
                           {role !== 'SYSADMIN' && (
                             <button onClick={() => handleRevoke(selectedUser.id, role as AppRole, selectedUser.full_name)}
@@ -414,48 +426,51 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                             </button>
                           )}
                         </span>
-                      )) : <span className="text-xs text-slate-400 italic">Sem cargo administrativo</span>}
+                      )) : <span className="text-xs italic" style={{ color: 'var(--admin-text-muted)' }}>Sem cargo administrativo</span>}
                     </div>
                   </div>
 
-                  <div className="h-px bg-slate-100" />
+                  <div className="h-px w-full" style={{ background: 'var(--admin-border)' }} />
 
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Ações</p>
+                    <p className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: 'var(--admin-text-muted)' }}>Ações</p>
                     <div className="space-y-2">
 
                       <button onClick={() => handleResetPin(selectedUser)}
                         disabled={isPending || selectedUser.roles.includes('SYSADMIN')}
-                        className="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-sm font-medium text-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-left">
-                        <div className="w-8 h-8 bg-slate-200 rounded-lg flex items-center justify-center shrink-0">
-                          <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-left hover:bg-white/5"
+                        style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-primary)' }}>
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                          <svg className="w-4 h-4" style={{ color: 'var(--admin-text-secondary)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                           </svg>
                         </div>
                         <div>
                           <p>Redefinir PIN</p>
-                          <p className="text-xs text-slate-400 font-normal">Usuário deverá criar novo PIN</p>
+                          <p className="text-xs font-normal" style={{ color: 'var(--admin-text-muted)' }}>Usuário deverá criar novo PIN</p>
                         </div>
                       </button>
 
                       <button onClick={() => handleResetPassword(selectedUser)} disabled={isPending}
-                        className="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-sm font-medium text-slate-700 transition-colors disabled:opacity-40 text-left">
-                        <div className="w-8 h-8 bg-slate-200 rounded-lg flex items-center justify-center shrink-0">
-                          <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors disabled:opacity-40 text-left hover:bg-white/5"
+                        style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-primary)' }}>
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                          <svg className="w-4 h-4" style={{ color: 'var(--admin-text-secondary)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
                         </div>
                         <div>
                           <p>Redefinir senha</p>
-                          <p className="text-xs text-slate-400 font-normal">Envia e-mail de recuperação</p>
+                          <p className="text-xs font-normal" style={{ color: 'var(--admin-text-muted)' }}>Envia e-mail de recuperação</p>
                         </div>
                       </button>
 
                       {selectedUser.is_suspended ? (
                         <button onClick={() => handleUnsuspend(selectedUser)}
                           disabled={isPending || selectedUser.roles.includes('SYSADMIN')}
-                          className="w-full flex items-center gap-3 px-4 py-3 bg-emerald-50 hover:bg-emerald-100 rounded-xl text-sm font-medium text-emerald-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-left">
-                          <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center shrink-0">
+                          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-left"
+                          style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#34d399' }}>
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(16, 185, 129, 0.2)' }}>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -468,8 +483,9 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                       ) : (
                         <button onClick={() => { setSuspendModalFor(selectedUser); setSuspendReason(''); setSuspendDuration('indefinido'); }}
                           disabled={isPending || selectedUser.roles.includes('SYSADMIN')}
-                          className="w-full flex items-center gap-3 px-4 py-3 bg-red-50 hover:bg-red-100 rounded-xl text-sm font-medium text-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-left">
-                          <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center shrink-0">
+                          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-left"
+                          style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171' }}>
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(239, 68, 68, 0.2)' }}>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                             </svg>
@@ -573,19 +589,19 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
 
       {/* ── Modal de suspensão ── */}
       {suspendModalFor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
-            <div className="px-6 py-5 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">Suspender acesso</h3>
-              <p className="text-sm text-slate-500 mt-0.5">
-                Bloqueando acesso de <strong>{suspendModalFor.full_name}</strong> ao sistema.
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+          <div className="rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+            <div className="px-6 py-5 border-b" style={{ borderColor: 'var(--admin-border)' }}>
+              <h3 className="text-lg font-bold" style={{ color: 'var(--admin-text-primary)' }}>Suspender acesso</h3>
+              <p className="text-sm mt-0.5" style={{ color: 'var(--admin-text-secondary)' }}>
+                Bloqueando acesso de <strong style={{ color: 'var(--admin-text-primary)' }}>{suspendModalFor.full_name}</strong> ao sistema.
               </p>
             </div>
 
             <div className="p-6 space-y-5">
               {/* Justificativa */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wide mb-1.5" style={{ color: 'var(--admin-text-muted)' }}>
                   Justificativa <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -593,14 +609,15 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                   onChange={e => setSuspendReason(e.target.value)}
                   rows={3}
                   placeholder="Descreva o motivo da suspensão. Esta mensagem será exibida ao usuário."
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                  className="w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:border-red-500 resize-none transition-all"
+                  style={{ background: 'var(--admin-surface-alt)', borderColor: 'var(--admin-border)', color: 'var(--admin-text-primary)' }}
                 />
-                <p className="text-xs text-slate-400 mt-1">O usuário verá esta mensagem ao tentar acessar o sistema.</p>
+                <p className="text-xs mt-1" style={{ color: 'var(--admin-text-muted)' }}>O usuário verá esta mensagem ao tentar acessar o sistema.</p>
               </div>
 
               {/* Duração */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Duração</label>
+                <label className="block text-xs font-bold uppercase tracking-wide mb-2" style={{ color: 'var(--admin-text-muted)' }}>Duração</label>
                 <div className="grid grid-cols-2 gap-2">
                   {([
                     { value: '1d',        label: '1 dia'      },
@@ -611,14 +628,16 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                     <label key={opt.value}
                       className={`flex items-center gap-2.5 p-3 rounded-xl border-2 cursor-pointer transition-all ${
                         suspendDuration === opt.value
-                          ? 'border-red-400 bg-red-50'
-                          : 'border-slate-200 hover:border-slate-300'
-                      }`}>
+                          ? 'border-red-500 bg-red-500/10'
+                          : 'border-transparent hover:border-slate-700/50'
+                      }`}
+                      style={{ background: suspendDuration === opt.value ? '' : 'var(--admin-surface-alt)' }}
+                    >
                       <input type="radio" name="duration" value={opt.value}
                         checked={suspendDuration === opt.value}
                         onChange={() => setSuspendDuration(opt.value)}
-                        className="accent-red-600" />
-                      <span className={`text-sm font-medium ${suspendDuration === opt.value ? 'text-red-700' : 'text-slate-700'}`}>
+                        className="accent-red-500" />
+                      <span className={`text-sm font-medium ${suspendDuration === opt.value ? 'text-red-400' : 'text-[var(--admin-text-primary)]'}`}>
                         {opt.label}
                       </span>
                     </label>
@@ -629,13 +648,15 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
 
             <div className="px-6 pb-6 flex gap-3">
               <button onClick={() => setSuspendModalFor(null)}
-                className="flex-1 py-3 font-semibold text-slate-600 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors">
+                className="flex-1 py-3 font-semibold rounded-2xl hover:bg-white/5 transition-colors"
+                style={{ border: '1px solid var(--admin-border)', color: 'var(--admin-text-secondary)' }}>
                 Cancelar
               </button>
               <button
                 onClick={handleConfirmSuspend}
                 disabled={isPending || !suspendReason.trim()}
-                className="flex-1 py-3 font-bold bg-red-600 text-white rounded-2xl hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-3 font-bold text-white rounded-2xl disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                style={{ background: '#ef4444' }}
               >
                 {isPending && <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg>}
                 Confirmar suspensão

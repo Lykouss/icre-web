@@ -103,29 +103,37 @@ export function QrScanner({ onCheckinSuccess }: QrScannerProps) {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="relative aspect-square rounded-3xl overflow-hidden bg-slate-900 border-2 border-white/5 shadow-2xl mb-6">
+      <div className="relative aspect-square rounded-[2rem] overflow-hidden border shadow-2xl mb-6 transition-all duration-500"
+        style={{ 
+          background: 'var(--admin-surface)', 
+          borderColor: isScanning ? 'rgba(59, 130, 246, 0.4)' : 'var(--admin-border)',
+          boxShadow: isScanning ? '0 0 40px -10px rgba(59, 130, 246, 0.3)' : '0 10px 30px -10px rgba(0,0,0,0.5)'
+        }}>
         {/* Camada de Processamento */}
         {isProcessing && (
-          <div className="absolute inset-0 z-30 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in">
-            <div className="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mb-4" />
-            <p className="text-xs font-bold text-white tracking-widest uppercase">Validando...</p>
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center animate-in fade-in backdrop-blur-xl" style={{ background: 'rgba(0,0,0,0.6)' }}>
+            <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mb-6" />
+            <p className="text-xs font-bold text-white tracking-widest uppercase bg-blue-500/20 px-4 py-1.5 rounded-full border border-blue-500/30">Validando Ingresso</p>
           </div>
         )}
 
         {/* Placeholder / Erro */}
         {!isScanning && !error && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-8 text-center">
-            <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mb-4">
-              <Camera className="w-10 h-10 text-blue-500" />
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-8 text-center" style={{ background: 'var(--admin-surface-alt)' }}>
+            <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6 border animate-pulse" style={{ background: 'rgba(59, 130, 246, 0.05)', borderColor: 'rgba(59, 130, 246, 0.2)' }}>
+              <Camera className="w-10 h-10" style={{ color: '#60a5fa' }} />
             </div>
-            <p className="text-slate-400 text-sm font-medium">A câmera está desligada</p>
+            <p className="text-sm font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>Câmera Desligada</p>
+            <p className="text-xs mt-2 max-w-[200px]" style={{ color: 'var(--admin-text-muted)' }}>Ative a câmera para escanear os ingressos dos membros.</p>
           </div>
         )}
 
         {error && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-8 text-center bg-red-950/20">
-            <CameraOff className="w-12 h-12 text-red-500 mb-4" />
-            <p className="text-red-400 text-sm font-bold">{error}</p>
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-8 text-center" style={{ background: 'rgba(239, 68, 68, 0.05)' }}>
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 bg-red-500/10 border border-red-500/20">
+              <CameraOff className="w-8 h-8 text-red-500" />
+            </div>
+            <p className="text-sm font-bold text-red-400 max-w-[250px] leading-relaxed">{error}</p>
           </div>
         )}
 
@@ -135,30 +143,33 @@ export function QrScanner({ onCheckinSuccess }: QrScannerProps) {
         {/* Overlay de Guia */}
         {isScanning && (
           <div className="absolute inset-0 pointer-events-none z-10">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border-2 border-blue-500/50 rounded-3xl">
-              <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-500 rounded-tl-xl" />
-              <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-500 rounded-tr-xl" />
-              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-blue-500 rounded-bl-xl" />
-              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-500 rounded-br-xl" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[65%] border-2 rounded-3xl transition-all duration-700 shadow-[0_0_20px_rgba(59,130,246,0.3)_inset]" style={{ borderColor: 'rgba(59, 130, 246, 0.4)' }}>
+              <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-400 rounded-tl-xl animate-pulse" />
+              <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-400 rounded-tr-xl animate-pulse" />
+              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-blue-400 rounded-bl-xl animate-pulse" />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-400 rounded-br-xl animate-pulse" />
             </div>
-            <div className="absolute inset-0 bg-slate-950/40" style={{ clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%, 50% 0%, 50% 50%, 50% 50%, 50% 50%, 50% 50%)' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-0.5 bg-blue-500/50 shadow-[0_0_10px_rgba(59,130,246,0.8)] animate-scan" />
+            <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.6)', clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%, 50% 0%, 50% 50%, 50% 50%, 50% 50%, 50% 50%)' }} />
           </div>
         )}
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 px-2">
         {!isScanning ? (
           <button
             onClick={startScanning}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-3"
+            className="w-full text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95"
+            style={{ background: 'var(--admin-accent)' }}
           >
             <Camera className="w-5 h-5" />
-            Ativar Câmera
+            Ativar Câmera Scanner
           </button>
         ) : (
           <button
             onClick={stopScanning}
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3"
+            className="w-full text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3 border hover:bg-white/5 active:scale-95"
+            style={{ background: 'var(--admin-surface-alt)', borderColor: 'var(--admin-border)' }}
           >
             <CameraOff className="w-5 h-5" />
             Desligar Câmera
@@ -168,7 +179,8 @@ export function QrScanner({ onCheckinSuccess }: QrScannerProps) {
         {error && (
           <button
             onClick={startScanning}
-            className="w-full bg-white/5 hover:bg-white/10 text-white text-xs font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2"
+            className="w-full hover:bg-white/5 text-xs font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 border"
+            style={{ borderColor: 'var(--admin-border)', color: 'var(--admin-text-secondary)' }}
           >
             <RefreshCw className="w-3 h-3" />
             Tentar novamente
@@ -181,6 +193,15 @@ export function QrScanner({ onCheckinSuccess }: QrScannerProps) {
           width: 100% !important;
           height: 100% !important;
           object-fit: cover !important;
+        }
+        @keyframes scan {
+          0% { top: 17.5%; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 82.5%; opacity: 0; }
+        }
+        .animate-scan {
+          animation: scan 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
       `}</style>
     </div>

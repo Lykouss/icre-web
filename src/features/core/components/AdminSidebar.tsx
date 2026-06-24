@@ -10,7 +10,6 @@ import { AppRole } from '@/features/core/api/get-current-user';
 import type { FlagResult } from '@/features/core/api/get-feature-flag';
 
 /* ─── Types ──────────────────────────────────────────────────── */
-
 interface SidebarProps {
   user: {
     id: string;
@@ -29,127 +28,102 @@ interface NavItem {
   label: string;
   href: string;
   flag: string;
-  roles: AppRole[];
   icon: React.ReactNode;
-  badge?: string;
 }
 
 const ROLE_LABELS: Record<string, string> = {
   SYSADMIN:     'Administrador do Sistema',
-  CHURCH_ADMIN: 'Administrador da Igreja',
+  CHURCH_ADMIN: 'Adm. da Igreja',
   FINANCE_ADMIN:'Adm. Financeiro',
   LEADER:       'Líder',
   MEMBER:       'Membro',
 };
 
-/* ─── Icons (18×18, strokeWidth 1.5) ────────────────────────── */
-const icons = {
-  dashboard: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-    </svg>
-  ),
-  finance: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-    </svg>
-  ),
-  members: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-    </svg>
-  ),
-  events: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-    </svg>
-  ),
-  cells: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-    </svg>
-  ),
-  leaders: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-    </svg>
-  ),
-  pastors: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-    </svg>
-  ),
-  media: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-    </svg>
-  ),
-  portal: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-    </svg>
-  ),
-  permissions: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-    </svg>
-  ),
-  sysadmin: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-    </svg>
-  ),
-  logout: (
-    <svg className="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-    </svg>
-  ),
+const ROLE_COLORS: Record<string, string> = {
+  SYSADMIN:     '#f59e0b',
+  CHURCH_ADMIN: '#3b82f6',
+  FINANCE_ADMIN:'#10b981',
+  LEADER:       '#8b5cf6',
+  MEMBER:       '#64748b',
 };
 
-/* ─── Spinner ────────────────────────────────────────────────── */
-function Spinner() {
+/* ─── SVG Icons ────────────────────────────────────────────────── */
+const NavIcon = ({ d, d2 }: { d: string; d2?: string }) => (
+  <svg className="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d={d} />
+    {d2 && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d={d2} />}
+  </svg>
+);
+
+const NAV_ICONS: Record<string, React.ReactNode> = {
+  dashboard:   <NavIcon d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />,
+  financeiro:  <NavIcon d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
+  membros:     <NavIcon d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />,
+  eventos:     <NavIcon d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />,
+  celulas:     <NavIcon d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />,
+  lideres:     <NavIcon d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />,
+  pastores:    <NavIcon d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />,
+  midias:      <NavIcon d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />,
+  portal:      <NavIcon d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />,
+  permissoes:  <NavIcon d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />,
+  sysadmin:    <NavIcon d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" d2="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />,
+  suporte:     <NavIcon d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />,
+};
+
+const NAV_ITEMS: NavItem[] = [
+  { label: 'Dashboard',        href: '/dashboard',  flag: 'module_dashboard',    icon: NAV_ICONS.dashboard  },
+  { label: 'Financeiro',       href: '/financeiro', flag: 'module_finance',      icon: NAV_ICONS.financeiro },
+  { label: 'Membros',          href: '/membros',    flag: 'module_members',      icon: NAV_ICONS.membros    },
+  { label: 'Eventos',          href: '/eventos',    flag: 'module_events',       icon: NAV_ICONS.eventos    },
+  { label: 'Células',          href: '/celulas',    flag: 'module_cells',        icon: NAV_ICONS.celulas    },
+  { label: 'Líderes',          href: '/lideres',    flag: 'module_leaders',      icon: NAV_ICONS.lideres    },
+  { label: 'Pastores',         href: '/pastores',   flag: 'module_pastors',      icon: NAV_ICONS.pastores   },
+  { label: 'Central de Mídias',href: '/midias',     flag: 'module_media',        icon: NAV_ICONS.midias     },
+  { label: 'Site Público',     href: '/portal',     flag: 'module_public_site',  icon: NAV_ICONS.portal     },
+  { label: 'Permissões',       href: '/permissoes', flag: 'module_permissions',  icon: NAV_ICONS.permissoes },
+  { label: 'Suporte',          href: '/suporte',    flag: '',                    icon: NAV_ICONS.suporte    },
+];
+
+/* ─── Loading Dots ─────────────────────────────────────────────── */
+function LoadingDots() {
   return (
-    <svg className="w-3.5 h-3.5 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
-      <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"/>
-      <path className="opacity-70" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
-    </svg>
+    <span className="flex items-center gap-0.5">
+      {[0,1,2].map(i => (
+        <span
+          key={i}
+          className="w-1 h-1 rounded-full bg-blue-400 animate-bounce"
+          style={{ animationDelay: `${i * 0.12}s`, animationDuration: '0.7s' }}
+        />
+      ))}
+    </span>
   );
 }
 
-/* ─── Nav Items ──────────────────────────────────────────────── */
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard',        href: '/dashboard',  flag: 'module_dashboard',    roles: ['SYSADMIN','CHURCH_ADMIN','FINANCE_ADMIN','LEADER'], icon: icons.dashboard },
-  { label: 'Financeiro',       href: '/financeiro', flag: 'module_finance',      roles: ['SYSADMIN','CHURCH_ADMIN','FINANCE_ADMIN'],          icon: icons.finance   },
-  { label: 'Membros',          href: '/membros',    flag: 'module_members',      roles: ['SYSADMIN','CHURCH_ADMIN','LEADER'],                  icon: icons.members   },
-  { label: 'Eventos',          href: '/eventos',    flag: 'module_events',       roles: ['SYSADMIN','CHURCH_ADMIN'],                          icon: icons.events    },
-  { label: 'Células',          href: '/celulas',    flag: 'module_cells',        roles: ['SYSADMIN','CHURCH_ADMIN'],                          icon: icons.cells     },
-  { label: 'Líderes',          href: '/lideres',    flag: 'module_leaders',      roles: ['SYSADMIN','CHURCH_ADMIN'],                          icon: icons.leaders   },
-  { label: 'Pastores',         href: '/pastores',   flag: 'module_pastors',      roles: ['SYSADMIN','CHURCH_ADMIN'],                          icon: icons.pastors   },
-  { label: 'Central de Mídias',href: '/midias',     flag: 'module_media',        roles: ['SYSADMIN','CHURCH_ADMIN'],                          icon: icons.media     },
-  { label: 'Site Público',     href: '/portal',     flag: 'module_public_site',  roles: ['SYSADMIN','CHURCH_ADMIN'],                          icon: icons.portal    },
-  { label: 'Permissões',       href: '/permissoes', flag: 'module_permissions',  roles: ['SYSADMIN','CHURCH_ADMIN'],                          icon: icons.permissions },
-];
-
-/* ─── Avatar ─────────────────────────────────────────────────── */
-function UserAvatar({ photoUrl, fullName, size = 30 }: { photoUrl: string | null; fullName: string; size?: number }) {
+/* ─── User Avatar ──────────────────────────────────────────────── */
+function UserAvatar({ photoUrl, fullName, size = 34, roleColor = '#3b82f6' }: {
+  photoUrl: string | null; fullName: string; size?: number; roleColor?: string;
+}) {
   const initials = fullName.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
   return (
     <div
-      style={{ width: size, height: size, fontSize: size * 0.36 }}
-      className="rounded-lg overflow-hidden bg-blue-600 flex items-center justify-center text-white font-bold shrink-0 ring-1 ring-white/10"
+      className="shrink-0 overflow-hidden flex items-center justify-center text-white font-bold"
+      style={{
+        width: size, height: size,
+        borderRadius: '10px',
+        fontSize: size * 0.35,
+        background: photoUrl ? 'transparent' : `linear-gradient(135deg, ${roleColor}cc, ${roleColor}66)`,
+        boxShadow: `0 0 0 2px rgba(255,255,255,0.08), 0 0 0 3px ${roleColor}44`,
+      }}
     >
       {photoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={photoUrl} alt={fullName} className="object-cover w-full h-full"/>
-      ) : (
-        <span>{initials}</span>
-      )}
+        <img src={photoUrl} alt={fullName} className="w-full h-full object-cover" />
+      ) : initials}
     </div>
   );
 }
 
-/* ─── Sidebar Content ────────────────────────────────────────── */
+/* ─── Sidebar Content ──────────────────────────────────────────── */
 function SidebarContent({
   user, flags = {}, isCollapsed, onCollapse, onClose, isMobile = false,
 }: {
@@ -166,11 +140,15 @@ function SidebarContent({
 
   useEffect(() => { setNavigatingTo(null); }, [pathname]);
 
-  const handleLogout = useCallback(async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.refresh();
-  }, [router]);
+  const primaryRole = user.roles[0] ?? 'MEMBER';
+  const roleLabel = ROLE_LABELS[primaryRole] ?? primaryRole;
+  const roleColor = ROLE_COLORS[primaryRole] ?? '#64748b';
+
+  const visibleItems = NAV_ITEMS.filter(item => !item.flag || flags[item.flag]?.isAllowed);
+
+  function isActive(href: string) {
+    return pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
+  }
 
   const handleNavClick = useCallback((href: string) => {
     if (pathname === href) return;
@@ -178,261 +156,249 @@ function SidebarContent({
     onClose?.();
   }, [pathname, onClose]);
 
-  const visibleItems = NAV_ITEMS.filter(item => {
-    const flagData = flags[item.flag];
-    return flagData?.isAllowed;
-  });
-
-  function isActive(href: string) {
-    return pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
-  }
-
-  const primaryRole = user.roles[0];
-  const roleLabel = ROLE_LABELS[primaryRole] ?? primaryRole;
+  const handleLogout = useCallback(async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.refresh();
+  }, [router]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden select-none">
 
-      {/* ── Logo Header ── */}
+      {/* ── Logo Header ─────────────────────────────────────── */}
       <div
-        className={`h-14 flex items-center shrink-0 ${isCollapsed ? 'justify-center px-3' : 'px-4 gap-3'}`}
+        className="h-[60px] shrink-0 flex items-center gap-3 px-4 relative"
         style={{ borderBottom: '1px solid var(--admin-border)' }}
       >
         <Link
           href="/dashboard"
           onClick={() => handleNavClick('/dashboard')}
-          className="flex items-center gap-2.5 group min-w-0"
+          className="flex items-center gap-2.5 group min-w-0 flex-1"
         >
-          <div className="w-7 h-7 shrink-0 relative">
-            <Image src="/logo.svg" alt="ICRE" fill className="object-contain brightness-0 invert opacity-80"/>
+          <div className="w-8 h-8 shrink-0 relative rounded-lg overflow-hidden flex items-center justify-center"
+            style={{ background: 'rgba(37,99,235,0.15)', border: '1px solid rgba(37,99,235,0.25)' }}>
+            <Image src="/logo.svg" alt="ICRE" width={20} height={20} className="object-contain brightness-0 invert" />
           </div>
           <AnimatePresence initial={false}>
             {!isCollapsed && (
-              <motion.span
+              <motion.div
                 key="brand"
-                initial={{ opacity: 0, x: -8 }}
+                initial={{ opacity: 0, x: -6 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -8 }}
-                transition={{ duration: 0.18 }}
-                className="font-bold text-sm text-slate-200 tracking-wide truncate"
+                exit={{ opacity: 0, x: -6 }}
+                transition={{ duration: 0.2 }}
+                className="min-w-0"
               >
-                SIGE-Web
-              </motion.span>
+                <p className="text-sm font-bold text-slate-100 leading-tight tracking-wide truncate">SIGE-Web</p>
+                <p className="text-[9px] text-slate-500 leading-tight uppercase tracking-widest">Sistema de Gestão</p>
+              </motion.div>
             )}
           </AnimatePresence>
         </Link>
 
-        {!isMobile && !isCollapsed && (
+        {/* Collapse button — only on desktop, OUTSIDE the logo */}
+        {!isMobile && (
           <button
             onClick={onCollapse}
-            title="Recolher menu"
-            className="ml-auto w-6 h-6 flex items-center justify-center rounded text-slate-600 hover:text-slate-300 hover:bg-white/5 transition-colors shrink-0"
+            title={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
+            className="w-7 h-7 shrink-0 flex items-center justify-center rounded-lg text-slate-600 hover:text-slate-300 hover:bg-white/8 transition-all duration-150"
           >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <motion.svg
+              className="w-3.5 h-3.5"
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              animate={{ rotate: isCollapsed ? 180 : 0 }}
+              transition={{ duration: 0.25, ease: [0.4,0,0.2,1] }}
+            >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-          </button>
-        )}
-        {!isMobile && isCollapsed && (
-          <button
-            onClick={onCollapse}
-            title="Expandir menu"
-            className="w-6 h-6 flex items-center justify-center rounded text-slate-600 hover:text-slate-300 hover:bg-white/5 transition-colors absolute right-2"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
-            </svg>
+            </motion.svg>
           </button>
         )}
       </div>
 
-      {/* ── Nav ── */}
-      <nav className="flex-1 py-3 overflow-y-auto overflow-x-hidden px-2">
+      {/* ── Navigation ──────────────────────────────────────── */}
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2.5">
 
-        {/* Gestão label */}
+        {/* Main group label */}
         <AnimatePresence initial={false}>
           {!isCollapsed && (
             <motion.p
-              key="label-gestao"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              key="label-g"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="text-[9px] font-semibold uppercase tracking-[0.15em] mb-1.5 px-2"
+              className="px-2 mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.18em]"
               style={{ color: 'var(--admin-text-muted)' }}
             >
-              Gestão
+              Módulos
             </motion.p>
           )}
         </AnimatePresence>
 
-        <div className="space-y-px">
+        <div className="space-y-0.5">
           {visibleItems.map(item => {
             const active = isActive(item.href);
             const isLoading = navigatingTo === item.href;
-            const flagData = flags[item.flag];
+            const flag = flags[item.flag];
+            const blocked = flag?.status === 'manutencao' && !user.isSysAdmin;
 
-            let dynBadge: { text: string; cls: string } | null = null;
-            if (flagData) {
-              switch (flagData.status) {
-                case 'novo':          if (!flagData.userHasViewed) dynBadge = { text: 'Novo', cls: 'bg-emerald-500/15 text-emerald-400' }; break;
-                case 'antecipado':    dynBadge = { text: 'VIP',        cls: 'bg-amber-500/15 text-amber-400' }; break;
-                case 'desenvolvimento': dynBadge = { text: 'Dev',      cls: 'bg-slate-500/15 text-slate-500' }; break;
-                case 'manutencao':    dynBadge = { text: 'Manutenção', cls: 'bg-red-500/15 text-red-400' };    break;
-                case 'inativo':       dynBadge = { text: 'Inativo',    cls: 'bg-stone-500/15 text-stone-500' }; break;
-              }
-            }
-
-            const isBlocked = flagData?.status === 'manutencao' && !user.isSysAdmin;
+            let chipText = '';
+            if (flag?.status === 'novo' && !flag.userHasViewed) chipText = 'Novo';
+            else if (flag?.status === 'manutencao') chipText = 'Man.';
+            else if (flag?.status === 'antecipado') chipText = 'VIP';
 
             return (
-              <div key={item.href} className="relative group/item">
-                <Link
-                  href={isBlocked ? '#' : item.href}
-                  onClick={e => {
-                    if (isBlocked) { e.preventDefault(); return; }
-                    handleNavClick(item.href);
-                  }}
-                  title={isCollapsed ? item.label : undefined}
-                  className={`
-                    relative flex items-center gap-2.5 rounded-md text-[13px] font-medium transition-all duration-150
-                    ${isCollapsed ? 'justify-center py-2.5 px-0' : 'px-2.5 py-2'}
-                    ${active
-                      ? 'text-blue-300'
-                      : isBlocked
-                        ? 'text-slate-600 cursor-not-allowed'
-                        : 'text-slate-500 hover:text-slate-200'
-                    }
-                  `}
-                  style={active ? { background: 'var(--admin-accent-dim)' } : {}}
-                >
-                  {/* Active bar */}
-                  {active && (
-                    <motion.span
-                      layoutId="active-indicator"
-                      className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r-full bg-blue-500"
-                      transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-                    />
-                  )}
-
-                  {/* Icon */}
-                  <span className={`transition-colors duration-150 ${active ? 'text-blue-400' : 'text-slate-600 group-hover:text-slate-400'}`}>
-                    {isLoading ? <Spinner /> : item.icon}
-                  </span>
-
-                  {/* Label */}
-                  <AnimatePresence initial={false}>
-                    {!isCollapsed && (
-                      <motion.span
-                        key="lbl"
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: 'auto' }}
-                        exit={{ opacity: 0, width: 0 }}
-                        transition={{ duration: 0.18 }}
-                        className="truncate overflow-hidden whitespace-nowrap flex-1"
-                      >
-                        {item.label}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Loading dots */}
-                  {isLoading && !isCollapsed && (
-                    <span className="ml-auto flex gap-0.5 items-center">
-                      {[0,1,2].map(i => (
-                        <span key={i} className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: `${i*0.1}s`, animationDuration: '0.6s' }}/>
-                      ))}
-                    </span>
-                  )}
-
-                  {/* Badge */}
-                  {dynBadge && !isCollapsed && !isLoading && (
-                    <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded ${dynBadge.cls}`}>
-                      {dynBadge.text}
-                    </span>
-                  )}
-                </Link>
-
-                {/* Tooltip for collapsed + maintenance */}
-                {isBlocked && !isCollapsed && (
-                  <span className="absolute hidden group-hover/item:block left-full ml-2 w-max bg-slate-900 border border-white/10 text-xs text-slate-300 px-2.5 py-1.5 rounded-lg z-[100] shadow-xl">
-                    Módulo em Manutenção
-                  </span>
+              <Link
+                key={item.href}
+                href={blocked ? '#' : item.href}
+                onClick={e => {
+                  if (blocked) { e.preventDefault(); return; }
+                  handleNavClick(item.href);
+                }}
+                title={isCollapsed ? item.label : undefined}
+                className={`
+                  group/item relative flex items-center gap-2.5 rounded-xl transition-all duration-200
+                  ${isCollapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}
+                  ${blocked ? 'opacity-40 cursor-not-allowed' : ''}
+                  ${active
+                    ? 'text-blue-200'
+                    : 'text-slate-500 hover:text-slate-200'
+                  }
+                `}
+                style={active ? {
+                  background: 'linear-gradient(135deg, rgba(37,99,235,0.18) 0%, rgba(37,99,235,0.08) 100%)',
+                  boxShadow: 'inset 0 0 0 1px rgba(37,99,235,0.2)',
+                } : {}}
+              >
+                {/* Active left accent bar */}
+                {active && (
+                  <motion.span
+                    layoutId="nav-active-bar"
+                    className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full"
+                    style={{ background: 'var(--admin-accent)', boxShadow: '0 0 8px rgba(37,99,235,0.6)' }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                  />
                 )}
-              </div>
+
+                {/* Hover glow */}
+                {!active && !blocked && (
+                  <span className="absolute inset-0 rounded-xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-200"
+                    style={{ background: 'rgba(255,255,255,0.035)' }} />
+                )}
+
+                {/* Icon */}
+                <span className={`
+                  relative z-10 transition-all duration-200 shrink-0
+                  ${active ? 'text-blue-400 drop-shadow-[0_0_6px_rgba(96,165,250,0.6)]' : 'text-slate-600 group-hover/item:text-slate-300 group-hover/item:translate-x-0.5'}
+                `}>
+                  {isLoading ? <LoadingDots /> : item.icon}
+                </span>
+
+                {/* Label + chip */}
+                <AnimatePresence initial={false}>
+                  {!isCollapsed && (
+                    <motion.div
+                      key="lbl"
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: 'auto' }}
+                      exit={{ opacity: 0, width: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden relative z-10"
+                    >
+                      <span className="text-[13px] font-medium truncate leading-none">{item.label}</span>
+                      {chipText && (
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                          chipText === 'Novo' ? 'bg-emerald-500/15 text-emerald-400' :
+                          chipText === 'VIP'  ? 'bg-amber-500/15 text-amber-400' :
+                          'bg-red-500/15 text-red-400'
+                        }`}>
+                          {chipText}
+                        </span>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Link>
             );
           })}
         </div>
 
-        {/* SysAdmin section */}
+        {/* System group */}
         {user.isSysAdmin && (
-          <div className="mt-4">
-            <div className="my-2 mx-1" style={{ borderTop: '1px solid var(--admin-border)' }} />
+          <>
+            <div className="my-3 mx-1" style={{ borderTop: '1px solid var(--admin-border)' }} />
             <AnimatePresence initial={false}>
               {!isCollapsed && (
                 <motion.p
-                  key="label-sistema"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                  key="label-sys"
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                   transition={{ duration: 0.15 }}
-                  className="text-[9px] font-semibold uppercase tracking-[0.15em] mb-1.5 px-2"
+                  className="px-2 mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.18em]"
                   style={{ color: 'var(--admin-text-muted)' }}
                 >
                   Sistema
                 </motion.p>
               )}
             </AnimatePresence>
-            {(() => {
-              const active = isActive('/sysadmin');
-              const isLoading = navigatingTo === '/sysadmin';
+            {[
+              { label: 'SysAdmin', href: '/sysadmin', icon: NAV_ICONS.sysadmin },
+              { label: 'Permissões', href: '/permissoes', icon: NAV_ICONS.permissoes },
+            ].map(item => {
+              const active = isActive(item.href);
+              const isLoading = navigatingTo === item.href;
               return (
                 <Link
-                  href="/sysadmin"
-                  onClick={() => handleNavClick('/sysadmin')}
-                  title={isCollapsed ? 'SysAdmin' : undefined}
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => handleNavClick(item.href)}
+                  title={isCollapsed ? item.label : undefined}
                   className={`
-                    relative flex items-center gap-2.5 rounded-md text-[13px] font-medium transition-all duration-150
-                    ${isCollapsed ? 'justify-center py-2.5 px-0' : 'px-2.5 py-2'}
-                    ${active ? 'text-blue-300' : 'text-slate-600 hover:text-slate-300'}
+                    group/item relative flex items-center gap-2.5 rounded-xl transition-all duration-200
+                    ${isCollapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}
+                    ${active ? 'text-blue-200' : 'text-slate-600 hover:text-slate-300'}
                   `}
-                  style={active ? { background: 'var(--admin-accent-dim)' } : {}}
+                  style={active ? {
+                    background: 'linear-gradient(135deg, rgba(37,99,235,0.18) 0%, rgba(37,99,235,0.08) 100%)',
+                    boxShadow: 'inset 0 0 0 1px rgba(37,99,235,0.2)',
+                  } : {}}
                 >
                   {active && (
                     <motion.span
-                      layoutId="active-indicator"
-                      className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r-full bg-blue-500"
-                      transition={{ type: 'spring', stiffness: 400, damping: 40 }}
+                      layoutId="nav-active-bar"
+                      className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full"
+                      style={{ background: 'var(--admin-accent)', boxShadow: '0 0 8px rgba(37,99,235,0.6)' }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                     />
                   )}
-                  <span className={`transition-colors duration-150 ${active ? 'text-blue-400' : 'text-slate-600 group-hover:text-slate-400'}`}>
-                    {isLoading ? <Spinner /> : icons.sysadmin}
+                  <span className={!active ? 'hover:translate-x-0.5 transition-transform' : ''}>
+                    {isLoading ? <LoadingDots /> : <span className={active ? 'text-blue-400' : 'text-slate-600 group-hover/item:text-slate-400'}>{item.icon}</span>}
                   </span>
                   <AnimatePresence initial={false}>
                     {!isCollapsed && (
                       <motion.span
-                        key="lbl-sa"
+                        key="lbl-sys"
                         initial={{ opacity: 0, width: 0 }}
                         animate={{ opacity: 1, width: 'auto' }}
                         exit={{ opacity: 0, width: 0 }}
-                        transition={{ duration: 0.18 }}
-                        className="truncate overflow-hidden whitespace-nowrap flex-1"
+                        transition={{ duration: 0.2 }}
+                        className="text-[13px] font-medium truncate"
                       >
-                        SysAdmin
+                        {item.label}
                       </motion.span>
                     )}
                   </AnimatePresence>
                 </Link>
               );
-            })()}
-          </div>
+            })}
+          </>
         )}
       </nav>
 
-      {/* ── Footer: User ── */}
-      <div className="shrink-0 p-2" style={{ borderTop: '1px solid var(--admin-border)' }}>
-        <div className={`flex items-center gap-2.5 rounded-md px-2 py-2 ${isCollapsed ? 'justify-center' : ''}`}>
-          <UserAvatar photoUrl={user.photoUrl} fullName={user.fullName} size={30} />
+      {/* ── User Footer ─────────────────────────────────────── */}
+      <div
+        className="shrink-0 p-2.5"
+        style={{ borderTop: '1px solid var(--admin-border)' }}
+      >
+        <div className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2 transition-colors hover:bg-white/5 ${isCollapsed ? 'justify-center' : ''}`}>
+          <UserAvatar photoUrl={user.photoUrl} fullName={user.fullName} size={34} roleColor={roleColor} />
 
           <AnimatePresence initial={false}>
             {!isCollapsed && (
@@ -441,11 +407,11 @@ function SidebarContent({
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
-                transition={{ duration: 0.18 }}
+                transition={{ duration: 0.2 }}
                 className="flex-1 min-w-0 overflow-hidden"
               >
                 <p className="text-[13px] font-semibold text-slate-200 truncate leading-tight">{user.fullName}</p>
-                <p className="text-[11px] truncate leading-tight" style={{ color: 'var(--admin-text-muted)' }}>{roleLabel}</p>
+                <p className="text-[10px] truncate leading-tight" style={{ color: roleColor }}>{roleLabel}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -453,20 +419,18 @@ function SidebarContent({
           <AnimatePresence initial={false}>
             {!isCollapsed && (
               <motion.button
-                key="logout"
-                initial={{ opacity: 0, scale: 0.8 }}
+                key="logout-btn"
+                initial={{ opacity: 0, scale: 0.7 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.12 }}
-                onClick={async () => {
-                  const supabase = createClient();
-                  await supabase.auth.signOut();
-                  useRouter();
-                }}
+                exit={{ opacity: 0, scale: 0.7 }}
+                transition={{ duration: 0.15 }}
+                onClick={handleLogout}
                 title="Sair"
-                className="p-1.5 rounded text-slate-600 hover:text-red-400 hover:bg-red-500/8 transition-colors shrink-0"
+                className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all duration-150 shrink-0"
               >
-                {icons.logout}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
               </motion.button>
             )}
           </AnimatePresence>
@@ -476,37 +440,36 @@ function SidebarContent({
   );
 }
 
-/* ─── Main Export ────────────────────────────────────────────── */
+/* ─── Main Export ──────────────────────────────────────────────── */
 export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClose }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    setIsMounted(true);
-    const saved = localStorage.getItem('sige_sidebar_collapsed');
-    if (saved) setIsCollapsed(saved === 'true');
+    setMounted(true);
+    const saved = localStorage.getItem('sige_sidebar_v2_collapsed');
+    if (saved === 'true') setIsCollapsed(true);
   }, []);
 
   const handleCollapseToggle = useCallback(() => {
     setIsCollapsed(prev => {
-      const next = !prev;
-      localStorage.setItem('sige_sidebar_collapsed', String(next));
-      return next;
+      localStorage.setItem('sige_sidebar_v2_collapsed', String(!prev));
+      return !prev;
     });
   }, []);
 
-  // Realtime feature flags
+  // Realtime flags
   useEffect(() => {
     const supabase = createClient();
-    const channel = supabase
-      .channel('realtime_flags')
+    const ch = supabase
+      .channel('rt_flags_sidebar')
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'feature_flags' }, () => router.refresh())
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { supabase.removeChannel(ch); };
   }, [router]);
 
-  // Escape key (mobile)
+  // Escape key on mobile
   useEffect(() => {
     if (!mobileOpen) return;
     const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onMobileClose?.(); };
@@ -514,32 +477,39 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
     return () => window.removeEventListener('keydown', h);
   }, [mobileOpen, onMobileClose]);
 
-  // Body scroll lock (mobile)
+  // Scroll lock
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
-  const sidebarStyle = { background: 'var(--admin-sidebar)' };
+  const sidebarBg: React.CSSProperties = {
+    background: 'var(--admin-sidebar)',
+    borderRight: '1px solid var(--admin-border)',
+  };
 
   return (
     <>
-      {/* ── Desktop Sidebar ── */}
+      {/* ── Desktop ── */}
       <motion.aside
+        animate={mounted && isCollapsed ? 'collapsed' : 'expanded'}
         variants={{
-          expanded:  { width: 236, transition: { duration: 0.28, ease: [0.4, 0, 0.2, 1] } },
-          collapsed: { width: 60,  transition: { duration: 0.28, ease: [0.4, 0, 0.2, 1] } },
+          expanded:  { width: 240, transition: { duration: 0.28, ease: [0.4, 0, 0.2, 1] } },
+          collapsed: { width: 64,  transition: { duration: 0.28, ease: [0.4, 0, 0.2, 1] } },
         }}
-        animate={isMounted && isCollapsed ? 'collapsed' : 'expanded'}
-        className="hidden md:flex flex-col shrink-0 z-20 relative overflow-visible"
-        style={{ ...sidebarStyle, borderRight: '1px solid var(--admin-border)', minWidth: isCollapsed ? 60 : 236 }}
+        className="hidden md:flex flex-col shrink-0 z-20 relative overflow-visible h-full"
+        style={sidebarBg}
       >
-        <div className="relative z-10 flex flex-col h-full">
-          <SidebarContent user={user} flags={flags} isCollapsed={isCollapsed} onCollapse={handleCollapseToggle} isMobile={false} />
-        </div>
+        <SidebarContent
+          user={user}
+          flags={flags}
+          isCollapsed={mounted ? isCollapsed : false}
+          onCollapse={handleCollapseToggle}
+          isMobile={false}
+        />
       </motion.aside>
 
-      {/* ── Mobile Drawer ── */}
+      {/* ── Mobile Overlay ── */}
       <div className="md:hidden">
         <AnimatePresence>
           {mobileOpen && (
@@ -547,7 +517,7 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
               key="overlay"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-black/75 backdrop-blur-sm"
               onClick={onMobileClose}
             />
           )}
@@ -558,10 +528,17 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
               key="drawer"
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
               transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
-              className="fixed top-0 left-0 w-64 h-full z-50 overflow-hidden"
-              style={{ ...sidebarStyle, borderRight: '1px solid var(--admin-border)' }}
+              className="fixed top-0 left-0 w-64 h-full z-50 flex flex-col"
+              style={sidebarBg}
             >
-              <SidebarContent user={user} flags={flags} isCollapsed={false} onCollapse={() => {}} onClose={onMobileClose} isMobile={true} />
+              <SidebarContent
+                user={user}
+                flags={flags}
+                isCollapsed={false}
+                onCollapse={() => {}}
+                onClose={onMobileClose}
+                isMobile={true}
+              />
             </motion.aside>
           )}
         </AnimatePresence>

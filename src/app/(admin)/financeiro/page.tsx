@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { NewTransactionModal } from '@/features/finance/components/NewTransactionModal';
 import { SummaryCards } from '@/features/finance/components/SummaryCards';
 import { FinancePageTabs } from '@/features/finance/components/FinancePageTabs';
+import { PageHeader } from '@/features/core/components/AdminSidebarShell';
 import {
   FinancialTransaction,
   FinancialClosing,
@@ -126,13 +127,11 @@ export default async function FinanceiroPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <FirstAccessTracker flagSlug="module_finance" userId={user?.id} />
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Financeiro</h1>
-          <p className="text-slate-500 mt-1">Gestão de dízimos, ofertas e despesas da tesouraria.</p>
-        </div>
-        <NewTransactionModal categories={categories} members={members} />
-      </div>
+      <PageHeader
+        title="Financeiro"
+        description="Gestão de dízimos, ofertas e despesas da tesouraria."
+        action={<NewTransactionModal categories={categories} members={members} />}
+      />
 
       <SummaryCards
         summary={{ totalIncome, totalExpense, balance: totalIncome - totalExpense }}

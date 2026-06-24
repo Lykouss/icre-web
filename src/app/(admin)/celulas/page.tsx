@@ -6,6 +6,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { MaintenanceScreen } from '@/features/core/components/MaintenanceScreen';
 import { FirstAccessTracker } from '@/features/core/components/FirstAccessTracker';
 import { CellsAdminClient } from '@/features/cells/components/CellsAdminClient';
+import { PageHeader } from '@/features/core/components/AdminSidebarShell';
 import type { Cell, Leader } from '@/features/portal/types';
 
 export default async function CelulasPage() {
@@ -41,14 +42,18 @@ export default async function CelulasPage() {
   console.log('[DEBUG celulas/page] leaders count:', leaders.length);
 
   return (
-    <>
+    <div className="max-w-7xl mx-auto">
       <FirstAccessTracker flagSlug="module_cells" userId={user?.id} />
+      <PageHeader
+        title="Células"
+        description="Gerencie os grupos de células, seus líderes, localização e encontros."
+      />
       <CellsAdminClient
         initialCells={cells}
         leaders={leaders}
         canManage={canManage}
         isSysAdmin={user.isSysAdmin}
       />
-    </>
+    </div>
   );
 }

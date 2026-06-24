@@ -34,13 +34,14 @@ export function FlagToggler({ slug, name, description, initialStatus }: FlagTogg
 
   return (
     // ... (O resto do visual continua igual, mas lembre-se de trocar `initialStatus` por `isToggled` nas validações de cor lá embaixo!)
-    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-4 transition-colors hover:border-blue-300">
+    <div className="p-6 rounded-2xl border shadow-sm flex items-center justify-between gap-4 transition-colors"
+      style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
       <div className="flex-1">
-        <h3 className="font-bold text-slate-800 text-lg">{name}</h3>
-        <p className="text-sm text-slate-500 mt-1">{description}</p>
+        <h3 className="font-bold text-lg" style={{ color: 'var(--admin-text-primary)' }}>{name}</h3>
+        <p className="text-sm mt-1" style={{ color: 'var(--admin-text-secondary)' }}>{description}</p>
         <div className="mt-2">
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            isToggled ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'
+            isToggled ? 'bg-emerald-500/10 text-emerald-400' : 'bg-white/5 text-slate-400'
           }`}>
             {isToggled ? 'Ativado para todos' : 'Desativado (Modo Manutenção)'}
           </span>
@@ -54,7 +55,7 @@ export function FlagToggler({ slug, name, description, initialStatus }: FlagTogg
         disabled={isPending}
         onClick={handleToggle}
         className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${
-          isToggled ? 'bg-blue-600' : 'bg-slate-300'
+          isToggled ? 'bg-blue-600' : 'bg-slate-700'
         }`}
       >
         <span
