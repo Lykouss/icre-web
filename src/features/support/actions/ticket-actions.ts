@@ -285,3 +285,27 @@ export async function getFileSignedUrl(path: string): Promise<ActionResult<{ url
 
   return { data: { url: data.signedUrl } };
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// markAdminMessagesAsRead — usuário marca as mensagens do admin como lidas
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function markAdminMessagesAsRead(ticketId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Não autenticado.' };
+
+  const { error } = await supabase
+    .from('support_ticket_messages')
+    .update({ read_at: new Date().toISOString() })
+    .eq('ticket_id', ticketId)
+    .eq('is_admin', true)
+    .is('read_at', null);
+
+  if (error) {
+    console.error('[markAdminMessagesAsRead]', error.message);
+    return { error: 'Erro ao atualizar status de leitura.' };
+  }
+
+  return {};
+}

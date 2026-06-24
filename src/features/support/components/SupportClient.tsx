@@ -7,6 +7,7 @@ import {
   sendUserMessage,
   closeUserTicket,
   getSignedUploadUrl,
+  markAdminMessagesAsRead,
 } from '@/features/support/actions/ticket-actions';
 import type { Ticket, TicketMessageWithSender } from '@/features/support/types';
 import {
@@ -276,6 +277,16 @@ function ChatInterface({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Mark admin messages as read
+  useEffect(() => {
+    const hasUnreadAdmin = messages.some(m => m.is_admin && !m.read_at);
+    if (hasUnreadAdmin) {
+      markAdminMessagesAsRead(ticket.id).then(() => {
+        setMessages(prev => prev.map(m => (m.is_admin && !m.read_at ? { ...m, read_at: new Date().toISOString() } : m)));
+      });
+    }
+  }, [messages, ticket.id]);
 
   // Realtime subscription
   useEffect(() => {

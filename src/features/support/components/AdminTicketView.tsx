@@ -17,7 +17,7 @@ import {
   TICKET_URGENCY_LABELS,
   TICKET_URGENCY_COLORS,
 } from '@/features/support/types';
-import { Send, Loader2, Paperclip, X, User, Mail, Calendar, ArrowLeft, ShieldAlert, CheckCircle } from 'lucide-react';
+import { Send, Loader2, Paperclip, X, User, Mail, Calendar, ArrowLeft, ShieldAlert, CheckCircle, CheckCheck } from 'lucide-react';
 import Link from 'next/link';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -312,12 +312,23 @@ export function AdminTicketView({
                         </div>
                       )}
                     </div>
-                    <p className={`text-[10px] text-slate-700 px-1 ${isAdminMsg ? 'text-right' : 'text-left'}`}>
-                      {formatTime(msg.created_at)}
-                      {!isAdminMsg && msg.read_at && (
-                        <span className="ml-1.5 text-blue-600/50">• lido</span>
+                    <div className={`flex items-center gap-1.5 px-1 ${isAdminMsg ? 'justify-end' : 'justify-start'}`}>
+                      <p className={`text-[10px] text-slate-700`}>
+                        {formatTime(msg.created_at)}
+                      </p>
+                      {isAdminMsg && (
+                        <span className="flex items-center" title={msg.read_at ? 'Lida' : 'Enviada'}>
+                          {msg.read_at ? (
+                            <CheckCheck className="w-3.5 h-3.5 text-blue-400" />
+                          ) : (
+                            <CheckCheck className="w-3.5 h-3.5 text-slate-500" />
+                          )}
+                        </span>
                       )}
-                    </p>
+                      {!isAdminMsg && msg.read_at && (
+                        <span className="text-[10px] text-blue-600/50">• lido</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </React.Fragment>

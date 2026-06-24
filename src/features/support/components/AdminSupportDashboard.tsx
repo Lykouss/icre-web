@@ -1,7 +1,9 @@
 'use client'
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 import type { TicketWithUser } from '@/features/support/types';
 import {
   TICKET_STATUS_LABELS,
@@ -164,6 +166,22 @@ function Column({
 export function AdminSupportDashboard({ tickets }: AdminSupportDashboardProps) {
   const [search, setSearch] = useState('');
   const [urgencyFilter, setUrgencyFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+  const router = useRouter();
+
+  // Realtime subscription
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase.channel('rt_admin_dashboard_tickets')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'support_tickets' }, () => {
+        router.refresh();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'support_ticket_messages' }, () => {
+        router.refresh();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [router]);
 
   // Filter and sort
   const filtered = tickets.filter(t => {

@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import { AppRole } from '@/features/core/api/get-current-user';
 import type { FlagResult } from '@/features/core/api/get-feature-flag';
+import { getPendingTicketsCount } from '@/features/support/actions/admin-support-actions';
 
 /* ─── Types ──────────────────────────────────────────────────── */
 interface SidebarProps {
@@ -125,7 +126,7 @@ function UserAvatar({ photoUrl, fullName, size = 34, roleColor = '#3b82f6' }: {
 
 /* ─── Sidebar Content ──────────────────────────────────────────── */
 function SidebarContent({
-  user, flags = {}, isCollapsed, onCollapse, onClose, isMobile = false,
+  user, flags = {}, isCollapsed, onCollapse, onClose, isMobile = false, supportCount = 0
 }: {
   user: SidebarProps['user'];
   flags: Record<string, FlagResult>;
@@ -133,6 +134,7 @@ function SidebarContent({
   onCollapse: () => void;
   onClose?: () => void;
   isMobile?: boolean;
+  supportCount?: number;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -241,7 +243,8 @@ function SidebarContent({
             const blocked = flag?.status === 'manutencao' && !user.isSysAdmin;
 
             let chipText = '';
-            if (flag?.status === 'novo' && !flag.userHasViewed) chipText = 'Novo';
+            if (item.href === '/admin-suporte' && supportCount > 0) chipText = String(supportCount);
+            else if (flag?.status === 'novo' && !flag.userHasViewed) chipText = 'Novo';
             else if (flag?.status === 'manutencao') chipText = 'Man.';
             else if (flag?.status === 'antecipado') chipText = 'VIP';
 
@@ -306,6 +309,7 @@ function SidebarContent({
                       <span className="text-[13px] font-medium truncate leading-none">{item.label}</span>
                       {chipText && (
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                          item.href === '/admin-suporte' ? 'bg-red-500 text-white' :
                           chipText === 'Novo' ? 'bg-emerald-500/15 text-emerald-400' :
                           chipText === 'VIP'  ? 'bg-amber-500/15 text-amber-400' :
                           'bg-red-500/15 text-red-400'
@@ -444,6 +448,7 @@ function SidebarContent({
 export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClose }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [supportCount, setSupportCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -459,14 +464,35 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
     });
   }, []);
 
-  // Realtime flags
+  // Realtime flags and support tickets
   useEffect(() => {
     const supabase = createClient();
-    const ch = supabase
+    
+    // Fetch initial count
+    let isSubscribed = true;
+    async function fetchSupportCount() {
+      const cnt = await getPendingTicketsCount();
+      if (isSubscribed) setSupportCount(cnt);
+    }
+    fetchSupportCount();
+
+    const chFlags = supabase
       .channel('rt_flags_sidebar')
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'feature_flags' }, () => router.refresh())
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+      
+    const chTickets = supabase
+      .channel('rt_tickets_sidebar')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'support_tickets' }, () => {
+        fetchSupportCount();
+      })
+      .subscribe();
+
+    return () => { 
+      isSubscribed = false;
+      supabase.removeChannel(chFlags); 
+      supabase.removeChannel(chTickets);
+    };
   }, [router]);
 
   // Escape key on mobile
@@ -506,6 +532,7 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
           isCollapsed={mounted ? isCollapsed : false}
           onCollapse={handleCollapseToggle}
           isMobile={false}
+          supportCount={supportCount}
         />
       </motion.aside>
 
@@ -538,6 +565,7 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
                 onCollapse={() => {}}
                 onClose={onMobileClose}
                 isMobile={true}
+                supportCount={supportCount}
               />
             </motion.aside>
           )}

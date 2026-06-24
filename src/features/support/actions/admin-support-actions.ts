@@ -300,3 +300,26 @@ export async function updateTicketStatus(
 
   return {};
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// getPendingTicketsCount — retorna contagem de chamados abertos e não respondidos
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function getPendingTicketsCount(): Promise<number> {
+  const admin = await requireAdmin();
+  if (!admin) return 0;
+
+  const supabase = await createClient();
+
+  const { count, error } = await supabase
+    .from('support_tickets')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'open');
+
+  if (error) {
+    console.error('[getPendingTicketsCount]', error.message);
+    return 0;
+  }
+
+  return count ?? 0;
+}
