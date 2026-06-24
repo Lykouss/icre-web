@@ -81,7 +81,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Central de Mídias',href: '/midias',     flag: 'module_media',        icon: NAV_ICONS.midias     },
   { label: 'Site Público',     href: '/portal',     flag: 'module_public_site',  icon: NAV_ICONS.portal     },
   { label: 'Permissões',       href: '/permissoes', flag: 'module_permissions',  icon: NAV_ICONS.permissoes },
-  { label: 'Suporte',          href: '/suporte',    flag: '',                    icon: NAV_ICONS.suporte    },
+  { label: 'Suporte',          href: '/admin-suporte',    flag: '',                    icon: NAV_ICONS.suporte    },
 ];
 
 /* ─── Loading Dots ─────────────────────────────────────────────── */

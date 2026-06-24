@@ -60,7 +60,7 @@ function TicketCard({ ticket }: { ticket: TicketWithUser }) {
 
   return (
     <Link
-      href={`/suporte/${ticket.id}`}
+      href={`/admin-suporte/${ticket.id}`}
       className="block group"
     >
       <div

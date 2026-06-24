@@ -202,7 +202,7 @@ export function AdminTicketView({
         >
           <div className="flex items-center gap-3 min-w-0">
             <Link
-              href="/suporte"
+              href="/admin-suporte"
               className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-300 hover:bg-white/8 transition-all shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
