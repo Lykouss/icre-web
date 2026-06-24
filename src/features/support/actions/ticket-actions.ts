@@ -134,14 +134,14 @@ export async function openTicket(
 export async function sendUserMessage(
   ticketId: string,
   content: string,
-  attachmentUrls: string[]
-): Promise<ActionResult<TicketMessage>> {
+  attachments: string[] = []
+): Promise<ActionResult<TicketMessageWithSender>> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Não autenticado.' };
 
   const cleanContent = content.trim().slice(0, 4000);
-  const cleanUrls    = attachmentUrls.slice(0, MAX_ATTACHMENTS_PER_MESSAGE);
+  const cleanUrls    = attachments.slice(0, MAX_ATTACHMENTS_PER_MESSAGE);
 
   if (!cleanContent && cleanUrls.length === 0) {
     return { error: 'A mensagem não pode estar vazia.' };
@@ -191,7 +191,7 @@ export async function sendUserMessage(
       content:         cleanContent || '(arquivo enviado)',
       attachment_urls: cleanUrls,
     })
-    .select('*')
+    .select('*, profiles(full_name, avatar_url)')
     .single();
 
   if (insertError || !message) {
@@ -207,7 +207,7 @@ export async function sendUserMessage(
       .eq('id', ticketId);
   }
 
-  return { data: message as TicketMessage };
+  return { data: message as TicketMessageWithSender };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

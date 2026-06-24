@@ -345,6 +345,13 @@ function ChatInterface({
       if (result.error) { setError(result.error); return; }
       setInputValue('');
       setUploadedUrls([]);
+      
+      if (result.data) {
+        setMessages(prev => {
+          if (prev.some(m => m.id === result.data!.id)) return prev;
+          return [...prev, result.data!];
+        });
+      }
     });
   }
 
