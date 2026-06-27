@@ -41,14 +41,14 @@ export function isValidDate(value: string): boolean {
 }
 
 // Roles que podem escrever dados de membros
-const MEMBER_WRITE_ROLES: AppRole[] = ['SYSADMIN', 'CHURCH_ADMIN'];
+const MEMBER_WRITE_ROLES: AppRole[] = ['SYSADMIN', 'CHURCH_ADMIN', 'MEMBER_ADMIN'];
 
 export function canWriteMembers(roles: AppRole[]): boolean {
   return roles.some(r => MEMBER_WRITE_ROLES.includes(r));
 }
 
 // Roles que podem criar membros
-const MEMBER_CREATE_ROLES: AppRole[] = ['SYSADMIN', 'CHURCH_ADMIN', 'LEADER'];
+const MEMBER_CREATE_ROLES: AppRole[] = ['SYSADMIN', 'CHURCH_ADMIN', 'LEADER', 'MEMBER_ADMIN'];
 
 export function canCreateMembers(roles: AppRole[]): boolean {
   return roles.some(r => MEMBER_CREATE_ROLES.includes(r));

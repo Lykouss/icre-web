@@ -9,6 +9,9 @@ import { createClient } from '@/lib/supabase/client';
 import { AppRole } from '@/features/core/api/get-current-user';
 import type { FlagResult } from '@/features/core/api/get-feature-flag';
 import { getPendingTicketsCount } from '@/features/support/actions/admin-support-actions';
+import { getPendingFeedbackCount } from '@/features/support/actions/admin-feedback-actions';
+import { RoleBadge } from '@/features/core/components/RoleBadge';
+
 
 /* ─── Types ──────────────────────────────────────────────────── */
 interface SidebarProps {
@@ -33,19 +36,29 @@ interface NavItem {
 }
 
 const ROLE_LABELS: Record<string, string> = {
-  SYSADMIN:     'Administrador do Sistema',
-  CHURCH_ADMIN: 'Adm. da Igreja',
-  FINANCE_ADMIN:'Adm. Financeiro',
-  LEADER:       'Líder',
-  MEMBER:       'Membro',
+  SYSADMIN:      'Administrador do Sistema',
+  CHURCH_ADMIN:  'Adm. da Igreja',
+  FINANCE_ADMIN: 'Adm. Financeiro',
+  LEADER:        'Líder',
+  MEMBER:        'Membro',
+  SUPPORT_ADMIN: 'Atendente de Suporte',
+  EVENT_ADMIN:   'Coord. de Eventos',
+  MEDIA_ADMIN:   'Gerente de Mídia',
+  MEMBER_ADMIN:  'Gestor de Membros',
+  REPORT_VIEWER: 'Analista',
 };
 
 const ROLE_COLORS: Record<string, string> = {
-  SYSADMIN:     '#f59e0b',
-  CHURCH_ADMIN: '#3b82f6',
-  FINANCE_ADMIN:'#10b981',
-  LEADER:       '#8b5cf6',
-  MEMBER:       '#64748b',
+  SYSADMIN:      '#f59e0b',
+  CHURCH_ADMIN:  '#3b82f6',
+  FINANCE_ADMIN: '#10b981',
+  LEADER:        '#8b5cf6',
+  MEMBER:        '#64748b',
+  SUPPORT_ADMIN: '#0ea5e9',
+  EVENT_ADMIN:   '#f97316',
+  MEDIA_ADMIN:   '#ec4899',
+  MEMBER_ADMIN:  '#14b8a6',
+  REPORT_VIEWER: '#94a3b8',
 };
 
 /* ─── SVG Icons ────────────────────────────────────────────────── */
@@ -82,8 +95,10 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Central de Mídias',href: '/midias',     flag: 'module_media',        icon: NAV_ICONS.midias     },
   { label: 'Site Público',     href: '/portal',     flag: 'module_public_site',  icon: NAV_ICONS.portal     },
   { label: 'Permissões',       href: '/permissoes', flag: 'module_permissions',  icon: NAV_ICONS.permissoes },
-  { label: 'Suporte',          href: '/admin-suporte',    flag: '',                    icon: NAV_ICONS.suporte    },
+  { label: 'Suporte',          href: '/admin-suporte',   flag: '',                    icon: NAV_ICONS.suporte    },
+  { label: 'Feedbacks & Bugs', href: '/admin-feedback',  flag: '',                    icon: <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg> },
 ];
+
 
 /* ─── Loading Dots ─────────────────────────────────────────────── */
 function LoadingDots() {
@@ -126,7 +141,7 @@ function UserAvatar({ photoUrl, fullName, size = 34, roleColor = '#3b82f6' }: {
 
 /* ─── Sidebar Content ──────────────────────────────────────────── */
 function SidebarContent({
-  user, flags = {}, isCollapsed, onCollapse, onClose, isMobile = false, supportCount = 0
+  user, flags = {}, isCollapsed, onCollapse, onClose, isMobile = false, supportCount = 0, feedbackCount = 0
 }: {
   user: SidebarProps['user'];
   flags: Record<string, FlagResult>;
@@ -135,6 +150,7 @@ function SidebarContent({
   onClose?: () => void;
   isMobile?: boolean;
   supportCount?: number;
+  feedbackCount?: number;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -189,10 +205,13 @@ function SidebarContent({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -6 }}
                 transition={{ duration: 0.2 }}
-                className="min-w-0"
+                className="min-w-0 flex flex-col justify-center"
               >
-                <p className="text-sm font-bold text-slate-100 leading-tight tracking-wide truncate">SIGE-Web</p>
-                <p className="text-[9px] text-slate-500 leading-tight uppercase tracking-widest">Sistema de Gestão</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-bold text-slate-100 leading-tight tracking-wide truncate">SIGE-Web</p>
+                  <RoleBadge role={primaryRole as AppRole} variant="icon" size="sm" />
+                </div>
+                <p className="text-[9px] text-slate-500 leading-tight uppercase tracking-widest mt-0.5">Sistema de Gestão</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -244,6 +263,7 @@ function SidebarContent({
 
             let chipText = '';
             if (item.href === '/admin-suporte' && supportCount > 0) chipText = String(supportCount);
+            else if (item.href === '/admin-feedback' && feedbackCount > 0) chipText = String(feedbackCount);
             else if (flag?.status === 'novo' && !flag.userHasViewed) chipText = 'Novo';
             else if (flag?.status === 'manutencao') chipText = 'Man.';
             else if (flag?.status === 'antecipado') chipText = 'VIP';
@@ -309,7 +329,8 @@ function SidebarContent({
                       <span className="text-[13px] font-medium truncate leading-none">{item.label}</span>
                       {chipText && (
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
-                          item.href === '/admin-suporte' ? 'bg-red-500 text-white' :
+                          item.href === '/admin-suporte'   ? 'bg-red-500 text-white' :
+                          item.href === '/admin-feedback'  ? 'bg-amber-500 text-white' :
                           chipText === 'Novo' ? 'bg-emerald-500/15 text-emerald-400' :
                           chipText === 'VIP'  ? 'bg-amber-500/15 text-amber-400' :
                           'bg-red-500/15 text-red-400'
@@ -344,7 +365,6 @@ function SidebarContent({
             </AnimatePresence>
             {[
               { label: 'SysAdmin', href: '/sysadmin', icon: NAV_ICONS.sysadmin },
-              { label: 'Permissões', href: '/permissoes', icon: NAV_ICONS.permissoes },
             ].map(item => {
               const active = isActive(item.href);
               const isLoading = navigatingTo === item.href;
@@ -414,8 +434,8 @@ function SidebarContent({
                 transition={{ duration: 0.2 }}
                 className="flex-1 min-w-0 overflow-hidden"
               >
-                <p className="text-[13px] font-semibold text-slate-200 truncate leading-tight">{user.fullName}</p>
-                <p className="text-[10px] truncate leading-tight" style={{ color: roleColor }}>{roleLabel}</p>
+                <p className="text-[13px] font-semibold text-slate-200 truncate leading-tight mb-1">{user.fullName}</p>
+                <RoleBadge role={primaryRole as AppRole} variant="chip" size="sm" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -449,6 +469,7 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [supportCount, setSupportCount] = useState(0);
+  const [feedbackCount, setFeedbackCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -474,7 +495,12 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
       const cnt = await getPendingTicketsCount();
       if (isSubscribed) setSupportCount(cnt);
     }
+    async function fetchFeedbackCount() {
+      const cnt = await getPendingFeedbackCount();
+      if (isSubscribed) setFeedbackCount(cnt);
+    }
     fetchSupportCount();
+    fetchFeedbackCount();
 
     const chFlags = supabase
       .channel('rt_flags_sidebar')
@@ -488,10 +514,18 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
       })
       .subscribe();
 
+    const chFeedback = supabase
+      .channel('rt_feedback_sidebar')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'feedback' }, () => {
+        fetchFeedbackCount();
+      })
+      .subscribe();
+
     return () => { 
       isSubscribed = false;
       supabase.removeChannel(chFlags); 
       supabase.removeChannel(chTickets);
+      supabase.removeChannel(chFeedback);
     };
   }, [router]);
 
@@ -533,6 +567,7 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
           onCollapse={handleCollapseToggle}
           isMobile={false}
           supportCount={supportCount}
+          feedbackCount={feedbackCount}
         />
       </motion.aside>
 
@@ -566,6 +601,7 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
                 onClose={onMobileClose}
                 isMobile={true}
                 supportCount={supportCount}
+                feedbackCount={feedbackCount}
               />
             </motion.aside>
           )}

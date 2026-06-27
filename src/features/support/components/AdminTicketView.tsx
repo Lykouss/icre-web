@@ -19,6 +19,8 @@ import {
 } from '@/features/support/types';
 import { Send, Loader2, Paperclip, X, User, Mail, Calendar, ArrowLeft, ShieldAlert, CheckCircle, CheckCheck } from 'lucide-react';
 import Link from 'next/link';
+import { AttachmentButton } from '@/features/support/components/AttachmentViewer';
+
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -358,10 +360,7 @@ export function AdminTicketView({
                       {msg.attachment_urls.length > 0 && (
                         <div className="mt-2 space-y-1">
                           {msg.attachment_urls.map((url, ai) => (
-                            <div key={ai} className="flex items-center gap-1.5 text-[11px] opacity-70">
-                              <Paperclip className="w-3 h-3" />
-                              <span className="truncate">{url.split('/').pop()}</span>
-                            </div>
+                            <AttachmentButton key={ai} rawPath={url} />
                           ))}
                         </div>
                       )}

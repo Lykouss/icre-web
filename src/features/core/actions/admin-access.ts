@@ -5,7 +5,16 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser, AppRole } from '@/features/core/api/get-current-user';
 
-const GRANTABLE_ROLES: AppRole[] = ['CHURCH_ADMIN', 'FINANCE_ADMIN', 'LEADER'];
+const GRANTABLE_ROLES: AppRole[] = [
+  'CHURCH_ADMIN',
+  'FINANCE_ADMIN',
+  'LEADER',
+  'SUPPORT_ADMIN',
+  'EVENT_ADMIN',
+  'MEDIA_ADMIN',
+  'MEMBER_ADMIN',
+  'REPORT_VIEWER',
+];
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function isValidUUID(id: string) {

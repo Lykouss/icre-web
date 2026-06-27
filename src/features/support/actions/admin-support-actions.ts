@@ -104,7 +104,7 @@ export async function getTicketWithMessages(
       .single(),
     supabase
       .from('support_ticket_messages')
-      .select('*, profiles:sender_id(full_name)')
+      .select('*, profiles:sender_id(full_name, photo_url)')
       .eq('ticket_id', ticketId)
       .order('created_at', { ascending: true }),
   ]);

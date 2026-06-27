@@ -17,6 +17,8 @@ import {
   TICKET_URGENCY_COLORS,
 } from '@/features/support/types';
 import { Paperclip, Send, X, AlertTriangle, MessageSquare, Plus, Loader2 } from 'lucide-react';
+import { AttachmentButton } from '@/features/support/components/AttachmentViewer';
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -522,10 +524,7 @@ function ChatInterface({
                     {msg.attachment_urls.length > 0 && (
                       <div className="mt-2 space-y-1">
                         {msg.attachment_urls.map((url, ai) => (
-                          <div key={ai} className="flex items-center gap-1.5 text-[11px] opacity-70">
-                            <Paperclip className="w-3 h-3" />
-                            <span className="truncate">{url.split('/').pop()}</span>
-                          </div>
+                          <AttachmentButton key={ai} rawPath={url} />
                         ))}
                       </div>
                     )}

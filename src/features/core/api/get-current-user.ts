@@ -1,7 +1,18 @@
 import { createClient } from '@/lib/supabase/server';
 
 // Definimos os cargos possíveis exatamente como no banco de dados
-export type AppRole = 'MEMBER' | 'LEADER' | 'FINANCE_ADMIN' | 'CHURCH_ADMIN' | 'SYSADMIN';
+export type AppRole =
+  | 'MEMBER'
+  | 'LEADER'
+  | 'FINANCE_ADMIN'
+  | 'CHURCH_ADMIN'
+  | 'SYSADMIN'
+  // Novos cargos especializados (migration 20260627170000)
+  | 'SUPPORT_ADMIN'   // Atendente de Suporte
+  | 'EVENT_ADMIN'     // Coordenador de Eventos
+  | 'MEDIA_ADMIN'     // Gerente de Conteúdo/Mídia
+  | 'MEMBER_ADMIN'    // Gestor de Membros
+  | 'REPORT_VIEWER';  // Analista (Somente Leitura)
 
 export async function getCurrentUser() {
   const supabase = await createClient();

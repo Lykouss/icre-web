@@ -10,20 +10,7 @@ import {
 } from '@/features/core/actions/admin-access';
 import { AppRole } from '@/features/core/api/get-current-user';
 import { useToast } from '@/features/core/components/ToastContext';
-
-const ROLE_LABELS: Record<string, string> = {
-  SYSADMIN:     'SysAdmin',
-  CHURCH_ADMIN: 'Administrador',
-  FINANCE_ADMIN:'Financeiro',
-  LEADER:       'Líder',
-};
-
-const ROLE_COLORS: Record<string, string> = {
-  SYSADMIN:     'bg-purple-100 text-purple-700',
-  CHURCH_ADMIN: 'bg-blue-100 text-blue-700',
-  FINANCE_ADMIN:'bg-emerald-100 text-emerald-700',
-  LEADER:       'bg-amber-100 text-amber-700',
-};
+import { RoleBadge, ROLE_BADGE_CONFIG } from '@/features/core/components/RoleBadge';
 
 const ONBOARDING_LABELS: Record<string, { label: string; color: string }> = {
   admin_notification: { label: 'Aguardando notificação', color: 'bg-amber-100 text-amber-700'   },
@@ -49,7 +36,16 @@ const ACTION_LABELS: Record<string, string> = {
   UPDATE_MINISTRIES:    'Ministérios atualizados',
 };
 
-const GRANTABLE_ROLES: AppRole[] = ['CHURCH_ADMIN', 'FINANCE_ADMIN', 'LEADER'];
+const GRANTABLE_ROLES: AppRole[] = [
+  'CHURCH_ADMIN',
+  'FINANCE_ADMIN',
+  'LEADER',
+  'SUPPORT_ADMIN',
+  'EVENT_ADMIN',
+  'MEDIA_ADMIN',
+  'MEMBER_ADMIN',
+  'REPORT_VIEWER',
+];
 
 type SuspendDuration = '1d' | '7d' | '30d' | 'indefinido';
 
@@ -152,7 +148,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
   };
 
   const handleRevoke = (userId: string, role: AppRole, name: string) => {
-    if (!confirm(`Revogar o cargo "${ROLE_LABELS[role] ?? role}" de ${name}?`)) return;
+    if (!confirm(`Revogar o cargo "${ROLE_BADGE_CONFIG[role]?.label ?? role}" de ${name}?`)) return;
     startTransition(async () => {
       const id = toast('loading', 'Revogando cargo...');
       const result = await revokeAdminRole(userId, role);
@@ -315,9 +311,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                       {u.church_role && <p className="text-xs mt-0.5" style={{ color: 'var(--admin-text-secondary)' }}>{u.church_role}</p>}
                       <div className="flex flex-wrap gap-1 mt-1.5">
                         {u.roles.length > 0 ? u.roles.map(role => (
-                          <span key={role} className={`text-xs font-semibold px-2 py-0.5 rounded-full ${ROLE_COLORS[role] ?? 'bg-white/5 text-slate-400'}`}>
-                            {ROLE_LABELS[role] ?? role}
-                          </span>
+                          <RoleBadge key={role} role={role as AppRole} variant="chip" size="sm" className="mr-1.5" />
                         )) : <span className="text-xs italic" style={{ color: 'var(--admin-text-muted)' }}>Sem cargo</span>}
                       </div>
                     </div>
@@ -327,7 +321,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                           <div className="flex items-center gap-2">
                             <select value={selectedRole} onChange={e => setSelectedRole(e.target.value as AppRole)}
                               className="text-xs px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none">
-                              {GRANTABLE_ROLES.map(r => <option key={r} value={r}>{ROLE_LABELS[r]}</option>)}
+                              {GRANTABLE_ROLES.map(r => <option key={r} value={r}>{ROLE_BADGE_CONFIG[r]?.label}</option>)}
                             </select>
                             <button onClick={() => handleGrant(u.id)} disabled={isPending}
                               className="text-xs font-semibold bg-blue-600 text-white px-2.5 py-1.5 rounded-lg hover:bg-blue-700 disabled:opacity-50">OK</button>
@@ -415,17 +409,17 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                     <p className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: 'var(--admin-text-muted)' }}>Cargos</p>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedUser.roles.length > 0 ? selectedUser.roles.map(role => (
-                        <span key={role} className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${ROLE_COLORS[role] ?? 'bg-white/5 text-slate-400'}`}>
-                          {ROLE_LABELS[role] ?? role}
+                        <div key={role} className="flex items-center gap-1">
+                          <RoleBadge role={role as AppRole} variant="chip" size="sm" />
                           {role !== 'SYSADMIN' && (
                             <button onClick={() => handleRevoke(selectedUser.id, role as AppRole, selectedUser.full_name)}
-                              disabled={isPending} className="ml-0.5 hover:text-red-600 transition-colors disabled:opacity-50">
-                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              disabled={isPending} className="hover:text-red-600 transition-colors disabled:opacity-50 text-slate-400" title="Revogar cargo">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
                               </svg>
                             </button>
                           )}
-                        </span>
+                        </div>
                       )) : <span className="text-xs italic" style={{ color: 'var(--admin-text-muted)' }}>Sem cargo administrativo</span>}
                     </div>
                   </div>
@@ -528,9 +522,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                           <input type="checkbox" checked={editRoles.includes(role)}
                             onChange={() => setEditRoles(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role])}
                             className="w-4 h-4 accent-blue-600" />
-                          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${ROLE_COLORS[role]}`}>
-                            {ROLE_LABELS[role]}
-                          </span>
+                          <RoleBadge role={role as AppRole} variant="chip" size="sm" />
                         </label>
                       ))}
                     </div>

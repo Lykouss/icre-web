@@ -52,6 +52,7 @@ export default async function MyAccountPage() {
       address={profileRes.data?.address ?? ''}
       birthDate={profileRes.data?.birth_date ?? ''}
       photoUrl={profileRes.data?.photo_url ?? null}
+      primaryRole={roleRes.data?.role as any} // The type is handled in ProfileClient
       isAdmin={!!roleRes.data}
       uploadsRemaining={uploadsRemaining}
     />

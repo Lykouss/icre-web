@@ -3,6 +3,8 @@
 import React, { useState, useTransition } from 'react';
 import { updatePublicProfile, changePublicPassword, deletePublicAccount } from '@/features/core/actions/profile';
 import { AvatarUpload } from '@/features/core/components/AvatarUpload';
+import { RoleBadge } from '@/features/core/components/RoleBadge';
+import type { AppRole } from '@/features/core/api/get-current-user';
 
 interface ProfileClientProps {
   email: string;
@@ -12,6 +14,7 @@ interface ProfileClientProps {
   birthDate: string;
   photoUrl: string | null;
   isAdmin: boolean;
+  primaryRole?: AppRole;
   uploadsRemaining: number;
 }
 
@@ -46,7 +49,7 @@ function Alert({ state, onClose }: { state: FeedbackState; onClose: () => void }
 }
 
 export function ProfileClient({
-  email, fullName, phone, address, birthDate, photoUrl, isAdmin, uploadsRemaining,
+  email, fullName, phone, address, birthDate, photoUrl, isAdmin, primaryRole, uploadsRemaining,
 }: ProfileClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>('dados');
   const [feedback, setFeedback]   = useState<FeedbackState | null>(null);
@@ -83,10 +86,10 @@ export function ProfileClient({
           <div>
             <h1 className="text-2xl font-bold text-white">{fullName || 'Minha Conta'}</h1>
             <p className="text-slate-400 text-sm mt-0.5">{email}</p>
-            {isAdmin && (
-              <span className="inline-flex items-center mt-2 px-2.5 py-1 bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-semibold rounded-lg">
-                Administrador
-              </span>
+            {primaryRole && (
+              <div className="mt-2">
+                <RoleBadge role={primaryRole} />
+              </div>
             )}
           </div>
         </div>

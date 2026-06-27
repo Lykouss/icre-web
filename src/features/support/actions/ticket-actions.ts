@@ -42,7 +42,7 @@ export async function getUserTicket(): Promise<ActionResult<{ ticket: Ticket; me
 
   const { data: messages, error: msgsError } = await supabase
     .from('support_ticket_messages')
-    .select('*, profiles(full_name)')
+    .select('*, profiles(full_name, photo_url)')
     .eq('ticket_id', ticket.id)
     .order('created_at', { ascending: true });
 
