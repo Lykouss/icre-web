@@ -43,7 +43,7 @@ export interface TicketMessage {
 export interface TicketMessageWithSender extends TicketMessage {
   profiles: {
     full_name: string;
-    avatar_url?: string | null;
+    photo_url?: string | null;
   } | null;
 }
 

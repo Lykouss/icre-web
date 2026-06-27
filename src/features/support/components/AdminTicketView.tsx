@@ -89,7 +89,7 @@ export function AdminTicketView({
     async function fetchAndAppend(msgId: string) {
       const { data } = await supabase
         .from('support_ticket_messages')
-        .select('*, profiles(full_name, avatar_url)')
+        .select('*, profiles(full_name, photo_url)')
         .eq('id', msgId)
         .single();
       if (!data) return;
@@ -298,7 +298,7 @@ export function AdminTicketView({
           {messages.map((msg, i) => {
             const isAdminMsg = msg.is_admin;
             const senderName = isAdminMsg ? 'Você (Suporte)' : userInfo.full_name;
-            const avatarUrl = isAdminMsg ? null : (msg.profiles as { full_name: string; avatar_url?: string | null } | null)?.avatar_url;
+            const avatarUrl = isAdminMsg ? null : (msg.profiles as { full_name: string; photo_url?: string | null } | null)?.photo_url;
             const showDate =
               i === 0 ||
               new Date(msg.created_at).toDateString() !== new Date(messages[i - 1].created_at).toDateString();

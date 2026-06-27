@@ -54,3 +54,7 @@ CREATE POLICY "msgs_update_read_admin"
   WITH CHECK (
     public.current_user_has_role(ARRAY['SYSADMIN','CHURCH_ADMIN','LEADER','FINANCE_ADMIN']::public.app_role[])
   );
+
+-- 4. Garantir que usuários autenticados possam chamar rpc_check_and_record_rate_limit
+--    (necessário para submitFeedback funcionar)
+GRANT EXECUTE ON FUNCTION public.rpc_check_and_record_rate_limit TO authenticated;

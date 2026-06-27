@@ -191,7 +191,7 @@ export async function sendUserMessage(
       content:         cleanContent || '(arquivo enviado)',
       attachment_urls: cleanUrls,
     })
-    .select('*, profiles(full_name, avatar_url)')
+    .select('*, profiles(full_name, photo_url)')
     .single();
 
   if (insertError || !message) {

@@ -314,7 +314,7 @@ function ChatInterface({
     async function fetchAndAppend(msgId: string) {
       const { data } = await supabase
         .from('support_ticket_messages')
-        .select('*, profiles(full_name, avatar_url)')
+        .select('*, profiles(full_name, photo_url)')
         .eq('id', msgId)
         .single();
       if (!data) return;
@@ -467,7 +467,7 @@ function ChatInterface({
         {messages.map((msg, i) => {
           const isOwn = msg.sender_id === userId && !msg.is_admin;
           const senderName = msg.is_admin ? 'Suporte ICRE' : (msg.profiles?.full_name ?? 'Usuário');
-          const avatarUrl = (msg.profiles as { full_name: string; avatar_url?: string | null } | null)?.avatar_url;
+          const avatarUrl = (msg.profiles as { full_name: string; photo_url?: string | null } | null)?.photo_url;
           const showDate =
             i === 0 ||
             new Date(msg.created_at).toDateString() !==
