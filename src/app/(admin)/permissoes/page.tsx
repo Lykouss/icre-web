@@ -90,6 +90,105 @@ const ROLES_DATA = [
     ),
   },
   {
+    id: 'SUPPORT_ADMIN',
+    title: 'Atendente de Suporte',
+    subtitle: 'Helpdesk / Atendimento',
+    level: 70,
+    accentColor: 'sky',
+    description: 'Gestão de tickets, mensagens em tempo real e feedbacks dos membros.',
+    permissions: [
+      { label: 'Leitura e resposta de tickets de suporte', granted: true },
+      { label: 'Visualização de feedbacks e denúncias', granted: true },
+      { label: 'Edição de configurações do sistema', granted: false },
+      { label: 'Acesso a dados financeiros', granted: false },
+    ],
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M12 14v1m0-5V8" />
+      </svg>
+    ),
+  },
+  {
+    id: 'EVENT_ADMIN',
+    title: 'Coordenador de Eventos',
+    subtitle: 'Eventos / Logística',
+    level: 60,
+    accentColor: 'orange',
+    description: 'Criação e gestão de eventos, ingressos, presenças e listas.',
+    permissions: [
+      { label: 'Criação e edição de eventos', granted: true },
+      { label: 'Gerenciamento de inscrições e presenças', granted: true },
+      { label: 'Acesso a dados financeiros dos eventos', granted: false },
+      { label: 'Edição de perfis de usuários', granted: false },
+    ],
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M12 11l.7 2.15H15l-1.85 1.35.7 2.15-1.85-1.35-1.85 1.35.7-2.15L9 13.15h2.3L12 11z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'MEDIA_ADMIN',
+    title: 'Gerente de Conteúdo',
+    subtitle: 'Mídia / Comunicação',
+    level: 50,
+    accentColor: 'pink',
+    description: 'Administração de arquivos de mídia, banners e blocos do site público.',
+    permissions: [
+      { label: 'Upload e gestão de arquivos de mídia', granted: true },
+      { label: 'Edição de conteúdo do portal público', granted: true },
+      { label: 'Acesso a dados e relatórios de membros', granted: false },
+      { label: 'Configurações de infraestrutura', granted: false },
+    ],
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+      </svg>
+    ),
+  },
+  {
+    id: 'MEMBER_ADMIN',
+    title: 'Gestor de Membros',
+    subtitle: 'Secretaria Executiva',
+    level: 45,
+    accentColor: 'teal',
+    description: 'Cadastros, edição de perfis, acompanhamento pastoral e trilha espiritual.',
+    permissions: [
+      { label: 'Aprovação e edição de cadastros de membros', granted: true },
+      { label: 'Gestão da trilha espiritual', granted: true },
+      { label: 'Promoção a cargos administrativos', granted: false },
+      { label: 'Acesso ao módulo financeiro', granted: false },
+    ],
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M12 4v4m-2-2h4" />
+      </svg>
+    ),
+  },
+  {
+    id: 'REPORT_VIEWER',
+    title: 'Analista (Leitura)',
+    subtitle: 'Conselho / Liderança Sênior',
+    level: 20,
+    accentColor: 'slate',
+    description: 'Visualização de relatórios financeiros, estatísticas de eventos e membros.',
+    permissions: [
+      { label: 'Acesso total de leitura a dashboards e relatórios', granted: true },
+      { label: 'Exportação de dados consolidados', granted: true },
+      { label: 'Edição de qualquer registro do sistema', granted: false },
+      { label: 'Aprovação de cadastros ou transações', granted: false },
+    ],
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M10 5l4 4 4-4" />
+      </svg>
+    ),
+  },
+  {
     id: 'MEMBER',
     title: 'Membro',
     subtitle: 'Visitante / Usuário padrão',
@@ -127,6 +226,10 @@ const accentMap: Record<string, {
   emerald:{ cardActive: 'border-emerald-500/30', badgeBg: 'rgba(16,185,129,0.15)', badgeColor: '#6ee7b7', iconBg: 'rgba(16,185,129,0.12)', iconColor: '#6ee7b7', bar: '#10b981', levelColor: '#6ee7b7' },
   amber:  { cardActive: 'border-amber-500/30',  badgeBg: 'rgba(245,158,11,0.15)', badgeColor: '#fbbf24', iconBg: 'rgba(245,158,11,0.12)', iconColor: '#fbbf24', bar: '#f59e0b', levelColor: '#fbbf24' },
   slate:  { cardActive: 'border-slate-500/30',  badgeBg: 'rgba(100,116,139,0.15)', badgeColor: '#94a3b8', iconBg: 'rgba(100,116,139,0.12)', iconColor: '#94a3b8', bar: '#64748b', levelColor: '#94a3b8' },
+  sky:    { cardActive: 'border-sky-500/30',    badgeBg: 'rgba(14,165,233,0.15)', badgeColor: '#38bdf8', iconBg: 'rgba(14,165,233,0.12)', iconColor: '#38bdf8', bar: '#0ea5e9', levelColor: '#38bdf8' },
+  orange: { cardActive: 'border-orange-500/30', badgeBg: 'rgba(249,115,22,0.15)', badgeColor: '#fb923c', iconBg: 'rgba(249,115,22,0.12)', iconColor: '#fb923c', bar: '#f97316', levelColor: '#fb923c' },
+  pink:   { cardActive: 'border-pink-500/30',   badgeBg: 'rgba(236,72,153,0.15)', badgeColor: '#f472b6', iconBg: 'rgba(236,72,153,0.12)', iconColor: '#f472b6', bar: '#ec4899', levelColor: '#f472b6' },
+  teal:   { cardActive: 'border-teal-500/30',   badgeBg: 'rgba(20,184,166,0.15)', badgeColor: '#2dd4bf', iconBg: 'rgba(20,184,166,0.12)', iconColor: '#2dd4bf', bar: '#14b8a6', levelColor: '#2dd4bf' },
 };
 
 /* ─── Page ──────────────────────────────────────────────────────── */
