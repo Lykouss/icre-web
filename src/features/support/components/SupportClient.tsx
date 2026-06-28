@@ -383,7 +383,7 @@ function ChatInterface({
     const supabase = createClient();
     const urls: string[] = [];
 
-    for (const file of files.slice(0, remaining)) {
+    for (const file of validFiles.slice(0, remaining)) {
       const result = await getSignedUploadUrl(file.name, file.type);
       if (result.error || !result.data) continue;
       const { token, path } = result.data;
