@@ -11,6 +11,7 @@ import {
   createAsaasBoletoPayment,
   getAsaasPixQrCode,
   getAsaasPaymentStatus,
+  getAsaasBoletoDetails,
 } from '@/lib/asaas-server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type {
@@ -307,14 +308,41 @@ export async function createPublicRegistration(
 
     if (payMethod === 'boleto') {
       payment = await createAsaasBoletoPayment(customerId, value, description, registration_id);
+      
+      // Retry para bankSlipUrl caso a API demore a gerar o boleto
+      let retries = 3;
+      while (!payment.bankSlipUrl && retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        try {
+          const details = await getAsaasBoletoDetails(payment.id);
+          if (details.bankSlipUrl) {
+            payment.bankSlipUrl = details.bankSlipUrl;
+            break;
+          }
+        } catch (e) {}
+        retries--;
+      }
     } else {
       payment = await createAsaasPixPayment(customerId, value, description, registration_id);
-      // QR Code é opcional — falha aqui não é fatal, invoiceUrl funciona como fallback
-      try {
-        const pix = await getAsaasPixQrCode(payment.id);
-        pixInfo = { qrCode: pix.encodedImage, copyPaste: pix.payload, expirationDate: pix.expirationDate };
-      } catch (qrErr) {
-        console.warn('[createPublicRegistration] PIX QR Code falhou (usando invoiceUrl como fallback):', qrErr);
+      
+      // Retry para QR Code do PIX, pois Asaas pode demorar uns instantes para gerar
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          const pix = await getAsaasPixQrCode(payment.id);
+          if (pix && pix.encodedImage && pix.payload) {
+            pixInfo = { qrCode: pix.encodedImage, copyPaste: pix.payload, expirationDate: pix.expirationDate };
+            break;
+          }
+        } catch (qrErr) {
+          // Ignora erro no retry
+        }
+        if (retries > 1) await new Promise(resolve => setTimeout(resolve, 1000));
+        retries--;
+      }
+      
+      if (!pixInfo.qrCode) {
+        console.warn('[createPublicRegistration] PIX QR Code falhou após retries (usando invoiceUrl como fallback)');
       }
     }
 
