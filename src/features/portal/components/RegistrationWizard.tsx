@@ -24,6 +24,9 @@ interface EventData {
   requires_payment: boolean;
   banner_url: string | null;
   custom_form_schema?: FormField[] | null;
+  terms_text?: string | null;
+  accepts_pix?: boolean;
+  accepts_boleto?: boolean;
 }
 
 interface Props {
@@ -86,6 +89,23 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
   const [showProcessingOverlay, setShowProcessingOverlay] = useState(false);
   const isSubmittingRef = useRef(false);
   const formRef = useRef<HTMLFormElement>(null);
+  
+  // Controle de scroll dos termos
+  const termsBoxRef = useRef<HTMLDivElement>(null);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(!event.terms_text);
+
+  const handleTermsScroll = () => {
+    if (!termsBoxRef.current || hasScrolledToBottom) return;
+    const { scrollTop, scrollHeight, clientHeight } = termsBoxRef.current;
+    if (scrollHeight - scrollTop - clientHeight < 10) {
+      setHasScrolledToBottom(true);
+    }
+  };
+  
+  // Se não houver texto personalizado de termos, libera automático
+  useEffect(() => {
+    if (!event.terms_text) setHasScrolledToBottom(true);
+  }, [event.terms_text]);
 
   const goTo = useCallback((index: number, dir: 'forward' | 'back') => {
     if (animating) return;
@@ -284,16 +304,21 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     </div>
                   )}
 
-                  <div className="bg-slate-800/60 border border-white/6 rounded-xl p-5 text-sm text-slate-300 leading-relaxed mb-5 max-h-48 overflow-y-auto portal-scroll">
-                    {event.rules || event.description || 'Ao se inscrever, você concorda em comparecer ao evento na data e horário indicados e respeitar todas as orientações da organização.'}
+                  <div 
+                    ref={termsBoxRef}
+                    onScroll={handleTermsScroll}
+                    className="bg-slate-800/60 border border-white/6 rounded-xl p-5 text-sm text-slate-300 leading-relaxed mb-5 max-h-48 overflow-y-auto portal-scroll whitespace-pre-wrap"
+                  >
+                    {event.terms_text || event.rules || event.description || 'Ao se inscrever, você concorda em comparecer ao evento na data e horário indicados e respeitar todas as orientações da organização.'}
                   </div>
 
-                  <label className="flex items-start gap-3 cursor-pointer mb-6 group p-3 rounded-xl hover:bg-white/3 transition-colors">
+                  <label className={`flex items-start gap-3 cursor-pointer mb-6 group p-3 rounded-xl transition-colors ${!hasScrolledToBottom ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/3'}`}>
                     <input
                       type="checkbox"
                       checked={termsAccepted}
+                      disabled={!hasScrolledToBottom}
                       onChange={e => setTermsAccepted(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-600 bg-slate-800 accent-blue-500 shrink-0"
+                      className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-600 bg-slate-800 accent-blue-500 shrink-0 disabled:opacity-50"
                     />
                     <span className="text-sm text-slate-300 group-hover:text-white transition-colors leading-snug">
                       Li e aceito as regras e termos deste evento
@@ -302,7 +327,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
                   <button
                     onClick={() => { if (termsAccepted) nextStep(); }}
-                    disabled={!termsAccepted}
+                    disabled={!termsAccepted || !hasScrolledToBottom}
                     className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                   >
                     Continuar
@@ -333,11 +358,22 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
                 <div className="p-7">
                   {error && (
-                    <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-500/20 text-red-400 text-sm px-4 py-3.5 rounded-xl mb-5">
-                      <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span>{error}</span>
+                    <div className="flex flex-col gap-2 mb-5">
+                      <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-500/20 text-red-400 text-sm px-4 py-3.5 rounded-xl">
+                        <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{error}</span>
+                      </div>
+                      <Link 
+                        href={`/suporte?subject=Erro+na+Inscrição&description=${encodeURIComponent(error)}`}
+                        className="self-start text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1.5 px-1 py-1 transition-colors"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 9v2m0 4h.01" />
+                        </svg>
+                        Reportar problema ao Suporte
+                      </Link>
                     </div>
                   )}
 
@@ -391,60 +427,64 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Forma de Pagamento</label>
                         <div className="grid grid-cols-2 gap-3">
                           {/* PIX */}
-                          <button
-                            type="button"
-                            onClick={() => setPaymentMethod('pix')}
-                            className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
-                              paymentMethod === 'pix'
-                                ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
-                                : 'border-white/8 hover:border-white/16 bg-slate-800/40'
-                            }`}
-                          >
-                            {paymentMethod === 'pix' && (
-                              <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                          {event.accepts_pix !== false && (
+                            <button
+                              type="button"
+                              onClick={() => setPaymentMethod('pix')}
+                              className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
+                                paymentMethod === 'pix'
+                                  ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
+                                  : 'border-white/8 hover:border-white/16 bg-slate-800/40'
+                              }`}
+                            >
+                              {paymentMethod === 'pix' && (
+                                <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                </div>
+                              )}
+                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'pix' ? 'bg-blue-500' : 'bg-slate-700'}`}>
+                                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M11.9999 2L3 7v10l9 5 9-5V7l-9-5zM12 4.236L18.764 8 12 11.764 5.236 8 12 4.236zM4 9.236l7 3.888V19.764L4 15.888V9.236zm9 10.528V13.124l7-3.888v6.652L13 19.764z"/>
                                 </svg>
                               </div>
-                            )}
-                            <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'pix' ? 'bg-blue-500' : 'bg-slate-700'}`}>
-                              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M11.9999 2L3 7v10l9 5 9-5V7l-9-5zM12 4.236L18.764 8 12 11.764 5.236 8 12 4.236zM4 9.236l7 3.888V19.764L4 15.888V9.236zm9 10.528V13.124l7-3.888v6.652L13 19.764z"/>
-                              </svg>
-                            </div>
-                            <div>
-                              <p className={`text-sm font-black ${paymentMethod === 'pix' ? 'text-white' : 'text-slate-300'}`}>PIX</p>
-                              <p className="text-[10px] text-slate-500">Aprovação imediata</p>
-                            </div>
-                          </button>
+                              <div>
+                                <p className={`text-sm font-black ${paymentMethod === 'pix' ? 'text-white' : 'text-slate-300'}`}>PIX</p>
+                                <p className="text-[10px] text-slate-500">Aprovação imediata</p>
+                              </div>
+                            </button>
+                          )}
 
                           {/* Boleto */}
-                          <button
-                            type="button"
-                            onClick={() => setPaymentMethod('boleto')}
-                            className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
-                              paymentMethod === 'boleto'
-                                ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
-                                : 'border-white/8 hover:border-white/16 bg-slate-800/40'
-                            }`}
-                          >
-                            {paymentMethod === 'boleto' && (
-                              <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                          {event.accepts_boleto !== false && (
+                            <button
+                              type="button"
+                              onClick={() => setPaymentMethod('boleto')}
+                              className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
+                                paymentMethod === 'boleto'
+                                  ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
+                                  : 'border-white/8 hover:border-white/16 bg-slate-800/40'
+                              }`}
+                            >
+                              {paymentMethod === 'boleto' && (
+                                <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                </div>
+                              )}
+                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'boleto' ? 'bg-blue-500' : 'bg-slate-700'}`}>
+                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                               </div>
-                            )}
-                            <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'boleto' ? 'bg-blue-500' : 'bg-slate-700'}`}>
-                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                              </svg>
-                            </div>
-                            <div>
-                              <p className={`text-sm font-black ${paymentMethod === 'boleto' ? 'text-white' : 'text-slate-300'}`}>Boleto</p>
-                              <p className="text-[10px] text-slate-500">Até 3 dias úteis</p>
-                            </div>
-                          </button>
+                              <div>
+                                <p className={`text-sm font-black ${paymentMethod === 'boleto' ? 'text-white' : 'text-slate-300'}`}>Boleto</p>
+                                <p className="text-[10px] text-slate-500">Até 3 dias úteis</p>
+                              </div>
+                            </button>
+                          )}
                         </div>
                       </div>
                     )}

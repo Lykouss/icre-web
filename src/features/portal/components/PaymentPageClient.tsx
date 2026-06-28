@@ -231,6 +231,16 @@ export function PaymentPageClient({ payment }: Props) {
                   </svg>
                 </div>
                 <p className="text-slate-500 text-sm text-center">QR Code não disponível.<br />Use o código copia e cola abaixo.</p>
+                {payment.asaasInvoiceUrl && (
+                  <a
+                    href={payment.asaasInvoiceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl transition-all border border-white/10"
+                  >
+                    Acessar Fatura
+                  </a>
+                )}
               </div>
             )}
 
@@ -342,6 +352,21 @@ export function PaymentPageClient({ payment }: Props) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Baixar boleto (PDF)
+              </a>
+            )}
+
+            {/* Fallback caso falhe o PDF do boleto */}
+            {!payment.boletoUrl && payment.asaasInvoiceUrl && (
+              <a
+                href={payment.asaasInvoiceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 border border-white/10 text-white font-semibold py-4 rounded-2xl transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Acessar Fatura do Asaas
               </a>
             )}
 

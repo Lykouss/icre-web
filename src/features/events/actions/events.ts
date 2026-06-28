@@ -32,8 +32,11 @@ function extractEventFields(formData: FormData) {
   const maxPerIp      = parseInt(formData.get('max_per_ip') as string, 10);
   const maxPerDevice  = parseInt(formData.get('max_per_device') as string, 10);
   const paymentMethods = JSON.parse((formData.get('payment_methods') as string) || '["pix"]');
+  const termsText     = (formData.get('terms_text') as string)?.trim() || null;
+  const acceptsPix    = formData.get('accepts_pix') === 'on';
+  const acceptsBoleto = formData.get('accepts_boleto') === 'on';
 
-  return { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recurrenceRules, cancelledDates, capacity, maxPerAccount, maxPerIp, maxPerDevice, paymentMethods };
+  return { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recurrenceRules, cancelledDates, capacity, maxPerAccount, maxPerIp, maxPerDevice, paymentMethods, termsText, acceptsPix, acceptsBoleto };
 }
 
 function validateEventFields(fields: ReturnType<typeof extractEventFields>): string | null {
@@ -48,7 +51,7 @@ function validateEventFields(fields: ReturnType<typeof extractEventFields>): str
 }
 
 function buildEventPayload(fields: ReturnType<typeof extractEventFields>, createdBy?: string) {
-  const { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recurrenceRules, cancelledDates, capacity, maxPerAccount, maxPerIp, maxPerDevice, paymentMethods } = fields;
+  const { title, type, description, date, time, location, bannerUrl, publishAt, isPublic, isRecurring, recurrenceRules, cancelledDates, capacity, maxPerAccount, maxPerIp, maxPerDevice, paymentMethods, termsText, acceptsPix, acceptsBoleto } = fields;
 
   return {
     title,
@@ -68,6 +71,9 @@ function buildEventPayload(fields: ReturnType<typeof extractEventFields>, create
     max_per_ip:     !isNaN(maxPerIp) && maxPerIp > 0 ? maxPerIp : 2,
     max_per_device: !isNaN(maxPerDevice) && maxPerDevice > 0 ? maxPerDevice : 2,
     payment_methods: paymentMethods,
+    terms_text:     termsText,
+    accepts_pix:    acceptsPix,
+    accepts_boleto: acceptsBoleto,
     ...(createdBy ? { created_by: createdBy } : {}),
   };
 }

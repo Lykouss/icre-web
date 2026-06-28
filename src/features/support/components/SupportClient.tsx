@@ -73,11 +73,18 @@ function OpenTicketModal({
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []);
-    const remaining = 3 - uploadedUrls.length;
-    if (files.length === 0 || remaining <= 0) return;
+    const allFiles = Array.from(e.target.files ?? []);
+    
+    // Validar tamanho (5MB)
+    const validFiles = allFiles.filter(f => f.size <= 5 * 1024 * 1024);
+    if (validFiles.length < allFiles.length) {
+      setError('Alguns arquivos excederam o limite de 5MB e foram descartados.');
+    }
 
-    const toUpload = files.slice(0, remaining);
+    const remaining = 3 - uploadedUrls.length;
+    if (validFiles.length === 0 || remaining <= 0) return;
+
+    const toUpload = validFiles.slice(0, remaining);
     setUploadingFiles(toUpload);
 
     const supabase = createClient();
@@ -361,9 +368,16 @@ function ChatInterface({
   }, [ticket.id]);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []);
+    const allFiles = Array.from(e.target.files ?? []);
+    
+    // Validar tamanho (5MB)
+    const validFiles = allFiles.filter(f => f.size <= 5 * 1024 * 1024);
+    if (validFiles.length < allFiles.length) {
+      setError('Alguns arquivos excederam o limite de 5MB e foram descartados.');
+    }
+
     const remaining = 3 - uploadedUrls.length;
-    if (!files.length || remaining <= 0) return;
+    if (!validFiles.length || remaining <= 0) return;
 
     setUploading(true);
     const supabase = createClient();

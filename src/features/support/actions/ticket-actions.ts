@@ -79,6 +79,20 @@ export async function openTicket(
   if (cleanSubject.length < 5)     return { error: 'O assunto deve ter pelo menos 5 caracteres.' };
   if (cleanDescription.length < 10) return { error: 'A descrição deve ter pelo menos 10 caracteres.' };
 
+  // Verifica limite diário de chamados (max 3 por dia)
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  const { count: dailyTicketsCount } = await supabase
+    .from('support_tickets')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .gte('created_at', yesterday.toISOString());
+
+  if ((dailyTicketsCount ?? 0) >= 3) {
+    return { error: 'Você atingiu o limite de 3 chamados por dia. Tente novamente amanhã.' };
+  }
+
   // Verifica se já tem chamado aberto
   const { count } = await supabase
     .from('support_tickets')
@@ -170,15 +184,23 @@ export async function sendUserMessage(
 
   // Verifica limite global de anexos por chamado (15 no total)
   if (cleanUrls.length > 0) {
-    const { count: existingAttachCount } = await supabase
+    const { data: messagesWithAttachments } = await supabase
       .from('support_ticket_messages')
-      .select('id', { count: 'exact', head: true })
-      .eq('ticket_id', ticketId);
+      .select('attachment_urls')
+      .eq('ticket_id', ticketId)
+      .neq('attachment_urls', '{}');
 
-    // Contagem aproximada — para exatidão real seria necessário unnest no banco
-    // Aqui verificamos de forma simples se ultrapassamos o limite de mensagens com anexo
-    if ((existingAttachCount ?? 0) >= MAX_ATTACHMENTS_PER_TICKET) {
-      return { error: 'Limite de anexos por chamado atingido (máx. 15 arquivos).' };
+    let totalAttachments = 0;
+    if (messagesWithAttachments) {
+      for (const msg of messagesWithAttachments) {
+        if (Array.isArray(msg.attachment_urls)) {
+          totalAttachments += msg.attachment_urls.length;
+        }
+      }
+    }
+
+    if (totalAttachments + cleanUrls.length > MAX_ATTACHMENTS_PER_TICKET) {
+      return { error: `Limite de anexos por chamado atingido. Você pode enviar no máximo mais ${Math.max(0, MAX_ATTACHMENTS_PER_TICKET - totalAttachments)} arquivos.` };
     }
   }
 
@@ -251,6 +273,20 @@ export async function getSignedUploadUrl(
     return { error: 'Tipo de arquivo não permitido. Use PNG, JPG, WEBP ou PDF.' };
   }
 
+  // Verifica limite diário de uploads
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const { count: uploadsCount } = await supabase
+    .from('support_upload_logs')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .gte('created_at', yesterday.toISOString());
+
+  if ((uploadsCount ?? 0) >= 20) {
+    return { error: 'Limite de uploads diário atingido. Tente novamente amanhã.' };
+  }
+
   const sanitizedName = fileName.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 100);
   const path = `${user.id}/${Date.now()}_${sanitizedName}`;
 
@@ -262,6 +298,12 @@ export async function getSignedUploadUrl(
     console.error('[getSignedUploadUrl]', error?.message);
     return { error: 'Erro ao preparar upload.' };
   }
+
+  // Loga o upload para contabilizar no rate limit
+  await supabase.from('support_upload_logs').insert({
+    user_id: user.id,
+    file_name: fileName
+  });
 
   return { data: { token: data.token, path } };
 }

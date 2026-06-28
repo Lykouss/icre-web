@@ -227,6 +227,7 @@ export function EventsPageClient({ initialEvents, canManage, isSysAdmin: _isSysA
             side="right"
             className="w-full sm:max-w-2xl overflow-y-auto p-6 sm:p-8"
             style={{ background: 'var(--admin-surface)', borderLeft: '1px solid var(--admin-border)' }}
+            data-admin="true"
           >
             <SheetHeader className="mb-6 pb-4" style={{ borderBottom: '1px solid var(--admin-border)' }}>
               <SheetTitle className="text-xl font-bold text-slate-100">Editar Evento</SheetTitle>

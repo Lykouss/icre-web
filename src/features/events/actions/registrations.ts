@@ -175,6 +175,9 @@ export async function createPublicRegistration(
   if (event.status !== 'publicado' && !user?.isSysAdmin) {
     return { error: 'Evento não está disponível para inscrições.' };
   }
+  if (!event.requires_registration) {
+    return { error: 'Este evento não requer inscrição prévia.' };
+  }
   if (event.publish_at && new Date(event.publish_at) > new Date() && !user?.isSysAdmin) {
     return { error: 'As inscrições para este evento ainda não estão abertas.' };
   }

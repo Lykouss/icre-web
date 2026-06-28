@@ -32,7 +32,7 @@ export default async function InscricaoPage({ params }: { params: Promise<{ id: 
   // Buscar evento
   const { data: event, error } = await supabase
     .from('events')
-    .select('id, title, date, time, location, description, rules, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account')
+    .select('id, title, date, time, location, description, rules, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account, terms_text, accepts_pix, accepts_boleto')
     .eq('id', id)
     .eq('status', 'publicado')
     .eq('is_public', true)
@@ -42,7 +42,7 @@ export default async function InscricaoPage({ params }: { params: Promise<{ id: 
   if ((error || !event) && user?.isSysAdmin) {
     const { data: adminEvent } = await supabase
       .from('events')
-      .select('id, title, date, time, location, description, rules, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account')
+      .select('id, title, date, time, location, description, rules, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account, terms_text, accepts_pix, accepts_boleto')
       .eq('id', id)
       .single();
     if (!adminEvent) notFound();
@@ -51,6 +51,11 @@ export default async function InscricaoPage({ params }: { params: Promise<{ id: 
   }
 
   if (error || !event) notFound();
+
+  // Se o evento não exige inscrição, não permite acessar esta página
+  if (!event.requires_registration) {
+    redirect(`/agenda/${id}`);
+  }
 
   // ─── Proteção server-side: verificar limite de inscrições por conta ───
   if (user && event.max_per_account) {

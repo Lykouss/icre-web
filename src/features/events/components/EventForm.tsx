@@ -105,7 +105,9 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
     max_per_account: initialData?.max_per_account ?? 1,
     max_per_ip: initialData?.max_per_ip ?? 2,
     max_per_device: initialData?.max_per_device ?? 2,
-    payment_methods: initialData?.payment_methods ?? ['pix'],
+    accepts_pix: initialData?.accepts_pix ?? true,
+    accepts_boleto: initialData?.accepts_boleto ?? true,
+    terms_text: initialData?.terms_text || '',
     custom_form_schema: (initialData as any)?.custom_form_schema || [],
   });
 
@@ -228,7 +230,9 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           max_per_account: formData.max_per_account ? Number(formData.max_per_account) : 1,
           max_per_ip: formData.max_per_ip ? Number(formData.max_per_ip) : 2,
           max_per_device: formData.max_per_device ? Number(formData.max_per_device) : 2,
-          payment_methods: formData.payment_methods,
+          accepts_pix: formData.accepts_pix,
+          accepts_boleto: formData.accepts_boleto,
+          terms_text: formData.terms_text,
           custom_form_schema: finalSchema,
         };
 
@@ -642,14 +646,8 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
             <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
               <input
                 type="checkbox"
-                checked={(formData.payment_methods || []).includes('pix')}
-                onChange={e => {
-                  const methods = formData.payment_methods || [];
-                  setFormData(p => ({
-                    ...p,
-                    payment_methods: e.target.checked ? [...methods, 'pix'] : methods.filter(m => m !== 'pix')
-                  }));
-                }}
+                checked={!!formData.accepts_pix}
+                onChange={e => setFormData(p => ({ ...p, accepts_pix: e.target.checked }))}
                 className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
               />
               PIX
@@ -657,19 +655,27 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
             <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
               <input
                 type="checkbox"
-                checked={(formData.payment_methods || []).includes('boleto')}
-                onChange={e => {
-                  const methods = formData.payment_methods || [];
-                  setFormData(p => ({
-                    ...p,
-                    payment_methods: e.target.checked ? [...methods, 'boleto'] : methods.filter(m => m !== 'boleto')
-                  }));
-                }}
+                checked={!!formData.accepts_boleto}
+                onChange={e => setFormData(p => ({ ...p, accepts_boleto: e.target.checked }))}
                 className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
               />
               Boleto
             </label>
           </div>
+        </div>
+      )}
+
+      {formData.requires_registration && (
+        <div className="space-y-3 mt-4">
+          <SectionDivider label="Termos do Evento" />
+          <Field label="Texto dos termos de inscrição" hint="Os participantes precisarão rolar até o fim para aceitar.">
+            <textarea
+              className={`${inputCls} min-h-[120px] resize-y`}
+              value={formData.terms_text || ''}
+              onChange={e => setFormData(p => ({ ...p, terms_text: e.target.value }))}
+              placeholder="Digite os termos de responsabilidade e regras do evento..."
+            />
+          </Field>
         </div>
       )}
 

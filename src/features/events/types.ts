@@ -56,6 +56,9 @@ export interface ChurchEvent {
   created_by: string | null;
   created_at: string;
   custom_form_schema: CustomFormSchema | null;
+  terms_text: string | null;
+  accepts_pix: boolean;
+  accepts_boleto: boolean;
 }
 
 // ─── Schedule ────────────────────────────────────────────────────────────────

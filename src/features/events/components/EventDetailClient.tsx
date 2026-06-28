@@ -40,9 +40,9 @@ type Tab = 'escala' | 'inscricoes' | 'presenca' | 'recorrencia';
 
 export function EventDetailClient({
   event,
-  schedules,
-  registrations,
-  attendance,
+  schedules: initialSchedules,
+  registrations: initialRegistrations,
+  attendance: initialAttendance,
   members,
   canManage,
   onEdit,
@@ -61,13 +61,38 @@ export function EventDetailClient({
   const [checkInName, setCheckInName] = useState('');
   const [checkInMemberId, setCheckInMemberId] = useState('');
 
+  const [schedules, setSchedules] = useState<EventSchedule[]>(initialSchedules);
+  const [registrations, setRegistrations] = useState<EventRegistration[]>(initialRegistrations);
+  const [attendance, setAttendance] = useState<EventAttendance[]>(initialAttendance);
+
+  // Sync state if props change from outside (e.g., initial open)
+  useEffect(() => {
+    setSchedules(initialSchedules);
+    setRegistrations(initialRegistrations);
+    setAttendance(initialAttendance);
+  }, [initialSchedules, initialRegistrations, initialAttendance]);
+
   useEffect(() => {
     const supabase = createClient();
+    
+    const fetchSchedules = async () => {
+      const { data } = await supabase.from('event_schedules').select('*, members(full_name)').eq('event_id', event.id);
+      if (data) setSchedules(data as EventSchedule[]);
+    };
+    const fetchRegistrations = async () => {
+      const { data } = await supabase.from('event_registrations').select('*').eq('event_id', event.id).order('created_at');
+      if (data) setRegistrations(data as EventRegistration[]);
+    };
+    const fetchAttendance = async () => {
+      const { data } = await supabase.from('event_attendance').select('*').eq('event_id', event.id).order('checked_in_at');
+      if (data) setAttendance(data as EventAttendance[]);
+    };
+
     const channel = supabase
       .channel(`realtime_event_${event.id}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_schedules' }, () => router.refresh())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_registrations' }, () => router.refresh())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_attendance' }, () => router.refresh())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_schedules' }, () => { fetchSchedules(); router.refresh(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_registrations' }, () => { fetchRegistrations(); router.refresh(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_attendance' }, () => { fetchAttendance(); router.refresh(); })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [router, event.id]);
@@ -156,7 +181,7 @@ export function EventDetailClient({
 
   const tabs: { id: Tab; label: string; count?: number }[] = [
     { id: 'escala', label: 'Escala' },
-    ...(event.type === 'especial' ? [
+    ...(event.requires_registration ? [
       { id: 'inscricoes' as Tab, label: 'Inscrições', count: confirmedCount },
       { id: 'presenca'   as Tab, label: 'Presenças',  count: unifiedAttendances.length },
     ] : []),
