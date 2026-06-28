@@ -49,12 +49,12 @@ async function checkAsaasHealth(): Promise<boolean> {
 // ─── Rollback seguro com retry ───────────────────────────────────────────
 
 async function safeRollbackRegistration(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabaseAdmin: Awaited<ReturnType<typeof createAdminClient>>,
   registrationId: string,
   reason: string
 ): Promise<void> {
   // Tentativa 1: deletar
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('event_registrations')
     .delete()
     .eq('id', registrationId);
@@ -62,7 +62,7 @@ async function safeRollbackRegistration(
   if (error) {
     // Falha no delete: marcar como cancelado para evitar inscrição zumbi
     console.error(`[rollback] delete failed (${reason}), marking as cancelled:`, error.message);
-    await supabase
+    await supabaseAdmin
       .from('event_registrations')
       .update({ status: 'cancelado', payment_status: 'expirado' })
       .eq('id', registrationId)
@@ -291,7 +291,7 @@ export async function createPublicRegistration(
   const asaasOk = await checkAsaasHealth();
   if (!asaasOk) {
     // Rollback imediato: não vale deixar inscrição pendente sem pagamento
-    await safeRollbackRegistration(supabase, registration_id, 'asaas_health_check_failed');
+    await safeRollbackRegistration(supabaseAdmin, registration_id, 'asaas_health_check_failed');
     return {
       error: 'O sistema de pagamentos está temporáriamente indisponível. Sua inscrição não foi cobrada. Por favor, tente novamente em alguns minutos.',
     };
@@ -359,7 +359,7 @@ export async function createPublicRegistration(
     console.error('[createPublicRegistration] Asaas error:', errMsg);
 
     // Rollback seguro com retry e fallback para cancelamento
-    await safeRollbackRegistration(supabase, registration_id, errMsg);
+    await safeRollbackRegistration(supabaseAdmin, registration_id, errMsg);
 
     // Diferenciar tipos de erro para mensagem mais útil
     if (errMsg.includes('timeout') || errMsg.includes('abort')) {
