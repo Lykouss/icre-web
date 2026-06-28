@@ -284,7 +284,7 @@ export async function createPublicRegistration(
   // Free registration — generate ticket signature and done
   if (!needsPayment) {
     const signature = generateTicketSignature(registration_id);
-    await supabase.from('event_registrations').update({ ticket_signature: signature }).eq('id', registration_id);
+    await supabaseAdmin.from('event_registrations').update({ ticket_signature: signature }).eq('id', registration_id);
     await logEventHistory(eventId, 'inscrição_gratuita', user?.id, null, { registration_id });
     revalidatePath(`/agenda/${eventId}`);
     return { registrationId: registration_id };
@@ -350,7 +350,7 @@ export async function createPublicRegistration(
     }
 
     // UPDATE atômico: só avança o status após ter o payment.id
-    const { error: updateErr } = await supabase
+    const { error: updateErr } = await supabaseAdmin
       .from('event_registrations')
       .update({
         asaas_payment_id: payment.id,
@@ -565,7 +565,8 @@ export async function checkAndUpdatePaymentStatus(registrationId: string) {
     const signature = reg.ticket_signature || generateTicketSignature(registrationId);
     const receiptUrl = `/comprovante/${registrationId}`;
 
-    await supabase
+    const supabaseAdmin = await createAdminClient();
+    await supabaseAdmin
       .from('event_registrations')
       .update({
         status: 'confirmado',
