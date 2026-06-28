@@ -3,7 +3,7 @@
 import React, { useState, useTransition, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { checkAndUpdatePaymentStatus } from '@/features/events/actions/registrations';
+import { checkAndUpdatePaymentStatus, syncPaymentDetails } from '@/features/events/actions/registrations';
 
 interface PaymentData {
   registrationId: string;
@@ -48,6 +48,40 @@ export function PaymentPageClient({ payment }: Props) {
   const [checkError, setCheckError] = useState('');
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string | null>(null);
+
+  const [livePixQrCode, setLivePixQrCode] = useState(payment.pixQrCode);
+  const [livePixCopyPaste, setLivePixCopyPaste] = useState(payment.pixCopyPaste);
+  const [liveBoletoUrl, setLiveBoletoUrl] = useState(payment.boletoUrl);
+  const [liveBoletoBarCode, setLiveBoletoBarCode] = useState(payment.boletoBarCode);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // Poll para gerar PIX ou Boleto caso falhe na geração inicial
+  useEffect(() => {
+    if (paymentConfirmed) return;
+    const missingPix = !isBoleto && !livePixQrCode;
+    const missingBoleto = isBoleto && !liveBoletoUrl;
+    
+    if (missingPix || missingBoleto) {
+      setIsSyncing(true);
+      const syncInterval = setInterval(async () => {
+        const details = await syncPaymentDetails(payment.registrationId);
+        if (details && !details.error) {
+          if (!isBoleto && details.pixQrCode) {
+            setLivePixQrCode(details.pixQrCode);
+            setLivePixCopyPaste(details.pixCopyPaste ?? null);
+            setIsSyncing(false);
+            clearInterval(syncInterval);
+          } else if (isBoleto && details.boletoUrl) {
+            setLiveBoletoUrl(details.boletoUrl);
+            setLiveBoletoBarCode(details.boletoBarCode ?? null);
+            setIsSyncing(false);
+            clearInterval(syncInterval);
+          }
+        }
+      }, 3000);
+      return () => clearInterval(syncInterval);
+    }
+  }, [paymentConfirmed, isBoleto, livePixQrCode, liveBoletoUrl, payment.registrationId]);
 
   // Countdown do PIX
   useEffect(() => {
@@ -98,15 +132,15 @@ export function PaymentPageClient({ payment }: Props) {
   };
 
   const copyPix = async () => {
-    if (!payment.pixCopyPaste) return;
-    await navigator.clipboard.writeText(payment.pixCopyPaste);
+    if (!livePixCopyPaste) return;
+    await navigator.clipboard.writeText(livePixCopyPaste);
     setPixCopied(true);
     setTimeout(() => setPixCopied(false), 3000);
   };
 
   const copyBarCode = async () => {
-    if (!payment.boletoBarCode) return;
-    await navigator.clipboard.writeText(payment.boletoBarCode);
+    if (!liveBoletoBarCode) return;
+    await navigator.clipboard.writeText(liveBoletoBarCode);
     setBarCodeCopied(true);
     setTimeout(() => setBarCodeCopied(false), 3000);
   };
@@ -211,17 +245,25 @@ export function PaymentPageClient({ payment }: Props) {
               </div>
             )}
 
-            {payment.pixQrCode ? (
+            {livePixQrCode ? (
               <div className="flex flex-col items-center">
                 <div className="bg-white p-4 rounded-2xl shadow-xl mb-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`data:image/png;base64,${payment.pixQrCode}`}
+                    src={`data:image/png;base64,${livePixQrCode}`}
                     alt="QR Code PIX"
                     className="w-52 h-52"
                   />
                 </div>
                 <p className="text-xs text-slate-400 text-center">Escaneie com o aplicativo do seu banco</p>
+              </div>
+            ) : isSyncing ? (
+              <div className="flex flex-col items-center py-8">
+                <svg className="w-8 h-8 text-blue-500 animate-spin mb-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+                <p className="text-slate-400 text-sm">Gerando QR Code do PIX...</p>
               </div>
             ) : (
               <div className="flex flex-col items-center py-8">
@@ -244,7 +286,7 @@ export function PaymentPageClient({ payment }: Props) {
               </div>
             )}
 
-            {payment.pixCopyPaste && (
+            {livePixCopyPaste && (
               <div>
                 <p className="text-xs text-slate-400 text-center mb-3">Ou use o PIX Copia e Cola:</p>
                 <button
@@ -252,7 +294,7 @@ export function PaymentPageClient({ payment }: Props) {
                   className="w-full flex items-center gap-3 bg-slate-800/60 border border-white/10 hover:border-blue-500/40 px-4 py-3.5 rounded-xl transition-all group"
                 >
                   <code className="text-xs text-slate-300 flex-1 text-left truncate">
-                    {payment.pixCopyPaste}
+                    {livePixCopyPaste}
                   </code>
                   <div className={`shrink-0 flex items-center gap-1.5 text-xs font-bold transition-colors ${pixCopied ? 'text-emerald-400' : 'text-slate-400 group-hover:text-blue-400'}`}>
                     {pixCopied ? (
@@ -323,7 +365,7 @@ export function PaymentPageClient({ payment }: Props) {
             </div>
 
             {/* Código de barras */}
-            {payment.boletoBarCode && (
+            {liveBoletoBarCode && (
               <div>
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Código de barras</p>
                 <button
@@ -331,7 +373,7 @@ export function PaymentPageClient({ payment }: Props) {
                   className="w-full flex items-center gap-3 bg-slate-800/60 border border-white/10 hover:border-blue-500/40 px-4 py-3.5 rounded-xl transition-all group"
                 >
                   <code className="text-xs text-slate-300 flex-1 text-left break-all">
-                    {payment.boletoBarCode}
+                    {liveBoletoBarCode}
                   </code>
                   <div className={`shrink-0 flex items-center gap-1.5 text-xs font-bold transition-colors ${barCodeCopied ? 'text-emerald-400' : 'text-slate-400 group-hover:text-blue-400'}`}>
                     {barCodeCopied ? 'Copiado!' : 'Copiar'}
@@ -341,19 +383,27 @@ export function PaymentPageClient({ payment }: Props) {
             )}
 
             {/* Botão de download do boleto */}
-            {payment.boletoUrl && (
+            {liveBoletoUrl ? (
               <a
-                href={payment.boletoUrl}
+                href={liveBoletoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 border border-white/10 text-white font-semibold py-4 rounded-2xl transition-all"
+                className="w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Baixar boleto (PDF)
+                Baixar ou Imprimir Boleto
               </a>
-            )}
+            ) : isSyncing ? (
+              <div className="flex flex-col items-center py-4 bg-slate-800/50 rounded-2xl">
+                <svg className="w-6 h-6 text-blue-500 animate-spin mb-2" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+                <p className="text-slate-400 text-sm">Gerando Boleto...</p>
+              </div>
+            ) : null}
 
             {/* Fallback caso falhe o PDF do boleto */}
             {!payment.boletoUrl && payment.asaasInvoiceUrl && (

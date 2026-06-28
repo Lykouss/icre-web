@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, useEffect } from 'react';
 import { updatePublicProfile, changePublicPassword, deletePublicAccount } from '@/features/core/actions/profile';
+import { markGiftAsNotified } from '@/features/events/actions/registrations';
 import { AvatarUpload } from '@/features/core/components/AvatarUpload';
 import { RoleBadge } from '@/features/core/components/RoleBadge';
 import type { AppRole } from '@/features/core/api/get-current-user';
+import Link from 'next/link';
 
 interface ProfileClientProps {
   email: string;
@@ -16,6 +18,7 @@ interface ProfileClientProps {
   isAdmin: boolean;
   primaryRole?: AppRole;
   uploadsRemaining: number;
+  unnotifiedGifts?: { id: string; event: { title: string } }[];
 }
 
 type Tab = 'dados' | 'senha' | 'conta';
@@ -49,10 +52,27 @@ function Alert({ state, onClose }: { state: FeedbackState; onClose: () => void }
 }
 
 export function ProfileClient({
-  email, fullName, phone, address, birthDate, photoUrl, isAdmin, primaryRole, uploadsRemaining,
+  email, fullName, phone, address, birthDate, photoUrl, isAdmin, primaryRole, uploadsRemaining, unnotifiedGifts = []
 }: ProfileClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>('dados');
   const [feedback, setFeedback]   = useState<FeedbackState | null>(null);
+  
+  const [currentGift, setCurrentGift] = useState<{ id: string; event: { title: string } } | null>(null);
+  const [isDismissingGift, startDismissingGift] = useTransition();
+
+  useEffect(() => {
+    if (unnotifiedGifts.length > 0 && !currentGift) {
+      setCurrentGift(unnotifiedGifts[0]);
+    }
+  }, [unnotifiedGifts, currentGift]);
+
+  const handleDismissGift = () => {
+    if (!currentGift) return;
+    startDismissingGift(async () => {
+      await markGiftAsNotified(currentGift.id);
+      setCurrentGift(null);
+    });
+  };
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'dados', label: 'Dados Pessoais' },
@@ -66,6 +86,45 @@ export function ProfileClient({
 
   return (
     <div className="min-h-screen bg-slate-950">
+      {currentGift && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden">
+            <div className="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl" />
+            <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl" />
+            
+            <div className="relative">
+              <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/30">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                </svg>
+              </div>
+              
+              <h2 className="text-2xl font-black text-white mb-2">Você ganhou um presente!</h2>
+              <p className="text-slate-300 text-sm mb-8 leading-relaxed">
+                Você recebeu uma inscrição de cortesia para o evento <strong className="text-white">{currentGift.event.title}</strong>.
+              </p>
+
+              <div className="flex flex-col gap-3">
+                <Link
+                  href={`/comprovante/${currentGift.id}`}
+                  onClick={handleDismissGift}
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-emerald-500/20"
+                >
+                  Ver meu ingresso
+                </Link>
+                <button
+                  onClick={handleDismissGift}
+                  disabled={isDismissingGift}
+                  className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50"
+                >
+                  {isDismissingGift ? 'Fechando...' : 'Fechar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Blurs decorativos */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-blue-600/8 rounded-full blur-3xl" />

@@ -366,7 +366,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                         <span>{error}</span>
                       </div>
                       <Link 
-                        href={`/suporte?subject=Erro+na+Inscrição&description=${encodeURIComponent(error)}`}
+                        href={`/suporte?title=Erro+na+Inscrição&description=${encodeURIComponent(error)}`}
                         className="self-start text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1.5 px-1 py-1 transition-colors"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

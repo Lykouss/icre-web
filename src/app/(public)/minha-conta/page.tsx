@@ -26,7 +26,7 @@ export default async function MyAccountPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  const [profileRes, roleRes, uploadCount] = await Promise.all([
+  const [profileRes, roleRes, uploadCount, unnotifiedGiftsRes] = await Promise.all([
     supabase
       .from('profiles')
       .select('full_name, phone, address, birth_date, photo_url')
@@ -40,10 +40,17 @@ export default async function MyAccountPage() {
       .limit(1)
       .single(),
     getAvatarUploadsUsed(user.id),
+    supabase
+      .from('event_registrations')
+      .select('id, event:events(title)')
+      .eq('member_id', user.id)
+      .eq('is_gift', true)
+      .is('gift_notified_at', null)
   ]);
 
   const uploadsRemaining = Math.max(0, AVATAR_MAX_PER_DAY - uploadCount);
 
+  
   return (
     <ProfileClient
       email={user.email ?? ''}
@@ -52,9 +59,10 @@ export default async function MyAccountPage() {
       address={profileRes.data?.address ?? ''}
       birthDate={profileRes.data?.birth_date ?? ''}
       photoUrl={profileRes.data?.photo_url ?? null}
-      primaryRole={roleRes.data?.role as any} // The type is handled in ProfileClient
+      primaryRole={roleRes.data?.role as any}
       isAdmin={!!roleRes.data}
       uploadsRemaining={uploadsRemaining}
+      unnotifiedGifts={unnotifiedGiftsRes.data as any}
     />
   );
 }

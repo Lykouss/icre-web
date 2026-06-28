@@ -415,9 +415,10 @@ export async function giftRegistration(
   targetCpf: string
 ) {
   const user = await getCurrentUser();
-  if (!user || !user.isSysAdmin) return { error: 'Acesso negado.' };
+  if (!user || !user.isAdmin) return { error: 'Acesso negado.' };
 
   const supabase = await createClient();
+  const supabaseAdmin = await createAdminClient();
   const { data: event } = await supabase
     .from('events')
     .select('id, title')
@@ -425,7 +426,7 @@ export async function giftRegistration(
     .single();
   if (!event) return { error: 'Evento não encontrado.' };
 
-  const { data: registration, error } = await supabase
+  const { data: registration, error } = await supabaseAdmin
     .from('event_registrations')
     .insert({
       event_id: eventId,
@@ -446,7 +447,7 @@ export async function giftRegistration(
   if (error || !registration) return { error: 'Falha ao criar cortesia.' };
 
   const signature = generateTicketSignature(registration.id);
-  await supabase
+  await supabaseAdmin
     .from('event_registrations')
     .update({ ticket_signature: signature })
     .eq('id', registration.id);
@@ -740,5 +741,71 @@ export async function checkInAttendance(eventId: string, name: string, memberId?
   }
 
   revalidatePath(`/eventos/${eventId}`);
+  return { success: true };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SYNC PAYMENT DETAILS & GIFT NOTIFICATION
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function syncPaymentDetails(registrationId: string) {
+  const supabaseAdmin = await createAdminClient();
+  const { data: reg, error } = await supabaseAdmin
+    .from('event_registrations')
+    .select('asaas_payment_id, payment_method, asaas_invoice_url')
+    .eq('id', registrationId)
+    .single();
+
+  if (error || !reg?.asaas_payment_id) {
+    return { error: 'Inscrição ou pagamento não encontrado' };
+  }
+
+  try {
+    if (reg.payment_method === 'asaas_pix' || reg.payment_method === 'pix') {
+      const pixData = await getAsaasPixQrCode(reg.asaas_payment_id);
+      return {
+        pixQrCode: pixData.encodedImage ?? null,
+        pixCopyPaste: pixData.payload ?? null,
+        pixExpirationDate: pixData.expirationDate ?? null,
+      };
+    } else if (reg.payment_method === 'asaas_boleto' || reg.payment_method === 'boleto') {
+      const boletoData = await getAsaasBoletoDetails(reg.asaas_payment_id);
+      
+      // Salvar a bankSlipUrl no banco de dados para evitar re-fetches
+      if (boletoData.bankSlipUrl && boletoData.bankSlipUrl !== reg.asaas_invoice_url) {
+        await supabaseAdmin
+          .from('event_registrations')
+          .update({ asaas_invoice_url: boletoData.bankSlipUrl })
+          .eq('id', registrationId);
+      }
+      
+      return {
+        boletoUrl: boletoData.bankSlipUrl ?? reg.asaas_invoice_url ?? null,
+        boletoBarCode: boletoData.identificationField ?? null,
+        value: boletoData.value ?? null,
+        dueDate: boletoData.dueDate ?? null,
+      };
+    }
+    return { error: 'Método de pagamento inválido' };
+  } catch (e) {
+    console.error('[syncPaymentDetails] Asaas fetch error:', e);
+    return { error: 'Falha ao buscar detalhes no Asaas' };
+  }
+}
+
+export async function markGiftAsNotified(registrationId: string) {
+  const user = await getCurrentUser();
+  if (!user) return { error: 'Não autorizado' };
+  const supabase = await createClient();
+  
+  const { error } = await supabase
+    .from('event_registrations')
+    .update({ gift_notified_at: new Date().toISOString() })
+    .eq('id', registrationId)
+    .is('gift_notified_at', null);
+
+  if (error) {
+    return { error: 'Falha ao atualizar a inscrição' };
+  }
   return { success: true };
 }
