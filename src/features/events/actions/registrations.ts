@@ -12,6 +12,7 @@ import {
   getAsaasPixQrCode,
   getAsaasPaymentStatus,
 } from '@/lib/asaas-server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import type {
   PaymentStatus,
   PaymentMethod,
@@ -247,8 +248,9 @@ export async function createPublicRegistration(
     memberId = memberData?.id || null;
   }
 
-  // Insert with row-level lock via RPC
-  const { data: rpcResult, error: rpcError } = await supabase
+  // Insert with row-level lock via RPC using Admin Client to bypass RLS execution permission (revoked for anon/auth)
+  const supabaseAdmin = await createAdminClient();
+  const { data: rpcResult, error: rpcError } = await supabaseAdmin
     .rpc('insert_registration_with_lock', {
       p_event_id: eventId,
       p_name: name,

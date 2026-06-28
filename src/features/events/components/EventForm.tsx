@@ -727,7 +727,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
 
       {/* Modal galeria */}
       <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
-        <DialogContent className="max-w-3xl p-0 overflow-hidden" showCloseButton={false}>
+        <DialogContent className="max-w-3xl p-0 overflow-hidden" showCloseButton={false} data-admin="true">
           <DialogTitle className="sr-only">Galeria de Imagens</DialogTitle>
           <div className="rounded-2xl shadow-2xl w-full flex flex-col max-h-[85vh] border" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
             <div className="flex items-center justify-between px-6 py-4 border-b shrink-0" style={{ borderColor: 'var(--admin-border)' }}>
