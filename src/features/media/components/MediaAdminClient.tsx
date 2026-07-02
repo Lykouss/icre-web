@@ -232,7 +232,7 @@ export function MediaAdminClient({ initialAssets, settings, isSysAdmin }: Props)
           {/* Level 1: Owners */}
           {selectedCategory && !selectedOwner && (
             owners.length === 0 ? (
-              <AdminEmptyState icon="folder" title="Pasta Vazia" description="Nenhum arquivo encontrado nesta categoria." />
+              <AdminEmptyState icon="media" title="Pasta Vazia" description="Nenhum arquivo encontrado nesta categoria." />
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {owners.map(owner => {
