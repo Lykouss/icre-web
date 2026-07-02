@@ -33,6 +33,8 @@ export interface AboutContent {
   body?:     string;
   text?:     string;
   image_url: string;
+  founded_year?: string;
+  location?: string;
 }
 
 export interface MissionItem {
@@ -44,6 +46,9 @@ export interface MissionItem {
 export interface MissionContent {
   title: string;
   items: MissionItem[];
+  active_members?: number | string;
+  active_cells?: number | string;
+  history_years?: number | string;
 }
 
 export interface EventsContent {
@@ -116,6 +121,7 @@ export interface SiteBlock {
   type:       SiteBlockType;
   order_idx:  number;
   content:    Record<string, unknown>;
+  published_content?: Record<string, unknown>;
   is_active:  boolean;
   updated_at: string;
 }

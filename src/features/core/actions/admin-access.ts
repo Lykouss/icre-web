@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser, AppRole } from '@/features/core/api/get-current-user';
+import { verifyAdminPin } from '@/features/core/actions/auth';
 
 const GRANTABLE_ROLES: AppRole[] = [
   'CHURCH_ADMIN',
@@ -21,7 +22,7 @@ function isValidUUID(id: string) {
   return UUID_REGEX.test(id);
 }
 
-async function assertSysAdmin() {
+export async function assertSysAdmin() {
   const actor = await getCurrentUser();
   if (!actor?.isSysAdmin) throw new Error('Acesso negado.');
   return actor;
@@ -29,9 +30,12 @@ async function assertSysAdmin() {
 
 // ── Cargos ────────────────────────────────────────────────────
 
-export async function grantAdminRole(userId: string, role: AppRole): Promise<{ error?: string }> {
+export async function grantAdminRole(userId: string, role: AppRole, pin: string): Promise<{ error?: string }> {
   try {
     const actor = await assertSysAdmin();
+    const pinCheck = await verifyAdminPin(pin);
+    if (pinCheck.error) return { error: pinCheck.error };
+
     if (!GRANTABLE_ROLES.includes(role)) return { error: 'Cargo inválido.' };
     if (!isValidUUID(userId)) return { error: 'Usuário inválido.' };
 
@@ -94,9 +98,12 @@ export async function grantAdminRole(userId: string, role: AppRole): Promise<{ e
   }
 }
 
-export async function revokeAdminRole(userId: string, role: AppRole): Promise<{ error?: string }> {
+export async function revokeAdminRole(userId: string, role: AppRole, pin: string): Promise<{ error?: string }> {
   try {
     const actor = await assertSysAdmin();
+    const pinCheck = await verifyAdminPin(pin);
+    if (pinCheck.error) return { error: pinCheck.error };
+
     if (!GRANTABLE_ROLES.includes(role)) return { error: 'Cargo inválido.' };
     if (!isValidUUID(userId)) return { error: 'Usuário inválido.' };
     if (userId === actor.id) return { error: 'Você não pode revogar seu próprio cargo.' };
@@ -153,10 +160,14 @@ export async function revokeAdminRole(userId: string, role: AppRole): Promise<{ 
 export async function suspendAdmin(
   userId: string,
   reason: string,
-  until: Date | null
+  until: Date | null,
+  pin: string
 ): Promise<{ error?: string }> {
   try {
     const actor = await assertSysAdmin();
+    const pinCheck = await verifyAdminPin(pin);
+    if (pinCheck.error) return { error: pinCheck.error };
+
     if (!isValidUUID(userId)) return { error: 'Usuário inválido.' };
     if (userId === actor.id) return { error: 'Você não pode suspender sua própria conta.' };
     if (!reason?.trim()) return { error: 'A justificativa é obrigatória.' };
@@ -212,9 +223,12 @@ export async function suspendAdmin(
   }
 }
 
-export async function unsuspendAdmin(userId: string): Promise<{ error?: string }> {
+export async function unsuspendAdmin(userId: string, pin: string): Promise<{ error?: string }> {
   try {
     const actor = await assertSysAdmin();
+    const pinCheck = await verifyAdminPin(pin);
+    if (pinCheck.error) return { error: pinCheck.error };
+
     if (!isValidUUID(userId)) return { error: 'Usuário inválido.' };
 
     const admin = await createAdminClient();
@@ -251,9 +265,12 @@ export async function unsuspendAdmin(userId: string): Promise<{ error?: string }
 
 // ── Redefinições ──────────────────────────────────────────────
 
-export async function resetAdminPin(userId: string): Promise<{ error?: string }> {
+export async function resetAdminPin(userId: string, pin: string): Promise<{ error?: string }> {
   try {
     const actor = await assertSysAdmin();
+    const pinCheck = await verifyAdminPin(pin);
+    if (pinCheck.error) return { error: pinCheck.error };
+
     if (!isValidUUID(userId)) return { error: 'Usuário inválido.' };
 
     const admin = await createAdminClient();
@@ -286,39 +303,152 @@ export async function resetAdminPin(userId: string): Promise<{ error?: string }>
   }
 }
 
-export async function resetAdminPassword(userId: string): Promise<{ error?: string }> {
+export async function adminUpdatePinDirect(userId: string, newPin: string, sysAdminPin: string): Promise<{ error?: string }> {
   try {
     const actor = await assertSysAdmin();
+    const pinCheck = await verifyAdminPin(sysAdminPin);
+    if (pinCheck.error) return { error: pinCheck.error };
+
     if (!isValidUUID(userId)) return { error: 'Usuário inválido.' };
+    if (!/^\d{4}$/.test(newPin)) return { error: 'O novo PIN deve ter exatamente 4 dígitos.' };
 
     const admin = await createAdminClient();
-    const { data: authUser } = await admin.auth.admin.getUserById(userId);
-    if (!authUser?.user?.email) return { error: 'E-mail do usuário não encontrado.' };
+    const bcrypt = await import('bcryptjs');
+    const hash = await bcrypt.hash(newPin, 12);
 
-    // Usa o client do usuário apenas para enviar o email de reset (auth API)
-    const supabase = await createClient();
-    const { error } = await supabase.auth.resetPasswordForEmail(
-      authUser.user.email,
-      { redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/nova-senha` }
-    );
+    const { error } = await admin
+      .from('profiles')
+      .update({ security_pin_hash: hash, onboarding_step: 'done' })
+      .eq('id', userId);
 
     if (error) {
-      console.error('[admin-access] resetAdminPassword:', error.message);
-      return { error: 'Falha ao enviar e-mail de redefinição.' };
+      console.error('[admin-access] adminUpdatePinDirect:', error.message);
+      return { error: 'Falha ao redefinir o PIN.' };
     }
 
-    // audit_logs agora requer service_role
     await admin.from('audit_logs').insert({
       entity_name: 'profiles',
       entity_id:   userId,
-      action:      'RESET_PASSWORD',
+      action:      'DIRECT_PIN_UPDATE',
       actor_id:    actor.id,
       actor_name:  actor.fullName,
       actor_role:  'SYSADMIN',
       old_data:    null,
-      new_data:    { email_sent_to: authUser.user.email },
+      new_data:    { method: 'direct_override' },
     });
 
+    revalidatePath('/sysadmin/acessos');
+    return {};
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Erro desconhecido.' };
+  }
+}
+
+export async function adminResetPasswordDirect(userId: string, newPassword: string, pin: string): Promise<{ error?: string }> {
+  try {
+    const actor = await assertSysAdmin();
+    const pinCheck = await verifyAdminPin(pin);
+    if (pinCheck.error) return { error: pinCheck.error };
+
+    if (!isValidUUID(userId)) return { error: 'Usuário inválido.' };
+    if (newPassword.length < 8) return { error: 'A senha deve ter no mínimo 8 caracteres.' };
+
+    const admin = await createAdminClient();
+    const { error } = await admin.auth.admin.updateUserById(userId, { password: newPassword });
+
+    if (error) {
+      console.error('[admin-access] resetPasswordDirect:', error.message);
+      return { error: 'Falha ao alterar a senha do usuário.' };
+    }
+
+    await admin.from('audit_logs').insert({
+      entity_name: 'auth.users',
+      entity_id:   userId,
+      action:      'DIRECT_PASSWORD_RESET',
+      actor_id:    actor.id,
+      actor_name:  actor.fullName,
+      actor_role:  'SYSADMIN',
+      old_data:    null,
+      new_data:    { method: 'direct_override' },
+    });
+
+    return {};
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Erro desconhecido.' };
+  }
+}
+
+export async function adminUpdateEmailDirect(userId: string, newEmail: string, pin: string): Promise<{ error?: string }> {
+  try {
+    const actor = await assertSysAdmin();
+    const pinCheck = await verifyAdminPin(pin);
+    if (pinCheck.error) return { error: pinCheck.error };
+
+    if (!isValidUUID(userId)) return { error: 'Usuário inválido.' };
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(newEmail)) return { error: 'E-mail inválido.' };
+
+    const admin = await createAdminClient();
+    const { error } = await admin.auth.admin.updateUserById(userId, { 
+      email: newEmail,
+      email_confirm: true 
+    });
+
+    if (error) {
+      console.error('[admin-access] updateEmailDirect:', error.message);
+      if (error.code === 'email_exists') return { error: 'Este e-mail já está em uso.' };
+      return { error: 'Falha ao alterar o e-mail do usuário.' };
+    }
+
+    await admin.from('audit_logs').insert({
+      entity_name: 'auth.users',
+      entity_id:   userId,
+      action:      'DIRECT_EMAIL_UPDATE',
+      actor_id:    actor.id,
+      actor_name:  actor.fullName,
+      actor_role:  'SYSADMIN',
+      old_data:    null,
+      new_data:    { new_email: newEmail },
+    });
+
+    revalidatePath('/sysadmin/acessos');
+    return {};
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Erro desconhecido.' };
+  }
+}
+
+export async function adminDeleteUser(userId: string, pin: string): Promise<{ error?: string }> {
+  try {
+    const actor = await assertSysAdmin();
+    const pinCheck = await verifyAdminPin(pin);
+    if (pinCheck.error) return { error: pinCheck.error };
+
+    if (!isValidUUID(userId)) return { error: 'Usuário inválido.' };
+    if (userId === actor.id) return { error: 'Você não pode excluir a sua própria conta.' };
+
+    const admin = await createAdminClient();
+
+    const { error } = await admin.auth.admin.deleteUser(userId);
+
+    if (error) {
+      console.error('[admin-access] deleteUser:', error.message);
+      return { error: 'Falha ao excluir o usuário (pode haver dependências).' };
+    }
+
+    await admin.from('audit_logs').insert({
+      entity_name: 'auth.users',
+      entity_id:   userId,
+      action:      'DELETE_USER',
+      actor_id:    actor.id,
+      actor_name:  actor.fullName,
+      actor_role:  'SYSADMIN',
+      old_data:    { user_id: userId },
+      new_data:    null,
+    });
+
+    revalidatePath('/sysadmin/acessos');
     return {};
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Erro desconhecido.' };
@@ -335,10 +465,14 @@ export async function updateAdminProfile(
     phone?: string;
     address?: string;
     roles?: AppRole[];
-  }
+  },
+  pin: string
 ): Promise<{ error?: string }> {
   try {
     const actor = await assertSysAdmin();
+    const pinCheck = await verifyAdminPin(pin);
+    if (pinCheck.error) return { error: pinCheck.error };
+
     if (!isValidUUID(userId)) return { error: 'Usuário inválido.' };
 
     const admin = await createAdminClient();

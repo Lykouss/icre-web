@@ -38,6 +38,7 @@ export function UserMenu({ fullName, roles, photoUrl }: UserMenuProps) {
   const router = useRouter()
   const primaryRole = (roles[0] as AppRole) ?? 'MEMBER'
   const roleColor = ROLE_BADGE_CONFIG[primaryRole]?.color ?? '#64748b'
+  const shortName = fullName.trim().split(/\s+/).slice(0, 2).join(' ')
 
   const handleLogout = () => {
     startTransition(async () => {
@@ -54,11 +55,11 @@ export function UserMenu({ fullName, roles, photoUrl }: UserMenuProps) {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button className="flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 transition-all focus:outline-none group hover:bg-white/5 data-[state=open]:bg-white/5">
-          <span className="hidden sm:block text-right">
-            <p className="text-[13px] font-semibold leading-tight mb-1 text-slate-200">{fullName}</p>
-            <div className="flex justify-end"><RoleBadge role={primaryRole} variant="chip" size="sm" /></div>
+          <span className="hidden sm:flex items-center justify-end gap-1.5 text-right mr-1">
+            <p className="text-[13px] font-semibold leading-tight text-slate-200">{shortName}</p>
+            <RoleBadge role={primaryRole} variant="icon" size="sm" />
           </span>
-          <Avatar name={fullName} photoUrl={photoUrl} roleColor={roleColor} />
+          <Avatar name={shortName} photoUrl={photoUrl} roleColor={roleColor} />
           <svg className="w-3 h-3 hidden sm:block transition-transform duration-200 group-data-[state=open]:rotate-180 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"/>
           </svg>
@@ -81,9 +82,9 @@ export function UserMenu({ fullName, roles, photoUrl }: UserMenuProps) {
           <div className="px-4 py-4 mb-1" style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.03), transparent)' }}>
             <div className="flex items-center gap-3.5">
               <Avatar name={fullName} photoUrl={photoUrl} roleColor={roleColor} />
-              <div className="min-w-0 flex-1">
-                <p className="text-[14px] font-bold text-white truncate leading-tight mb-1.5">{fullName}</p>
-                <RoleBadge role={primaryRole} variant="chip" size="sm" className="bg-slate-900/50" />
+              <div className="min-w-0 flex-1 flex items-center gap-1.5">
+                <p className="text-[14px] font-bold text-white truncate leading-tight">{fullName}</p>
+                <RoleBadge role={primaryRole} variant="icon" size="sm" className="bg-slate-900/50" />
               </div>
             </div>
           </div>

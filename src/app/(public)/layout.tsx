@@ -3,6 +3,7 @@ import { PublicNavbar } from '@/features/portal/components/PublicNavbar';
 import { AdminPromotionBanner } from '@/features/core/components/AdminPromotionBanner';
 import { PendingOnboardingBanner } from '@/features/core/components/PendingOnboardingBanner';
 import { ToastProvider } from '@/features/core/components/ToastContext';
+import { GlobalNotificationListener } from '@/features/core/components/GlobalNotificationListener';
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -35,6 +36,7 @@ export default async function PublicLayout({ children }: { children: React.React
 
   return (
     <ToastProvider>
+      <GlobalNotificationListener />
       <AdminPromotionBanner />
       <PendingOnboardingBanner />
       <PublicNavbar user={navUser} activeBlockTypes={activeBlockTypes} />

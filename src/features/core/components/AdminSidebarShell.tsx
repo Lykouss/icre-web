@@ -6,6 +6,7 @@ import { AdminSidebar } from '@/features/core/components/AdminSidebar';
 import { UserMenu } from '@/features/core/components/UserMenu';
 import { AppRole } from '@/features/core/api/get-current-user';
 import type { FlagResult } from '@/features/core/api/get-feature-flag';
+import { UserInbox } from './UserInbox';
 
 interface Props {
   user: {
@@ -66,23 +67,57 @@ const ROUTE_LABELS: Record<string, { label: string; icon: React.ReactNode }> = {
   '/admin-feedback':   { label: 'Feedbacks & Bugs',   icon: <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg> },
 };
 
+import Link from 'next/link';
+
 function TopbarBreadcrumb() {
   const pathname = usePathname();
-  const base = '/' + (pathname.split('/')[1] ?? '');
-  const route = ROUTE_LABELS[base];
+  const segments = pathname.split('/').filter(Boolean);
 
   return (
-    <div className="flex items-center gap-2 text-[13px]">
-      <span className="font-medium" style={{ color: 'var(--admin-text-muted)' }}>SIGE</span>
-      <svg className="w-3 h-3" style={{ color: 'var(--admin-text-muted)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-      </svg>
-      <div className="flex items-center gap-1.5">
-        <span style={{ color: 'var(--admin-text-secondary)' }}>{route?.icon}</span>
-        <span className="font-semibold" style={{ color: 'var(--admin-text-primary)' }}>
-          {route?.label ?? 'Painel'}
-        </span>
-      </div>
+    <div className="flex items-center gap-2 text-[13px] whitespace-nowrap overflow-x-auto no-scrollbar">
+      <Link href="/dashboard" className="font-medium hover:text-blue-500 transition-colors" style={{ color: 'var(--admin-text-muted)' }}>SIGE</Link>
+      
+      {segments.map((segment, index) => {
+        const href = '/' + segments.slice(0, index + 1).join('/');
+        const isLast = index === segments.length - 1;
+        
+        let label = segment.charAt(0).toUpperCase() + segment.slice(1);
+        let icon = null;
+        
+        if (index === 0) {
+          const route = ROUTE_LABELS['/' + segment];
+          if (route) {
+            label = route.label;
+            icon = route.icon;
+          }
+        } else {
+          if (segment === 'comunicacao') {
+            label = 'Central de Comunicações';
+            icon = <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>;
+          } else if (segment.length > 20 && segment.includes('-')) {
+            label = 'Detalhes';
+            icon = <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z"/></svg>;
+          }
+        }
+
+        return (
+          <React.Fragment key={href}>
+            <svg className="w-3 h-3 shrink-0" style={{ color: 'var(--admin-text-muted)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <Link 
+              href={href}
+              className={`flex items-center gap-1.5 transition-colors ${isLast ? 'pointer-events-none' : 'hover:text-blue-500'}`}
+              style={{ color: isLast ? 'var(--admin-text-primary)' : 'var(--admin-text-muted)' }}
+            >
+              {icon && <span style={{ color: isLast ? 'var(--admin-text-secondary)' : 'inherit' }}>{icon}</span>}
+              <span className={isLast ? 'font-semibold' : 'font-medium'}>
+                {label}
+              </span>
+            </Link>
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 }
@@ -131,7 +166,10 @@ export function AdminSidebarShell({ user, flags, children }: Props) {
             <TopbarBreadcrumb />
           </div>
 
-          <UserMenu fullName={user.fullName} roles={user.roles} photoUrl={user.photoUrl} />
+          <div className="flex items-center gap-4">
+            <UserInbox />
+            <UserMenu fullName={user.fullName} roles={user.roles} photoUrl={user.photoUrl} />
+          </div>
         </header>
 
         {/* Page content */}

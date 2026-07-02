@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 
-export type MediaCategory = 'avatar' | 'pastor' | 'cell' | 'banner' | 'event' | 'other';
+export type MediaCategory = 'avatar' | 'pastor' | 'cell' | 'banner' | 'event' | 'support_archive' | 'support_attachment' | 'other';
 
 export interface UploadSettings {
   id: string;
@@ -31,6 +31,7 @@ export interface MediaAsset {
   uploaded_by: string;
   created_at: string;
   uploader?: { full_name: string }; // joined from profiles
+  owner_name?: string; // Resolved name instead of ID
 }
 
 // ── Settings ──────────────────────────────────────────────────
@@ -67,7 +68,7 @@ export async function updateUploadSettings(settings: Partial<UploadSettings>) {
 
 export async function checkUploadPermission(category: MediaCategory, sizeBytes: number): Promise<{ allowed: boolean; error?: string }> {
   const settings = await getUploadSettings();
-  if (!settings) return { allowed: true }; // Fallback se não existir (teoricamente existe via SQL)
+  if (!settings) return { allowed: true }; // Fallback se não existir
 
   if (!settings.global_enabled) {
     return { allowed: false, error: 'Uploads bloqueados globalmente no sistema.' };
@@ -92,6 +93,11 @@ export async function checkUploadPermission(category: MediaCategory, sizeBytes: 
     case 'banner':
       isEnabled = settings.banners_enabled;
       maxSizeKb = settings.banners_max_size_kb;
+      break;
+    case 'support_archive':
+    case 'support_attachment':
+      isEnabled = true; // Assumimos true por padrão para suporte
+      maxSizeKb = 51200; // 50MB para arquivos de suporte (PDFs, etc)
       break;
     default:
       break;
@@ -126,14 +132,37 @@ export async function registerMediaAsset(data: {
   }
 }
 
+export async function updateMediaAsset(id: string, updates: { file_name: string; category: MediaCategory }) {
+  const user = await getCurrentUser();
+  if (!user || (!user.isSysAdmin && !user.roles.includes('CHURCH_ADMIN'))) {
+    return { error: 'Acesso negado.' };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('media_assets')
+    .update({ file_name: updates.file_name, category: updates.category })
+    .eq('id', id);
+
+  if (error) {
+    console.error('[media] Erro ao atualizar asset:', error.message);
+    return { error: 'Falha ao atualizar arquivo.' };
+  }
+
+  revalidatePath('/midias');
+  return { success: true };
+}
+
 export async function listMediaAssets(category?: MediaCategory): Promise<{ items: MediaAsset[], error?: string }> {
   const user = await getCurrentUser();
   if (!user || (!user.isSysAdmin && !user.roles.includes('CHURCH_ADMIN'))) {
     return { items: [], error: 'Acesso negado.' };
   }
 
-  const supabase = await createClient();
-  let query = supabase
+  const admin = await createAdminClient();
+  
+  // 1. Fetch assets
+  let query = admin
     .from('media_assets')
     .select(`*, uploader:profiles!uploaded_by(full_name)`)
     .order('created_at', { ascending: false });
@@ -142,13 +171,47 @@ export async function listMediaAssets(category?: MediaCategory): Promise<{ items
     query = query.eq('category', category);
   }
 
-  const { data, error } = await query;
+  const { data: assets, error } = await query;
   if (error) {
     console.error('[media] Falha ao listar assets:', error.message);
     return { items: [], error: 'Falha ao carregar galeria.' };
   }
 
-  return { items: data as any[] };
+  // 2. We want to resolve UUIDs in storage_path to human readable names.
+  // We will load all profiles, cells, and pastors names to create a map.
+  const [{ data: profiles }, { data: cells }, { data: pastors }] = await Promise.all([
+    admin.from('profiles').select('id, full_name'),
+    admin.from('cells').select('id, name'),
+    admin.from('pastors').select('id, name')
+  ]);
+
+  const idMap = new Map<string, string>();
+  profiles?.forEach(p => idMap.set(p.id, p.full_name));
+  cells?.forEach(c => idMap.set(c.id, c.name));
+  pastors?.forEach(p => idMap.set(p.id, p.name));
+
+  const items = (assets as any[]).map(asset => {
+    let owner_name = asset.uploader?.full_name || 'Desconhecido';
+    
+    // Check if any UUID in the storage path matches our ID Map
+    const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+    const matches = asset.storage_path.match(uuidRegex);
+    if (matches && matches.length > 0) {
+      for (const match of matches) {
+        if (idMap.has(match)) {
+          owner_name = idMap.get(match)!;
+          break; // First match wins
+        }
+      }
+    }
+    
+    return {
+      ...asset,
+      owner_name
+    };
+  });
+
+  return { items };
 }
 
 export async function deleteMediaAsset(id: string): Promise<{ success?: boolean; error?: string }> {
@@ -157,33 +220,25 @@ export async function deleteMediaAsset(id: string): Promise<{ success?: boolean;
 
   const supabase = await createClient();
   
-  // 1. Get asset details
   const { data: asset } = await supabase.from('media_assets').select('*').eq('id', id).single();
   if (!asset) return { error: 'Arquivo não encontrado.' };
 
-  // 2. Check permission (Owner or Admin)
   if (asset.uploaded_by !== user.id && !user.isSysAdmin && !user.roles.includes('CHURCH_ADMIN')) {
     return { error: 'Acesso negado para excluir este arquivo.' };
   }
 
-  // 3. Delete from bucket via Admin Client (bypass bucket RLS to ensure clean up)
   const admin = await createAdminClient();
   
-  // Storage path should contain bucket/path format, e.g., "avatars/123/avatar.jpg" or we deduce it
-  // Actually, we should store bucket and path separately or just know them.
-  // Our url format is https://.../object/public/bucket/path
   let bucket = 'site-images';
   if (asset.storage_path.includes('avatars/')) bucket = 'avatars';
+  if (asset.category === 'support_archive') bucket = 'support_archives';
+  if (asset.category === 'support_attachment') bucket = 'support_attachments';
   
-  // Extract path from url if needed, but storage_path was saved.
-  // Let's assume storage_path is the actual path inside the bucket.
   const { error: storageError } = await admin.storage.from(bucket).remove([asset.storage_path]);
   if (storageError) {
     console.error('[media] Storage delete err:', storageError.message);
-    // Ignore error if not found in storage, we still delete record
   }
 
-  // 4. Delete record
   const { error: dbError } = await supabase.from('media_assets').delete().eq('id', id);
   if (dbError) {
     console.error('[media] DB delete err:', dbError.message);
@@ -201,7 +256,6 @@ export async function syncOldMediaAssets(): Promise<{ success?: boolean; error?:
   const admin = await createAdminClient();
   let count = 0;
 
-  // Function to register if not exists
   const register = async (category: MediaCategory, url: string, fileName: string, uploadedBy: string, sizeBytes: number = 0, mimeType: string = 'image/jpeg') => {
     if (!url) return;
     const { data: existing } = await admin.from('media_assets').select('id').eq('url', url).single();
@@ -209,9 +263,8 @@ export async function syncOldMediaAssets(): Promise<{ success?: boolean; error?:
 
     let path = url.split('/object/public/')[1];
     if (path) {
-      // path looks like "bucket/folder/file.jpg", we want to remove the bucket part for storage_path
       const parts = path.split('/');
-      parts.shift(); // remove bucket
+      parts.shift();
       path = parts.join('/');
     } else {
       path = 'unknown/' + fileName;
@@ -229,7 +282,6 @@ export async function syncOldMediaAssets(): Promise<{ success?: boolean; error?:
     count++;
   };
 
-  // 1. Profiles
   const { data: profiles } = await admin.from('profiles').select('id, photo_url');
   if (profiles) {
     for (const p of profiles) {
@@ -237,7 +289,6 @@ export async function syncOldMediaAssets(): Promise<{ success?: boolean; error?:
     }
   }
 
-  // 2. Pastors
   const { data: pastors } = await admin.from('pastors').select('id, name, photo_url');
   if (pastors) {
     for (const p of pastors) {
@@ -245,7 +296,6 @@ export async function syncOldMediaAssets(): Promise<{ success?: boolean; error?:
     }
   }
 
-  // 3. Leaders
   const { data: leaders } = await admin.from('leaders').select('id, name, photo_url');
   if (leaders) {
     for (const p of leaders) {
@@ -253,7 +303,6 @@ export async function syncOldMediaAssets(): Promise<{ success?: boolean; error?:
     }
   }
 
-  // 4. Cells
   const { data: cells } = await admin.from('cells').select('id, name, image_url, leader_photo_url');
   if (cells) {
     for (const c of cells) {
@@ -262,7 +311,6 @@ export async function syncOldMediaAssets(): Promise<{ success?: boolean; error?:
     }
   }
 
-  // 5. Site Media
   const { data: siteMedia } = await admin.from('site_media').select('*');
   if (siteMedia) {
     for (const sm of siteMedia) {

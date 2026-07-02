@@ -180,8 +180,10 @@ function SidebarContent({
     router.refresh();
   }, [router]);
 
+  const shortName = user.fullName.trim().split(/\s+/).slice(0, 2).join(' ');
+
   return (
-    <div className="flex flex-col h-full overflow-hidden select-none">
+    <div className="flex flex-col h-full select-none relative">
 
       {/* ── Logo Header ─────────────────────────────────────── */}
       <div
@@ -217,15 +219,19 @@ function SidebarContent({
           </AnimatePresence>
         </Link>
 
-        {/* Collapse button — only on desktop, OUTSIDE the logo */}
+        {/* Collapse button — conditionally absolute when collapsed */}
         {!isMobile && (
           <button
             onClick={onCollapse}
             title={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
-            className="w-7 h-7 shrink-0 flex items-center justify-center rounded-lg text-slate-600 hover:text-slate-300 hover:bg-white/8 transition-all duration-150"
+            className={`flex items-center justify-center transition-all duration-150 ${
+              isCollapsed
+                ? 'absolute -right-3 top-4 w-6 h-6 rounded-full bg-blue-600 text-white shadow-lg border-2 border-[var(--admin-bg)] z-50 hover:bg-blue-500'
+                : 'w-7 h-7 shrink-0 rounded-lg text-slate-600 hover:text-slate-300 hover:bg-white/8'
+            }`}
           >
             <motion.svg
-              className="w-3.5 h-3.5"
+              className={isCollapsed ? "w-3 h-3" : "w-3.5 h-3.5"}
               fill="none" stroke="currentColor" viewBox="0 0 24 24"
               animate={{ rotate: isCollapsed ? 180 : 0 }}
               transition={{ duration: 0.25, ease: [0.4,0,0.2,1] }}
@@ -422,7 +428,7 @@ function SidebarContent({
         style={{ borderTop: '1px solid var(--admin-border)' }}
       >
         <div className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2 transition-colors hover:bg-white/5 ${isCollapsed ? 'justify-center' : ''}`}>
-          <UserAvatar photoUrl={user.photoUrl} fullName={user.fullName} size={34} roleColor={roleColor} />
+          <UserAvatar photoUrl={user.photoUrl} fullName={shortName} size={34} roleColor={roleColor} />
 
           <AnimatePresence initial={false}>
             {!isCollapsed && (
@@ -432,10 +438,10 @@ function SidebarContent({
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
                 transition={{ duration: 0.2 }}
-                className="flex-1 min-w-0 overflow-hidden"
+                className="flex-1 min-w-0 overflow-hidden flex items-center gap-1.5"
               >
-                <p className="text-[13px] font-semibold text-slate-200 truncate leading-tight mb-1">{user.fullName}</p>
-                <RoleBadge role={primaryRole as AppRole} variant="chip" size="sm" />
+                <p className="text-[13px] font-semibold text-slate-200 truncate leading-tight">{shortName}</p>
+                <RoleBadge role={primaryRole as AppRole} variant="icon" size="sm" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -470,7 +476,22 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
   const [mounted, setMounted] = useState(false);
   const [supportCount, setSupportCount] = useState(0);
   const [feedbackCount, setFeedbackCount] = useState(0);
+  
+  const [hiddenSupportCount, setHiddenSupportCount] = useState(0);
+  const [hiddenFeedbackCount, setHiddenFeedbackCount] = useState(0);
+
+  const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    if (pathname === '/admin-suporte') setHiddenSupportCount(supportCount);
+    else if (supportCount < hiddenSupportCount) setHiddenSupportCount(supportCount);
+  }, [pathname, supportCount, hiddenSupportCount]);
+
+  useEffect(() => {
+    if (pathname === '/admin-feedback') setHiddenFeedbackCount(feedbackCount);
+    else if (feedbackCount < hiddenFeedbackCount) setHiddenFeedbackCount(feedbackCount);
+  }, [pathname, feedbackCount, hiddenFeedbackCount]);
 
   useEffect(() => {
     setMounted(true);
@@ -545,8 +566,10 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
 
   const sidebarBg: React.CSSProperties = {
     background: 'var(--admin-sidebar)',
-    borderRight: '1px solid var(--admin-border)',
   };
+
+  const displaySupportCount = Math.max(0, supportCount - hiddenSupportCount);
+  const displayFeedbackCount = Math.max(0, feedbackCount - hiddenFeedbackCount);
 
   return (
     <>
@@ -557,7 +580,7 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
           expanded:  { width: 240, transition: { duration: 0.28, ease: [0.4, 0, 0.2, 1] } },
           collapsed: { width: 64,  transition: { duration: 0.28, ease: [0.4, 0, 0.2, 1] } },
         }}
-        className="hidden md:flex flex-col shrink-0 z-20 relative overflow-visible h-full"
+        className="hidden md:flex flex-col shrink-0 z-40 relative overflow-visible h-full rounded-tr-3xl rounded-br-3xl shadow-[4px_0_24px_rgba(0,0,0,0.6)] border-r border-[var(--admin-border)]"
         style={sidebarBg}
       >
         <SidebarContent
@@ -566,8 +589,8 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
           isCollapsed={mounted ? isCollapsed : false}
           onCollapse={handleCollapseToggle}
           isMobile={false}
-          supportCount={supportCount}
-          feedbackCount={feedbackCount}
+          supportCount={displaySupportCount}
+          feedbackCount={displayFeedbackCount}
         />
       </motion.aside>
 
@@ -600,8 +623,8 @@ export function AdminSidebar({ user, flags = {}, mobileOpen = false, onMobileClo
                 onCollapse={() => {}}
                 onClose={onMobileClose}
                 isMobile={true}
-                supportCount={supportCount}
-                feedbackCount={feedbackCount}
+                supportCount={displaySupportCount}
+                feedbackCount={displayFeedbackCount}
               />
             </motion.aside>
           )}

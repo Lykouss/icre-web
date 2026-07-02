@@ -269,13 +269,13 @@ export function FlagManager({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           >
-            <div className="px-6 pb-8 pt-2 space-y-8 border-t border-slate-100">
+            <div className="px-6 pb-8 pt-2 space-y-8 border-t" style={{ borderColor: 'var(--admin-border)' }}>
               
               {/* Status Selector Grid */}
               <section>
                 <header className="flex items-center gap-2 mb-4">
                   <div className="w-1 h-3.5 bg-blue-500 rounded-full" />
-                  <h4 className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--admin-text-muted)' }}>Configuração de Status</h4>
+                  <h4 className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--admin-text-secondary)' }}>Configuração de Status</h4>
                 </header>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
@@ -294,8 +294,8 @@ export function FlagManager({
                       <div className="mb-3 p-2 rounded-xl" style={{ background: status === opt.value ? 'var(--admin-surface)' : 'rgba(255,255,255,0.02)', color: opt.color, border: `1px solid ${status === opt.value ? opt.border : 'transparent'}` }}>
                         {opt.icon}
                       </div>
-                      <span className="text-[13px] font-bold" style={{ color: status === opt.value ? opt.color : 'var(--admin-text-secondary)' }}>{opt.label}</span>
-                      <p className="text-[11px] mt-1 lines-clamp-2 leading-relaxed" style={{ color: 'var(--admin-text-muted)' }}>{opt.description}</p>
+                      <span className="text-[13px] font-bold" style={{ color: status === opt.value ? opt.color : 'var(--admin-text-primary)' }}>{opt.label}</span>
+                      <p className="text-[11px] mt-1 lines-clamp-2 leading-relaxed" style={{ color: 'var(--admin-text-secondary)' }}>{opt.description}</p>
                       
                       {status === opt.value && (
                         <motion.div layoutId={`active-dot-${slug}`} className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: opt.color }} />
@@ -311,7 +311,7 @@ export function FlagManager({
                 {/* Maintenance Scheduler */}
                 <div className="p-6 rounded-2xl border shadow-sm transition-shadow" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
                   <header className="flex items-center justify-between mb-4">
-                    <h5 className="text-[11px] font-black uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--admin-text-muted)' }}>
+                    <h5 className="text-[11px] font-black uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--admin-text-secondary)' }}>
                       <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                       Agendamento
                     </h5>
@@ -347,7 +347,7 @@ export function FlagManager({
                 {/* Raffle Selection */}
                 <div className="p-6 rounded-2xl border shadow-sm transition-shadow" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
                   <header className="flex items-center gap-2 mb-4">
-                    <h5 className="text-[11px] font-black uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--admin-text-muted)' }}>
+                    <h5 className="text-[11px] font-black uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--admin-text-secondary)' }}>
                       <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                       Sorteio de Acesso
                     </h5>

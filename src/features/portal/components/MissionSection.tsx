@@ -212,9 +212,9 @@ export function MissionSection({ content }: Props) {
           ref={statsRef}
           className="grid grid-cols-3 gap-0 mb-24 p-8 bg-slate-800/40 backdrop-blur-sm border border-white/6 rounded-3xl"
         >
-          <StatCard icon={STAT_ICONS[0]} value={500} suffix="+" label="Membros ativos" index={0} active={statsVisible} />
-          <StatCard icon={STAT_ICONS[1]} value={4}   suffix=""  label="Células ativas"  index={1} active={statsVisible} />
-          <StatCard icon={STAT_ICONS[2]} value={33}  suffix=""  label="Anos de história" index={2} active={statsVisible} />
+          <StatCard icon={STAT_ICONS[0]} value={Number(content.active_members) || 500} suffix="+" label="Membros ativos" index={0} active={statsVisible} />
+          <StatCard icon={STAT_ICONS[1]} value={Number(content.active_cells) || 4}   suffix=""  label="Células ativas"  index={1} active={statsVisible} />
+          <StatCard icon={STAT_ICONS[2]} value={Number(content.history_years) || 33}  suffix=""  label="Anos de história" index={2} active={statsVisible} />
         </div>
 
         {/* Pilares */}

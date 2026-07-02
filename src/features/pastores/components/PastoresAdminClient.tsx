@@ -9,44 +9,20 @@ import {
   togglePastorActive,
 } from '@/features/portal/actions/portal-actions';
 import { useToast } from '@/features/core/components/ToastContext';
+import { AdminEmptyState } from '@/features/core/components/AdminEmptyState';
+import { AdminButton } from '@/features/core/components/AdminUI';
 import type { Pastor } from '@/features/portal/types';
 
-/* ─── Image preview input ─────────────────────────────────────── */
-
-function PhotoInput({ src, name }: { src: string | null; name: string }) {
-  const [preview, setPreview] = useState<string | null>(src);
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
-  return (
-    <div className="flex items-center gap-4">
-      <div
-        className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-100 border-2 border-dashed border-slate-200 hover:border-blue-400 transition-colors cursor-pointer group shrink-0 flex items-center justify-center"
-        onClick={() => inputRef.current?.click()}
-      >
-        {preview ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={preview} alt="" className="w-full h-full object-cover object-top" />
-        ) : (
-          <svg className="w-7 h-7 text-slate-300 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        )}
-      </div>
-      <div className="min-w-0">
-        <button type="button" onClick={() => inputRef.current?.click()}
-          className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors">
-          {preview ? 'Trocar foto' : 'Selecionar foto'}
-        </button>
-        <p className="text-xs text-slate-400 mt-0.5">JPG, PNG ou WebP • máx. 3 MB</p>
-        <input ref={inputRef} type="file" name={name} className="hidden" accept="image/jpeg,image/png,image/webp"
-          onChange={e => {
-            const f = e.target.files?.[0];
-            if (f) setPreview(URL.createObjectURL(f));
-          }} />
-      </div>
-    </div>
-  );
-}
+const inputCls = 'w-full h-9 px-3 rounded-xl text-sm text-slate-200 placeholder-slate-600 outline-none transition-all';
+const inputStyle = { background: 'var(--admin-surface-alt)', border: '1px solid var(--admin-border)' } as const;
+const focusFns = {
+  onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    e.target.style.borderColor = 'rgba(37,99,235,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.1)';
+  },
+  onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    e.target.style.borderColor = 'var(--admin-border)'; e.target.style.boxShadow = 'none';
+  },
+};
 
 /* ─── Toggle ──────────────────────────────────────────────────── */
 
@@ -54,9 +30,41 @@ function Toggle({ checked, onChange, disabled }: { checked: boolean; onChange: (
   return (
     <button type="button" role="switch" aria-checked={checked} disabled={disabled}
       onClick={() => onChange(!checked)}
-      className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${checked ? 'bg-blue-600' : 'bg-slate-200'} disabled:opacity-50`}>
-      <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
+      className="relative w-9 h-5 rounded-full transition-colors duration-200 disabled:opacity-40"
+      style={{ background: checked ? 'var(--admin-accent)' : 'var(--admin-surface-alt)', border: '1px solid var(--admin-border)' }}>
+      <span className="absolute top-0.5 left-0.5 w-4 h-4 rounded-full shadow transition-transform duration-200"
+        style={{ background: checked ? '#fff' : 'rgba(255,255,255,0.3)', transform: checked ? 'translateX(16px)' : 'translateX(0)' }} />
     </button>
+  );
+}
+
+/* ─── Photo Preview ───────────────────────────────────────────── */
+
+function PhotoPreview({ src, onChange }: { src: string | null; onChange: (url: string | null) => void }) {
+  const ref = React.useRef<HTMLInputElement>(null);
+  return (
+    <div
+      className="relative w-24 h-24 rounded-2xl overflow-hidden cursor-pointer group shrink-0 transition-all"
+      style={{ background: 'var(--admin-surface-alt)', border: '2px dashed var(--admin-border)' }}
+      onClick={() => ref.current?.click()}
+      onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(37,99,235,0.4)')}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--admin-border)')}
+    >
+      {src
+        // eslint-disable-next-line @next/next/no-img-element
+        ? <img src={src} alt="" className="w-full h-full object-cover object-top" />
+        : (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1" style={{ color: 'var(--admin-text-muted)' }}>
+            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span className="text-[9px] font-medium">Foto</span>
+          </div>
+        )}
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+      <input ref={ref} type="file" name="photo" className="hidden" accept="image/jpeg,image/png,image/webp"
+        onChange={e => { const f = e.target.files?.[0]; if (f) onChange(URL.createObjectURL(f)); }} />
+    </div>
   );
 }
 
@@ -70,84 +78,77 @@ function PastorModal({
   onClose: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }) {
-  const [chars, setChars] = useState(editing?.bio?.length ?? 0);
+  const [photoSrc, setPhotoSrc] = useState<string | null>(editing?.photo_url ?? null);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col" onClick={e => e.stopPropagation()}>
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="relative w-full max-w-lg rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+        style={{ background: 'var(--admin-surface)', border: '1px solid var(--admin-border-strong)' }}
+        onClick={e => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
-          <h2 className="text-lg font-bold text-slate-900">
-            {editing ? 'Editar Liderança' : 'Novo(a) Líder'}
-          </h2>
-          <button onClick={onClose} className="p-2 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid var(--admin-border)' }}>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-blue-400" style={{ background: 'var(--admin-accent-dim)', border: '1px solid var(--admin-accent-border)' }}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h2 className="text-[15px] font-bold text-slate-100">{editing ? 'Editar Pastor(a)' : 'Novo(a) Pastor(a)'}</h2>
+          </div>
+          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-lg transition-all" style={{ color: 'var(--admin-text-muted)' }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--admin-text-primary)'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'var(--admin-text-muted)'; e.currentTarget.style.background = 'transparent'; }}>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <form key={editing?.id ?? 'new'} onSubmit={onSubmit} className="flex-1 overflow-y-auto">
+        <form key={editing?.id ?? 'new'} onSubmit={onSubmit}>
           <div className="p-6 space-y-5">
-
-            {/* Foto */}
-            <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Foto</label>
-              <PhotoInput src={editing?.photo_url ?? null} name="photo" />
-            </div>
-
-            {/* Nome e cargo */}
-            <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Identificação</label>
-              <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Nome Completo *</label>
-                <input name="name" defaultValue={editing?.name} required
-                  className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
-                  placeholder="Ex: Pastor João Silva" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+            {/* Foto + campos em linha */}
+            <div className="flex flex-col sm:flex-row items-start gap-4">
+              <PhotoPreview src={photoSrc} onChange={setPhotoSrc} />
+              <div className="flex-1 space-y-3 w-full">
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Cargo / Função *</label>
-                  <input name="role" defaultValue={editing?.role} required
-                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
-                    placeholder="Ex: Pastor Titular" />
+                  <label className="block text-[11px] font-semibold mb-1.5" style={{ color: 'var(--admin-text-secondary)' }}>Nome Completo *</label>
+                  <input name="name" defaultValue={editing?.name} required placeholder="Ex: Pastor João Silva"
+                    className={inputCls} style={inputStyle} {...focusFns} />
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Instagram (@)</label>
-                  <input name="instagram_url" type="url" defaultValue={editing?.instagram_url ?? ''}
-                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
-                    placeholder="https://instagram.com/pastor..." />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold mb-1.5" style={{ color: 'var(--admin-text-secondary)' }}>Cargo / Função *</label>
+                    <input name="role" defaultValue={editing?.role} required placeholder="Ex: Pastor Titular"
+                      className={inputCls} style={inputStyle} {...focusFns} />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold mb-1.5" style={{ color: 'var(--admin-text-secondary)' }}>Instagram (URL)</label>
+                    <input name="instagram_url" type="url" defaultValue={editing?.instagram_url ?? ''} placeholder="https://instagram.com/pastor..."
+                      className={inputCls} style={inputStyle} {...focusFns} />
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Bio */}
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-medium text-slate-600">Biografia</label>
-                <span className={`text-xs ${chars > 550 ? 'text-amber-500' : 'text-slate-400'}`}>{chars}/600</span>
-              </div>
-              <textarea name="bio" rows={4} maxLength={600}
-                defaultValue={editing?.bio ?? ''}
-                onChange={e => setChars(e.target.value.length)}
-                className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none"
-                placeholder="Uma breve descrição sobre o líder, sua história e ministério..." />
+              <label className="block text-[11px] font-semibold mb-1.5" style={{ color: 'var(--admin-text-secondary)' }}>Biografia</label>
+              <textarea name="bio" rows={4} maxLength={600} defaultValue={editing?.bio ?? ''}
+                placeholder="Uma breve descrição sobre o pastor, sua história e ministério..."
+                className="w-full px-3 py-2.5 rounded-xl text-sm text-slate-200 placeholder-slate-600 outline-none transition-all resize-none"
+                style={inputStyle} {...focusFns} />
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/50 shrink-0">
-            <button type="button" onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors">
-              Cancelar
-            </button>
-            <button type="submit" disabled={isPending}
-              className="px-5 py-2 text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
-              {isPending && <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>}
-              {editing ? 'Salvar alterações' : 'Adicionar Líder'}
-            </button>
+          <div className="flex items-center justify-end gap-3 px-6 py-4" style={{ borderTop: '1px solid var(--admin-border)', background: 'rgba(0,0,0,0.15)' }}>
+            <AdminButton type="button" variant="ghost" onClick={onClose}>Cancelar</AdminButton>
+            <AdminButton type="submit" variant="primary" loading={isPending}>
+              {editing ? 'Salvar alterações' : 'Adicionar Pastor(a)'}
+            </AdminButton>
           </div>
         </form>
       </div>
@@ -164,65 +165,77 @@ function PastorCard({
   onEdit: () => void; onToggle: () => void; toggling: boolean; onDelete: () => void;
 }) {
   return (
-    <div className={`bg-white rounded-2xl border p-4 flex flex-col sm:flex-row items-center gap-5 transition-all duration-200 hover:shadow-md hover:border-blue-200 ${pastor.is_active ? 'border-slate-200' : 'border-slate-200 opacity-60 bg-slate-50'}`}>
-      {/* Photo */}
-      <div className="w-24 h-24 sm:w-20 sm:h-20 shrink-0 rounded-full sm:rounded-2xl bg-slate-100 overflow-hidden relative shadow-inner ring-4 ring-slate-50 sm:ring-0">
-        {pastor.photo_url ? (
+    <div
+      className={`rounded-2xl overflow-hidden flex flex-col sm:flex-row transition-all duration-200 hover:-translate-y-0.5 ${!pastor.is_active ? 'opacity-50' : ''}`}
+      style={{ background: 'var(--admin-surface)', border: '1px solid var(--admin-border)', boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}
+      onMouseEnter={e => { if (pastor.is_active) e.currentTarget.style.borderColor = 'rgba(37,99,235,0.3)'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--admin-border)'; }}
+    >
+      {/* Photo side */}
+      <div className="relative w-full sm:w-32 h-40 sm:h-auto overflow-hidden shrink-0 flex items-center justify-center" style={{ background: 'var(--admin-surface-alt)' }}>
+        {pastor.photo_url
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={pastor.photo_url} alt={pastor.name} className="w-full h-full object-cover object-top" />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-            <svg className="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent sm:hidden" />
+          ? <img src={pastor.photo_url} alt={pastor.name} className="w-full h-full object-cover object-top" />
+          : (
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-blue-400" style={{ background: 'var(--admin-accent-dim)', border: '1px solid var(--admin-accent-border)' }}>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+            </div>
+          )}
+        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/50 to-transparent sm:hidden" />
       </div>
 
-      {/* Body */}
-      <div className="flex-1 flex flex-col text-center sm:text-left min-w-0 w-full">
-        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">{pastor.role}</p>
-        <h3 className="font-bold text-slate-900 text-lg leading-tight mb-1 truncate">{pastor.name}</h3>
+      {/* Content */}
+      <div className="p-4 flex flex-col flex-1 min-w-0 w-full">
+        <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">{pastor.role}</p>
+        <h3 className="font-bold text-slate-100 text-[15px] mb-1 truncate">{pastor.name}</h3>
         
         {pastor.instagram_url && (
-          <a href={pastor.instagram_url} target="_blank" rel="noreferrer" className="text-xs font-medium text-fuchsia-600 mb-2 inline-flex items-center justify-center sm:justify-start gap-1 hover:underline">
+          <a href={pastor.instagram_url} target="_blank" rel="noreferrer"
+            className="text-[11px] flex items-center gap-1.5 mb-2 hover:text-purple-300 transition-colors w-max" style={{ color: '#c4b5fd' }}>
             <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
             Instagram
           </a>
         )}
         {pastor.bio ? (
-          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed max-w-2xl">{pastor.bio}</p>
+          <p className="text-[11px] line-clamp-2 leading-relaxed max-w-2xl" style={{ color: 'var(--admin-text-muted)' }}>{pastor.bio}</p>
         ) : (
-          <p className="text-xs text-slate-400 italic">Sem biografia cadastrada.</p>
+          <p className="text-[11px] italic" style={{ color: 'var(--admin-text-muted)' }}>Sem biografia cadastrada.</p>
+        )}
+
+        {/* Actions */}
+        {canManage && (
+          <div className="flex items-center justify-between pt-3 mt-auto w-full" style={{ borderTop: '1px solid var(--admin-border)' }}>
+            <div className="flex items-center gap-2">
+              <Toggle checked={pastor.is_active} onChange={onToggle} disabled={toggling} />
+              <span className="text-[11px]" style={{ color: 'var(--admin-text-secondary)' }}>
+                {pastor.is_active ? 'Visível' : 'Oculto'}
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <button onClick={onEdit} title="Editar" className="p-1.5 rounded-lg transition-all" style={{ color: 'var(--admin-text-muted)' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#93c5fd'; e.currentTarget.style.background = 'rgba(37,99,235,0.1)'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'var(--admin-text-muted)'; e.currentTarget.style.background = 'transparent'; }}>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              {isSysAdmin && (
+                <button onClick={onDelete} title="Remover" className="p-1.5 rounded-lg transition-all" style={{ color: 'var(--admin-text-muted)' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--admin-text-muted)'; e.currentTarget.style.background = 'transparent'; }}>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
         )}
       </div>
-
-      {/* Actions */}
-      {canManage && (
-        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 sm:gap-2 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 mt-2 sm:mt-0 shrink-0">
-          <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-            <Toggle checked={pastor.is_active} onChange={onToggle} disabled={toggling} />
-            <span className="text-xs font-medium text-slate-600">{pastor.is_active ? 'Visível' : 'Oculto'}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <button onClick={onEdit} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50 transition-colors" title="Editar">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              Editar
-            </button>
-            {isSysAdmin && (
-              <button onClick={onDelete} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 hover:bg-red-50 transition-colors" title="Remover">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Excluir
-              </button>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -257,14 +270,14 @@ export function PastoresAdminClient({ initialPastors, canManage, isSysAdmin }: P
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     startTransition(async () => {
-      const toastId = toast('loading', editing ? 'Salvando...' : 'Adicionando líder...');
+      const toastId = toast('loading', editing ? 'Salvando...' : 'Adicionando pastor...');
       const result = editing
         ? await updatePastor(editing.id, formData)
         : await createPastor(formData);
       dismiss(toastId);
       const err = 'error' in result ? result.error : null;
       if (err) { toast('error', err); return; }
-      toast('success', editing ? 'Líder atualizado!' : 'Líder adicionado com sucesso!');
+      toast('success', editing ? 'Pastor atualizado!' : 'Pastor adicionado com sucesso!');
       setIsOpen(false);
       router.refresh();
     });
@@ -282,7 +295,7 @@ export function PastoresAdminClient({ initialPastors, canManage, isSysAdmin }: P
   };
 
   const handleDelete = (pastor: Pastor) => {
-    if (!confirm(`Tem certeza que deseja EXCLUIR DEFINITIVAMENTE "${pastor.name}"? Esta ação não pode ser desfeita e removerá o pastor do banco de dados.`)) return;
+    if (!confirm(`Tem certeza que deseja EXCLUIR DEFINITIVAMENTE "${pastor.name}"? Esta ação não pode ser desfeita.`)) return;
     startTransition(async () => {
       const toastId = toast('loading', 'Excluindo...');
       const result = await deletePastor(pastor.id);
@@ -304,72 +317,62 @@ export function PastoresAdminClient({ initialPastors, canManage, isSysAdmin }: P
   const hiddenCount  = pastors.length - visibleCount;
 
   return (
-    <div className="max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Liderança</h1>
-          <p className="text-slate-500 mt-1.5 text-sm">
-            Gerencie os pastores e líderes exibidos na seção de liderança do portal.
-          </p>
-        </div>
-        {canManage && (
-          <button onClick={openCreate}
-            className="shrink-0 flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-xl transition-colors shadow-sm">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Adicionar Líder
-          </button>
-        )}
-      </div>
-
+    <div className="w-full space-y-6">
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total',    value: pastors.length, color: 'text-slate-600',   bg: 'bg-slate-50 border-slate-200'    },
-          { label: 'Visíveis', value: visibleCount,   color: 'text-blue-600',    bg: 'bg-blue-50 border-blue-200'      },
-          { label: 'Ocultos',  value: hiddenCount,    color: 'text-slate-400',   bg: 'bg-slate-50 border-slate-200'    },
+          { label: 'Total',    value: pastors.length, color: '#3b82f6' },
+          { label: 'Visíveis', value: visibleCount,   color: '#10b981' },
+          { label: 'Ocultos',  value: hiddenCount,    color: '#f59e0b' },
         ].map(s => (
-          <div key={s.label} className={`rounded-xl border p-4 ${s.bg}`}>
-            <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{s.label}</p>
+          <div key={s.label} className="rounded-2xl p-4" style={{ background: 'var(--admin-surface)', border: '1px solid var(--admin-border)' }}>
+            <p className="text-2xl font-black" style={{ color: s.color }}>{s.value}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wide mt-0.5" style={{ color: 'var(--admin-text-secondary)' }}>{s.label}</p>
           </div>
         ))}
       </div>
 
-      {/* Search */}
-      <div className="relative mb-6">
-        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <input value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="Buscar por nome ou cargo..."
-          className="w-full pl-9 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400" />
+      {/* Toolbar */}
+      <div className="flex flex-col sm:flex-row gap-3 items-center">
+        <div className="relative flex-1 w-full">
+          <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Buscar por nome ou cargo..."
+            className="w-full h-9 pl-9 pr-4 rounded-xl text-sm text-slate-200 placeholder-slate-600 outline-none transition-all"
+            style={{ background: 'var(--admin-surface-alt)', border: '1px solid var(--admin-border)' }}
+            onFocus={e => { e.target.style.borderColor = 'rgba(37,99,235,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.1)'; }}
+            onBlur={e => { e.target.style.borderColor = 'var(--admin-border)'; e.target.style.boxShadow = 'none'; }}
+          />
+        </div>
+        {canManage && (
+          <AdminButton variant="primary" className="shrink-0"
+            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>}
+            onClick={openCreate}>
+            Novo Pastor
+          </AdminButton>
+        )}
       </div>
 
       {/* Grid or Empty */}
       {filtered.length === 0 ? (
-        <div className="text-center py-20 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
-          <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </div>
-          <p className="text-slate-700 font-semibold mb-1">
-            {search ? 'Nenhum líder encontrado' : 'Nenhum líder cadastrado'}
-          </p>
-          <p className="text-slate-400 text-sm mb-6">
-            {search ? 'Tente outros termos.' : 'Adicione os pastores e líderes para exibi-los no portal.'}
-          </p>
-          {canManage && !search && (
-            <button onClick={openCreate} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-xl transition-colors">
-              Adicionar primeiro líder
-            </button>
-          )}
+        <div className="rounded-2xl" style={{ border: '1px dashed var(--admin-border-strong)', background: 'var(--admin-surface)' }}>
+          <AdminEmptyState
+            icon={search ? 'search' : 'members'}
+            title={search ? 'Nenhum pastor encontrado' : 'Nenhum pastor cadastrado'}
+            description={search ? 'Tente outros termos.' : 'Adicione os pastores para exibi-los no portal.'}
+            action={canManage && !search ? (
+              <AdminButton variant="primary"
+                icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>}
+                onClick={openCreate}>
+                Adicionar primeiro pastor
+              </AdminButton>
+            ) : undefined}
+          />
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {filtered.map(p => (
             <PastorCard
               key={p.id}
