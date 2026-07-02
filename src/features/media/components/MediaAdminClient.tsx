@@ -256,7 +256,7 @@ export function MediaAdminClient({ initialAssets, settings, isSysAdmin }: Props)
           {/* Level 2: Files */}
           {selectedOwner && (
             filteredAssets.length === 0 ? (
-              <AdminEmptyState icon="folder" title="Nenhum arquivo" description="Este usuário não possui arquivos nesta categoria." />
+              <AdminEmptyState icon="media" title="Nenhum arquivo" description="Este usuário não possui arquivos nesta categoria." />
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                 {filteredAssets.map(asset => {
