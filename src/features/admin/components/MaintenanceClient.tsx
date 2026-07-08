@@ -22,6 +22,8 @@ export function MaintenanceClient({ initialData }: Props) {
     auto_activate_scheduled: true,
     auto_deactivate_expected: false,
     message: 'O site está em manutenção. Voltaremos em breve.',
+    scheduled_at: null,
+    expected_end_at: null,
   });
   const [isPending, setIsPending] = useState(false);
 
