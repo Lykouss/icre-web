@@ -11,7 +11,7 @@ import type { ChurchEvent, EventSchedule, EventRegistration, EventAttendance, Sc
 import { getNextEventOccurrence } from '@/lib/event-utils';
 import { cancelEventOccurrence } from '@/features/events/actions/events';
 
-import { Music, BookOpen, Users, Settings, QrCode, ScanLine } from 'lucide-react';
+import { Music, BookOpen, Users, Settings, QrCode, ScanLine, X } from 'lucide-react';
 
 const ROLES: { id: ScheduleRole; label: string; icon: React.ElementType }[] = [
   { id: 'louvor',   label: 'Louvor',   icon: Music },
@@ -23,6 +23,7 @@ const ROLES: { id: ScheduleRole; label: string; icon: React.ElementType }[] = [
 interface Member {
   id: string;
   full_name: string;
+  photo_url: string | null;
 }
 
 interface EventDetailClientProps {
@@ -51,10 +52,14 @@ export function EventDetailClient({
   const router = useRouter();
   const { toast, dismiss } = useToast();
 
+  const isEncerrado = event.status === 'encerrado';
+  const effectiveCanManage = canManage && !isEncerrado;
+
   const [tab, setTab] = useState<Tab>('escala');
   const [isPending, startTransition] = useTransition();
 
   const [editingRole, setEditingRole] = useState<ScheduleRole | null>(null);
+  const [selectedCheckin, setSelectedCheckin] = useState<any>(null);
   const [selectedMember, setSelectedMember] = useState('');
   const [slotNotes, setSlotNotes] = useState('');
 
@@ -170,12 +175,16 @@ export function EventDetailClient({
     name: r.name,
     time: r.checkin_time,
     type: 'scanner' as const,
+    member_id: r.member_id,
+    raw: r,
   }));
   const manualCheckins = attendance.map(a => ({
     id: a.id,
     name: a.name,
     time: (a as any).checked_in_at || (a as any).created_at,
     type: 'manual' as const,
+    member_id: a.member_id,
+    raw: a,
   }));
   const unifiedAttendances = [...scannerCheckins, ...manualCheckins].sort((a, b) => new Date(b.time || 0).getTime() - new Date(a.time || 0).getTime());
 
@@ -192,7 +201,22 @@ export function EventDetailClient({
 
   return (
     <div className="rounded-3xl border shadow-sm overflow-hidden" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
-      <div className="flex border-b" style={{ borderColor: 'var(--admin-border)' }}>
+      {isEncerrado && (
+        <div className="bg-yellow-500/10 border-b border-yellow-500/20 px-6 py-3 flex items-center justify-between print:hidden">
+          <p className="text-yellow-600 text-sm font-bold flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+            Evento Encerrado — Arquivo de Leitura Imutável
+          </p>
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-800 shadow-sm hover:bg-slate-50 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            Exportar Histórico (PDF)
+          </button>
+        </div>
+      )}
+      <div className="flex border-b overflow-x-auto print:hidden" style={{ borderColor: 'var(--admin-border)' }}>
         {tabs.map(t => (
           <button
             key={t.id}
@@ -215,7 +239,7 @@ export function EventDetailClient({
       <div className="p-6 md:p-8 min-h-[400px]">
 
         {tab === 'recorrencia' && event.is_recurring && (
-          <div className="animate-in fade-in duration-300 max-w-2xl border rounded-2xl p-6 shadow-sm" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+          <div className="animate-in fade-in duration-300 max-w-2xl mx-auto border rounded-2xl p-6 shadow-sm" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
             <h3 className="text-lg font-bold mb-4" style={{ color: 'var(--admin-text-primary)' }}>Gerenciar Recorrência</h3>
             <p className="text-sm mb-6" style={{ color: 'var(--admin-text-secondary)' }}>Aqui você pode visualizar a próxima ocorrência dinâmica deste evento e cancelar ocorrências específicas.</p>
             
@@ -232,12 +256,12 @@ export function EventDetailClient({
                 )}
               </div>
               
-              {!getNextEventOccurrence(event as any).isCancelled && getNextEventOccurrence(event as any).nextDate && canManage && (
+              {!getNextEventOccurrence(event as any).isCancelled && getNextEventOccurrence(event as any).nextDate && effectiveCanManage && (
                 <div className="flex gap-2">
                   <button 
                     onClick={handleCancelOccurrence}
                     disabled={isPending}
-                    className="px-4 py-2 border font-bold text-sm rounded-xl transition-all disabled:opacity-50"
+                    className="px-4 py-2 border font-bold text-sm rounded-xl transition-all disabled:opacity-50 print:hidden"
                     style={{ background: 'var(--admin-surface)', color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.2)' }}
                   >
                     Cancelar este dia
@@ -272,7 +296,7 @@ export function EventDetailClient({
         )}
 
         {tab === 'escala' && (
-          <div className="animate-in fade-in duration-300 max-w-2xl">
+          <div className="animate-in fade-in duration-300 max-w-2xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {ROLES.map(role => {
                 const slot = getSlot(role.id);
@@ -285,7 +309,7 @@ export function EventDetailClient({
                         </div>
                         <span className="font-bold text-sm" style={{ color: 'var(--admin-text-primary)' }}>{role.label}</span>
                       </div>
-                      {canManage && (
+                      {effectiveCanManage && (
                         <div className="flex gap-2">
                           <button onClick={() => openEdit(role.id)} className="text-xs font-semibold" style={{ color: '#60a5fa' }}>
                             {slot ? 'Editar' : 'Escalar'}
@@ -356,13 +380,13 @@ export function EventDetailClient({
             registrations={registrations}
             members={members}
             capacity={event.capacity}
-            canManage={canManage}
+            canManage={effectiveCanManage}
           />
         )}
 
         {tab === 'presenca' && (
-          <div className="animate-in fade-in duration-300 max-w-3xl">
-            {canManage && (
+          <div className="animate-in fade-in duration-300 max-w-3xl mx-auto">
+            {effectiveCanManage && (
               <div className="rounded-3xl border p-8 shadow-sm mb-8 text-center" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border" style={{ background: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.2)' }}>
                   <QrCode className="w-8 h-8" style={{ color: '#60a5fa' }} />
@@ -372,7 +396,7 @@ export function EventDetailClient({
                   Para garantir a segurança e evitar fraudes, o check-in agora é realizado exclusivamente através do scanner de ingressos.
                 </p>
                 <button 
-                  onClick={() => router.push('/eventos/checkin')}
+                  onClick={() => router.push(`/eventos/checkin?eventId=${event.id}`)}
                   className="inline-flex items-center gap-2 text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-lg"
                   style={{ background: 'var(--admin-accent)' }}
                 >
@@ -392,39 +416,151 @@ export function EventDetailClient({
                   <p className="font-semibold" style={{ color: 'var(--admin-text-muted)' }}>Nenhuma presença registrada ainda.</p>
                 </div>
               ) : (
-                unifiedAttendances.map(a => (
-                  <div key={a.id} className="rounded-2xl border px-5 py-4 flex items-center justify-between transition-colors shadow-sm" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${a.type === 'scanner' ? 'bg-blue-500/10 text-blue-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-                        {a.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="font-bold" style={{ color: 'var(--admin-text-primary)' }}>{a.name}</p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md border ${a.type === 'scanner' ? 'bg-blue-500/5 text-blue-400 border-blue-500/20' : 'bg-emerald-500/5 text-emerald-400 border-emerald-500/20'}`}>
-                            {a.type === 'scanner' ? 'Ingresso (QR)' : 'Manual'}
-                          </span>
+                unifiedAttendances.map(a => {
+                  const photoUrl = a.member_id ? members.find(m => m.id === a.member_id)?.photo_url : null;
+                  return (
+                    <button 
+                      key={a.id} 
+                      onClick={() => setSelectedCheckin(a)}
+                      className="w-full rounded-2xl border px-5 py-4 flex items-center justify-between transition-all shadow-sm text-left cursor-pointer hover:bg-slate-800/50" 
+                      style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}
+                    >
+                      <div className="flex items-center gap-4">
+                        {photoUrl ? (
+                          <img src={photoUrl} alt={a.name} className="w-10 h-10 rounded-full object-cover shrink-0" />
+                        ) : (
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${a.type === 'scanner' ? 'bg-blue-500/10 text-blue-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                            {a.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-bold" style={{ color: 'var(--admin-text-primary)' }}>{a.name}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md border ${a.type === 'scanner' ? 'bg-blue-500/5 text-blue-400 border-blue-500/20' : 'bg-emerald-500/5 text-emerald-400 border-emerald-500/20'}`}>
+                              {a.type === 'scanner' ? 'Ingresso (QR)' : 'Manual'}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      {a.time && (
-                        <p className="text-xs font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>
-                          {new Date(a.time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                        </p>
-                      )}
-                      {a.time && (
-                        <p className="text-[10px] mt-0.5" style={{ color: 'var(--admin-text-muted)' }}>
-                          {new Date(a.time).toLocaleDateString('pt-BR')}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))
+                      <div className="text-right">
+                        {a.time && (
+                          <p className="text-xs font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>
+                            {new Date(a.time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        )}
+                        {a.time && (
+                          <p className="text-[10px] mt-0.5" style={{ color: 'var(--admin-text-muted)' }}>
+                            {new Date(a.time).toLocaleDateString('pt-BR')}
+                          </p>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })
               )}
             </div>
           </div>
         )}
+      </div>
+
+      {selectedCheckin && (
+        <CheckinDetailsSheet 
+          checkin={selectedCheckin} 
+          onClose={() => setSelectedCheckin(null)} 
+          members={members} 
+        />
+      )}
+    </div>
+  );
+}
+
+function CheckinDetailsSheet({ 
+  checkin, 
+  onClose,
+  members
+}: { 
+  checkin: any; 
+  onClose: () => void;
+  members: Member[];
+}) {
+  const isScanner = checkin.type === 'scanner';
+  const reg = checkin.raw as EventRegistration | undefined;
+  const photoUrl = checkin.member_id ? members.find(m => m.id === checkin.member_id)?.photo_url : null;
+  const adminName = isScanner ? reg?.checkin_admin?.full_name || 'Desconhecido' : 'N/D';
+  const adminPhoto = isScanner ? reg?.checkin_admin?.photo_url : null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end">
+      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-sm shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 border-l" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+        <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 z-10" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+          <div>
+            <h3 className="font-bold" style={{ color: 'var(--admin-text-primary)' }}>Detalhes do Check-in</h3>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-xl transition-colors hover:bg-white/5">
+            <X className="w-5 h-5" style={{ color: 'var(--admin-text-muted)' }} />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          <div className="flex flex-col items-center text-center">
+            {photoUrl ? (
+              <img src={photoUrl} alt={checkin.name} className="w-20 h-20 rounded-full object-cover border-4 shadow-sm mb-3" style={{ borderColor: 'var(--admin-surface-alt)' }} />
+            ) : (
+              <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold border-4 shadow-sm mb-3" style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-secondary)', borderColor: 'var(--admin-border)' }}>
+                {checkin.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <h4 className="font-bold text-xl" style={{ color: 'var(--admin-text-primary)' }}>{checkin.name}</h4>
+            <span className={`text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-md mt-3 ${isScanner ? 'bg-blue-500/10 text-blue-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+              {isScanner ? 'Ingresso (QR)' : 'Presença Manual'}
+            </span>
+          </div>
+
+          <section>
+            <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--admin-text-muted)' }}>Registro</h4>
+            <div className="rounded-xl px-4 py-3 space-y-2 text-sm" style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-primary)' }}>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>Data:</span>
+                <span>{checkin.time ? new Date(checkin.time).toLocaleDateString('pt-BR') : '-'}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>Hora:</span>
+                <span>{checkin.time ? new Date(checkin.time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '-'}</span>
+              </div>
+            </div>
+          </section>
+
+          {isScanner && reg && (
+            <section>
+              <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--admin-text-muted)' }}>Dados da Inscrição</h4>
+              <div className="rounded-xl px-4 py-3 space-y-2 text-sm" style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-primary)' }}>
+                {reg.email && <div className="flex flex-col"><span className="font-semibold text-xs mb-1" style={{ color: 'var(--admin-text-secondary)' }}>E-mail:</span><span>{reg.email}</span></div>}
+                {reg.phone && <div className="flex flex-col mt-3"><span className="font-semibold text-xs mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Telefone:</span><span>{reg.phone}</span></div>}
+                <div className="flex flex-col mt-3">
+                  <span className="font-semibold text-xs mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Pagamento:</span>
+                  <span className="capitalize">{reg.payment_status}</span>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {isScanner && (
+            <section>
+              <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--admin-text-muted)' }}>Realizado por</h4>
+              <div className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm" style={{ background: 'var(--admin-surface-alt)', color: 'var(--admin-text-primary)' }}>
+                {adminPhoto ? (
+                  <img src={adminPhoto} alt={adminName} className="w-8 h-8 rounded-full object-cover" />
+                ) : (
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'var(--admin-surface)', color: 'var(--admin-text-secondary)' }}>
+                    {adminName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="font-semibold">{adminName}</span>
+              </div>
+            </section>
+          )}
+        </div>
       </div>
     </div>
   );

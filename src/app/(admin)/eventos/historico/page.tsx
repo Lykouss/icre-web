@@ -25,7 +25,7 @@ export default async function EventHistoryPage() {
     return (
       <div className="p-6">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-slate-800">Auditoria de Eventos</h1>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--admin-text-primary)' }}>Auditoria de Eventos</h1>
           <p className="text-sm text-slate-500 mt-1">Histórico imutável de transações, inscrições e check-ins.</p>
         </div>
         <EventHistoryClient initialHistory={[]} />
@@ -68,7 +68,7 @@ export default async function EventHistoryPage() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Auditoria de Eventos</h1>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--admin-text-primary)' }}>Auditoria de Eventos</h1>
           <p className="text-sm text-slate-500 mt-1">Histórico imutável de transações, inscrições e check-ins.</p>
         </div>
       </div>

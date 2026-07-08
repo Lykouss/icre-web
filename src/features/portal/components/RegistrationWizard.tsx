@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { createPublicRegistration } from '@/features/events/actions/registrations';
 import type { AsaasPaymentInfo, FormField, CustomFormResponses } from '@/features/events/types';
 import { DynamicFormRenderer } from './DynamicFormRenderer';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 interface EventData {
   id: string;
@@ -60,26 +61,29 @@ function formatDate(dateStr: string | null): string {
   return `${d.getDate()} de ${MONTHS[d.getMonth()]}. de ${d.getFullYear()}`;
 }
 
-const STEPS_FREE = ['Termos', 'Dados', 'Sucesso'] as const;
-const STEPS_PAID = ['Termos', 'Dados', 'Pagamento', 'Sucesso'] as const;
-
-type StepId = 'terms' | 'form' | 'payment-method' | 'success';
-
-const STEP_IDS_FREE: StepId[] = ['terms', 'form', 'success'];
-const STEP_IDS_PAID: StepId[] = ['terms', 'form', 'payment-method', 'success'];
+type StepId = 'terms' | 'form' | 'custom' | 'payment-method' | 'success';
 
 export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }: Props) {
   const router = useRouter();
   const isPaid = event.requires_payment && (event.ticket_price ?? 0) > 0;
-  const stepIds = isPaid ? STEP_IDS_PAID : STEP_IDS_FREE;
-  const stepLabels = isPaid ? STEPS_PAID : STEPS_FREE;
+  const hasCustomForm = !!(event.custom_form_schema && event.custom_form_schema.length > 0);
+  
+  const stepLabels = isPaid 
+    ? (hasCustomForm ? ['Termos', 'Titular', 'Adicionais', 'Pagamento', 'Sucesso'] : ['Termos', 'Titular', 'Pagamento', 'Sucesso'])
+    : (hasCustomForm ? ['Termos', 'Titular', 'Adicionais', 'Sucesso'] : ['Termos', 'Titular', 'Sucesso']);
+
+  const stepIds: StepId[] = isPaid
+    ? (hasCustomForm ? ['terms', 'form', 'custom', 'payment-method', 'success'] : ['terms', 'form', 'payment-method', 'success'])
+    : (hasCustomForm ? ['terms', 'form', 'custom', 'success'] : ['terms', 'form', 'success']);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState<'forward' | 'back'>('forward');
   const [animating, setAnimating] = useState(false);
 
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'boleto'>('pix');
+  const initialPaymentMethod = event.accepts_pix !== false ? 'pix' : 'boleto';
+  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'boleto'>(initialPaymentMethod);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
   const [cpfValue, setCpfValue] = useState('');
   const [cpfError, setCpfError] = useState('');
   const [customResponses, setCustomResponses] = useState<CustomFormResponses>({});
@@ -87,6 +91,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
   const [isPending, startTransition] = useTransition();
   const [registrationId, setRegistrationId] = useState<string | null>(null);
   const [showProcessingOverlay, setShowProcessingOverlay] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const isSubmittingRef = useRef(false);
   const formRef = useRef<HTMLFormElement>(null);
   
@@ -128,25 +133,42 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
   const stepId = stepIds[currentStep];
   const formFields: FormField[] = event.custom_form_schema ?? [];
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePersonalDataSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isSubmittingRef.current) return;
-    isSubmittingRef.current = true;
-    setError('');
-
     if (isPaid && cpfValue) {
       if (!isValidCpfClient(cpfValue.replace(/\D/g, ''))) {
         setCpfError('CPF inválido. Verifique os dígitos.');
-        isSubmittingRef.current = false;
         return;
       }
     }
     setCpfError('');
 
-    const formData = new FormData(e.currentTarget);
-    if (isPaid) formData.set('payment_method', paymentMethod);
+    if (hasCustomForm) {
+      nextStep();
+    } else {
+      executeSubmit();
+    }
+  };
+
+  const handleCustomFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    executeSubmit();
+  };
+
+  const executeSubmit = () => {
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+    setError('');
+
+    const dataToSubmit = new FormData();
+    dataToSubmit.set('name', formData.name);
+    dataToSubmit.set('email', formData.email);
+    dataToSubmit.set('phone', formData.phone);
+    if (turnstileToken) dataToSubmit.set('turnstile_token', turnstileToken);
+    if (cpfValue) dataToSubmit.set('cpf', cpfValue);
+    if (isPaid) dataToSubmit.set('payment_method', paymentMethod);
     if (Object.keys(customResponses).length > 0) {
-      formData.set('custom_form_responses', JSON.stringify(customResponses));
+      dataToSubmit.set('custom_form_responses', JSON.stringify(customResponses));
     }
 
     setShowProcessingOverlay(true);
@@ -158,7 +180,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
           localStorage.setItem('icre_device_id', deviceId);
         }
 
-        const result = await createPublicRegistration(event.id, formData, undefined, deviceId);
+        const result = await createPublicRegistration(event.id, dataToSubmit, undefined, deviceId);
 
         if (result.error) {
           setError(result.error);
@@ -377,18 +399,42 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     </div>
                   )}
 
-                  <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+                  <form ref={formRef} onSubmit={handlePersonalDataSubmit} className="space-y-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Nome completo *</label>
-                      <input name="name" type="text" required placeholder="Seu nome completo" className={inputCls} />
+                      <input 
+                        name="name" 
+                        type="text" 
+                        required 
+                        placeholder="Seu nome completo" 
+                        className={inputCls} 
+                        value={formData.name}
+                        onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">E-mail *</label>
-                      <input name="email" type="email" required placeholder="seu@email.com" className={inputCls} />
+                      <input 
+                        name="email" 
+                        type="email" 
+                        required 
+                        placeholder="seu@email.com" 
+                        className={inputCls} 
+                        value={formData.email}
+                        onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Telefone *</label>
-                      <input name="phone" type="tel" required placeholder="(XX) XXXXX-XXXX" className={inputCls} />
+                      <input 
+                        name="phone" 
+                        type="tel" 
+                        required 
+                        placeholder="(XX) XXXXX-XXXX" 
+                        className={inputCls} 
+                        value={formData.phone}
+                        onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                      />
                       {isPaid && <p className="text-xs text-amber-400/80 mt-1.5 flex items-center gap-1"><span>⚠️</span> Necessário para eventuais estornos.</p>}
                     </div>
                     <div>
@@ -412,14 +458,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       {cpfError && <p className="text-xs text-red-400 mt-1 font-semibold">{cpfError}</p>}
                     </div>
 
-                    {formFields.length > 0 && (
-                      <DynamicFormRenderer
-                        fields={formFields}
-                        responses={customResponses}
-                        onChange={(id, val) => setCustomResponses(prev => ({ ...prev, [id]: val }))}
-                        inputCls={inputCls}
-                      />
-                    )}
+                    {/* Custom fields foram removidos daqui e movidos para o próximo step */}
 
                     {/* Método de pagamento */}
                     {isPaid && (
@@ -488,6 +527,85 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                         </div>
                       </div>
                     )}
+
+                    {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+                      <div className="flex justify-center mt-4">
+                        <Turnstile
+                          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                          onSuccess={setTurnstileToken}
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={prevStep}
+                        className="px-5 py-3.5 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 text-sm font-semibold transition-all"
+                      >
+                        Voltar
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isPending}
+                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                      >
+                        {isPending ? (
+                          <>
+                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                            </svg>
+                            {(!hasCustomForm && isPaid) ? 'Gerando cobrança...' : 'Confirmando...'}
+                          </>
+                        ) : (!hasCustomForm && isPaid) ? (
+                          <>Pagar {formatCurrency(event.ticket_price!)} <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
+                        ) : (
+                          <>{hasCustomForm ? 'Próximo Passo' : 'Confirmar Inscrição'} <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* ─── STEP: CUSTOM FORM (Adicionais) ─── */}
+            {stepId === 'custom' && hasCustomForm && (
+              <div>
+                <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/60 border-b border-white/6 px-7 py-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-pink-500/15 border border-pink-500/25 rounded-xl flex items-center justify-center shrink-0">
+                      <svg className="w-4.5 h-4.5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-pink-400 uppercase tracking-widest">Passo 3 de {visibleSteps.length}</p>
+                      <h2 className="text-base font-black text-white">Dados Adicionais</h2>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-7">
+                  {error && (
+                    <div className="flex flex-col gap-2 mb-5">
+                      <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-500/20 text-red-400 text-sm px-4 py-3.5 rounded-xl">
+                        <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{error}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleCustomFormSubmit} className="space-y-4">
+                    <DynamicFormRenderer
+                      fields={formFields}
+                      responses={customResponses}
+                      onChange={(id, val) => setCustomResponses(prev => ({ ...prev, [id]: val }))}
+                      inputCls={inputCls}
+                    />
 
                     <div className="flex gap-3 pt-2">
                       <button

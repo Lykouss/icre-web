@@ -290,7 +290,7 @@ function ContactBlock({ content, layout }: { content: ContactContent; layout: Re
           {!content.address && !content.phone && !content.email && (
             <p className="text-sm text-slate-400 italic">Preencha as informações de contato no editor.</p>
           )}
-          <Link href="/contato" className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-blue-700 transition-colors">
+          <Link href="/feedback" className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-blue-700 transition-colors">
             Fale conosco
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />

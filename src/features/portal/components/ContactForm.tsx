@@ -108,7 +108,7 @@ export function ContactSection({ content }: Props) {
 
             <div className="pt-2">
               <Link
-                href="/contato"
+                href="/feedback"
                 className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-2xl text-sm transition-all duration-200 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25"
               >
                 Fale conosco
@@ -149,20 +149,6 @@ export function ContactSection({ content }: Props) {
           </div>
         </div>
 
-        {/* Rodapé */}
-        <div className="mt-24 pt-8 border-t border-white/6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-blue-400" />
-            </div>
-            <p className="text-sm text-slate-500">© {new Date().getFullYear()} Igreja de Cristo Rocha Eterna</p>
-          </div>
-          <nav className="flex items-center gap-6 text-sm text-slate-500">
-            <Link href="/termos"  className="hover:text-slate-300 transition-colors">Termos de Uso</Link>
-            <Link href="/contato" className="hover:text-slate-300 transition-colors">Contato</Link>
-            <Link href="/login"   className="hover:text-slate-300 transition-colors">Área do Membro</Link>
-          </nav>
-        </div>
       </div>
     </section>
   );

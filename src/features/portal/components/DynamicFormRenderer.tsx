@@ -59,16 +59,16 @@ export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: D
                 required={field.required}
               >
                 <option value="">Selecione...</option>
-                {(field.options || []).map(opt => (
-                  <option key={opt} value={opt}>{opt}</option>
+                {(field.options || []).map((opt, idx) => (
+                  <option key={`${idx}-${opt}`} value={opt}>{opt}</option>
                 ))}
               </select>
             )}
 
             {field.type === 'multiple_choice' && (
               <div className="space-y-2">
-                {(field.options || []).map(opt => (
-                  <label key={opt} className="flex items-center gap-3 cursor-pointer group">
+                {(field.options || []).map((opt, idx) => (
+                  <label key={`${idx}-${opt}`} className="flex items-center gap-3 cursor-pointer group">
                     <input
                       type="radio"
                       name={field.id}
@@ -86,8 +86,8 @@ export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: D
 
             {field.type === 'checkboxes' && (
               <div className="space-y-2">
-                {(field.options || []).map(opt => (
-                  <label key={opt} className="flex items-center gap-3 cursor-pointer group">
+                {(field.options || []).map((opt, idx) => (
+                  <label key={`${idx}-${opt}`} className="flex items-center gap-3 cursor-pointer group">
                     <input
                       type="checkbox"
                       value={opt}

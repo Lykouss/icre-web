@@ -63,7 +63,7 @@ export function EventsPageClient({ initialEvents, canManage, isSysAdmin: _isSysA
   const [schedules, setSchedules] = useState<EventSchedule[]>([]);
   const [registrations, setRegistrations] = useState<EventRegistration[]>([]);
   const [attendance, setAttendance] = useState<EventAttendance[]>([]);
-  const [members, setMembers] = useState<{ id: string; full_name: string }[]>([]);
+  const [members, setMembers] = useState<{ id: string; full_name: string; photo_url: string | null }[]>([]);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
   useEffect(() => {
@@ -86,9 +86,9 @@ export function EventsPageClient({ initialEvents, canManage, isSysAdmin: _isSysA
     const supabase = createClient();
     const [schedulesRes, regRes, attendRes, membersRes] = await Promise.all([
       supabase.from('event_schedules').select('*, members(full_name)').eq('event_id', event.id),
-      supabase.from('event_registrations').select('*').eq('event_id', event.id).order('created_at'),
+      supabase.from('event_registrations').select('*, checkin_admin:profiles!event_registrations_checkin_by_fkey(full_name, photo_url)').eq('event_id', event.id).order('created_at'),
       supabase.from('event_attendance').select('*').eq('event_id', event.id).order('checked_in_at'),
-      supabase.from('members').select('id, full_name').eq('status', 'Membro').order('full_name'),
+      supabase.from('members').select('id, full_name, photo_url').order('full_name'),
     ]);
     setSchedules((schedulesRes.data ?? []) as EventSchedule[]);
     setRegistrations((regRes.data ?? []) as EventRegistration[]);

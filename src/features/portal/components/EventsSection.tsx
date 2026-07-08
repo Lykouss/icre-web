@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useScrollReveal } from '@/features/core/hooks/use-scroll-reveal';
 import type { EventsContent } from '@/features/portal/types';
 
@@ -182,7 +183,7 @@ function SpecialEventCard({ event, index }: { event: PublicEvent; index: number 
         {/* Fundo */}
         <div className="absolute inset-0 bg-slate-950" />
         <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 will-change-transform"
           style={event.banner_url
             ? { backgroundImage: `url(${event.banner_url})` }
             : { background: 'radial-gradient(ellipse at 50% 0%, #92400e 0%, #1c1917 70%)' }
@@ -256,8 +257,7 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
         <div className="relative shrink-0 w-20 sm:w-24 bg-slate-800/80 border-r border-white/6 flex flex-col items-center justify-center overflow-hidden">
           {event.banner_url ? (
             <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={event.banner_url} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <Image src={event.banner_url} alt="Capa do Evento" fill sizes="96px" className="object-cover group-hover:scale-105 transition-transform duration-500 will-change-transform" />
               <div className="absolute inset-0 bg-gradient-to-r from-slate-900/50 to-slate-900/20" />
               {date && (
                 <div className="relative z-10 text-center">

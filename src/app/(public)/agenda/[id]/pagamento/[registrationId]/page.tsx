@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { isValidUuid } from '@/lib/action-validators';
 import { PaymentPageClient } from '@/features/portal/components/PaymentPageClient';
 import {
@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { registrationId } = await params;
   if (!isValidUuid(registrationId)) return { title: 'Pagamento' };
 
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
   const { data } = await supabase
     .from('event_registrations')
     .select('events ( title )')
@@ -35,7 +35,7 @@ export default async function PagamentoPage({
 
   if (!isValidUuid(id) || !isValidUuid(registrationId)) notFound();
 
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   const { data: raw, error } = await supabase
     .from('event_registrations')
@@ -111,6 +111,8 @@ export default async function PagamentoPage({
         value,
         dueDate,
         status: raw.payment_status,
+        acceptsPix: eventData.accepts_pix,
+        acceptsBoleto: eventData.accepts_boleto,
       }}
     />
   );

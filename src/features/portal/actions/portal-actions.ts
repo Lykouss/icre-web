@@ -289,6 +289,10 @@ export async function createPastor(formData: FormData) {
   const role = (formData.get('role') as string)?.trim();
   const bio  = (formData.get('bio')  as string)?.trim() || null;
   const instagram_url = (formData.get('instagram_url') as string)?.trim() || null;
+  const is_president = formData.get('is_president') === 'on';
+  const spouse_id_raw = formData.get('spouse_id') as string;
+  const spouse_id = spouse_id_raw && spouse_id_raw !== 'null' ? spouse_id_raw : null;
+  const sort_order = parseInt(formData.get('sort_order') as string || '0', 10);
 
   if (!name || !role) return { error: 'Nome e cargo são obrigatórios.' };
   if (name.length < 2 || name.length > 120) return { error: 'Nome inválido.' };
@@ -298,11 +302,16 @@ export async function createPastor(formData: FormData) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('pastors')
-    .insert({ name, role, bio, instagram_url })
+    .insert({ name, role, bio, instagram_url, is_president, spouse_id, sort_order })
     .select('id')
     .single();
 
   if (error) return { error: 'Falha ao criar pastor.' };
+
+  // Sync spouse relation
+  if (spouse_id && data) {
+    await supabase.from('pastors').update({ spouse_id: data.id }).eq('id', spouse_id);
+  }
 
   const photoFile = formData.get('photo');
   if (photoFile instanceof File && photoFile.size > 0) {
@@ -339,6 +348,10 @@ export async function updatePastor(id: string, formData: FormData) {
   const role = (formData.get('role') as string)?.trim();
   const bio  = (formData.get('bio')  as string)?.trim() || null;
   const instagram_url = (formData.get('instagram_url') as string)?.trim() || null;
+  const is_president = formData.get('is_president') === 'on';
+  const spouse_id_raw = formData.get('spouse_id') as string;
+  const spouse_id = spouse_id_raw && spouse_id_raw !== 'null' ? spouse_id_raw : null;
+  const sort_order = parseInt(formData.get('sort_order') as string || '0', 10);
 
   if (!name || !role) return { error: 'Nome e cargo são obrigatórios.' };
   if (bio && bio.length > 600) return { error: 'Bio muito longa.' };
@@ -366,11 +379,23 @@ export async function updatePastor(id: string, formData: FormData) {
     } else return upload;
   }
 
-  const patch: Record<string, unknown> = { name, role, bio, instagram_url, updated_at: new Date().toISOString() };
+  const { data: oldData } = await supabase.from('pastors').select('spouse_id').eq('id', id).single();
+  const old_spouse_id = oldData?.spouse_id;
+
+  const patch: Record<string, unknown> = { name, role, bio, instagram_url, is_president, spouse_id, sort_order, updated_at: new Date().toISOString() };
   if (photo_url !== undefined) patch.photo_url = photo_url;
 
   const { error } = await supabase.from('pastors').update(patch).eq('id', id);
   if (error) return { error: 'Falha ao atualizar.' };
+
+  if (old_spouse_id !== spouse_id) {
+    if (old_spouse_id) {
+      await supabase.from('pastors').update({ spouse_id: null }).eq('id', old_spouse_id);
+    }
+    if (spouse_id) {
+      await supabase.from('pastors').update({ spouse_id: id }).eq('id', spouse_id);
+    }
+  }
 
   revalidatePath('/');
   revalidatePath('/dashboard/pastores');

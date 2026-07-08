@@ -2,12 +2,19 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { isValidPhone } from '@/lib/action-validators';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export async function sendContactMessage(formData: FormData) {
+  const turnstileToken = (formData.get('turnstile_token') as string)?.trim();
+  const isHuman = await verifyTurnstileToken(turnstileToken);
+  if (!isHuman) {
+    return { error: 'Falha na verificação de segurança. Tente novamente.' };
+  }
+
   const name    = (formData.get('name')    as string)?.trim();
   const phone   = (formData.get('phone')   as string)?.trim();
   const email   = (formData.get('email')   as string)?.trim();

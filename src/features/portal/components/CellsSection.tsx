@@ -1,7 +1,7 @@
 'use client'
 
-import Link from 'next/link';
 import { useState } from 'react';
+import Image from 'next/image';
 import { useScrollReveal } from '@/features/core/hooks/use-scroll-reveal';
 import type { CellsSectionContent, PublicCell, MeetingType } from '@/features/portal/types';
 
@@ -19,90 +19,97 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
     <button
       ref={ref}
       onClick={onClick}
-      className="group flex flex-col text-left bg-slate-900/60 backdrop-blur-sm border border-white/8 rounded-3xl overflow-hidden hover:border-white/16 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/8 transition-all duration-400 ease-out"
+      className="group flex flex-col text-left bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-[2rem] overflow-hidden hover:border-blue-500/30 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(59,130,246,0.2)] transition-all duration-500 ease-out w-full"
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(28px)', transitionDelay: `${index * 70}ms` }}
     >
-      {/* Imagem — altura fixa padronizada */}
-      <div className="relative h-44 bg-slate-800 shrink-0 border-b border-white/5 w-full overflow-hidden">
+      {/* Imagem */}
+      <div className="relative w-full aspect-[4/3] bg-slate-800 shrink-0 overflow-hidden">
         {cell.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={cell.image_url} alt={cell.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+          <Image src={cell.image_url} alt={cell.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-110 transition-transform duration-1000 ease-out will-change-transform" />
         ) : (
-          /* Placeholder rico */
           <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-800/80 to-slate-900">
             <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-            <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/15 rounded-2xl flex items-center justify-center">
-              <svg className="w-8 h-8 text-blue-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-              </svg>
-            </div>
+            <svg className="w-12 h-12 text-blue-500/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
-
-        {/* Badge de tipo */}
-        <div className="absolute top-3 left-3">
-          <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold border px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md ${typeConfig.cls}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${typeConfig.dot}`} />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent opacity-90" />
+        
+        {/* Top Badge */}
+        <div className="absolute top-4 left-4">
+          <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold border px-3 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-md shadow-lg ${typeConfig.cls}`}>
+            <span className={`w-2 h-2 rounded-full ${typeConfig.dot} animate-pulse`} />
             {typeConfig.label}
           </span>
+        </div>
+
+        {/* Name Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 pt-12 bg-gradient-to-t from-slate-900 to-transparent">
+          <h3 className="text-xl sm:text-2xl font-black text-white group-hover:text-blue-300 transition-colors duration-300 leading-tight">{cell.name}</h3>
         </div>
       </div>
 
       {/* Conteúdo */}
-      <div className="p-5 flex flex-col flex-1">
-        <h3 className="text-base font-bold text-white mb-3 group-hover:text-blue-300 transition-colors duration-200 leading-tight">{cell.name}</h3>
-
-        {/* Líderes */}
+      <div className="relative p-6 flex flex-col flex-1 bg-slate-900 w-full z-10">
+        
+        {/* Floating Leaders Badge */}
         {(cell.leader1 || cell.leader2) && (
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex -space-x-2">
+          <div className="absolute -top-6 right-6 flex items-center bg-slate-800/90 backdrop-blur-xl p-1.5 pr-4 rounded-full border border-white/10 shadow-xl group-hover:border-blue-500/30 transition-colors duration-300">
+            <div className="flex -space-x-2 mr-2">
               {[cell.leader1, cell.leader2].filter(Boolean).map((leader, i) => (
-                leader!.photo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={i} src={leader!.photo_url} alt={leader!.name} className="w-6 h-6 rounded-full object-cover object-top ring-2 ring-slate-900" />
+                leader?.photo_url ? (
+                  <div key={i} className="relative w-8 h-8 rounded-full overflow-hidden ring-2 ring-slate-800 z-10">
+                    <Image src={leader.photo_url} alt={leader.name} fill sizes="32px" className="object-cover object-top" />
+                  </div>
                 ) : (
-                  <div key={i} className="w-6 h-6 rounded-full bg-blue-500/20 ring-2 ring-slate-900 flex items-center justify-center">
-                    <svg className="w-3 h-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
+                  <div key={i} className="w-8 h-8 rounded-full bg-blue-500/20 ring-2 ring-slate-800 flex items-center justify-center relative z-10">
+                    <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                   </div>
                 )
               ))}
             </div>
-            <span className="text-xs text-slate-400 truncate">
-              {[cell.leader1, cell.leader2].filter(Boolean).map(l => l!.name).join(' & ')}
-            </span>
+            <div className="flex flex-col items-start justify-center text-left">
+              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-0.5">Líderes</span>
+              <span className="text-[11px] font-semibold text-slate-300 leading-none max-w-[90px] truncate">
+                {[cell.leader1, cell.leader2].filter(Boolean).map(l => {
+                  const parts = l!.name.split(' ');
+                  return (parts[0] === 'Pr.' || parts[0] === 'Pra.') ? (parts[1] || parts[0]) : parts[0];
+                }).join(' & ')}
+              </span>
+            </div>
           </div>
         )}
 
-        {/* Info */}
-        <div className="space-y-2 pt-3 border-t border-white/6 mt-auto">
+        {/* Info Area */}
+        <div className="space-y-4 pt-2">
           {cell.meeting_days && (
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-              <span className="font-medium">{cell.meeting_days}{cell.meeting_time && ` · ${cell.meeting_time}`}</span>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500/20 transition-colors">
+                <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+              <div className="flex flex-col items-start text-left">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Encontros</span>
+                <span className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">{cell.meeting_days}{cell.meeting_time && ` às ${cell.meeting_time}`}</span>
+              </div>
             </div>
           )}
           {(cell.neighborhood || cell.address) && (
-            <div className="flex items-start gap-2 text-xs text-slate-400">
-              <svg className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-              </svg>
-              <div className="flex flex-col">
-                {cell.neighborhood && <span className="font-medium">{cell.neighborhood}</span>}
-                {cell.address && <span className="text-slate-500 leading-tight mt-0.5">{cell.address}</span>}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/20 transition-colors">
+                <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <div className="flex flex-col items-start text-left">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Localização</span>
+                <span className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors line-clamp-1">{cell.neighborhood || cell.address}</span>
               </div>
             </div>
           )}
         </div>
+        
+        {/* Glow Bottom Line */}
+        <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
       </div>
-
-      {/* Linha inferior animada */}
-      <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-400 origin-left" />
     </button>
   );
 }
@@ -121,8 +128,7 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
         {/* Imagem header */}
         <div className="relative h-40 sm:h-52 w-full bg-slate-800 shrink-0 border-b border-white/5 overflow-hidden">
           {cell.image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={cell.image_url} alt={cell.name} className="w-full h-full object-cover" />
+            <Image src={cell.image_url} alt={cell.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-800/80 to-slate-900">
               <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
@@ -158,9 +164,10 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
                 const tagProps = leader!.instagram_url ? { href: leader!.instagram_url, target: '_blank', rel: 'noreferrer' } : {};
                 return (
                   <LeaderTag key={i} {...tagProps} className={`flex items-center gap-3 ${leader!.instagram_url ? 'hover:bg-white/5 p-2 rounded-xl transition-colors cursor-pointer group' : ''}`}>
-                    {leader!.photo_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={leader!.photo_url} alt={leader!.name} className="w-10 h-10 rounded-full object-cover object-top ring-2 ring-white/10 shadow-lg" />
+                    {leader?.photo_url ? (
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-white/10 shadow-lg shrink-0">
+                        <Image src={leader.photo_url} alt={leader.name} fill sizes="40px" className="object-cover object-top" />
+                      </div>
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center ring-2 ring-blue-500/20">
                         <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>

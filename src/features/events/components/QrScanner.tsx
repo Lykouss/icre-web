@@ -7,10 +7,11 @@ import { useToast } from '@/features/core/components/ToastContext';
 import { Camera, CameraOff, RefreshCw } from 'lucide-react';
 
 interface QrScannerProps {
+  eventId: string;
   onCheckinSuccess?: () => void;
 }
 
-export function QrScanner({ onCheckinSuccess }: QrScannerProps) {
+export function QrScanner({ eventId, onCheckinSuccess }: QrScannerProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +59,7 @@ export function QrScanner({ onCheckinSuccess }: QrScannerProps) {
           lastScannedRef.current = decodedText;
 
           try {
-            const res = await processCheckin(decodedText);
+            const res = await processCheckin(eventId, decodedText);
             if (res.error) {
               if (navigator.vibrate) navigator.vibrate([500]); // Erro forte
               toast('error', res.error);

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { MaintenanceProvider } from '@/features/core/components/MaintenanceProvider';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json", // Link para o manifesto PWA
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased`}>
-        {children}
+        <MaintenanceProvider>
+          {children}
+        </MaintenanceProvider>
       </body>
     </html>
   );

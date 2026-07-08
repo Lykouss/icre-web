@@ -153,15 +153,6 @@ export function ContactSection({ content }: { content: ContactContent }) {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="relative max-w-6xl mx-auto mt-20 pt-8 border-t border-white/6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-600">
-        <p>© {new Date().getFullYear()} Igreja de Cristo Rocha Eterna. Todos os direitos reservados.</p>
-        <div className="flex items-center gap-6">
-          <Link href="/termos" className="hover:text-slate-300 transition-colors duration-200">Termos de Uso</Link>
-          <Link href="/privacidade" className="hover:text-slate-300 transition-colors duration-200">Privacidade</Link>
-          <Link href="/login" className="hover:text-slate-300 transition-colors duration-200">Área do Membro</Link>
-        </div>
-      </div>
     </section>
   );
 }

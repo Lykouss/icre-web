@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { registerUser } from '@/features/core/actions/auth';
 import { useRegisterDraft } from '@/features/core/hooks/use-register-draft';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 type StepId = 'name' | 'email' | 'phone' | 'birthdate' | 'address' | 'password' | 'terms';
 
@@ -208,6 +209,7 @@ export default function RegisterPage() {
   const [showPass, setShowPass]       = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [isPending, startTransition]  = useTransition();
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
 
@@ -295,6 +297,9 @@ export default function RegisterPage() {
     startTransition(async () => {
       const formData = new FormData();
       Object.entries(values).forEach(([k, v]) => formData.set(k, v));
+      if (turnstileToken) {
+        formData.set('turnstile_token', turnstileToken);
+      }
       const result = await registerUser(formData);
       if (result?.error) {
         const targetStep = result.field ? (fieldToStep[result.field] ?? null) : null;
@@ -547,6 +552,15 @@ export default function RegisterPage() {
                       </Link>
                     </span>
                   </label>
+                  
+                  {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+                    <div className="flex justify-center mt-4">
+                      <Turnstile
+                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                        onSuccess={setTurnstileToken}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 

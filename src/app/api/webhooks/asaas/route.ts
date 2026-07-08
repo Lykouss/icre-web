@@ -1,12 +1,26 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { generateTicketSignature } from '@/features/events/utils/signature';
+import { timingSafeEqual } from 'crypto';
 
 const ASAAS_WEBHOOK_SECRET = process.env.ASAAS_WEBHOOK_SECRET;
+const ASAAS_ALLOWED_IPS = process.env.ASAAS_ALLOWED_IPS?.split(',').map(ip => ip.trim()) || [];
 
 export async function POST(request: Request) {
   try {
-    // ── 1. Token validation ────────────────────────────────────────────────
+    // ── 0. IP Whitelisting ─────────────────────────────────────────────────
+    if (ASAAS_ALLOWED_IPS.length > 0) {
+      const forwardedFor = request.headers.get('x-forwarded-for');
+      const realIp = request.headers.get('x-real-ip');
+      const clientIp = forwardedFor?.split(',')[0].trim() || realIp || '';
+
+      if (!ASAAS_ALLOWED_IPS.includes(clientIp)) {
+        console.warn(`[Webhook Asaas] Origem não autorizada bloqueada. IP: ${clientIp}`);
+        return NextResponse.json({ error: 'Acesso negado.' }, { status: 403 });
+      }
+    }
+
+    // ── 1. Token validation (Timing Safe) ──────────────────────────────────
     if (!ASAAS_WEBHOOK_SECRET) {
       console.error('[Webhook Asaas] ASAAS_WEBHOOK_SECRET não está configurado!');
       return NextResponse.json({ error: 'Servidor mal configurado.' }, { status: 500 });
@@ -14,8 +28,16 @@ export async function POST(request: Request) {
 
     const asaasToken = request.headers.get('asaas-access-token');
 
-    if (asaasToken !== ASAAS_WEBHOOK_SECRET) {
-      console.warn('[Webhook Asaas] Token inválido:', asaasToken?.slice(0, 8));
+    if (!asaasToken) {
+      console.warn('[Webhook Asaas] Token ausente.');
+      return NextResponse.json({ error: 'Acesso não autorizado.' }, { status: 401 });
+    }
+
+    const secretBuffer = Buffer.from(ASAAS_WEBHOOK_SECRET);
+    const tokenBuffer = Buffer.from(asaasToken);
+
+    if (secretBuffer.length !== tokenBuffer.length || !timingSafeEqual(secretBuffer, tokenBuffer)) {
+      console.warn('[Webhook Asaas] Token inválido (falha na comparação segura).');
       return NextResponse.json({ error: 'Acesso não autorizado.' }, { status: 401 });
     }
 

@@ -81,22 +81,48 @@ const NAV_ICONS: Record<string, React.ReactNode> = {
   portal:      <NavIcon d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />,
   permissoes:  <NavIcon d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />,
   sysadmin:    <NavIcon d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" d2="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />,
+  manutencao:  <NavIcon d="M14.752 11.168l-3.197-2.132A4 4 0 002 9.87v4.263a4 4 0 009.555.832l3.197-2.132a4.111 4.111 0 000-1.664z" d2="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
   suporte:     <NavIcon d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />,
 };
 
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard',        href: '/dashboard',  flag: 'module_dashboard',    icon: NAV_ICONS.dashboard  },
-  { label: 'Financeiro',       href: '/financeiro', flag: 'module_finance',      icon: NAV_ICONS.financeiro },
-  { label: 'Membros',          href: '/membros',    flag: 'module_members',      icon: NAV_ICONS.membros    },
-  { label: 'Eventos',          href: '/eventos',    flag: 'module_events',       icon: NAV_ICONS.eventos    },
-  { label: 'Células',          href: '/celulas',    flag: 'module_cells',        icon: NAV_ICONS.celulas    },
-  { label: 'Líderes',          href: '/lideres',    flag: 'module_leaders',      icon: NAV_ICONS.lideres    },
-  { label: 'Pastores',         href: '/pastores',   flag: 'module_pastors',      icon: NAV_ICONS.pastores   },
-  { label: 'Central de Mídias',href: '/midias',     flag: 'module_media',        icon: NAV_ICONS.midias     },
-  { label: 'Site Público',     href: '/portal',     flag: 'module_public_site',  icon: NAV_ICONS.portal     },
-  { label: 'Permissões',       href: '/permissoes', flag: 'module_permissions',  icon: NAV_ICONS.permissoes },
-  { label: 'Suporte',          href: '/admin-suporte',   flag: '',                    icon: NAV_ICONS.suporte    },
-  { label: 'Feedbacks & Bugs', href: '/admin-feedback',  flag: '',                    icon: <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg> },
+const NAV_GROUPS = [
+  {
+    title: 'Visão Geral',
+    items: [
+      { label: 'Dashboard',        href: '/dashboard',  flag: 'module_dashboard',    icon: NAV_ICONS.dashboard  },
+      { label: 'Financeiro',       href: '/financeiro', flag: 'module_finance',      icon: NAV_ICONS.financeiro },
+    ]
+  },
+  {
+    title: 'Comunidade',
+    items: [
+      { label: 'Membros',          href: '/membros',    flag: 'module_members',      icon: NAV_ICONS.membros    },
+      { label: 'Células',          href: '/celulas',    flag: 'module_cells',        icon: NAV_ICONS.celulas    },
+      { label: 'Eventos',          href: '/eventos',    flag: 'module_events',       icon: NAV_ICONS.eventos    },
+    ]
+  },
+  {
+    title: 'Liderança',
+    items: [
+      { label: 'Líderes',          href: '/lideres',    flag: 'module_leaders',      icon: NAV_ICONS.lideres    },
+      { label: 'Pastores',         href: '/pastores',   flag: 'module_pastors',      icon: NAV_ICONS.pastores   },
+    ]
+  },
+  {
+    title: 'Comunicação',
+    items: [
+      { label: 'Central de Mídias',href: '/midias',     flag: 'module_media',        icon: NAV_ICONS.midias     },
+      { label: 'Site Público',     href: '/portal',     flag: 'module_public_site',  icon: NAV_ICONS.portal     },
+    ]
+  },
+  {
+    title: 'Administração',
+    items: [
+      { label: 'Permissões',       href: '/permissoes', flag: 'module_permissions',  icon: NAV_ICONS.permissoes },
+      { label: 'Suporte',          href: '/admin-suporte',   flag: '',                    icon: NAV_ICONS.suporte    },
+      { label: 'Feedbacks & Bugs', href: '/admin-feedback',  flag: '',                    icon: <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg> },
+    ]
+  }
 ];
 
 
@@ -162,7 +188,10 @@ function SidebarContent({
   const roleLabel = ROLE_LABELS[primaryRole] ?? primaryRole;
   const roleColor = ROLE_COLORS[primaryRole] ?? '#64748b';
 
-  const visibleItems = NAV_ITEMS.filter(item => !item.flag || flags[item.flag]?.isAllowed);
+  const visibleGroups = NAV_GROUPS.map(group => ({
+    title: group.title,
+    items: group.items.filter(item => !item.flag || flags[item.flag]?.isAllowed)
+  })).filter(group => group.items.length > 0);
 
   function isActive(href: string) {
     return pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
@@ -245,112 +274,116 @@ function SidebarContent({
       {/* ── Navigation ──────────────────────────────────────── */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2.5">
 
-        {/* Main group label */}
-        <AnimatePresence initial={false}>
-          {!isCollapsed && (
-            <motion.p
-              key="label-g"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="px-2 mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.18em]"
-              style={{ color: 'var(--admin-text-muted)' }}
-            >
-              Módulos
-            </motion.p>
-          )}
-        </AnimatePresence>
+        {visibleGroups.map((group, groupIdx) => (
+          <div key={group.title} className="mb-6 last:mb-0">
+            {/* Group Label */}
+            <AnimatePresence initial={false}>
+              {!isCollapsed && (
+                <motion.p
+                  key={`label-${group.title}`}
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="px-2 mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.18em]"
+                  style={{ color: 'var(--admin-text-muted)' }}
+                >
+                  {group.title}
+                </motion.p>
+              )}
+            </AnimatePresence>
 
-        <div className="space-y-0.5">
-          {visibleItems.map(item => {
-            const active = isActive(item.href);
-            const isLoading = navigatingTo === item.href;
-            const flag = flags[item.flag];
-            const blocked = flag?.status === 'manutencao' && !user.isSysAdmin;
+            <div className="space-y-0.5">
+              {group.items.map(item => {
+                const active = isActive(item.href);
+                const isLoading = navigatingTo === item.href;
+                const flag = flags[item.flag];
+                const blocked = flag?.status === 'manutencao' && !user.isSysAdmin;
 
-            let chipText = '';
-            if (item.href === '/admin-suporte' && supportCount > 0) chipText = String(supportCount);
-            else if (item.href === '/admin-feedback' && feedbackCount > 0) chipText = String(feedbackCount);
-            else if (flag?.status === 'novo' && !flag.userHasViewed) chipText = 'Novo';
-            else if (flag?.status === 'manutencao') chipText = 'Man.';
-            else if (flag?.status === 'antecipado') chipText = 'VIP';
+                let chipText = '';
+                if (item.href === '/admin-suporte' && supportCount > 0) chipText = String(supportCount);
+                else if (item.href === '/admin-feedback' && feedbackCount > 0) chipText = String(feedbackCount);
+                else if (flag?.status === 'novo' && !flag.userHasViewed) chipText = 'Novo';
+                else if (flag?.status === 'manutencao') chipText = 'Man.';
+                else if (flag?.status === 'antecipado') chipText = 'VIP';
 
-            return (
-              <Link
-                key={item.href}
-                href={blocked ? '#' : item.href}
-                onClick={e => {
-                  if (blocked) { e.preventDefault(); return; }
-                  handleNavClick(item.href);
-                }}
-                title={isCollapsed ? item.label : undefined}
-                className={`
-                  group/item relative flex items-center gap-2.5 rounded-xl transition-all duration-200
-                  ${isCollapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}
-                  ${blocked ? 'opacity-40 cursor-not-allowed' : ''}
-                  ${active
-                    ? 'text-blue-200'
-                    : 'text-slate-500 hover:text-slate-200'
-                  }
-                `}
-                style={active ? {
-                  background: 'linear-gradient(135deg, rgba(37,99,235,0.18) 0%, rgba(37,99,235,0.08) 100%)',
-                  boxShadow: 'inset 0 0 0 1px rgba(37,99,235,0.2)',
-                } : {}}
-              >
-                {/* Active left accent bar */}
-                {active && (
-                  <motion.span
-                    layoutId="nav-active-bar"
-                    className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full"
-                    style={{ background: 'var(--admin-accent)', boxShadow: '0 0 8px rgba(37,99,235,0.6)' }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 40 }}
-                  />
-                )}
+                return (
+                  <Link
+                    key={item.href}
+                    href={blocked ? '#' : item.href}
+                    onClick={e => {
+                      if (blocked) { e.preventDefault(); return; }
+                      handleNavClick(item.href);
+                    }}
+                    title={isCollapsed ? item.label : undefined}
+                    className={`
+                      group/item relative flex items-center gap-2.5 rounded-xl transition-all duration-200
+                      ${isCollapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}
+                      ${blocked ? 'opacity-40 cursor-not-allowed' : ''}
+                      ${active
+                        ? 'text-blue-200'
+                        : 'text-slate-500 hover:text-slate-200'
+                      }
+                    `}
+                    style={active ? {
+                      background: 'linear-gradient(135deg, rgba(37,99,235,0.18) 0%, rgba(37,99,235,0.08) 100%)',
+                      boxShadow: 'inset 0 0 0 1px rgba(37,99,235,0.2)',
+                    } : {}}
+                  >
+                    {/* Active left accent bar */}
+                    {active && (
+                      <motion.span
+                        layoutId="nav-active-bar"
+                        className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full"
+                        style={{ background: 'var(--admin-accent)', boxShadow: '0 0 8px rgba(37,99,235,0.6)' }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                      />
+                    )}
 
-                {/* Hover glow */}
-                {!active && !blocked && (
-                  <span className="absolute inset-0 rounded-xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-200"
-                    style={{ background: 'rgba(255,255,255,0.035)' }} />
-                )}
+                    {/* Hover glow */}
+                    {!active && !blocked && (
+                      <span className="absolute inset-0 rounded-xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-200"
+                        style={{ background: 'rgba(255,255,255,0.035)' }} />
+                    )}
 
-                {/* Icon */}
-                <span className={`
-                  relative z-10 transition-all duration-200 shrink-0
-                  ${active ? 'text-blue-400 drop-shadow-[0_0_6px_rgba(96,165,250,0.6)]' : 'text-slate-600 group-hover/item:text-slate-300 group-hover/item:translate-x-0.5'}
-                `}>
-                  {isLoading ? <LoadingDots /> : item.icon}
-                </span>
+                    {/* Icon */}
+                    <span className={`
+                      relative z-10 transition-all duration-200 shrink-0
+                      ${active ? 'text-blue-400 drop-shadow-[0_0_6px_rgba(96,165,250,0.6)]' : 'text-slate-600 group-hover/item:text-slate-300 group-hover/item:translate-x-0.5'}
+                    `}>
+                      {isLoading ? <LoadingDots /> : item.icon}
+                    </span>
 
-                {/* Label + chip */}
-                <AnimatePresence initial={false}>
-                  {!isCollapsed && (
-                    <motion.div
-                      key="lbl"
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 'auto' }}
-                      exit={{ opacity: 0, width: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden relative z-10"
-                    >
-                      <span className="text-[13px] font-medium truncate leading-none">{item.label}</span>
-                      {chipText && (
-                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
-                          item.href === '/admin-suporte'   ? 'bg-red-500 text-white' :
-                          item.href === '/admin-feedback'  ? 'bg-amber-500 text-white' :
-                          chipText === 'Novo' ? 'bg-emerald-500/15 text-emerald-400' :
-                          chipText === 'VIP'  ? 'bg-amber-500/15 text-amber-400' :
-                          'bg-red-500/15 text-red-400'
-                        }`}>
-                          {chipText}
-                        </span>
+                    {/* Label + chip */}
+                    <AnimatePresence initial={false}>
+                      {!isCollapsed && (
+                        <motion.div
+                          key="lbl"
+                          initial={{ opacity: 0, width: 0 }}
+                          animate={{ opacity: 1, width: 'auto' }}
+                          exit={{ opacity: 0, width: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden relative z-10"
+                        >
+                          <span className="text-[13px] font-medium truncate leading-none">{item.label}</span>
+                          {chipText && (
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                              item.href === '/admin-suporte'   ? 'bg-red-500 text-white' :
+                              item.href === '/admin-feedback'  ? 'bg-amber-500 text-white' :
+                              chipText === 'Novo' ? 'bg-emerald-500/15 text-emerald-400' :
+                              chipText === 'VIP'  ? 'bg-amber-500/15 text-amber-400' :
+                              'bg-red-500/15 text-red-400'
+                            }`}>
+                              {chipText}
+                            </span>
+                          )}
+                        </motion.div>
                       )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </Link>
-            );
-          })}
-        </div>
+                    </AnimatePresence>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
 
         {/* System group */}
         {user.isSysAdmin && (
@@ -371,6 +404,7 @@ function SidebarContent({
             </AnimatePresence>
             {[
               { label: 'SysAdmin', href: '/sysadmin', icon: NAV_ICONS.sysadmin },
+              { label: 'Manutenção', href: '/manutencao', icon: NAV_ICONS.manutencao },
             ].map(item => {
               const active = isActive(item.href);
               const isLoading = navigatingTo === item.href;

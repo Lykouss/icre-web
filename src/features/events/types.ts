@@ -100,6 +100,7 @@ export interface EventRegistration {
   checkin_status: boolean;
   checkin_time: string | null;
   checkin_by: string | null;
+  checkin_admin?: { full_name: string; photo_url?: string | null } | null;
   is_gift: boolean;
   gifted_by: string | null;
   custom_form_responses: CustomFormResponses | null;

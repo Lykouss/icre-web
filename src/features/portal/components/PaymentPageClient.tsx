@@ -20,6 +20,8 @@ interface PaymentData {
   value: number;
   dueDate: string | null;
   status: string;
+  acceptsPix?: boolean;
+  acceptsBoleto?: boolean;
 }
 
 interface Props {
@@ -41,7 +43,8 @@ type Tab = 'pix' | 'boleto' | 'cartao';
 export function PaymentPageClient({ payment }: Props) {
   const router = useRouter();
   const isBoleto = payment.paymentMethod === 'asaas_boleto' || payment.paymentMethod === 'boleto';
-  const [activeTab, setActiveTab] = useState<Tab>(isBoleto ? 'boleto' : 'pix');
+  const defaultTab = isBoleto ? 'boleto' : (payment.acceptsPix !== false ? 'pix' : 'boleto');
+  const [activeTab, setActiveTab] = useState<Tab>(defaultTab);
   const [pixCopied, setPixCopied] = useState(false);
   const [barCodeCopied, setBarCodeCopied] = useState(false);
   const [isChecking, startChecking] = useTransition();
@@ -196,7 +199,13 @@ export function PaymentPageClient({ payment }: Props) {
 
         {/* Tabs */}
         <div className="flex gap-1 bg-slate-900/60 border border-white/8 rounded-2xl p-1.5 mb-6">
-          {(['pix', 'boleto', 'cartao'] as Tab[]).map(tab => (
+          {(['pix', 'boleto', 'cartao'] as Tab[])
+            .filter(tab => {
+              if (tab === 'pix') return payment.acceptsPix !== false;
+              if (tab === 'boleto') return payment.acceptsBoleto !== false;
+              return true; // cartao é mostrado como em breve
+            })
+            .map(tab => (
             <button
               key={tab}
               onClick={() => tab !== 'cartao' && setActiveTab(tab)}

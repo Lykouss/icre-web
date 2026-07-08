@@ -1,6 +1,7 @@
 'use client'
 
 import { useScrollReveal } from '@/features/core/hooks/use-scroll-reveal';
+import Image from 'next/image';
 import type { AboutContent } from '@/features/portal/types';
 
 export function AboutSection({ content }: { content: AboutContent }) {
@@ -23,7 +24,7 @@ export function AboutSection({ content }: { content: AboutContent }) {
         <div
           ref={leftRef}
           className="transition-all duration-700 ease-out"
-          style={{ opacity: lv ? 1 : 0, transform: lv ? 'translateX(0)' : 'translateX(-48px)', transitionTimingFunction: 'var(--ease-spring)' }}
+          style={{ opacity: lv ? 1 : 0, transform: lv ? 'translate3d(0, 0, 0)' : 'translate3d(-48px, 0, 0)', transitionTimingFunction: 'var(--ease-spring)' }}
         >
           <div className="relative">
             {/* Glow animado no frame */}
@@ -31,8 +32,7 @@ export function AboutSection({ content }: { content: AboutContent }) {
 
             <div className="relative rounded-3xl overflow-hidden aspect-4/3 bg-slate-800/60 border border-white/10 shadow-2xl backdrop-blur-sm">
               {content.image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={content.image_url} alt="Sobre a ICRE" className="w-full h-full object-cover" />
+                <Image src={content.image_url} alt="Sobre a ICRE" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-800 to-slate-900">
                   <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
@@ -77,7 +77,7 @@ export function AboutSection({ content }: { content: AboutContent }) {
         <div
           ref={rightRef}
           className="transition-all duration-700 ease-out"
-          style={{ opacity: rv ? 1 : 0, transform: rv ? 'translateX(0)' : 'translateX(48px)', transitionDelay: '120ms', transitionTimingFunction: 'var(--ease-spring)' }}
+          style={{ opacity: rv ? 1 : 0, transform: rv ? 'translate3d(0, 0, 0)' : 'translate3d(48px, 0, 0)', transitionDelay: '120ms', transitionTimingFunction: 'var(--ease-spring)' }}
         >
           <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-8">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

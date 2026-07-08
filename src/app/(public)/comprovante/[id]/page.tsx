@@ -1,4 +1,5 @@
 import { redirect, notFound } from 'next/navigation';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { isValidUuid } from '@/lib/action-validators';
 import { ReceiptClient } from '@/features/portal/components/ReceiptClient';
@@ -10,9 +11,10 @@ export default async function ComprovantePage({ params }: { params: Promise<{ id
   const { id } = await params;
   if (!isValidUuid(id)) notFound();
 
-  const supabase = await createClient();
+  const supabaseServer = await createClient(); // For auth
+  const supabaseAdmin = await createAdminClient();
 
-  const { data: raw, error } = await supabase
+  const { data: raw, error } = await supabaseAdmin
     .from('event_registrations')
     .select(`
       id, name, email, phone, status, payment_status, member_id,
@@ -25,13 +27,13 @@ export default async function ComprovantePage({ params }: { params: Promise<{ id
 
   if (error || !raw) notFound();
 
-  const { data: { user: authUser } } = await supabase.auth.getUser();
+  const { data: { user: authUser } } = await supabaseServer.auth.getUser();
   const user = await getCurrentUser();
   if (!user || !authUser) {
     redirect(`/login?returnTo=/comprovante/${id}`);
   }
 
-  const { data: memberData } = await supabase
+  const { data: memberData } = await supabaseServer
     .from('members')
     .select('id')
     .eq('user_id', user.id)

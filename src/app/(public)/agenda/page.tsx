@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { getNextEventOccurrence } from '@/lib/event-utils';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 
@@ -30,8 +30,9 @@ interface PublicEvent {
 
 export default async function PublicEventsPage() {
   const supabase = await createClient();
+  const supabaseAdmin = await createAdminClient();
 
-  const { data: rawEvents } = await supabase
+  const { data: rawEvents } = await supabaseAdmin
     .from('events')
     .select('id, title, date, time, location, description, type, banner_url, ticket_price, requires_registration, requires_payment, capacity, is_recurring, recurrence_rules, cancelled_dates')
     .eq('is_public', true)

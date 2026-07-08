@@ -28,15 +28,75 @@ export async function updateSession(request: NextRequest) {
     '/dashboard', '/financeiro', '/membros',
     '/eventos', '/escalas', '/kids',
     '/patrimonio', '/sysadmin', '/portal', '/permissoes',
-    '/pin-lock',
+    '/pin-lock', '/manutencao'
   ];
 
+  // Instância admin para consultar tabelas de sistema sem RLS
+  const supabaseAdmin = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { cookies: { getAll() { return [] }, setAll() {} } }
+  );
+
+  // 3. Verificação de Manutenção (Redirecionamento Invisível - Rewrite)
+  if (pathname !== '/manutencao-screen' && !pathname.startsWith('/api') && !pathname.startsWith('/_next')) {
+    const { data: maintenance } = await supabaseAdmin
+      .from('site_maintenance')
+      .select('is_portal_maintenance, is_sige_maintenance, scheduled_portal, scheduled_sige, auto_activate_scheduled, auto_deactivate_expected, scheduled_at, expected_end_at')
+      .eq('id', 1)
+      .maybeSingle();
+
+    if (maintenance) {
+      const now = new Date();
+      let isPortal = maintenance.is_portal_maintenance;
+      let isSige = maintenance.is_sige_maintenance;
+
+      // 1. Ativação automática se passou da data de agendamento
+      if (maintenance.scheduled_at && maintenance.auto_activate_scheduled) {
+        if (new Date(maintenance.scheduled_at) <= now) {
+          if (maintenance.scheduled_portal) isPortal = true;
+          if (maintenance.scheduled_sige) isSige = true;
+        }
+      }
+
+      // 2. Desativação automática se passou da previsão de término
+      if (maintenance.expected_end_at && maintenance.auto_deactivate_expected) {
+        if (new Date(maintenance.expected_end_at) <= now) {
+          isPortal = false;
+          isSige = false;
+        }
+      }
+
+      if (isPortal || isSige) {
+      let isSysAdmin = false;
+      if (user) {
+        const { data: roles } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', user.id);
+        isSysAdmin = roles?.some(r => r.role === 'SYSADMIN' || r.role === 'CHURCH_ADMIN') || false;
+      }
+
+      if (!isSysAdmin) {
+        const isSigeRoute = adminRoutes.some(r => pathname.startsWith(r));
+
+        // Se o portal está em manutenção, bloqueia TUDO (portal e sistema)
+        if (isPortal) {
+          return NextResponse.rewrite(new URL('/manutencao-screen', request.url));
+        }
+        // Se só o sistema está em manutenção, bloqueia apenas o sistema
+        if (isSige && isSigeRoute) {
+          return NextResponse.rewrite(new URL('/manutencao-screen', request.url));
+        }
+        }
+      }
+    }
+  }
   const onboardingRoutes = ['/termos-admin', '/criar-pin', '/admin-onboarding'];
   const isOnboardingRoute = onboardingRoutes.some(r => pathname.startsWith(r));
   const isProtectedRoute  = adminRoutes.some(r => pathname.startsWith(r));
 
   if (isProtectedRoute && !user) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+    return response;
   }
 
   if (isProtectedRoute && user && !isOnboardingRoute) {
@@ -57,6 +117,7 @@ export async function updateSession(request: NextRequest) {
         await supabase.rpc('clear_expired_suspension', { p_user_id: user.id });
       } else {
         const response = NextResponse.redirect(new URL('/acesso-suspenso', request.url));
+        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
         response.cookies.delete('admin_unlocked');
         return response;
       }
@@ -78,13 +139,19 @@ export async function updateSession(request: NextRequest) {
       }
 
       if (['admin_notification', 'fill_admin_profile', 'upload_photo'].includes(realStep)) {
-        return NextResponse.redirect(new URL('/admin-onboarding', request.url));
+        const response = NextResponse.redirect(new URL('/admin-onboarding', request.url));
+        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+        return response;
       }
       if (realStep === 'accept_admin_terms') {
-        return NextResponse.redirect(new URL('/termos-admin', request.url));
+        const response = NextResponse.redirect(new URL('/termos-admin', request.url));
+        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+        return response;
       }
       if (realStep === 'create_pin') {
-        return NextResponse.redirect(new URL('/criar-pin', request.url));
+        const response = NextResponse.redirect(new URL('/criar-pin', request.url));
+        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+        return response;
       }
     }
   }
@@ -95,7 +162,9 @@ export async function updateSession(request: NextRequest) {
     const unlockToken = request.cookies.get('admin_unlocked')?.value;
     
     if (!unlockToken) {
-      return NextResponse.redirect(new URL('/pin-lock', request.url));
+      const response = NextResponse.redirect(new URL('/pin-lock', request.url));
+      supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+      return response;
     }
 
     const { verifyPinToken } = await import('@/features/core/utils/pin-token');
@@ -104,13 +173,16 @@ export async function updateSession(request: NextRequest) {
     if (!isValidToken) {
       // Clear invalid cookie
       const response = NextResponse.redirect(new URL('/pin-lock', request.url));
+      supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
       response.cookies.delete('admin_unlocked');
       return response;
     }
   }
 
   if (pathname === '/login' && user) {
-    return NextResponse.redirect(new URL('/', request.url));
+    const response = NextResponse.redirect(new URL('/', request.url));
+    supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+    return response;
   }
 
   return supabaseResponse;

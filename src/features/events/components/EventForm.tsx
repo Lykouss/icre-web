@@ -470,12 +470,12 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                 </div>
 
                 {['multiple_choice', 'checkboxes', 'dropdown'].includes(field.type) && (
-                  <div className="space-y-2 mt-4 bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Opções de Resposta</label>
+                  <div className="space-y-2 mt-4 p-4 rounded-xl border shadow-sm" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--admin-text-muted)' }}>Opções de Resposta</label>
                     <div className="space-y-2">
                       {(field.options || []).map((opt: string, oIdx: number) => (
                         <div key={oIdx} className="flex items-center gap-2 group animate-in fade-in slide-in-from-top-1">
-                          <div className="p-2 text-slate-300 cursor-grab active:cursor-grabbing hover:text-slate-400">
+                          <div className="p-2 cursor-grab active:cursor-grabbing transition-colors" style={{ color: 'var(--admin-text-muted)' }}>
                             <GripVertical className="w-4 h-4" />
                           </div>
                           <input
@@ -494,7 +494,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                               const newOpts = (field.options || []).filter((_: any, i: number) => i !== oIdx);
                               updateCustomField(index, { options: newOpts });
                             }}
-                            className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                            className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                             title="Remover Opção"
                           >
                             <XIcon className="w-5 h-5" />
@@ -502,20 +502,20 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                         </div>
                       ))}
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newOpts = [...(field.options || []), ''];
-                        updateCustomField(index, { options: newOpts });
-                      }}
-                      className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors mt-3"
-                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newOpts = [...(field.options || []), ''];
+                          updateCustomField(index, { options: newOpts });
+                        }}
+                        className="flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg transition-colors mt-3 text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20"
+                      >
                       <PlusCircleIcon className="w-4 h-4" /> Adicionar nova opção
                     </button>
                   </div>
                 )}
 
-                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer">
+                <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer" style={{ color: 'var(--admin-text-primary)' }}>
                   <input
                     type="checkbox"
                     checked={field.required}
@@ -529,7 +529,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
               <button
                 type="button"
                 onClick={() => removeCustomField(index)}
-                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                 title="Remover campo"
               >
                 <Trash2Icon className="w-5 h-5" />
@@ -541,7 +541,8 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
         <button
           type="button"
           onClick={addCustomField}
-          className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all"
+          className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed rounded-xl text-sm font-semibold transition-all hover:border-blue-400 hover:text-blue-400 hover:bg-blue-500/10"
+          style={{ borderColor: 'var(--admin-border)', color: 'var(--admin-text-secondary)' }}
         >
           <PlusIcon className="w-4 h-4" />
           Adicionar Campo Extra
@@ -643,7 +644,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
         <div className="space-y-3 mt-4">
           <SectionDivider label="Métodos de Pagamento (Asaas)" />
           <div className="flex gap-4">
-            <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+            <label className="flex items-center gap-2 text-sm font-medium cursor-pointer" style={{ color: 'var(--admin-text-primary)' }}>
               <input
                 type="checkbox"
                 checked={!!formData.accepts_pix}
@@ -652,7 +653,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
               />
               PIX
             </label>
-            <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+            <label className="flex items-center gap-2 text-sm font-medium cursor-pointer" style={{ color: 'var(--admin-text-primary)' }}>
               <input
                 type="checkbox"
                 checked={!!formData.accepts_boleto}
@@ -706,7 +707,8 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           type="button"
           onClick={onCancel}
           disabled={isLoading}
-          className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors hover:bg-white/5"
+          style={{ color: 'var(--admin-text-secondary)' }}
         >
           Cancelar
         </button>
@@ -790,7 +792,8 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                     return (
                       <div
                         key={item.id}
-                        className={`group relative aspect-video rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${isSelected ? 'border-blue-500 shadow-md' : 'border-slate-200 hover:border-blue-300 hover:shadow-md'}`}
+                        className={`group relative aspect-video rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${isSelected ? 'border-blue-500 shadow-md' : 'hover:border-blue-300 hover:shadow-md'}`}
+                        style={{ borderColor: isSelected ? undefined : 'var(--admin-border)' }}
                         onClick={() => handleSelectImage(item.name)}
                       >
                         <Image src={url} alt={item.name} fill className="object-cover" />

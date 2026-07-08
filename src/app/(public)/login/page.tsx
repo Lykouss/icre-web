@@ -4,6 +4,7 @@ import React, { useState, useActionState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { loginUser, requestPasswordReset } from '@/features/core/actions/auth';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 type View = 'login' | 'forgot';
 
@@ -56,6 +57,7 @@ export default function LoginPage() {
 function LoginForm({ onForgot }: { onForgot: () => void }) {
   const [state, formAction, isPending] = useActionState(loginUser, null);
   const [showPass, setShowPass] = useState(false);
+  const [token, setToken] = useState<string>('');
 
   const inputClass =
     'w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all';
@@ -157,6 +159,16 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
           </div>
         )}
 
+        {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+          <div className="flex justify-center py-2">
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              onSuccess={setToken}
+            />
+            <input type="hidden" name="turnstile_token" value={token} />
+          </div>
+        )}
+
         <button
           type="submit"
           disabled={isPending}
@@ -181,6 +193,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
 
 function ForgotForm({ onBack }: { onBack: () => void }) {
   const [state, formAction, isPending] = useActionState(requestPasswordReset, null);
+  const [token, setToken] = useState<string>('');
 
   const inputClass =
     'w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all';
@@ -231,6 +244,16 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           {state.error}
+        </div>
+      )}
+
+      {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+        <div className="flex justify-center py-2">
+          <Turnstile
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+            onSuccess={setToken}
+          />
+          <input type="hidden" name="turnstile_token" value={token} />
         </div>
       )}
 

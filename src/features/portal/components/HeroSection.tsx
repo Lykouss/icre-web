@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import type { HeroContent } from '@/features/portal/types';
 
@@ -37,10 +38,9 @@ export function HeroSection({ content }: { content: HeroContent }) {
       {content.image_url && (
         <div
           className="absolute inset-0 will-change-transform"
-          style={{ transform: `translateY(${parallaxOffset}px) scale(1.15)` }}
+          style={{ transform: `translate3d(0, ${parallaxOffset}px, 0) scale(1.15)` }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={content.image_url} alt="" className="w-full h-full object-cover" />
+          <Image src={content.image_url} alt="Capa" fill className="object-cover" priority />
           {/* Overlay multicamadas */}
           <div className="absolute inset-0 bg-slate-950/55" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-slate-950/20" />
@@ -52,7 +52,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
       {!content.image_url && (
         <div
           className="absolute inset-0 will-change-transform"
-          style={{ transform: `translateY(${parallaxOffset * 0.3}px)` }}
+          style={{ transform: `translate3d(0, ${parallaxOffset * 0.3}px, 0)` }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950/80 to-slate-900" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
@@ -63,11 +63,11 @@ export function HeroSection({ content }: { content: HeroContent }) {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
           className="absolute top-1/4 left-1/3 w-[700px] h-[700px] bg-blue-500/10 rounded-full blur-[160px] will-change-transform"
-          style={{ transform: `translateY(${parallaxOffset * 0.18}px)` }}
+          style={{ transform: `translate3d(0, ${parallaxOffset * 0.18}px, 0)` }}
         />
         <div
           className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-indigo-500/8 rounded-full blur-[120px] will-change-transform"
-          style={{ transform: `translateY(${parallaxOffset * -0.12}px)` }}
+          style={{ transform: `translate3d(0, ${parallaxOffset * -0.12}px, 0)` }}
         />
       </div>
 
@@ -77,7 +77,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         style={{
           backgroundImage: 'linear-gradient(rgba(148,163,184,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.5) 1px, transparent 1px)',
           backgroundSize: '80px 80px',
-          transform: `translateY(${parallaxOffset * 0.04}px)`,
+          transform: `translate3d(0, ${parallaxOffset * 0.04}px, 0)`,
         }}
       />
 
@@ -99,7 +99,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         {/* Badge com ícone de cruz */}
         <div
           className="transition-all duration-700 ease-out"
-          style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(-20px)', transitionDelay: '0ms' }}
+          style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translate3d(0, 0, 0)' : 'translate3d(0, -20px, 0)', transitionDelay: '0ms' }}
         >
           <div className="inline-flex items-center gap-2.5 bg-white/[0.06] backdrop-blur-xl border border-white/[0.12] text-white/70 text-[11px] font-semibold tracking-[0.2em] uppercase px-5 py-2.5 rounded-full mb-12">
             <svg className="w-3.5 h-3.5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
@@ -113,7 +113,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         {/* Título com gradiente */}
         <h1
           className="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-black leading-[0.95] tracking-tight mb-8 transition-all duration-700 ease-out text-gradient-blue"
-          style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(36px)', transitionDelay: '120ms' }}
+          style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translate3d(0, 0, 0)' : 'translate3d(0, 36px, 0)', transitionDelay: '120ms' }}
         >
           {content.title || 'Bem-vindo à ICRE'}
         </h1>
@@ -132,7 +132,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         {content.subtitle && (
           <p
             className="text-lg sm:text-xl text-white/50 max-w-xl mx-auto mb-14 leading-relaxed tracking-wide font-light transition-all duration-700 ease-out"
-            style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(20px)', transitionDelay: '260ms' }}
+            style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translate3d(0, 0, 0)' : 'translate3d(0, 20px, 0)', transitionDelay: '260ms' }}
           >
             {content.subtitle}
           </p>
@@ -141,7 +141,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         {/* CTAs */}
         <div
           className="flex items-center justify-center gap-4 flex-wrap transition-all duration-700 ease-out"
-          style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(20px)', transitionDelay: '360ms' }}
+          style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translate3d(0, 0, 0)' : 'translate3d(0, 20px, 0)', transitionDelay: '360ms' }}
         >
           {(content.cta_label || content.button_text) && (
             <Link
@@ -156,15 +156,6 @@ export function HeroSection({ content }: { content: HeroContent }) {
               </svg>
             </Link>
           )}
-          <Link
-            href="/login"
-            className="group inline-flex items-center gap-2.5 text-white/60 hover:text-white font-semibold px-6 py-4 rounded-2xl border border-white/[0.12] hover:border-white/30 hover:bg-white/[0.06] transition-all duration-300 backdrop-blur-sm"
-          >
-            <svg className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-            </svg>
-            Área do Membro
-          </Link>
         </div>
       </div>
 

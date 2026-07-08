@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
 import { isValidEmail, isValidPhone, isValidDate } from '@/lib/action-validators';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 const MAX_REGISTER_ATTEMPTS = 5;
 const WINDOW_MINUTES = 60;
@@ -33,6 +34,12 @@ async function checkAndRecordRateLimit(identifier: string, action: string, maxAt
 }
 
 export async function registerUser(formData: FormData): Promise<RegisterResult> {
+  const turnstileToken = (formData.get('turnstile_token') as string)?.trim();
+  const isHuman = await verifyTurnstileToken(turnstileToken);
+  if (!isHuman) {
+    return { error: 'Falha na verificação de segurança. Tente novamente.' };
+  }
+
   const fullName    = sanitize((formData.get('fullName')    as string) ?? '');
   const email       = sanitize((formData.get('email')       as string) ?? '').toLowerCase();
   const phone       = sanitize((formData.get('phone')       as string) ?? '');
@@ -92,6 +99,17 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
 
   const admin = await createAdminClient();
 
+  // ── Checagem de Manutenção ────────────────────────────────────
+  const { data: maintenance } = await admin
+    .from('site_maintenance')
+    .select('is_portal_maintenance, block_signups, block_logins')
+    .eq('id', 1)
+    .single();
+
+  if (maintenance && (maintenance.is_portal_maintenance || maintenance.block_signups || maintenance.block_logins)) {
+    return { error: 'Novos cadastros estão temporariamente suspensos.' };
+  }
+
   // ── Verifica e-mail duplicado de forma determinística ─────────
   const { data: authUser } = await admin
     .schema('auth')
@@ -104,10 +122,11 @@ export async function registerUser(formData: FormData): Promise<RegisterResult> 
     return { error: 'Este e-mail já está cadastrado.', field: 'email' };
   }
 
-  // ── Cria usuário via adminClient (email_confirm removido para segurança)
+  // ── Cria usuário via adminClient (email_confirm=true para forçar login s/ verificação)
   const { data: createdUser, error: createError } = await admin.auth.admin.createUser({
     email,
     password,
+    email_confirm: true,
     user_metadata: { full_name: fullName },
   });
 
@@ -182,6 +201,12 @@ export async function loginUser(
   prevState: LoginResult | null,
   formData: FormData
 ): Promise<LoginResult> {
+  const turnstileToken = (formData.get('turnstile_token') as string)?.trim();
+  const isHuman = await verifyTurnstileToken(turnstileToken);
+  if (!isHuman) {
+    return { error: 'Falha na verificação de segurança. Tente novamente.' };
+  }
+
   const email    = sanitize((formData.get('email')    as string) ?? '').toLowerCase();
   const password = (formData.get('password') as string) ?? '';
 
@@ -201,6 +226,30 @@ export async function loginUser(
     return { error: 'E-mail ou senha incorretos.' };
   }
 
+  // ── Checagem de Manutenção ────────────────────────────────────
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const admin = await createAdminClient();
+    const { data: maintenance } = await admin
+      .from('site_maintenance')
+      .select('is_portal_maintenance, block_logins')
+      .eq('id', 1)
+      .single();
+
+    if (maintenance && (maintenance.is_portal_maintenance || maintenance.block_logins)) {
+      const { data: roles } = await admin
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id);
+      
+      const isSysAdmin = roles?.some((r: any) => r.role === 'SYSADMIN' || r.role === 'CHURCH_ADMIN');
+      if (!isSysAdmin) {
+        await supabase.auth.signOut();
+        return { error: 'O site está em manutenção. Logins estão temporariamente suspensos.' };
+      }
+    }
+  }
+
   redirect('/');
 }
 
@@ -210,6 +259,12 @@ export async function requestPasswordReset(
   prevState: { error?: string; success?: boolean } | null,
   formData: FormData
 ): Promise<{ error?: string; success?: boolean }> {
+  const turnstileToken = (formData.get('turnstile_token') as string)?.trim();
+  const isHuman = await verifyTurnstileToken(turnstileToken);
+  if (!isHuman) {
+    return { error: 'Falha na verificação de segurança. Tente novamente.' };
+  }
+
   const email = sanitize((formData.get('email') as string) ?? '').toLowerCase();
 
   if (!isValidEmail(email)) {

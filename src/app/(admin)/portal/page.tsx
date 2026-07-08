@@ -25,7 +25,7 @@ export default async function PortalPage() {
   const supabase = await createClient();
   const [blocksRes, pastorsRes, cellsRes, eventsRes] = await Promise.all([
     supabase.from('site_blocks').select('*').order('order_idx').returns<SiteBlock[]>(),
-    supabase.from('pastors').select('id, name, role, bio, photo_url, sort_order').eq('is_active', true).order('sort_order'),
+    supabase.from('pastors').select('id, name, role, bio, photo_url, instagram_url, sort_order, is_president, spouse_id').eq('is_active', true).order('sort_order'),
     supabase.from('cells').select('id, name, meeting_days, meeting_time, meeting_type, neighborhood, address, description, contact_phone, contact_whatsapp, instagram_url, image_url, leader_photo_url, leader1_id, leader2_id, leader1:leaders!leader1_id(id,name,photo_url,instagram_url), leader2:leaders!leader2_id(id,name,photo_url,instagram_url)').eq('is_active', true).order('name'),
     supabase.from('events').select('id, title, date, time, location, is_recurring, recurrence_rules, type, banner_url, cancelled_dates').eq('is_public', true).eq('status', 'publicado'),
   ]);

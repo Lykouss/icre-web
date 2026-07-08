@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { BookOpen, CreditCard, FileText, CalendarCheck, Search, ChevronDown } from 'lucide-react';
 
 // ─── FAQ Data ─────────────────────────────────────────────────────────────────
@@ -8,39 +9,110 @@ import { BookOpen, CreditCard, FileText, CalendarCheck, Search, ChevronDown } fr
 interface FaqItem {
   category: string;
   question: string;
-  answer: string;
+  answer: React.ReactNode;
+  answerText: string;
 }
 
 const FAQ_ITEMS: FaqItem[] = [
   {
     category: 'Comprovantes',
     question: 'Onde ficam meus comprovantes?',
-    answer:
-      "Você pode encontrar todos os seus comprovantes na aba 'Minhas Inscrições' no menu do seu perfil. Cada inscrição confirmada possui um comprovante disponível para visualização e download.",
+    answerText: 'Você pode encontrar todos os seus comprovantes na aba Minhas Inscrições no menu do seu perfil. Cada inscrição confirmada possui um comprovante disponível para visualização e download.',
+    answer: (
+      <>
+        Você pode encontrar todos os seus comprovantes na aba <Link href="/minhas-inscricoes" className="text-blue-400 hover:underline transition-colors font-medium">Minhas Inscrições</Link> no menu do seu perfil. Cada inscrição confirmada possui um comprovante disponível para visualização e download.
+      </>
+    ),
   },
   {
-    category: 'Evento',
+    category: 'Comprovantes',
+    question: 'Como faço para baixar ou imprimir meu comprovante?',
+    answerText: 'Acesse a página Minhas Inscrições, clique no comprovante desejado e procure pela opção de imprimir ou salvar como PDF no seu navegador ou celular.',
+    answer: (
+      <>
+        Acesse a página <Link href="/minhas-inscricoes" className="text-blue-400 hover:underline transition-colors font-medium">Minhas Inscrições</Link>, clique no comprovante desejado e procure pela opção de imprimir ou salvar como PDF no seu navegador ou celular.
+      </>
+    ),
+  },
+  {
+    category: 'Eventos',
     question: 'O que fazer na hora de apresentar o comprovante no evento?',
-    answer:
-      'Basta abrir o comprovante pelo celular ou levá-lo impresso, apresentando o QR Code na portaria de check-in. Nossa equipe realizará a leitura do código e confirmará sua entrada.',
+    answerText: 'Basta abrir o comprovante pelo celular ou levá-lo impresso, apresentando o QR Code na portaria de check-in. Nossa equipe realizará a leitura do código e confirmará sua entrada.',
+    answer: (
+      <>
+        Basta abrir o comprovante pelo celular ou levá-lo impresso, apresentando o QR Code na portaria de check-in. Nossa equipe realizará a leitura do código e confirmará sua entrada.
+      </>
+    ),
+  },
+  {
+    category: 'Eventos',
+    question: 'Onde posso ver a programação dos próximos eventos?',
+    answerText: 'Você pode acompanhar a programação completa acessando nossa Agenda de Eventos.',
+    answer: (
+      <>
+        Você pode acompanhar a programação completa acessando nossa <Link href="/agenda" className="text-blue-400 hover:underline transition-colors font-medium">Agenda de Eventos</Link>.
+      </>
+    ),
   },
   {
     category: 'Pagamentos',
-    question: 'Problemas com pagamento?',
-    answer:
-      'Seu pagamento pode demorar até 24h para ser processado caso tenha sido via boleto. Para Pix, a aprovação é imediata. Se após esse prazo o status ainda não foi atualizado, abra um chamado de suporte.',
+    question: 'Quais são as formas de pagamento aceitas?',
+    answerText: 'Aceitamos pagamentos via Pix e Cartão de Crédito. O pagamento via Pix tem aprovação imediata.',
+    answer: (
+      <>
+        Aceitamos pagamentos via Pix e Cartão de Crédito. O pagamento via Pix tem aprovação imediata.
+      </>
+    ),
+  },
+  {
+    category: 'Pagamentos',
+    question: 'Problemas com aprovação do pagamento?',
+    answerText: 'Se o seu pagamento via Pix não foi aprovado imediatamente, ou ocorreu algum erro no Cartão de Crédito, recomendamos abrir um chamado em nossa página de Fale Conosco.',
+    answer: (
+      <>
+        Se o seu pagamento via Pix não foi aprovado imediatamente, ou ocorreu algum erro no Cartão de Crédito, recomendamos abrir um chamado em nossa página de <Link href="/suporte" className="text-blue-400 hover:underline transition-colors font-medium">Suporte</Link>.
+      </>
+    ),
+  },
+  {
+    category: 'Pagamentos',
+    question: 'Como solicitar um reembolso?',
+    answerText: 'Para solicitar o cancelamento e reembolso de uma inscrição, você deve acessar a página Suporte e enviar uma solicitação. Nossa equipe analisará e fará o estorno de acordo com as políticas do evento.',
+    answer: (
+      <>
+        Para solicitar o cancelamento e reembolso de uma inscrição, você deve acessar a página <Link href="/suporte" className="text-blue-400 hover:underline transition-colors font-medium">Suporte</Link> e enviar uma solicitação. Nossa equipe analisará e fará o estorno de acordo com as políticas do evento.
+      </>
+    ),
   },
   {
     category: 'Inscrições',
     question: 'Como faço para me inscrever em um evento?',
-    answer:
-      "Acesse a página inicial, localize o evento desejado na seção de eventos e clique em 'Inscrever-se'. Você precisará estar logado para concluir a inscrição. Após o processamento, receberá um comprovante.",
+    answerText: 'Acesse a nossa Agenda de Eventos, localize o evento desejado e clique em inscrever-se. Você precisará estar logado para concluir a inscrição.',
+    answer: (
+      <>
+        Acesse a nossa <Link href="/agenda" className="text-blue-400 hover:underline transition-colors font-medium">Agenda de Eventos</Link>, localize o evento desejado e clique no botão de inscrição. Você precisará estar logado para concluir a inscrição.
+      </>
+    ),
+  },
+  {
+    category: 'Inscrições',
+    question: 'Posso fazer a inscrição para outra pessoa?',
+    answerText: 'Sim, durante o processo de inscrição, você poderá preencher os dados do participante. Porém, o comprovante ficará associado à sua conta na aba Minhas Inscrições.',
+    answer: (
+      <>
+        Sim, durante o processo de inscrição, você poderá preencher os dados do participante. Porém, o comprovante ficará associado à sua conta na aba <Link href="/minhas-inscricoes" className="text-blue-400 hover:underline transition-colors font-medium">Minhas Inscrições</Link>.
+      </>
+    ),
   },
   {
     category: 'Conta',
     question: 'Esqueci minha senha. Como recupero?',
-    answer:
-      "Na tela de login, clique em 'Esqueci minha senha' e informe o e-mail cadastrado. Você receberá um link de redefinição de senha no e-mail. O link expira em 1 hora.",
+    answerText: 'Na tela de Login, clique na opção de recuperar senha e informe o e-mail cadastrado. Você receberá um link de redefinição no seu e-mail.',
+    answer: (
+      <>
+        Na tela de <Link href="/login" className="text-blue-400 hover:underline transition-colors font-medium">Login</Link>, clique na opção de recuperar senha e informe o e-mail cadastrado. Você receberá um link de redefinição no seu e-mail.
+      </>
+    ),
   },
 ];
 
@@ -56,15 +128,15 @@ const CATEGORIES = [
     border: 'rgba(59,130,246,0.2)',
   },
   {
-    label: 'Pagamentos e Reembolsos',
-    description: 'Boleto, Pix, confirmação e estornos',
+    label: 'Pagamentos',
+    description: 'Boletos, Pix, confirmações e estornos',
     icon: <CreditCard className="w-6 h-6" />,
     color: '#10b981',
     bg: 'rgba(16,185,129,0.1)',
     border: 'rgba(16,185,129,0.2)',
   },
   {
-    label: 'Meus Comprovantes',
+    label: 'Comprovantes',
     description: 'Acesso e download dos seus comprovantes',
     icon: <FileText className="w-6 h-6" />,
     color: '#8b5cf6',
@@ -72,7 +144,7 @@ const CATEGORIES = [
     border: 'rgba(139,92,246,0.2)',
   },
   {
-    label: 'Dia do Evento',
+    label: 'Eventos',
     description: 'Check-in, acesso e orientações gerais',
     icon: <CalendarCheck className="w-6 h-6" />,
     color: '#f59e0b',
@@ -145,7 +217,7 @@ export function HelpCenterClient() {
     return FAQ_ITEMS.filter(
       f =>
         f.question.toLowerCase().includes(term) ||
-        f.answer.toLowerCase().includes(term) ||
+        f.answerText.toLowerCase().includes(term) ||
         f.category.toLowerCase().includes(term)
     );
   }, [search]);
@@ -309,7 +381,7 @@ export function HelpCenterClient() {
           >
             <p className="text-slate-300 font-medium mb-1">Não encontrou o que procurava?</p>
             <p className="text-slate-500 text-sm mb-4">Nossa equipe está pronta para te ajudar.</p>
-            <a
+            <Link
               href="/suporte"
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm text-white transition-all"
               style={{ background: 'var(--admin-accent, #2563eb)' }}
@@ -317,7 +389,7 @@ export function HelpCenterClient() {
               onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
               Abrir Chamado de Suporte
-            </a>
+            </Link>
           </div>
         </div>
       </section>

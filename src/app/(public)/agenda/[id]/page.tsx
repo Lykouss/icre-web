@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { isValidUuid } from '@/lib/action-validators';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
 import { EventDetailsClient } from '@/features/portal/components/EventDetailsClient';
@@ -10,8 +10,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   if (!isValidUuid(id)) return { title: 'Evento' };
 
-  const supabase = await createClient();
-  const { data: event } = await supabase
+  const supabaseAdmin = await createAdminClient();
+  const { data: event } = await supabaseAdmin
     .from('events')
     .select('title, description')
     .eq('id', id)
@@ -28,12 +28,13 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
   if (!isValidUuid(id)) notFound();
 
   const supabase = await createClient();
+  const supabaseAdmin = await createAdminClient();
   const user = await getCurrentUser();
 
   // Fetch the event
-  const query = supabase
+  const query = supabaseAdmin
     .from('events')
-    .select('id, title, date, time, location, description, rules, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account')
+    .select('id, title, date, time, location, description, rules, terms_text, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account')
     .eq('id', id);
 
   if (!user?.isSysAdmin) {
@@ -45,8 +46,8 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
   if (error || !event) notFound();
   if (event.status !== 'publicado' && !user?.isSysAdmin) notFound();
 
-  // Contagem de vagas
-  const { count } = await supabase
+  // Contagem de vagas (admin client pois anon não tem acesso a event_registrations)
+  const { count } = await supabaseAdmin
     .from('event_registrations')
     .select('id', { count: 'exact', head: true })
     .eq('event_id', id)

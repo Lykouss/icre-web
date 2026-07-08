@@ -37,7 +37,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       .returns<EventSchedule[]>(),
     supabase
       .from('event_registrations')
-      .select('*')
+      .select('*, checkin_admin:profiles!event_registrations_checkin_by_fkey(full_name, photo_url)')
       .eq('event_id', id)
       .order('created_at')
       .returns<EventRegistration[]>(),
@@ -49,8 +49,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       .returns<EventAttendance[]>(),
     supabase
       .from('members')
-      .select('id, full_name')
-      .eq('status', 'Membro')
+      .select('id, full_name, photo_url')
       .order('full_name'),
   ]);
 

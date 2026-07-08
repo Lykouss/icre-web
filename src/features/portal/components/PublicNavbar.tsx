@@ -33,10 +33,10 @@ interface Props {
 function Avatar({ name, photoUrl }: { name: string; photoUrl: string | null }) {
   const initials = name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
   return (
-    <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 text-white font-bold flex items-center justify-center shrink-0 text-xs">
+    <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 text-white font-bold flex items-center justify-center shrink-0 text-xs relative">
       {photoUrl
         // eslint-disable-next-line @next/next/no-img-element
-        ? <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
+        ? <Image src={photoUrl} alt={name} fill sizes="36px" className="object-cover" />
         : initials}
     </div>
   );

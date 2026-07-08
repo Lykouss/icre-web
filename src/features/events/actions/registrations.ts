@@ -26,6 +26,7 @@ import {
   verifyTicketSignature,
   parseAndVerifyQrPayload,
 } from '../utils/signature';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 // ─── Health check do Asaas antes de processar pagamento ───────────────────
 
@@ -139,6 +140,14 @@ export async function createPublicRegistration(
   deviceId?: string
 ): Promise<{ error?: string; registrationId?: string; paymentInfo?: AsaasPaymentInfo }> {
   if (!isValidUuid(eventId)) return { error: 'Evento inválido.' };
+
+  const turnstileToken = (formData.get('turnstile_token') as string)?.trim();
+  
+  // Validate Turnstile
+  const isHuman = await verifyTurnstileToken(turnstileToken);
+  if (!isHuman) {
+    return { error: 'Verificação de segurança falhou. Por favor, tente novamente.' };
+  }
 
   const name      = (formData.get('name')     as string)?.trim();
   const email     = (formData.get('email')    as string)?.trim();
@@ -444,7 +453,10 @@ export async function giftRegistration(
     .select()
     .single();
 
-  if (error || !registration) return { error: 'Falha ao criar cortesia.' };
+  if (error || !registration) {
+    console.error('[giftRegistration] Insert failed:', error);
+    return { error: 'Falha ao criar cortesia.' };
+  }
 
   const signature = generateTicketSignature(registration.id);
   await supabaseAdmin
@@ -465,7 +477,7 @@ export async function giftRegistration(
 // PROCESS CHECKIN (QR Scanner)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function processCheckin(qrCodeData: string): Promise<CheckinResult> {
+export async function processCheckin(eventId: string, qrCodeData: string): Promise<CheckinResult> {
   const user = await getCurrentUser();
   if (!user || !user.isSysAdmin) return { success: false, error: 'Acesso negado.' };
 
@@ -488,6 +500,29 @@ export async function processCheckin(qrCodeData: string): Promise<CheckinResult>
 
   if (error || !reg) return { success: false, error: 'Inscrição não encontrada.' };
   if (reg.status !== 'confirmado') return { success: false, error: 'Inscrição não está confirmada.' };
+  if (reg.event_id !== eventId) return { success: false, error: 'O ingresso pertence a outro evento.' };
+
+  // Validar se o evento permite check-in (não encerrado e é o dia certo)
+  const { data: eventData } = await supabase.from('events').select('status, date').eq('id', eventId).single();
+  if (eventData) {
+    if (eventData.status === 'encerrado') {
+      return { success: false, error: 'Este evento já foi encerrado.' };
+    }
+    // Validar a data do evento com a data de hoje local
+    if (eventData.date) {
+      const today = new Date().toLocaleDateString('en-CA'); // yyyy-mm-dd local format commonly matching db
+      // Actually better to use JS local string mapping or simple ISO split
+      // JS `new Date()` might give different timezone. Let's use a simple timezone offset or just compare string dates.
+      // A better way: `new Date().toISOString().split('T')[0]` if server is UTC and we expect UTC, but in Brazil we should adjust.
+      // Since `eventData.date` is YYYY-MM-DD, let's use `new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })`
+      const todayBR = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }); // DD/MM/YYYY
+      const [year, month, day] = eventData.date.split('-');
+      const eventDateBR = `${day}/${month}/${year}`;
+      if (todayBR !== eventDateBR) {
+        return { success: false, error: 'Check-in não permitido. O evento não é hoje.' };
+      }
+    }
+  }
 
   // Already checked in
   if (reg.checkin_status) {
@@ -719,6 +754,22 @@ export async function checkInAttendance(eventId: string, name: string, memberId?
   if (memberId && !isValidUuid(memberId)) return { error: 'Membro inválido.' };
 
   const supabase = await createClient();
+
+  // Validar se o evento permite check-in
+  const { data: eventData } = await supabase.from('events').select('status, date').eq('id', eventId).single();
+  if (eventData) {
+    if (eventData.status === 'encerrado') {
+      return { error: 'Este evento já foi encerrado.' };
+    }
+    if (eventData.date) {
+      const todayBR = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+      const [year, month, day] = eventData.date.split('-');
+      const eventDateBR = `${day}/${month}/${year}`;
+      if (todayBR !== eventDateBR) {
+        return { error: 'Check-in manual não permitido. O evento não é hoje.' };
+      }
+    }
+  }
 
   if (memberId) {
     const { data: existing } = await supabase

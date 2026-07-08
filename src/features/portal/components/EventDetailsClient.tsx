@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ShareEventModal } from './ShareEventModal';
 
 const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const MONTHS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
@@ -34,6 +35,7 @@ interface EventData {
   requires_payment: boolean;
   banner_url: string | null;
   max_per_account: number | null;
+  terms_text?: string | null;
 }
 
 interface ExistingRegistration {
@@ -60,6 +62,7 @@ export function EventDetailsClient({
   existingRegistrations,
 }: Props) {
   const [rulesExpanded, setRulesExpanded] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const isPaid = event.requires_payment && (event.ticket_price ?? 0) > 0;
   const needsRegistration = event.requires_registration || isPaid;
@@ -91,16 +94,27 @@ export function EventDetailsClient({
       </div>
 
       <div className="relative max-w-3xl mx-auto px-4 pt-28 pb-16">
-        {/* Back */}
-        <Link
-          href="/agenda"
-          className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-medium transition-colors mb-8"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Voltar à agenda
-        </Link>
+        {/* Top actions */}
+        <div className="flex items-center justify-between mb-8">
+          <Link
+            href="/agenda"
+            className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-medium transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Voltar à agenda
+          </Link>
+          <button
+            onClick={() => setShareModalOpen(true)}
+            className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-medium transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            Compartilhar
+          </button>
+        </div>
 
         {/* Banner */}
         {event.banner_url && (
@@ -179,8 +193,8 @@ export function EventDetailsClient({
           </div>
         </div>
 
-        {/* Regras */}
-        {(event.rules || event.description) && needsRegistration && (
+        {/* Regras e Termos */}
+        {event.terms_text && needsRegistration && (
           <div className="bg-slate-900/60 border border-white/8 rounded-2xl overflow-hidden mb-6">
             <button
               onClick={() => setRulesExpanded(v => !v)}
@@ -197,8 +211,8 @@ export function EventDetailsClient({
               </svg>
             </button>
             {rulesExpanded && (
-              <div className="px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/6 pt-4">
-                {event.rules || event.description}
+              <div className="px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/6 pt-4 whitespace-pre-wrap">
+                {event.terms_text}
               </div>
             )}
           </div>
@@ -341,6 +355,13 @@ export function EventDetailsClient({
           )}
         </div>
       </div>
+
+      <ShareEventModal 
+        isOpen={shareModalOpen} 
+        onClose={() => setShareModalOpen(false)}
+        eventUrl={typeof window !== 'undefined' ? window.location.href : ''}
+        eventTitle={event.title}
+      />
     </div>
   );
 }

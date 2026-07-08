@@ -144,6 +144,9 @@ export interface Pastor {
   instagram_url?: string | null;
   sort_order: number;
   is_active:  boolean;
+  is_president: boolean;
+  spouse_id: string | null;
+  spouse?: Pastor;
 }
 
 // ── Líderes ──────────────────────────────────────────────────

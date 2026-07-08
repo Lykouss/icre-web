@@ -71,12 +71,13 @@ function PhotoPreview({ src, onChange }: { src: string | null; onChange: (url: s
 /* ─── Pastor Modal ────────────────────────────────────────────── */
 
 function PastorModal({
-  editing, isPending, onClose, onSubmit,
+  editing, isPending, onClose, onSubmit, pastors
 }: {
   editing: Pastor | null;
   isPending: boolean;
   onClose: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  pastors: Pastor[];
 }) {
   const [photoSrc, setPhotoSrc] = useState<string | null>(editing?.photo_url ?? null);
 
@@ -96,7 +97,7 @@ function PastorModal({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <h2 className="text-[15px] font-bold text-slate-100">{editing ? 'Editar Pastor(a)' : 'Novo(a) Pastor(a)'}</h2>
+            <h2 className="text-[15px] font-bold text-slate-100">{editing ? 'Editar Pastor' : 'Novo Pastor'}</h2>
           </div>
           <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-lg transition-all" style={{ color: 'var(--admin-text-muted)' }}
             onMouseEnter={e => { e.currentTarget.style.color = 'var(--admin-text-primary)'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
@@ -120,7 +121,7 @@ function PastorModal({
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold mb-1.5" style={{ color: 'var(--admin-text-secondary)' }}>Cargo / Função *</label>
+                    <label className="block text-[11px] font-semibold mb-1.5" style={{ color: 'var(--admin-text-secondary)' }}>Cargo *</label>
                     <input name="role" defaultValue={editing?.role} required placeholder="Ex: Pastor Titular"
                       className={inputCls} style={inputStyle} {...focusFns} />
                   </div>
@@ -141,13 +142,39 @@ function PastorModal({
                 className="w-full px-3 py-2.5 rounded-xl text-sm text-slate-200 placeholder-slate-600 outline-none transition-all resize-none"
                 style={inputStyle} {...focusFns} />
             </div>
+
+            {/* Opções Avançadas */}
+            <div className="pt-5 mt-2" style={{ borderTop: '1px solid var(--admin-border)' }}>
+               <div className="flex items-center gap-3 mb-5">
+                 <input type="checkbox" id="is_president" name="is_president" defaultChecked={editing?.is_president} className="w-4 h-4 rounded accent-blue-500 cursor-pointer" />
+                 <label htmlFor="is_president" className="text-[13px] font-semibold text-slate-200 cursor-pointer select-none flex items-center gap-1.5">
+                   Pastor Presidente
+                   <svg className="w-3.5 h-3.5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                 </label>
+               </div>
+               <div className="grid grid-cols-2 gap-3">
+                 <div>
+                    <label className="block text-[11px] font-semibold mb-1.5" style={{ color: 'var(--admin-text-secondary)' }}>Cônjuge</label>
+                    <select name="spouse_id" defaultValue={editing?.spouse_id ?? 'null'} className={inputCls} style={inputStyle} {...focusFns}>
+                      <option value="null">Nenhum / Não aplicável</option>
+                      {pastors.filter(p => p.id !== editing?.id).map(p => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
+                 </div>
+                 <div>
+                    <label className="block text-[11px] font-semibold mb-1.5" style={{ color: 'var(--admin-text-secondary)' }}>Ordem de Exibição</label>
+                    <input type="number" name="sort_order" defaultValue={editing?.sort_order ?? 0} className={inputCls} style={inputStyle} {...focusFns} />
+                 </div>
+               </div>
+            </div>
           </div>
 
           {/* Footer */}
           <div className="flex items-center justify-end gap-3 px-6 py-4" style={{ borderTop: '1px solid var(--admin-border)', background: 'rgba(0,0,0,0.15)' }}>
             <AdminButton type="button" variant="ghost" onClick={onClose}>Cancelar</AdminButton>
             <AdminButton type="submit" variant="primary" loading={isPending}>
-              {editing ? 'Salvar alterações' : 'Adicionar Pastor(a)'}
+              {editing ? 'Salvar alterações' : 'Adicionar Pastor'}
             </AdminButton>
           </div>
         </form>
@@ -159,9 +186,9 @@ function PastorModal({
 /* ─── Pastor Card ─────────────────────────────────────────────── */
 
 function PastorCard({
-  pastor, canManage, isSysAdmin, onEdit, onToggle, toggling, onDelete,
+  pastor, canManage, isSysAdmin, onEdit, onToggle, toggling, onDelete, pastorsList
 }: {
-  pastor: Pastor; canManage: boolean; isSysAdmin: boolean;
+  pastor: Pastor; canManage: boolean; isSysAdmin: boolean; pastorsList: Pastor[];
   onEdit: () => void; onToggle: () => void; toggling: boolean; onDelete: () => void;
 }) {
   return (
@@ -190,8 +217,22 @@ function PastorCard({
 
       {/* Content */}
       <div className="p-4 flex flex-col flex-1 min-w-0 w-full">
+        {pastor.is_president && (
+          <div className="mb-2">
+            <span className="inline-flex items-center gap-1 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-widest">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+              Presidente
+            </span>
+          </div>
+        )}
         <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">{pastor.role}</p>
         <h3 className="font-bold text-slate-100 text-[15px] mb-1 truncate">{pastor.name}</h3>
+        {pastor.spouse_id && (
+          <p className="text-[11px] text-indigo-400 mb-2 font-medium flex items-center gap-1 truncate">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+            Casado(a) com {pastorsList.find(p => p.id === pastor.spouse_id)?.name || '...'}
+          </p>
+        )}
         
         {pastor.instagram_url && (
           <a href={pastor.instagram_url} target="_blank" rel="noreferrer"
@@ -307,11 +348,19 @@ export function PastoresAdminClient({ initialPastors, canManage, isSysAdmin }: P
     });
   };
 
-  const filtered = pastors.filter(p =>
-    !search ||
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.role.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = pastors
+    .slice()
+    .sort((a, b) => {
+      if (a.is_president !== b.is_president) {
+         return a.is_president ? -1 : 1;
+      }
+      return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+    })
+    .filter(p =>
+      !search ||
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.role.toLowerCase().includes(search.toLowerCase())
+    );
 
   const visibleCount = pastors.filter(p => p.is_active).length;
   const hiddenCount  = pastors.length - visibleCount;
@@ -377,6 +426,7 @@ export function PastoresAdminClient({ initialPastors, canManage, isSysAdmin }: P
             <PastorCard
               key={p.id}
               pastor={p}
+              pastorsList={pastors}
               canManage={canManage}
               isSysAdmin={isSysAdmin}
               onEdit={() => openEdit(p)}
@@ -395,6 +445,7 @@ export function PastoresAdminClient({ initialPastors, canManage, isSysAdmin }: P
           isPending={isPending}
           onClose={() => setIsOpen(false)}
           onSubmit={handleSubmit}
+          pastors={pastors}
         />
       )}
     </div>

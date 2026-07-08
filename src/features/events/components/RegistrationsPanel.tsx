@@ -14,12 +14,12 @@ import { XIcon, GiftIcon, ChevronRightIcon, UserIcon } from 'lucide-react';
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const PAYMENT_STATUS_STYLES: Record<PaymentStatus, string> = {
-  gratuito:   'bg-slate-100 text-slate-500',
-  pendente:   'bg-amber-100 text-amber-700',
-  pago:       'bg-green-100 text-green-700',
-  reembolsado:'bg-blue-100 text-blue-700',
-  expirado:   'bg-red-100 text-red-700',
-  cortesia:   'bg-purple-100 text-purple-700',
+  gratuito:   'bg-slate-500/10 text-slate-400',
+  pendente:   'bg-amber-500/10 text-amber-400',
+  pago:       'bg-green-500/10 text-green-400',
+  reembolsado:'bg-blue-500/10 text-blue-400',
+  expirado:   'bg-red-500/10 text-red-400',
+  cortesia:   'bg-purple-500/10 text-purple-400',
 };
 
 const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
@@ -104,7 +104,7 @@ function RegistrationSheet({
         <div className="p-6 space-y-6">
           {/* Status badges */}
           <div className="flex flex-wrap gap-2">
-            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${reg.status === 'confirmado' ? 'bg-green-100 text-green-700' : reg.status === 'cancelado' ? 'bg-red-100 text-red-500' : 'bg-amber-100 text-amber-700'}`}>
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${reg.status === 'confirmado' ? 'bg-green-500/10 text-green-400' : reg.status === 'cancelado' ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'}`}>
               {reg.status === 'confirmado' ? 'Confirmado' : reg.status === 'cancelado' ? 'Cancelado' : 'Aguardando pagamento'}
             </span>
             <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${PAYMENT_STATUS_STYLES[reg.payment_status]}`}>
@@ -112,7 +112,7 @@ function RegistrationSheet({
               {reg.payment_method && ` · ${PAYMENT_METHOD_LABELS[reg.payment_method]}`}
             </span>
             {reg.is_gift && (
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-pink-100 text-pink-700 flex items-center gap-1">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-pink-500/10 text-pink-400 flex items-center gap-1">
                 <GiftIcon className="w-3 h-3" /> Presente
               </span>
             )}
@@ -189,7 +189,7 @@ function RegistrationSheet({
           {canManage && reg.status === 'confirmado' && (
             <button
               onClick={() => { onCancel(reg.id); onClose(); }}
-              className="w-full py-2.5 rounded-xl border border-red-200 text-red-500 text-sm font-semibold hover:bg-red-50 transition-colors"
+              className="w-full py-2.5 rounded-xl border border-red-500/20 text-red-400 text-sm font-semibold hover:bg-red-500/10 transition-colors"
             >
               Cancelar inscrição
             </button>
@@ -286,7 +286,7 @@ export function RegistrationsPanel({ eventId, registrations, members, capacity, 
   const inputClass = 'px-4 py-2 border rounded-xl focus:outline-none focus:border-blue-500 text-sm transition-all bg-[var(--admin-surface-alt)] border-[var(--admin-border)] text-[var(--admin-text-primary)]';
 
   return (
-    <div className="animate-in fade-in duration-300 max-w-4xl">
+    <div className="animate-in fade-in duration-300 max-w-4xl mx-auto">
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         {([
@@ -365,7 +365,7 @@ export function RegistrationsPanel({ eventId, registrations, members, capacity, 
                 </span>
 
                 {/* Type */}
-                <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0`} style={{ background: 'var(--admin-surface-alt)' }}>
+                <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 ${r.is_gift ? 'bg-pink-500/10 text-pink-400' : PAYMENT_STATUS_STYLES[r.payment_status]}`}>
                   {r.is_gift ? '🎁 Presente' : PAYMENT_STATUS_LABELS[r.payment_status]}
                 </span>
 
