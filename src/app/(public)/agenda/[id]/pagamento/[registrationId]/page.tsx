@@ -46,7 +46,7 @@ export default async function PagamentoPage({
       payment_method,
       asaas_payment_id,
       asaas_invoice_url,
-      events!inner ( id, title, ticket_price, date )
+      events!inner ( id, title, ticket_price, date, accepts_pix, accepts_boleto )
     `)
     .eq('id', registrationId)
     .eq('event_id', id)
