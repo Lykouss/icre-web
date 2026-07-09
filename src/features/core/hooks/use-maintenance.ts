@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
 
 export interface SiteMaintenance {
   is_portal_maintenance: boolean;
@@ -21,23 +20,18 @@ export interface SiteMaintenance {
 export function useMaintenance() {
   const [maintenance, setMaintenance] = useState<SiteMaintenance | null>(null);
   const [isSysAdmin, setIsSysAdmin] = useState(false);
-  const [timeOffset, setTimeOffset] = useState(0);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const didRun = useRef(false);
 
   useEffect(() => {
+    // Prevent double execution in React StrictMode
+    if (didRun.current) return;
+    didRun.current = true;
+
     const supabase = createClient();
 
     async function fetchMaintenance() {
       try {
-        // Obter hora oficial do servidor
-        fetch(window.location.origin, { method: 'HEAD' }).then(res => {
-          const dateHeader = res.headers.get('Date');
-          if (dateHeader) {
-            setTimeOffset(new Date(dateHeader).getTime() - Date.now());
-          }
-        }).catch(() => {});
-
         const { data, error } = await supabase
           .from('site_maintenance')
           .select('*')
@@ -82,7 +76,6 @@ export function useMaintenance() {
         },
         (payload) => {
           setMaintenance(payload.new as SiteMaintenance);
-          router.refresh(); // Opcional: forçar revalidação
         }
       )
       .subscribe();
@@ -90,7 +83,7 @@ export function useMaintenance() {
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, [router]);
+  }, []);
 
-  return { maintenance, isSysAdmin, loading, timeOffset };
+  return { maintenance, isSysAdmin, loading };
 }

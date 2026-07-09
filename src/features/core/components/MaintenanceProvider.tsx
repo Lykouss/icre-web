@@ -2,21 +2,21 @@
 
 import { ReactNode, useEffect } from 'react';
 import { useMaintenance } from '@/features/core/hooks/use-maintenance';
-import { Wrench, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 interface MaintenanceProviderProps {
   children: ReactNode;
 }
 
 export function MaintenanceProvider({ children }: MaintenanceProviderProps) {
-  const { maintenance, isSysAdmin, loading, timeOffset } = useMaintenance();
+  const { maintenance, isSysAdmin, loading } = useMaintenance();
 
   // Efeito que monitora o momento exato em que a manutenção deve iniciar
   useEffect(() => {
     if (maintenance && !maintenance.is_portal_maintenance && !maintenance.is_sige_maintenance && maintenance.scheduled_at && maintenance.auto_activate_scheduled) {
       const scheduledTime = new Date(maintenance.scheduled_at).getTime();
       const interval = setInterval(() => {
-        const now = Date.now() + (timeOffset || 0);
+        const now = Date.now();
         if (now >= scheduledTime && !isSysAdmin) {
           if (window.location.pathname !== '/manutencao-screen') {
             window.location.href = '/manutencao-screen';
@@ -25,7 +25,7 @@ export function MaintenanceProvider({ children }: MaintenanceProviderProps) {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [maintenance?.scheduled_at, maintenance?.auto_activate_scheduled, maintenance?.is_portal_maintenance, maintenance?.is_sige_maintenance, timeOffset, isSysAdmin]);
+  }, [maintenance?.scheduled_at, maintenance?.auto_activate_scheduled, maintenance?.is_portal_maintenance, maintenance?.is_sige_maintenance, isSysAdmin]);
 
   if (loading) return <>{children}</>;
 
@@ -35,7 +35,7 @@ export function MaintenanceProvider({ children }: MaintenanceProviderProps) {
   let timeRemaining = null;
   if (maintenance.scheduled_at && !maintenance.is_portal_maintenance && !maintenance.is_sige_maintenance) {
     const scheduledTime = new Date(maintenance.scheduled_at).getTime();
-    const now = Date.now() + (timeOffset || 0);
+    const now = Date.now();
     const diffMins = Math.ceil((scheduledTime - now) / 60000);
     
     if (diffMins > 0 && diffMins <= 15) {
@@ -60,7 +60,7 @@ export function MaintenanceProvider({ children }: MaintenanceProviderProps) {
       {timeRemaining !== null && (
         <div className="fixed bottom-4 right-4 z-[9999] bg-slate-900 text-white px-6 py-4 rounded-2xl border border-amber-500/30 shadow-2xl flex items-start gap-4 max-w-sm animate-in slide-in-from-bottom-4">
           <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
-            <Wrench className="w-5 h-5 text-amber-500" />
+            <AlertTriangle className="w-5 h-5 text-amber-500" />
           </div>
           <div>
             <h4 className="font-bold text-amber-500 mb-1">Manutenção Programada</h4>

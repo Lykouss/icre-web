@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { FullscreenAnnouncement, AnnouncementPayload } from './FullscreenAnnouncement';
 import { useToast } from './ToastContext';
@@ -10,9 +10,11 @@ import { markNotificationAsRead } from '@/features/core/actions/communications';
 export function GlobalNotificationListener() {
   const [announcements, setAnnouncements] = useState<AnnouncementPayload[]>([]);
   const { toast } = useToast();
-  const supabase = createClient();
+  const supabaseRef = useRef(createClient());
+  const didRunFirebase = useRef(false);
+  const didRunNotifications = useRef(false);
 
-  const handleIncomingNotification = (id: string, comm: any) => {
+  const handleIncomingNotification = useCallback((id: string, comm: any) => {
     const isFuture = comm.scheduled_for && new Date(comm.scheduled_for).getTime() > Date.now();
     
     const display = () => {
@@ -43,9 +45,12 @@ export function GlobalNotificationListener() {
     } else {
       display();
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
+    if (didRunFirebase.current) return;
+    didRunFirebase.current = true;
+
     // 1. Ask for Firebase permission
     requestFirebaseNotificationPermission().then((token) => {
       if (token) {
@@ -66,6 +71,11 @@ export function GlobalNotificationListener() {
   }, [toast]);
 
   useEffect(() => {
+    if (didRunNotifications.current) return;
+    didRunNotifications.current = true;
+
+    const supabase = supabaseRef.current;
+
     const fetchPendingAnnouncements = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -108,11 +118,6 @@ export function GlobalNotificationListener() {
             .single();
 
           if (data && !error) {
-            // Only process if it's targeted at the currently logged in user
-            // We check this by querying auth.getUser, but we can also just let RLS handle it (the insert event might fire for all, wait)
-            // Postgres changes don't fire for rows we can't see? Actually they do unless we filter by RLS or if RLS is enforced on Realtime.
-            // But we already set RLS on user_notifications and we only subscribe to the ones we own. Wait, RLS on Realtime is true by default?
-            // To be safe, we check if payload.new.user_id === currentUser.id
             const { data: { user } } = await supabase.auth.getUser();
             if (user && payload.new.user_id === user.id) {
               handleIncomingNotification(newNotifId, data);
@@ -125,7 +130,7 @@ export function GlobalNotificationListener() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, toast]);
+  }, [handleIncomingNotification]);
 
   const handleClose = async (id: string) => {
     setAnnouncements(prev => prev.filter(a => a.id !== id));
@@ -136,3 +141,4 @@ export function GlobalNotificationListener() {
 
   return <FullscreenAnnouncement announcement={announcements[0]} onClose={handleClose} />;
 }
+
