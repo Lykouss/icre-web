@@ -24,12 +24,6 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const { pathname } = request.nextUrl;
 
-  // DEBUG: Rastrear o que está causando o loop
-  const rscHeader = request.headers.get('RSC');
-  const accept = request.headers.get('accept');
-  const isRSC = rscHeader === '1' || accept?.includes('text/x-component');
-  console.log(`[MW DEBUG] ${request.method} ${pathname} | user=${!!user} | RSC=${isRSC} | cookies_changed=${supabaseResponse.headers.getSetCookie().length > 0}`);
-
   const adminRoutes = [
     '/dashboard', '/financeiro', '/membros',
     '/eventos', '/escalas', '/kids',
