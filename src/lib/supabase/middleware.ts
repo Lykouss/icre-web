@@ -95,7 +95,7 @@ export async function updateSession(request: NextRequest) {
 
   if (isProtectedRoute && !user) {
     const response = NextResponse.redirect(new URL('/login', request.url));
-    supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+    supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c));
     return response;
   }
 
@@ -117,7 +117,7 @@ export async function updateSession(request: NextRequest) {
         await supabase.rpc('clear_expired_suspension', { p_user_id: user.id });
       } else {
         const response = NextResponse.redirect(new URL('/acesso-suspenso', request.url));
-        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c));
         response.cookies.delete('admin_unlocked');
         return response;
       }
@@ -140,17 +140,17 @@ export async function updateSession(request: NextRequest) {
 
       if (['admin_notification', 'fill_admin_profile', 'upload_photo'].includes(realStep)) {
         const response = NextResponse.redirect(new URL('/admin-onboarding', request.url));
-        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c));
         return response;
       }
       if (realStep === 'accept_admin_terms') {
         const response = NextResponse.redirect(new URL('/termos-admin', request.url));
-        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c));
         return response;
       }
       if (realStep === 'create_pin') {
         const response = NextResponse.redirect(new URL('/criar-pin', request.url));
-        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+        supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c));
         return response;
       }
     }
@@ -163,7 +163,7 @@ export async function updateSession(request: NextRequest) {
     
     if (!unlockToken) {
       const response = NextResponse.redirect(new URL('/pin-lock', request.url));
-      supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+      supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c));
       return response;
     }
 
@@ -173,7 +173,7 @@ export async function updateSession(request: NextRequest) {
     if (!isValidToken) {
       // Clear invalid cookie
       const response = NextResponse.redirect(new URL('/pin-lock', request.url));
-      supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+      supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c));
       response.cookies.delete('admin_unlocked');
       return response;
     }
@@ -181,7 +181,7 @@ export async function updateSession(request: NextRequest) {
 
   if (pathname === '/login' && user) {
     const response = NextResponse.redirect(new URL('/', request.url));
-    supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c.name, c.value));
+    supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c));
     return response;
   }
 
