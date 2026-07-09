@@ -313,7 +313,16 @@ export async function createPublicRegistration(
   try {
     const customerId = await createOrFindAsaasCustomer(name, email, phone, cpf);
     const description = `Ingresso: ${event.title}`;
-    const value = Number(event.ticket_price);
+    
+    // Calcula a taxa do Asaas para somar ao valor final
+    let asaasFee = 0;
+    if (payMethod === 'boleto') {
+      asaasFee = 2.99;
+    } else if (payMethod === 'pix') {
+      asaasFee = 1.99;
+    }
+    
+    const value = Number(event.ticket_price) + asaasFee;
 
     let payment;
     let pixInfo: { qrCode?: string; copyPaste?: string; expirationDate?: string } = {};

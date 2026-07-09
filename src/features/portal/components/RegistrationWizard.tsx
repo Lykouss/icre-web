@@ -61,7 +61,7 @@ function formatDate(dateStr: string | null): string {
   return `${d.getDate()} de ${MONTHS[d.getMonth()]}. de ${d.getFullYear()}`;
 }
 
-type StepId = 'terms' | 'form' | 'custom' | 'payment-method' | 'success';
+type StepId = 'terms' | 'form' | 'custom' | 'summary' | 'success';
 
 export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }: Props) {
   const router = useRouter();
@@ -69,11 +69,11 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
   const hasCustomForm = !!(event.custom_form_schema && event.custom_form_schema.length > 0);
   
   const stepLabels = isPaid 
-    ? (hasCustomForm ? ['Termos', 'Titular', 'Adicionais', 'Pagamento', 'Sucesso'] : ['Termos', 'Titular', 'Pagamento', 'Sucesso'])
+    ? (hasCustomForm ? ['Termos', 'Titular', 'Adicionais', 'Resumo', 'Sucesso'] : ['Termos', 'Titular', 'Resumo', 'Sucesso'])
     : (hasCustomForm ? ['Termos', 'Titular', 'Adicionais', 'Sucesso'] : ['Termos', 'Titular', 'Sucesso']);
 
   const stepIds: StepId[] = isPaid
-    ? (hasCustomForm ? ['terms', 'form', 'custom', 'payment-method', 'success'] : ['terms', 'form', 'payment-method', 'success'])
+    ? (hasCustomForm ? ['terms', 'form', 'custom', 'summary', 'success'] : ['terms', 'form', 'summary', 'success'])
     : (hasCustomForm ? ['terms', 'form', 'custom', 'success'] : ['terms', 'form', 'success']);
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -145,6 +145,8 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
     if (hasCustomForm) {
       nextStep();
+    } else if (isPaid) {
+      nextStep();
     } else {
       executeSubmit();
     }
@@ -152,7 +154,11 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
   const handleCustomFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    executeSubmit();
+    if (isPaid) {
+      nextStep();
+    } else {
+      executeSubmit();
+    }
   };
 
   const executeSubmit = () => {
@@ -528,7 +534,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       </div>
                     )}
 
-                    {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+                    {!isPaid && !hasCustomForm && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
                       <div className="flex justify-center mt-4">
                         <Turnstile
                           siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
@@ -556,10 +562,10 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                             </svg>
-                            {(!hasCustomForm && isPaid) ? 'Gerando cobrança...' : 'Confirmando...'}
+                            Confirmando...
                           </>
                         ) : (!hasCustomForm && isPaid) ? (
-                          <>Pagar {formatCurrency(event.ticket_price!)} <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
+                          <>Revisar e Pagar <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
                         ) : (
                           <>{hasCustomForm ? 'Próximo Passo' : 'Confirmar Inscrição'} <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
                         )}
@@ -607,6 +613,15 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       inputCls={inputCls}
                     />
 
+                    {!isPaid && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+                      <div className="flex justify-center mt-4">
+                        <Turnstile
+                          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                          onSuccess={setTurnstileToken}
+                        />
+                      </div>
+                    )}
+
                     <div className="flex gap-3 pt-2">
                       <button
                         type="button"
@@ -626,16 +641,103 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                             </svg>
-                            {isPaid ? 'Gerando cobrança...' : 'Confirmando...'}
+                            Confirmando...
                           </>
                         ) : isPaid ? (
-                          <>Pagar {formatCurrency(event.ticket_price!)} <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
+                          <>Revisar e Pagar <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
                         ) : (
                           <>Confirmar Inscrição <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
                         )}
                       </button>
                     </div>
                   </form>
+                </div>
+              </div>
+            )}
+
+            {/* ─── STEP: SUMMARY (Checkout) ─── */}
+            {stepId === 'summary' && isPaid && (
+              <div>
+                <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/60 border-b border-white/6 px-7 py-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-emerald-500/15 border border-emerald-500/25 rounded-xl flex items-center justify-center shrink-0">
+                      <svg className="w-4.5 h-4.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Passo Final de {visibleSteps.length}</p>
+                      <h2 className="text-base font-black text-white">Resumo da Compra</h2>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-7">
+                  {error && (
+                    <div className="flex flex-col gap-2 mb-5">
+                      <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-500/20 text-red-400 text-sm px-4 py-3.5 rounded-xl">
+                        <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{error}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="bg-slate-800/40 border border-white/10 rounded-2xl p-5 mb-6">
+                    <div className="flex justify-between items-center mb-4 pb-4 border-b border-white/10">
+                      <span className="text-sm font-semibold text-slate-300">Valor da Inscrição (Base)</span>
+                      <span className="text-sm font-bold text-white">{formatCurrency(event.ticket_price || 0)}</span>
+                    </div>
+                    <div className="flex justify-between items-center mb-4 pb-4 border-b border-white/10">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-slate-300">Taxa de Transação</span>
+                        <span className="text-[10px] text-slate-500 mt-0.5">Cobrada pelo Asaas ({paymentMethod === 'pix' ? 'PIX' : 'Boleto'})</span>
+                      </div>
+                      <span className="text-sm font-bold text-white">{formatCurrency(paymentMethod === 'pix' ? 1.99 : 2.99)}</span>
+                    </div>
+                    <div className="flex justify-between items-center pt-2">
+                      <span className="text-base font-black text-white">Total a Pagar</span>
+                      <span className="text-xl font-black text-blue-400">{formatCurrency((event.ticket_price || 0) + (paymentMethod === 'pix' ? 1.99 : 2.99))}</span>
+                    </div>
+                  </div>
+
+                  {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+                    <div className="flex justify-center mb-6">
+                      <Turnstile
+                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                        onSuccess={setTurnstileToken}
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={prevStep}
+                      className="px-5 py-3.5 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 text-sm font-semibold transition-all"
+                    >
+                      Voltar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={executeSubmit}
+                      disabled={isPending}
+                      className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                    >
+                      {isPending ? (
+                        <>
+                          <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                          </svg>
+                          Gerando cobrança...
+                        </>
+                      ) : (
+                        <>Confirmar e Pagar <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
