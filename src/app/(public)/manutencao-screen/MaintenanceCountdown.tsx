@@ -16,7 +16,7 @@ export function MaintenanceCountdown({ expectedEndAt, serverTime, autoDeactivate
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'site_maintenance' }, (payload) => {
         const row = payload.new as any;
         if (row && !row.is_portal_maintenance && !row.is_sige_maintenance) {
-          window.location.reload(); // Recarrega se a manutenção global acabar
+          window.location.href = '/'; // Redireciona para home se a manutenção global acabar
         }
       })
       .subscribe();
@@ -37,7 +37,7 @@ export function MaintenanceCountdown({ expectedEndAt, serverTime, autoDeactivate
       
       if (diff <= 0) {
         if (autoDeactivate) {
-          window.location.reload();
+          window.location.href = '/';
         } else {
           setTimeLeft('Tempo estimado atingido');
           setIsFinished(true);
@@ -73,7 +73,7 @@ export function MaintenanceCountdown({ expectedEndAt, serverTime, autoDeactivate
       
       {isFinished && !autoDeactivate && (
         <button 
-          onClick={() => window.location.reload()}
+          onClick={() => window.location.href = '/'}
           className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors bg-slate-800/50 hover:bg-slate-700 px-4 py-2 rounded-full border border-slate-700 hover:border-slate-600"
         >
           <RefreshCw className="w-4 h-4" />

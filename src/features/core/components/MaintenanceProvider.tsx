@@ -13,11 +13,19 @@ export function MaintenanceProvider({ children }: MaintenanceProviderProps) {
 
   // Efeito que monitora o momento exato em que a manutenção deve iniciar
   useEffect(() => {
+    if (loading) return; // Aguarda a verificação de SysAdmin terminar
+
     if (maintenance && !maintenance.is_portal_maintenance && !maintenance.is_sige_maintenance && maintenance.scheduled_at && maintenance.auto_activate_scheduled) {
       const scheduledTime = new Date(maintenance.scheduled_at).getTime();
+      const expectedEndTime = maintenance.expected_end_at ? new Date(maintenance.expected_end_at).getTime() : null;
+
       const interval = setInterval(() => {
         const now = Date.now();
-        if (now >= scheduledTime && !isSysAdmin) {
+        const isPastStart = now >= scheduledTime;
+        const isPastEnd = expectedEndTime ? now >= expectedEndTime : false;
+
+        // Só redireciona se passou do início E NÃO passou do fim
+        if (isPastStart && !isPastEnd && !isSysAdmin) {
           if (window.location.pathname !== '/manutencao-screen') {
             window.location.href = '/manutencao-screen';
           }
@@ -25,7 +33,7 @@ export function MaintenanceProvider({ children }: MaintenanceProviderProps) {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [maintenance?.scheduled_at, maintenance?.auto_activate_scheduled, maintenance?.is_portal_maintenance, maintenance?.is_sige_maintenance, isSysAdmin]);
+  }, [maintenance?.scheduled_at, maintenance?.expected_end_at, maintenance?.auto_activate_scheduled, maintenance?.is_portal_maintenance, maintenance?.is_sige_maintenance, isSysAdmin, loading]);
 
   if (loading) return <>{children}</>;
 

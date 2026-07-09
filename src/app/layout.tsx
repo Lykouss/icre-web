@@ -23,6 +23,27 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased`}>
+        {/* Limpa service workers residuais do PWA antigo que causam reload loops */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+              for (var r of registrations) {
+                if (r.active && r.active.scriptURL && !r.active.scriptURL.includes('firebase-messaging-sw')) {
+                  r.unregister();
+                }
+              }
+            });
+            if ('caches' in window) {
+              caches.keys().then(function(names) {
+                for (var name of names) {
+                  if (name.startsWith('workbox-') || name === 'start-url' || name.startsWith('static-') || name === 'next-data' || name === 'next-image' || name === 'others' || name === 'apis') {
+                    caches.delete(name);
+                  }
+                }
+              });
+            }
+          }
+        `}} />
         <MaintenanceProvider>
           {children}
         </MaintenanceProvider>
