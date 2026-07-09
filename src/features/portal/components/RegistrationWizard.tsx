@@ -686,13 +686,13 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
                   <div className="bg-slate-800/40 border border-white/10 rounded-2xl p-5 mb-6">
                     <div className="flex justify-between items-center mb-4 pb-4 border-b border-white/10">
-                      <span className="text-sm font-semibold text-slate-300">Valor da Inscrição (Base)</span>
+                      <span className="text-sm font-semibold text-slate-300">Valor da Inscrição</span>
                       <span className="text-sm font-bold text-white">{formatCurrency(event.ticket_price || 0)}</span>
                     </div>
                     <div className="flex justify-between items-center mb-4 pb-4 border-b border-white/10">
                       <div className="flex flex-col">
                         <span className="text-sm font-semibold text-slate-300">Taxa de Transação</span>
-                        <span className="text-[10px] text-slate-500 mt-0.5">Cobrada pelo Asaas ({paymentMethod === 'pix' ? 'PIX' : 'Boleto'})</span>
+                        <span className="text-[10px] text-slate-500 mt-0.5">Cobrança do serviço de transações</span>
                       </div>
                       <span className="text-sm font-bold text-white">{formatCurrency(paymentMethod === 'pix' ? 1.99 : 2.99)}</span>
                     </div>
