@@ -43,23 +43,6 @@ export function AdminSystemButton() {
     };
 
     check();
-
-    // Realtime — detecta quando onboarding_step vira 'done'
-    const channel = supabase
-      .channel('admin_button_watch')
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'profiles' },
-        payload => {
-          if (payload.new.id === userId && payload.new.onboarding_step === 'done') {
-            setIsAdmin(true);
-            setTimeout(() => setVisible(true), 300);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
   }, []);
 
   if (!isAdmin) return null;

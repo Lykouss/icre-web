@@ -11,19 +11,22 @@ export function MaintenanceCountdown({ expectedEndAt, serverTime, autoDeactivate
   const supabase = createClient();
 
   useEffect(() => {
-    // Inscreve no Realtime para detectar quando a manutenção for desativada manualmente
-    const channel = supabase.channel('public:site_maintenance_screen')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'site_maintenance' }, (payload) => {
-        const row = payload.new as any;
-        if (row && !row.is_portal_maintenance && !row.is_sige_maintenance) {
+    // Polling em vez de Realtime para não estourar limite do Supabase Free Tier
+    const interval = setInterval(async () => {
+      const { data, error } = await supabase
+        .from('site_maintenance')
+        .select('is_portal_maintenance, is_sige_maintenance')
+        .eq('id', 1)
+        .single();
+        
+      if (!error && data) {
+        if (!data.is_portal_maintenance && !data.is_sige_maintenance) {
           window.location.href = '/'; // Redireciona para home se a manutenção global acabar
         }
-      })
-      .subscribe();
+      }
+    }, 10000);
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {

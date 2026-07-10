@@ -63,26 +63,12 @@ export function useMaintenance() {
 
     fetchMaintenance();
 
-    // Subscribe to realtime changes
-    const subscription = supabase
-      .channel('public:site_maintenance')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'site_maintenance',
-          filter: 'id=eq.1'
-        },
-        (payload) => {
-          setMaintenance(payload.new as SiteMaintenance);
-        }
-      )
-      .subscribe();
+    fetchMaintenance();
 
-    return () => {
-      supabase.removeChannel(subscription);
-    };
+    // Polling em vez de Realtime para não estourar limite do Supabase Free Tier
+    const interval = setInterval(fetchMaintenance, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return { maintenance, isSysAdmin, loading };

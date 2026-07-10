@@ -71,64 +71,61 @@ export function GlobalNotificationListener() {
   }, [toast]);
 
   useEffect(() => {
-    if (didRunNotifications.current) return;
-    didRunNotifications.current = true;
+    const supabase = createClient();
+    let channel: any = null;
 
-    const supabase = supabaseRef.current;
-
-    const fetchPendingAnnouncements = async () => {
+    const setupListener = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
-        .from('user_notifications')
-        .select(`
-          id,
-          communications (
-            id, type, title, message, lock_duration_seconds, scheduled_for
-          )
-        `)
-        .eq('user_id', user.id)
-        .eq('is_read', false);
+      const fetchPendingAnnouncements = async () => {
+        const { data, error } = await supabase
+          .from('user_notifications')
+          .select(`
+            id,
+            communications (id, type, title, message, lock_duration_seconds, scheduled_for)
+          `)
+          .eq('user_id', user.id)
+          .eq('is_read', false);
 
-      if (data && !error) {
-        for (const item of data) {
-          const comm = Array.isArray(item.communications) ? item.communications[0] : item.communications;
-          if (comm) {
-             handleIncomingNotification(item.id, comm);
-          }
-        }
-      }
-    };
-
-    fetchPendingAnnouncements();
-
-    const channel = supabase.channel('user-notifications-channel')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'user_notifications' },
-        async (payload) => {
-          const newNotifId = payload.new.id;
-          const commId = payload.new.communication_id;
-
-          const { data, error } = await supabase
-            .from('communications')
-            .select('*')
-            .eq('id', commId)
-            .single();
-
-          if (data && !error) {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user && payload.new.user_id === user.id) {
-              handleIncomingNotification(newNotifId, data);
+        if (data && !error) {
+          for (const item of data) {
+            const comm = Array.isArray(item.communications) ? item.communications[0] : item.communications;
+            if (comm) {
+               handleIncomingNotification(item.id, comm);
             }
           }
         }
-      )
-      .subscribe();
+      };
+
+      fetchPendingAnnouncements();
+
+      channel = supabase.channel('user-notifications-channel')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'user_notifications', filter: `user_id=eq.${user.id}` },
+          async (payload) => {
+            const newNotifId = payload.new.id;
+            const commId = payload.new.communication_id;
+
+            const { data, error } = await supabase
+              .from('communications')
+              .select('id, type, title, message, lock_duration_seconds, scheduled_for')
+              .eq('id', commId)
+              .single();
+
+            if (!error && data) {
+              handleIncomingNotification(newNotifId, data);
+            }
+          }
+        )
+        .subscribe();
+    };
+
+    setupListener();
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [handleIncomingNotification]);
 

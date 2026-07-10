@@ -101,24 +101,7 @@ useEffect(() => {
     };
 
     check();
-
-    // Realtime — detecta onboarding concluído
-    const supabase = createClient();
-    const channel = supabase
-      .channel('navbar_admin_watch')
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'profiles' },
-        payload => {
-          if (payload.new.onboarding_step === 'done') {
-            setIsAdminOverride(true);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
-  }, []);
+  }, [user]);
 
   const showAdminButton = isAdminOverride !== null ? isAdminOverride : user?.isAdmin;
 
