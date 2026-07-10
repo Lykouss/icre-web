@@ -404,7 +404,12 @@ function RegistrationCard({
           )}
 
           {variant === 'cancelled' && (
-            <StatusBadge color="slate" label="Cancelada" />
+            <div className="flex flex-col md:items-end gap-1">
+              <StatusBadge color="slate" label={reg.payment_status === 'expirado' ? 'Cancelada (Expirou)' : 'Cancelada'} />
+              {reg.payment_status === 'expirado' && (
+                <p className="text-[10px] text-slate-500 font-medium">Tempo limite de pagamento esgotado.</p>
+              )}
+            </div>
           )}
         </div>
 

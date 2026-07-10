@@ -70,24 +70,34 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
   if (user) {
     const { data: { user: authUser } } = await supabase.auth.getUser();
 
-    const { data: regs } = await supabase
-      .from('event_registrations')
-      .select('id, status, payment_status, ticket_signature, event_id')
-      .eq('event_id', id)
-      .eq('member_id', user.id);
+    // 1. Get the member ID associated with this user
+    const { data: memberData } = await supabase
+      .from('members')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle();
 
-    existingRegistrations = (regs ?? []).filter(
-      r => r.status === 'confirmado' || r.status === 'pendente_pagamento'
-    );
+    const memberId = memberData?.id;
 
-    // Fallback por email (inscrições feitas sem login)
+    if (memberId) {
+      const { data: regs } = await supabase
+        .from('event_registrations')
+        .select('id, status, payment_status, ticket_signature, event_id')
+        .eq('event_id', id)
+        .eq('member_id', memberId);
+
+      existingRegistrations = (regs ?? []).filter(
+        r => r.status === 'confirmado' || r.status === 'pendente_pagamento'
+      );
+    }
+
+    // Fallback por email (inscrições feitas sem login ou sem membro)
     if (existingRegistrations.length === 0 && authUser?.email) {
       const { data: emailRegs } = await supabase
         .from('event_registrations')
         .select('id, status, payment_status, ticket_signature, event_id')
         .eq('event_id', id)
-        .eq('email', authUser.email)
-        .is('member_id', null);
+        .eq('email', authUser.email); // Removed .is('member_id', null) to catch all
 
       existingRegistrations = (emailRegs ?? []).filter(
         r => r.status === 'confirmado' || r.status === 'pendente_pagamento'

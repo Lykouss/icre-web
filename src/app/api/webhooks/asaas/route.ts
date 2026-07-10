@@ -97,6 +97,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Inscrição não encontrada.' }, { status: 404 });
     }
 
+    // ── 3.5 Resolve User ID for Notifications ───────────────────────────────
+    let userId: string | null = null;
+    if (registration.member_id) {
+      const { data: member } = await supabase.from('members').select('user_id').eq('id', registration.member_id).single();
+      userId = member?.user_id;
+    }
+    if (!userId && registration.email) {
+      const { data: profile } = await supabase.from('profiles').select('id').eq('email', registration.email).maybeSingle();
+      userId = profile?.id;
+    }
+
     // ── 4. Process event ───────────────────────────────────────────────────
     if (eventType === 'PAYMENT_RECEIVED' || eventType === 'PAYMENT_CONFIRMED') {
       if (registration.payment_status === 'pago') {
@@ -126,6 +137,18 @@ export async function POST(request: Request) {
       });
 
       console.log(`[Webhook Asaas] ✓ Pagamento confirmado para inscrição ${registration.id}`);
+
+      if (userId) {
+        const { data: ev } = await supabase.from('events').select('title').eq('id', registration.event_id).single();
+        const eventTitle = ev?.title || 'o evento';
+        await sendSystemNotification(
+          supabase,
+          userId,
+          'INFO',
+          'Pagamento Confirmado! 🎉',
+          `Sua inscrição para ${eventTitle} foi confirmada com sucesso. Você já pode acessar seu ingresso virtual.`
+        );
+      }
     } else if (
       eventType === 'PAYMENT_DELETED' ||
       eventType === 'PAYMENT_REFUNDED' ||
@@ -155,6 +178,18 @@ export async function POST(request: Request) {
       });
 
       console.log(`[Webhook Asaas] ✓ Pagamento ${newPaymentStatus} para inscrição ${registration.id}`);
+
+      if (userId && eventType === 'PAYMENT_OVERDUE') {
+        const { data: ev } = await supabase.from('events').select('title').eq('id', registration.event_id).single();
+        const eventTitle = ev?.title || 'o evento';
+        await sendSystemNotification(
+          supabase,
+          userId,
+          'WARNING',
+          'Tempo de Pagamento Expirado ⏰',
+          `O tempo limite para pagamento da inscrição em ${eventTitle} expirou. Sua inscrição foi cancelada automaticamente.`
+        );
+      }
     }
 
     return NextResponse.json({ received: true, processed: true });
@@ -164,5 +199,31 @@ export async function POST(request: Request) {
       { error: 'Erro interno no servidor.' },
       { status: 500 }
     );
+  }
+}
+
+async function sendSystemNotification(supabaseAdmin: any, userId: string, type: string, title: string, message: string) {
+  try {
+    const { data: comm } = await supabaseAdmin
+      .from('communications')
+      .insert({
+        type,
+        title,
+        message,
+        lock_duration_seconds: 0,
+        audience_filter: { type: 'MANUAL', userIds: [userId] },
+      })
+      .select('id')
+      .single();
+
+    if (comm?.id) {
+      await supabaseAdmin.from('user_notifications').insert({
+        user_id: userId,
+        communication_id: comm.id,
+        is_read: false,
+      });
+    }
+  } catch (err) {
+    console.error('[Webhook Asaas] Erro ao enviar notificação:', err);
   }
 }

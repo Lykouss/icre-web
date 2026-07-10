@@ -3,6 +3,7 @@ import { PublicNavbar } from '@/features/portal/components/PublicNavbar';
 import { PublicFooter } from '@/features/portal/components/PublicFooter';
 import { AdminPromotionBanner } from '@/features/core/components/AdminPromotionBanner';
 import { PendingOnboardingBanner } from '@/features/core/components/PendingOnboardingBanner';
+import { PendingPaymentBanner } from '@/features/core/components/PendingPaymentBanner';
 import { ToastProvider } from '@/features/core/components/ToastContext';
 import { GlobalNotificationListener } from '@/features/core/components/GlobalNotificationListener';
 import { GiftNotificationModal } from '@/features/events/components/GiftNotificationModal';
@@ -62,6 +63,7 @@ export default async function PublicLayout({ children }: { children: React.React
       <GiftNotificationModal gifts={unnotifiedGifts} />
       <AdminPromotionBanner />
       <PendingOnboardingBanner />
+      <PendingPaymentBanner />
       <PublicNavbar user={navUser} activeBlockTypes={activeBlockTypes} />
       <div className="pt-0 min-h-screen">{children}</div>
       <PublicFooter />
