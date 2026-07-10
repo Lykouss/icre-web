@@ -88,7 +88,7 @@ export async function POST(request: Request) {
     // ── 3. Find registration ───────────────────────────────────────────────
     const { data: registration, error: fetchError } = await supabase
       .from('event_registrations')
-      .select('id, event_id, status, payment_status, ticket_signature')
+      .select('id, event_id, status, payment_status, ticket_signature, member_id, email')
       .eq('asaas_payment_id', payment.id)
       .single();
 
