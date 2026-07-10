@@ -115,11 +115,11 @@ function Toast({ message, type }: { message: string; type: 'success' | 'error' }
       } shadow-lg`}
     >
       {type === 'success' ? (
-        <div className="w-4 h-4 bg-emerald-500 text-white rounded-full flex items-center justify-center">
+        <div className="w-4 h-4 bg-emerald-500 text-slate-900 dark:text-white rounded-full flex items-center justify-center">
           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
         </div>
       ) : (
-        <div className="w-4 h-4 bg-red-500 text-white rounded-full flex items-center justify-center">
+        <div className="w-4 h-4 bg-red-500 text-slate-900 dark:text-white rounded-full flex items-center justify-center">
           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
         </div>
       )}
@@ -336,7 +336,7 @@ export function FlagManager({
                      <button
                       disabled={isPending || !maintenanceAt}
                       onClick={(e) => { e.stopPropagation(); handleScheduleMaintenance(); }}
-                      className="px-5 py-2.5 text-white font-bold text-xs rounded-xl shadow-lg transition-all disabled:opacity-30"
+                      className="px-5 py-2.5 text-slate-900 dark:text-white font-bold text-xs rounded-xl shadow-lg transition-all disabled:opacity-30"
                       style={{ background: 'var(--admin-accent)' }}
                     >
                       Agendar
@@ -365,7 +365,7 @@ export function FlagManager({
                     <button
                       disabled={isPending}
                       onClick={(e) => { e.stopPropagation(); handleEarlyAccess(); }}
-                      className="ml-auto px-6 py-2.5 text-white font-bold text-xs rounded-xl shadow-lg transition-all"
+                      className="ml-auto px-6 py-2.5 text-slate-900 dark:text-white font-bold text-xs rounded-xl shadow-lg transition-all"
                       style={{ background: 'var(--admin-accent)' }}
                     >
                       SORTEAR

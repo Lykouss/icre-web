@@ -73,7 +73,7 @@ export default async function PublicEventsPage() {
             <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full">
               Agenda
             </div>
-            <Link href="/minhas-inscricoes" className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-xs font-semibold px-4 py-2 rounded-full transition-all border border-black/10 dark:border-white/10">
+            <Link href="/minhas-inscricoes" className="inline-flex items-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-xs font-semibold px-4 py-2 rounded-full transition-all border-black/10 dark:border-white/10">
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
               Minhas Inscrições
             </Link>
@@ -87,7 +87,7 @@ export default async function PublicEventsPage() {
         </div>
 
         {(!events || events.length === 0) ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-slate-50 dark:bg-slate-900/40 border border-white/6 border-dashed rounded-3xl">
+          <div className="flex flex-col items-center justify-center py-20 bg-slate-50 dark:bg-slate-900/40 border border-black/6 dark:border-white/6 border-dashed rounded-3xl">
             <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/15 rounded-2xl flex items-center justify-center mb-4">
               <svg className="w-8 h-8 text-blue-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -112,7 +112,7 @@ export default async function PublicEventsPage() {
                   <div className="absolute inset-0 rounded-3xl bg-blue-500/0 group-hover:bg-blue-500/3 transition-colors duration-300 pointer-events-none" />
 
                   {/* Imagem */}
-                  <div className="relative h-44 bg-slate-800/60 overflow-hidden">
+                  <div className="relative h-44 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 overflow-hidden">
                     {event.banner_url ? (
                       <Image
                         src={event.banner_url}
@@ -129,7 +129,7 @@ export default async function PublicEventsPage() {
                         </div>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-50/80 dark:from-slate-900/80 via-transparent to-transparent" />
 
                     {/* Data flutuante */}
                     {date && (

@@ -137,7 +137,7 @@ export default function AdminOnboardingPhotoPage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={preview} alt="Preview" className="w-full h-full rounded-full object-cover" />
               ) : (
-                <div className="w-full h-full rounded-full bg-slate-800/80 border-2 border-dashed border-slate-600 hover:border-violet-500/60 flex flex-col items-center justify-center gap-2 transition-all">
+                <div className="w-full h-full rounded-full bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/80 border-2 border-dashed border-slate-200 dark:border-slate-600 hover:border-violet-500/60 flex flex-col items-center justify-center gap-2 transition-all">
                   <svg className="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>

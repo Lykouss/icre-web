@@ -68,7 +68,7 @@ export function PendingOnboardingBanner() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 p-4 flex justify-center pointer-events-none">
-      <div className="pointer-events-auto flex items-center gap-4 bg-slate-900/90 backdrop-blur-xl border border-violet-500/30 rounded-2xl px-5 py-3.5 shadow-2xl shadow-black/40 max-w-lg w-full">
+      <div className="pointer-events-auto flex items-center gap-4 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-900/90 backdrop-blur-xl border-violet-500/30 rounded-2xl px-5 py-3.5 shadow-2xl shadow-black/40 max-w-lg w-full">
         {/* Ícone pulsante */}
         <div className="w-8 h-8 bg-violet-500/15 border border-violet-500/30 rounded-xl flex items-center justify-center shrink-0">
           <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
@@ -76,12 +76,12 @@ export function PendingOnboardingBanner() {
 
         <div className="flex-1 min-w-0">
           <p className="text-xs text-violet-400 font-bold uppercase tracking-wide">Etapa pendente</p>
-          <p className="text-sm text-slate-200 font-medium truncate">{info.label}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-200 font-medium truncate">{info.label}</p>
         </div>
 
         <button
           onClick={() => router.push(info.href)}
-          className="shrink-0 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors"
+          className="shrink-0 bg-violet-600 hover:bg-violet-500 text-slate-900 dark:text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors"
         >
           Continuar
         </button>

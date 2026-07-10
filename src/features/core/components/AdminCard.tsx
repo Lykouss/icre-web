@@ -57,7 +57,7 @@ export function AdminCardHeader({ title, description, icon, action, className = 
           </div>
         )}
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-slate-200 leading-tight">{title}</p>
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-200 leading-tight">{title}</p>
           {description && <p className="text-[11px] mt-0.5" style={{ color: 'var(--admin-text-secondary)' }}>{description}</p>}
         </div>
       </div>

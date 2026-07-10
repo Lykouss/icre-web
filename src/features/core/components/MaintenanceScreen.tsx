@@ -39,14 +39,14 @@ export function MaintenanceScreen({ featureName = 'Este recurso' }: MaintenanceS
             Em Manutenção
           </h2>
           
-          <p className="text-slate-400 mb-8 leading-relaxed text-sm">
+          <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed text-sm">
             Estamos polindo o módulo <strong>{featureName}</strong> para garantir a melhor experiência possível. 
             Em breve tudo estará de volta ao normal!
           </p>
 
           <a 
             href="/dashboard"
-            className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
+            className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold bg-blue-600 text-slate-900 dark:text-white rounded-lg hover:bg-blue-500 transition-colors"
           >
             Voltar ao Início
           </a>

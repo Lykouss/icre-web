@@ -129,7 +129,7 @@ export function EventDetailsClient({
         {event.banner_url && (
           <div className="relative w-full aspect-video rounded-3xl overflow-hidden mb-8 border border-black/5 dark:border-white/8">
             <Image src={event.banner_url} alt={event.title} fill className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-white/60 dark:from-slate-950/60 to-transparent" />
           </div>
         )}
 
@@ -177,7 +177,7 @@ export function EventDetailsClient({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <span className="font-medium text-slate-200">{formatDate(event.date)}{event.time && ` · ${event.time.slice(0, 5)}`}</span>
+                <span className="font-medium text-slate-600 dark:text-slate-200">{formatDate(event.date)}{event.time && ` · ${event.time.slice(0, 5)}`}</span>
               </div>
             )}
             {event.location && (
@@ -187,7 +187,7 @@ export function EventDetailsClient({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
                 </div>
-                <span className="font-medium text-slate-200">{event.location}</span>
+                <span className="font-medium text-slate-600 dark:text-slate-200">{event.location}</span>
               </div>
             )}
             {spotsLeft !== null && (
@@ -225,7 +225,7 @@ export function EventDetailsClient({
               </svg>
             </button>
             {rulesExpanded && (
-              <div className="px-6 pb-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-white/6 pt-4 whitespace-pre-wrap">
+              <div className="px-6 pb-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-black/6 dark:border-white/6 pt-4 whitespace-pre-wrap">
                 {event.terms_text}
               </div>
             )}
@@ -310,7 +310,7 @@ export function EventDetailsClient({
               </Link>
               <Link
                 href="/suporte?title=Erro+no+Pagamento&description=Não+consegui+finalizar+o+pagamento+da+minha+inscrição."
-                className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-2xl transition-all border border-black/10 dark:border-white/10"
+                className="w-full flex items-center justify-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-2xl transition-all border-black/10 dark:border-white/10"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 9v2m0 4h.01" />
@@ -352,7 +352,7 @@ export function EventDetailsClient({
               {confirmedRegistrations.length > 1 && (
                 <Link
                   href="/minhas-inscricoes"
-                  className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-sm font-semibold py-3 rounded-2xl transition-all border border-black/10 dark:border-white/10"
+                  className="w-full flex items-center justify-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-sm font-semibold py-3 rounded-2xl transition-all border-black/10 dark:border-white/10"
                 >
                   Ver todos os comprovantes ({confirmedRegistrations.length})
                 </Link>

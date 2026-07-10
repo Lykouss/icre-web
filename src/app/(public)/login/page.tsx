@@ -28,7 +28,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl">
           {view === 'login' ? (
             <LoginForm onForgot={() => setView('forgot')} />
           ) : (
@@ -66,7 +66,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
     <div className="space-y-5">
       {/* Google — em breve */}
       <div className="relative group">
-        <div className="w-full flex items-center gap-3 bg-slate-800/40 border border-slate-700/50 rounded-xl px-4 py-3 cursor-not-allowed select-none backdrop-blur-sm">
+        <div className="w-full flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/40 dark:border-slate-700/50 rounded-xl px-4 py-3 cursor-not-allowed select-none backdrop-blur-sm">
           <svg className="w-5 h-5 shrink-0 opacity-35" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -82,10 +82,10 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
           </span>
         </div>
         <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-10 translate-y-1 group-hover:translate-y-0">
-          <div className="bg-slate-800 border border-slate-700 text-slate-600 dark:text-slate-300 text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl">
+          <div className="bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs px-3 py-1.5 rounded-lg whitespace-nowrap">
             Login com Google estará disponível em breve
           </div>
-          <div className="w-2 h-2 bg-slate-800 border-l border-t border-slate-700 rotate-45 absolute -top-1 left-1/2 -translate-x-1/2" />
+          <div className="w-2 h-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-l border-t dark:border-slate-700 rotate-45 absolute -top-1 left-1/2 -translate-x-1/2" />
         </div>
       </div>
 

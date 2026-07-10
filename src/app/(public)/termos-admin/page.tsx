@@ -39,9 +39,9 @@ export default function AdminTermsPage() {
           </div>
         </div>
 
-        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
           {/* Header */}
-          <div className="p-8 border-b border-slate-800">
+          <div className="p-8 border-b border-slate-200 dark:border-slate-800">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 bg-violet-500/10 border border-violet-500/20 rounded-2xl flex items-center justify-center shrink-0">
                 <svg className="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,12 +62,12 @@ export default function AdminTermsPage() {
           {/* Conteúdo dos Termos — scroll obrigatório */}
           <div
             onScroll={handleScroll}
-            className="h-72 overflow-y-auto p-8 text-sm text-slate-500 dark:text-slate-400 leading-relaxed space-y-4 border-b border-slate-800"
+            className="h-72 overflow-y-auto p-8 text-sm text-slate-500 dark:text-slate-400 leading-relaxed space-y-4 border-b border-slate-200 dark:border-slate-800"
           >
             <AdminTermsContent />
 
             {!scrolledToBottom && (
-              <div className="sticky bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none -mx-8" />
+              <div className="sticky bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-50 dark:from-slate-900 to-transparent pointer-events-none -mx-8" />
             )}
           </div>
 
@@ -91,7 +91,7 @@ export default function AdminTermsPage() {
                   disabled={!scrolledToBottom}
                   className="sr-only peer"
                 />
-                <div className="w-5 h-5 rounded-md border-2 border-slate-600 peer-checked:bg-violet-600 peer-checked:border-violet-600 transition-all flex items-center justify-center">
+                <div className="w-5 h-5 rounded-md border-2 border-slate-200 dark:border-slate-600 peer-checked:bg-violet-600 peer-checked:border-violet-600 transition-all flex items-center justify-center">
                   {accepted && (
                     <svg className="w-3 h-3 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
@@ -149,34 +149,34 @@ export default function AdminTermsPage() {
 function AdminTermsContent() {
   return (
     <>
-      <p className="font-bold text-slate-200 text-base">Termos de Responsabilidade do Administrador — ICRE</p>
+      <p className="font-bold text-slate-600 dark:text-slate-200 text-base">Termos de Responsabilidade do Administrador — ICRE</p>
       <p>Última atualização: março de 2026</p>
 
-      <p className="font-semibold text-slate-200">1. Natureza do Cargo</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-200">1. Natureza do Cargo</p>
       <p>O cargo de administrador no sistema SIGE-Web da ICRE é uma posição de confiança concedida pela liderança da igreja. O acesso administrativo não é um direito, mas um privilégio que pode ser revogado a qualquer momento mediante decisão da liderança.</p>
 
-      <p className="font-semibold text-slate-200">2. Acesso a Informações Confidenciais</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-200">2. Acesso a Informações Confidenciais</p>
       <p>Como administrador, você terá acesso a dados pessoais de membros (incluindo informações de contato, endereço e histórico pastoral), dados financeiros da igreja e registros internos. Todas essas informações são estritamente confidenciais e não devem ser compartilhadas, divulgadas ou utilizadas fora do contexto ministerial da ICRE.</p>
 
-      <p className="font-semibold text-slate-200">3. Responsabilidade pelo Uso do Sistema</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-200">3. Responsabilidade pelo Uso do Sistema</p>
       <p>Todas as ações realizadas com suas credenciais são registradas em log de auditoria e associadas à sua identidade. Você é pessoalmente responsável por qualquer ação executada no sistema com seu login. Nunca compartilhe seu PIN ou credenciais de acesso com terceiros.</p>
 
-      <p className="font-semibold text-slate-200">4. PIN de Segurança</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-200">4. PIN de Segurança</p>
       <p>Ao concluir este aceite, você criará um PIN de segurança pessoal de 4 dígitos. Este PIN é exigido sempre que você acessar o sistema em um novo contexto de sessão. Guarde-o com responsabilidade — o PIN não pode ser recuperado, apenas redefinido pela liderança.</p>
 
-      <p className="font-semibold text-slate-200">5. Conduta Ética</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-200">5. Conduta Ética</p>
       <p>O administrador compromete-se a exercer suas funções com integridade, imparcialidade e alinhamento com os valores cristãos da ICRE. É vedado o uso do sistema para fins pessoais, comerciais ou contrários aos princípios da igreja. Qualquer abuso será tratado com seriedade pela liderança.</p>
 
-      <p className="font-semibold text-slate-200">6. Gestão de Membros e Finanças</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-200">6. Gestão de Membros e Finanças</p>
       <p>Ao editar dados de membros ou registrar transações financeiras, o administrador declara que as informações inseridas são verdadeiras e corretas ao melhor de seu conhecimento. Erros intencionais ou omissões dolosas configuram violação grave destes termos.</p>
 
-      <p className="font-semibold text-slate-200">7. Proteção de Dados (LGPD)</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-200">7. Proteção de Dados (LGPD)</p>
       <p>Como operador de dados pessoais, o administrador deve seguir as diretrizes da Lei Geral de Proteção de Dados (Lei nº 13.709/2018). Isso inclui coletar apenas dados necessários, tratá-los com finalidade legítima e notificar a liderança sobre qualquer incidente de segurança.</p>
 
-      <p className="font-semibold text-slate-200">8. Revogação de Acesso</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-200">8. Revogação de Acesso</p>
       <p>O cargo administrativo pode ser revogado a qualquer momento pela liderança da ICRE, sem necessidade de justificativa prévia. Ao sair do cargo, o administrador deve cessar imediatamente qualquer uso de credenciais privilegiadas.</p>
 
-      <p className="font-semibold text-slate-200">9. Vigência</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-200">9. Vigência</p>
       <p>Estes termos entram em vigor no momento do aceite e permanecem válidos durante todo o período em que o cargo for exercido. A aceitação é registrada com data e hora no sistema para fins de auditoria.</p>
     </>
   );

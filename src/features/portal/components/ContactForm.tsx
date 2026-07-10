@@ -18,7 +18,7 @@ function InfoRow({
       </div>
       <div>
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">{label}</p>
-        <p className="text-slate-200 font-medium leading-snug">{value}</p>
+        <p className="text-slate-600 dark:text-slate-200 font-medium leading-snug">{value}</p>
       </div>
     </div>
   );
@@ -127,7 +127,7 @@ export function ContactSection({ content }: Props) {
           >
             <div className="relative">
               <div className="absolute -inset-3 bg-blue-500/8 rounded-3xl blur-xl" />
-              <div className="relative rounded-3xl overflow-hidden border border-black/5 dark:border-white/8 bg-slate-800/50 aspect-4/3 shadow-2xl">
+              <div className="relative rounded-3xl overflow-hidden border border-black/5 dark:border-white/8 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 aspect-4/3 shadow-2xl">
                 {mapsUrl ? (
                   <iframe
                     src={mapsUrl}

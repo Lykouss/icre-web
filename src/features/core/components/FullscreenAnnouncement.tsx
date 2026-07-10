@@ -56,7 +56,7 @@ export function FullscreenAnnouncement({ announcement, onClose }: FullscreenAnno
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+            className="absolute inset-0 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-950/80"
             style={{ pointerEvents: 'auto' }}
           />
           
@@ -79,13 +79,13 @@ export function FullscreenAnnouncement({ announcement, onClose }: FullscreenAnno
                 </div>
               </div>
               
-              <h2 className="text-2xl font-black text-center text-white mb-4">{announcement.title}</h2>
-              <div className="text-slate-300 text-sm text-center leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto portal-scroll">
+              <h2 className="text-2xl font-black text-center text-slate-900 dark:text-white mb-4">{announcement.title}</h2>
+              <div className="text-slate-600 dark:text-slate-300 text-sm text-center leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto portal-scroll">
                 {announcement.message}
               </div>
             </div>
 
-            <div className="p-6 bg-black/40 border-t border-white/5 flex justify-center">
+            <div className="p-6 bg-black/40 border-t border-black/5 dark:border-white/5 flex justify-center">
               <button
                 onClick={handleClose}
                 disabled={timeLeft > 0}

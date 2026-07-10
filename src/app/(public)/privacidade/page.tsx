@@ -31,7 +31,7 @@ export default function PrivacidadePage() {
     <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* Hero */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-blue-950/60 to-slate-950 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-br from-blue-950/60 to-white dark:to-slate-950 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative max-w-3xl mx-auto px-6 pt-32 pb-16">

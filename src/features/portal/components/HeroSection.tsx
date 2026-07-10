@@ -43,8 +43,8 @@ export function HeroSection({ content }: { content: HeroContent }) {
           <Image src={content.image_url} alt="Capa" fill className="object-cover" priority />
           {/* Overlay multicamadas */}
           <div className="absolute inset-0 bg-white dark:bg-slate-950/55" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-slate-950/20" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/60 via-transparent to-slate-950/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-950 via-slate-50/30 dark:via-slate-950/30 to-white/20 dark:to-slate-950/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/60 dark:from-slate-950/60 via-transparent to-white/60 dark:to-slate-950/60" />
         </div>
       )}
 
@@ -54,8 +54,8 @@ export function HeroSection({ content }: { content: HeroContent }) {
           className="absolute inset-0 will-change-transform"
           style={{ transform: `translate3d(0, ${parallaxOffset * 0.3}px, 0)` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950/80 to-slate-900" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-white dark:from-slate-950 via-blue-950/80 to-slate-50 dark:to-slate-900" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/80 dark:from-slate-950/80 via-transparent to-transparent" />
         </div>
       )}
 
@@ -165,7 +165,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         style={{ opacity: mounted ? 0.35 : 0, transitionDelay: '700ms' }}
       >
         <span className="text-[10px] text-slate-900 dark:text-white/40 font-semibold tracking-[0.2em] uppercase">Scroll</span>
-        <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center pt-1.5">
+        <div className="w-5 h-8 rounded-full border border-black/20 dark:border-white/20 flex items-start justify-center pt-1.5">
           <div className="w-1 h-2 bg-white/50 rounded-full animate-bounce" style={{ animationDuration: '1.8s' }} />
         </div>
       </div>

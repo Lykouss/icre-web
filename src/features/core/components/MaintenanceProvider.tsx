@@ -66,14 +66,14 @@ export function MaintenanceProvider({ children }: MaintenanceProviderProps) {
 
       {/* Alerta de Manutenção Agendada */}
       {timeRemaining !== null && (
-        <div className="fixed bottom-4 right-4 z-[9999] bg-slate-900 text-white px-6 py-4 rounded-2xl border border-amber-500/30 shadow-2xl flex items-start gap-4 max-w-sm animate-in slide-in-from-bottom-4">
+        <div className="fixed bottom-4 right-4 z-[9999] bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white px-6 py-4 rounded-2xl border border-amber-500/30 shadow-2xl flex items-start gap-4 max-w-sm animate-in slide-in-from-bottom-4">
           <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
             <AlertTriangle className="w-5 h-5 text-amber-500" />
           </div>
           <div>
             <h4 className="font-bold text-amber-500 mb-1">Manutenção Programada</h4>
-            <p className="text-sm text-slate-300">
-              O sistema será pausado em aproximadamente <strong className="text-white">{timeRemaining} minutos</strong>. Salve seu trabalho.
+            <p className="text-sm text-slate-600 dark:text-slate-300">
+              O sistema será pausado em aproximadamente <strong className="text-slate-900 dark:text-white">{timeRemaining} minutos</strong>. Salve seu trabalho.
             </p>
           </div>
         </div>

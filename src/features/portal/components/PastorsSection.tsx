@@ -13,18 +13,18 @@ function PastorModal({ pastor, onClose }: { pastor: Pastor; onClose: () => void 
         className="relative bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-modal-in"
         onClick={e => e.stopPropagation()}
       >
-        <div className="relative w-full aspect-[4/3] bg-slate-800 overflow-hidden">
+        <div className="relative w-full aspect-[4/3] bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 overflow-hidden">
           {pastor.photo_url ? (
             <Image src={pastor.photo_url} alt={pastor.name} fill sizes="(max-width: 768px) 100vw, 448px" className="object-cover object-top" />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-800 to-slate-900">
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-50 dark:from-slate-800 via-slate-50 dark:via-slate-800 to-slate-50 dark:to-slate-900">
               <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
               <svg className="w-20 h-20 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
               </svg>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-50 dark:from-slate-900 via-slate-50/20 dark:via-slate-900/20 to-transparent" />
           <button
             onClick={onClose}
             className="absolute top-4 right-4 z-10 w-9 h-9 bg-black/40 hover:bg-black/70 text-slate-900 dark:text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-black/10 dark:border-white/10 backdrop-blur-sm"
@@ -80,18 +80,18 @@ function PastorCard({ pastor, index, isPresident, embedded }: { pastor: Pastor; 
         className={wrapperClass}
         style={!embedded ? { opacity: visible ? 1 : 0, transform: visible ? 'translate3d(0,0,0)' : 'translate3d(0,40px,0)', transitionDelay: `${index * 90}ms` } : {}}
       >
-        <div className="relative w-full aspect-[3/4] bg-slate-800 overflow-hidden shrink-0">
+        <div className="relative w-full aspect-[3/4] bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 overflow-hidden shrink-0">
           {pastor.photo_url ? (
             <Image src={pastor.photo_url} alt={pastor.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px" className="object-cover object-top group-hover:scale-105 transition-transform duration-600 ease-out will-change-transform" />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-50 dark:from-slate-800 to-slate-50 dark:to-slate-900">
               <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
               <svg className="w-16 h-16 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
               </svg>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/10 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/90 dark:from-slate-950/90 via-slate-50/10 dark:via-slate-950/10 to-transparent" />
           <div className="absolute inset-0 flex items-end justify-end p-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
             <span className={`inline-flex items-center gap-1.5 ${badgeBg} backdrop-blur-sm text-slate-900 dark:text-white text-xs font-bold px-3 py-1.5 rounded-xl translate-y-2 group-hover:translate-y-0 transition-transform duration-300`}>
               Ver perfil
@@ -132,8 +132,8 @@ function CoupleCard({ p1, p2, index, isPresident }: { p1: Pastor; p2: Pastor, in
         <PastorCard pastor={p1} index={0} isPresident={isPresident} embedded />
       </div>
       
-      <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-slate-800 border border-black/10 dark:border-white/10 shadow-xl z-10 -my-6 sm:my-auto sm:-mx-10 relative">
-        <div className="absolute inset-0 rounded-full border border-black/5 dark:border-white/5 bg-slate-800/80 backdrop-blur-md" />
+      <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-black/10 dark:border-white/10 z-10 -my-6 sm:my-auto sm:-mx-10 relative">
+        <div className="absolute inset-0 rounded-full border border-black/5 dark:border-white/5 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border-slate-200/50 dark:border-transparent dark:bg-slate-800/80" />
         <svg className={`w-5 h-5 relative z-10 ${isPresident ? 'text-yellow-400' : 'text-indigo-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
         </svg>
@@ -275,7 +275,7 @@ export function PastorsSection({ content, pastors }: Props) {
 
           </div>
         ) : (
-          <div className="w-full max-w-2xl bg-slate-50 dark:bg-slate-900/40 border border-white/6 border-dashed rounded-3xl p-14 text-center">
+          <div className="w-full max-w-2xl bg-slate-50 dark:bg-slate-900/40 border border-black/6 dark:border-white/6 border-dashed rounded-3xl p-14 text-center">
             <div className="w-16 h-16 bg-indigo-500/10 border border-indigo-500/15 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <svg className="w-8 h-8 text-indigo-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>

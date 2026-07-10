@@ -85,37 +85,37 @@ export function ProfileClient({
   const initials   = fullName.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       {currentGift && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-emerald-500/30 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden">
             <div className="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl" />
             <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl" />
             
             <div className="relative">
               <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/30">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-10 h-10 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                 </svg>
               </div>
               
-              <h2 className="text-2xl font-black text-white mb-2">Você ganhou um presente!</h2>
-              <p className="text-slate-300 text-sm mb-8 leading-relaxed">
-                Você recebeu uma inscrição de cortesia para o evento <strong className="text-white">{currentGift.event.title}</strong>.
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Você ganhou um presente!</h2>
+              <p className="text-slate-600 dark:text-slate-300 text-sm mb-8 leading-relaxed">
+                Você recebeu uma inscrição de cortesia para o evento <strong className="text-slate-900 dark:text-white">{currentGift.event.title}</strong>.
               </p>
 
               <div className="flex flex-col gap-3">
                 <Link
                   href={`/comprovante/${currentGift.id}`}
                   onClick={handleDismissGift}
-                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-emerald-500/20"
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-emerald-500/20"
                 >
                   Ver meu ingresso
                 </Link>
                 <button
                   onClick={handleDismissGift}
                   disabled={isDismissingGift}
-                  className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50"
+                  className="w-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50"
                 >
                   {isDismissingGift ? 'Fechando...' : 'Fechar'}
                 </button>
@@ -143,8 +143,8 @@ export function ProfileClient({
             )}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">{fullName || 'Minha Conta'}</h1>
-            <p className="text-slate-400 text-sm mt-0.5">{email}</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{fullName || 'Minha Conta'}</h1>
+            <p className="text-slate-600 dark:text-slate-400 text-sm mt-0.5">{email}</p>
             {primaryRole && (
               <div className="mt-2">
                 <RoleBadge role={primaryRole} />
@@ -154,9 +154,9 @@ export function ProfileClient({
         </div>
 
         {/* Card com glass */}
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl overflow-hidden shadow-2xl">
+        <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-900/60 backdrop-blur-xl dark:border-slate-700/50 rounded-3xl overflow-hidden shadow-2xl">
           {/* Tabs */}
-          <div className="flex border-b border-slate-700/50">
+          <div className="flex border-b border-slate-200/50 dark:border-slate-700/50">
             {tabs.map(tab => (
               <button
                 key={tab.id}
@@ -231,7 +231,7 @@ function DataTab({
         uploadsRemaining={uploadsRemaining}
       />
 
-      <div className="border-t border-slate-700/50 pt-8">
+      <div className="border-t border-slate-200/50 dark:border-slate-700/50 pt-8">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className={labelClass}>Nome completo *</label>
@@ -254,7 +254,7 @@ function DataTab({
             <button
               type="submit"
               disabled={isPending}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2 text-sm"
+              className="bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2 text-sm"
             >
               {isPending ? (
                 <>
@@ -372,7 +372,7 @@ function PasswordTab({
         </p>
       )}
 
-      <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 text-xs text-slate-500 space-y-1">
+      <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/40 dark:border-slate-700/50 rounded-xl p-4 text-xs text-slate-500 space-y-1">
         <p className={newPass.length >= 8 ? 'text-emerald-400' : ''}>• Mínimo 8 caracteres</p>
         <p className={/[A-Z]/.test(newPass) ? 'text-emerald-400' : ''}>• Pelo menos 1 letra maiúscula</p>
         <p className={/[0-9]/.test(newPass) ? 'text-emerald-400' : ''}>• Pelo menos 1 número</p>
@@ -382,7 +382,7 @@ function PasswordTab({
         <button
           type="submit"
           disabled={isPending}
-          className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2 text-sm"
+          className="bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2 text-sm"
         >
           {isPending ? (
             <>
@@ -423,10 +423,10 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 space-y-3">
-        <h3 className="font-semibold text-slate-200 text-sm">Informações da conta</h3>
+      <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/40 dark:border-slate-700/50 rounded-2xl p-5 space-y-3">
+        <h3 className="font-semibold text-slate-600 dark:text-slate-200 text-sm">Informações da conta</h3>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-400">Tipo de conta</span>
+          <span className="text-slate-600 dark:text-slate-400">Tipo de conta</span>
           <span className={`font-semibold px-2.5 py-1 rounded-lg text-xs ${
             isAdmin
               ? 'bg-violet-500/15 border border-violet-500/30 text-violet-300'
@@ -436,8 +436,8 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
           </span>
         </div>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-400">Autenticação</span>
-          <span className="font-medium text-slate-300">E-mail e senha</span>
+          <span className="text-slate-600 dark:text-slate-400">Autenticação</span>
+          <span className="font-medium text-slate-600 dark:text-slate-300">E-mail e senha</span>
         </div>
       </div>
 
@@ -455,7 +455,7 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
         <div className="p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="font-semibold text-slate-200 text-sm">Excluir minha conta</p>
+              <p className="font-semibold text-slate-600 dark:text-slate-200 text-sm">Excluir minha conta</p>
               <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                 Remove permanentemente sua conta e todos os dados pessoais. Esta ação não pode ser desfeita.
               </p>
@@ -464,7 +464,7 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
               <button
                 onClick={() => setShowConfirm(true)}
                 disabled={isAdmin}
-                className="shrink-0 bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="shrink-0 bg-red-600 hover:bg-red-500 text-slate-900 dark:text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Excluir
               </button>
@@ -479,25 +479,25 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
 
           {showConfirm && !isAdmin && (
             <div className="mt-4 space-y-3 border-t border-red-500/20 pt-4">
-              <p className="text-xs text-slate-400">
-                Digite <strong className="text-slate-200">EXCLUIR</strong> para confirmar:
+              <p className="text-xs text-slate-600 dark:text-slate-400">
+                Digite <strong className="text-slate-600 dark:text-slate-200">EXCLUIR</strong> para confirmar:
               </p>
               <input
                 type="text"
                 value={confirmText}
                 onChange={e => setConfirmText(e.target.value)}
                 placeholder="EXCLUIR"
-                className="w-full bg-slate-800/50 border border-red-500/30 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-600"
+                className="w-full bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 border-red-500/30 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-600"
               />
 
-              <p className="text-xs text-slate-400">Confirme sua senha:</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Confirme sua senha:</p>
               <div className="relative">
                 <input
                   type={showDeletePass ? 'text' : 'password'}
                   value={deletePassword}
                   onChange={e => setDeletePassword(e.target.value)}
                   placeholder="Sua senha atual"
-                  className="w-full bg-slate-800/50 border border-red-500/30 text-white rounded-xl px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-600"
+                  className="w-full bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 border-red-500/30 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-600"
                 />
                 <button
                   type="button"
@@ -521,7 +521,7 @@ function AccountTab({ isAdmin, onFeedback }: { isAdmin: boolean; onFeedback: (f:
                 <button
                   onClick={handleDelete}
                   disabled={confirmText !== 'EXCLUIR' || !deletePassword || isPending}
-                  className="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="bg-red-600 hover:bg-red-500 text-slate-900 dark:text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {isPending && (
                     <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">

@@ -135,6 +135,12 @@
 
 /* Gradient text utility */
 .text-gradient-blue {
+  background: linear-gradient(135deg, #1e293b 40%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.dark .text-gradient-blue {
   background: linear-gradient(135deg, #fff 40%, #93c5fd 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

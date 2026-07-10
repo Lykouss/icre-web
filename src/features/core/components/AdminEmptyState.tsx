@@ -102,7 +102,7 @@ export function AdminEmptyState({ title, description, action, icon = 'generic' }
       <div className="w-32 h-28 mb-5 opacity-80">
         {illustrations[icon]}
       </div>
-      <h3 className="text-sm font-semibold text-slate-300 mb-1">{title}</h3>
+      <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">{title}</h3>
       {description && (
         <p className="text-xs max-w-xs leading-relaxed" style={{ color: 'var(--admin-text-secondary)' }}>
           {description}

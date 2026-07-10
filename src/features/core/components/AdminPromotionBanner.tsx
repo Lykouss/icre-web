@@ -96,16 +96,16 @@ export function AdminPromotionBanner() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-950/70" />
 
-      <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-xl shadow-2xl shadow-black/50">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border-slate-200/50 dark:border-transparent dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl shadow-black/50">
 
         {/* Glows decorativos */}
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-64 h-64 bg-violet-600/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 right-0 w-48 h-48 bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
 
         {/* Header */}
-        <div className="relative px-8 pt-10 pb-6 text-center border-b border-white/8">
+        <div className="relative px-8 pt-10 pb-6 text-center border-b border-black/8 dark:border-white/8">
           <div className="w-16 h-16 bg-violet-500/15 border border-violet-500/30 rounded-2xl flex items-center justify-center mx-auto mb-5">
             <svg className="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -117,15 +117,15 @@ export function AdminPromotionBanner() {
             Novo cargo atribuído
           </div>
 
-          <h2 className="text-2xl font-black text-white mb-2">Você é um Administrador</h2>
-          <p className="text-slate-400 text-sm leading-relaxed">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Você é um Administrador</h2>
+          <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
             A liderança da ICRE concedeu a você um cargo administrativo no sistema SIGE-Web.
           </p>
         </div>
 
         {/* Corpo */}
         <div className="relative px-8 py-6 space-y-5">
-          <p className="text-slate-300 text-sm font-semibold">Antes de acessar o sistema:</p>
+          <p className="text-slate-600 dark:text-slate-300 text-sm font-semibold">Antes de acessar o sistema:</p>
 
           <ul className="space-y-3">
             {[
@@ -134,8 +134,8 @@ export function AdminPromotionBanner() {
                 { n: '3', text: 'Ler e aceitar os Termos de Responsabilidade do Administrador' },
                 { n: '4', text: 'Criar um PIN de segurança pessoal para proteger o acesso' },
             ].map(item => (
-              <li key={item.n} className="flex items-start gap-3 text-sm text-slate-400">
-                <span className="w-6 h-6 bg-white/5 border border-white/10 text-violet-400 rounded-lg flex items-center justify-center text-xs font-black shrink-0 mt-0.5">
+              <li key={item.n} className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400">
+                <span className="w-6 h-6 bg-white/5 border border-black/10 dark:border-white/10 text-violet-400 rounded-lg flex items-center justify-center text-xs font-black shrink-0 mt-0.5">
                   {item.n}
                 </span>
                 {item.text}
@@ -150,7 +150,7 @@ export function AdminPromotionBanner() {
           <button
             onClick={handleProceed}
             disabled={loading}
-            className="w-full bg-violet-600 hover:bg-violet-500 active:bg-violet-700 text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-violet-500/20"
+            className="w-full bg-violet-600 hover:bg-violet-500 active:bg-violet-700 text-slate-900 dark:text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-violet-500/20"
           >
             {loading ? (
               <>

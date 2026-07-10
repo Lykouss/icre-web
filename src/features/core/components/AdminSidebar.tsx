@@ -148,7 +148,7 @@ function UserAvatar({ photoUrl, fullName, size = 34, roleColor = '#3b82f6' }: {
   const initials = fullName.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
   return (
     <div
-      className="shrink-0 overflow-hidden flex items-center justify-center text-white font-bold"
+      className="shrink-0 overflow-hidden flex items-center justify-center text-slate-900 dark:text-white font-bold"
       style={{
         width: size, height: size,
         borderRadius: '10px',
@@ -474,7 +474,7 @@ function SidebarContent({
                 transition={{ duration: 0.2 }}
                 className="flex-1 min-w-0 overflow-hidden flex items-center gap-1.5"
               >
-                <p className="text-[13px] font-semibold text-slate-200 truncate leading-tight">{shortName}</p>
+                <p className="text-[13px] font-semibold text-slate-600 dark:text-slate-200 truncate leading-tight">{shortName}</p>
                 <RoleBadge role={primaryRole as AppRole} variant="icon" size="sm" />
               </motion.div>
             )}

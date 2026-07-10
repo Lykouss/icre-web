@@ -209,7 +209,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
         {event.banner_url && (
           <div className="relative w-full aspect-video rounded-3xl overflow-hidden mb-8 border border-black/5 dark:border-white/8">
             <Image src={event.banner_url} alt={event.title} fill className="object-cover" />
-            <div className="absolute inset-0 bg-linear-to-t from-slate-950/60 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-white/60 dark:from-slate-950/60 to-transparent" />
           </div>
         )}
 
@@ -246,7 +246,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <span className="font-medium text-slate-200">{formatDate(event.date)}{event.time && ` · ${event.time.slice(0, 5)}`}</span>
+                <span className="font-medium text-slate-600 dark:text-slate-200">{formatDate(event.date)}{event.time && ` · ${event.time.slice(0, 5)}`}</span>
               </div>
             )}
             {event.location && (
@@ -256,7 +256,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
                 </div>
-                <span className="font-medium text-slate-200">{event.location}</span>
+                <span className="font-medium text-slate-600 dark:text-slate-200">{event.location}</span>
               </div>
             )}
             {spotsLeft !== null && (
@@ -312,12 +312,12 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
             <div className="p-8">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Regras e Termos</h2>
               <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Leia com atenção antes de prosseguir.</p>
-              <div className="bg-slate-800/60 border border-black/5 dark:border-white/8 rounded-2xl p-5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6 max-h-48 overflow-y-auto">
+              <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/5 dark:border-white/8 rounded-2xl p-5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6 max-h-48 overflow-y-auto">
                 {event.rules || event.description || 'Ao se inscrever, você concorda em comparecer ao evento na data e horário indicados e respeitar todas as orientações da organização.'}
               </div>
               <label className="flex items-start gap-3 cursor-pointer mb-6">
                 <input type="checkbox" checked={termsAccepted} onChange={e => setTermsAccepted(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-600 bg-slate-800" />
+                  className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-200 dark:border-slate-600 bg-white shadow-xl shadow-slate-200/50 border dark:border-transparent dark:shadow-none dark:bg-slate-800" />
                 <span className="text-sm text-slate-600 dark:text-slate-300">Li e aceito as regras deste evento</span>
               </label>
               <button
@@ -493,7 +493,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                       <p className="text-xs text-slate-500 dark:text-slate-400 text-center mb-2">Ou use o código PIX Copia e Cola:</p>
                       <button
                         onClick={copyPix}
-                        className="w-full flex items-center gap-3 bg-slate-800/60 border border-black/10 dark:border-white/10 hover:border-blue-500/40 px-4 py-3 rounded-xl transition-all group"
+                        className="w-full flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/10 dark:border-white/10 hover:border-blue-500/40 px-4 py-3 rounded-xl transition-all group"
                       >
                         <code className="text-xs text-slate-600 dark:text-slate-300 flex-1 text-left truncate">
                           {paymentInfo.pixCopyPaste}
@@ -527,7 +527,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                   href={paymentInfo.boletoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white font-semibold py-3.5 rounded-xl transition-all mb-4"
+                  className="flex items-center justify-center gap-2 w-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/10 dark:border-white/10 text-slate-900 dark:text-white font-semibold py-3.5 rounded-xl transition-all mb-4"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -620,7 +620,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
 
                 <Link
                   href="/minhas-inscricoes/comprovantes"
-                  className="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-sm font-semibold px-6 py-3.5 rounded-2xl transition-all border border-black/10 dark:border-white/10"
+                  className="inline-flex items-center justify-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-sm font-semibold px-6 py-3.5 rounded-2xl transition-all border-black/10 dark:border-white/10"
                 >
                   <svg className="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />

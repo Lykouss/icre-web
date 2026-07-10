@@ -127,7 +127,7 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
             <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
               Copiar Link
             </label>
-            <div className="flex items-center gap-2 bg-slate-800/50 border border-black/10 dark:border-white/10 rounded-xl p-1.5">
+            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 border-black/10 dark:border-white/10 rounded-xl p-1.5">
               <div className="flex-1 min-w-0 px-3">
                 <p className="text-sm text-slate-600 dark:text-slate-300 truncate font-mono">{eventUrl}</p>
               </div>

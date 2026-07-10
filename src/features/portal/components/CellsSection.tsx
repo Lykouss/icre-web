@@ -23,18 +23,18 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(28px)', transitionDelay: `${index * 70}ms` }}
     >
       {/* Imagem */}
-      <div className="relative w-full aspect-[4/3] bg-slate-800 shrink-0 overflow-hidden">
+      <div className="relative w-full aspect-[4/3] bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 shrink-0 overflow-hidden">
         {cell.image_url ? (
           <Image src={cell.image_url} alt={cell.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-110 transition-transform duration-1000 ease-out will-change-transform" />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-800/80 to-slate-900">
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-50 dark:from-slate-800 via-slate-50/80 dark:via-slate-800/80 to-slate-50 dark:to-slate-900">
             <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
             <svg className="w-12 h-12 text-blue-500/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-950 via-slate-50/40 dark:via-slate-900/40 to-transparent opacity-90" />
         
         {/* Top Badge */}
         <div className="absolute top-4 left-4">
@@ -45,7 +45,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
         </div>
 
         {/* Name Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 pt-12 bg-gradient-to-t from-slate-900 to-transparent">
+        <div className="absolute bottom-0 left-0 right-0 p-6 pt-12 bg-gradient-to-t from-slate-50 dark:from-slate-900 to-transparent">
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white group-hover:text-blue-300 transition-colors duration-300 leading-tight">{cell.name}</h3>
         </div>
       </div>
@@ -55,7 +55,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
         
         {/* Floating Leaders Badge */}
         {(cell.leader1 || cell.leader2) && (
-          <div className="absolute -top-6 right-6 flex items-center bg-slate-800/90 backdrop-blur-xl p-1.5 pr-4 rounded-full border border-black/10 dark:border-white/10 shadow-xl group-hover:border-blue-500/30 transition-colors duration-300">
+          <div className="absolute -top-6 right-6 flex items-center bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/90 backdrop-blur-xl p-1.5 pr-4 rounded-full border-black/10 dark:border-white/10 shadow-xl group-hover:border-blue-500/30 transition-colors duration-300">
             <div className="flex -space-x-2 mr-2">
               {[cell.leader1, cell.leader2].filter(Boolean).map((leader, i) => (
                 leader?.photo_url ? (
@@ -90,7 +90,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
               </div>
               <div className="flex flex-col items-start text-left">
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Encontros</span>
-                <span className="text-sm font-semibold text-slate-200 group-hover:text-slate-900 dark:text-white transition-colors">{cell.meeting_days}{cell.meeting_time && ` às ${cell.meeting_time}`}</span>
+                <span className="text-sm font-semibold text-slate-600 dark:text-slate-200 group-hover:text-slate-900 dark:text-white transition-colors">{cell.meeting_days}{cell.meeting_time && ` às ${cell.meeting_time}`}</span>
               </div>
             </div>
           )}
@@ -101,7 +101,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
               </div>
               <div className="flex flex-col items-start text-left">
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Localização</span>
-                <span className="text-sm font-semibold text-slate-200 group-hover:text-slate-900 dark:text-white transition-colors line-clamp-1">{cell.neighborhood || cell.address}</span>
+                <span className="text-sm font-semibold text-slate-600 dark:text-slate-200 group-hover:text-slate-900 dark:text-white transition-colors line-clamp-1">{cell.neighborhood || cell.address}</span>
               </div>
             </div>
           )}
@@ -126,16 +126,16 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
         onClick={e => e.stopPropagation()}
       >
         {/* Imagem header */}
-        <div className="relative h-40 sm:h-52 w-full bg-slate-800 shrink-0 border-b border-black/5 dark:border-white/5 overflow-hidden">
+        <div className="relative h-40 sm:h-52 w-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 shrink-0 border-b border-black/5 dark:border-white/5 overflow-hidden">
           {cell.image_url ? (
             <Image src={cell.image_url} alt={cell.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-800/80 to-slate-900">
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-50 dark:from-slate-800 via-slate-50/80 dark:via-slate-800/80 to-slate-50 dark:to-slate-900">
               <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
               <svg className="w-12 h-12 text-blue-500/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-50 dark:from-slate-900 via-slate-50/30 dark:via-slate-900/30 to-transparent" />
           <button
             onClick={onClose}
             className="absolute top-4 right-4 w-9 h-9 bg-black/50 hover:bg-black/80 text-slate-900 dark:text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-black/10 dark:border-white/10 backdrop-blur-sm"
@@ -158,7 +158,7 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
 
           {/* Líderes */}
           {(cell.leader1 || cell.leader2) && (
-            <div className="mb-6 p-4 bg-slate-800/50 rounded-2xl border border-black/5 dark:border-white/5 flex flex-wrap gap-4 items-center">
+            <div className="mb-6 p-4 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 rounded-2xl border-black/5 dark:border-white/5 flex flex-wrap gap-4 items-center">
               {[cell.leader1, cell.leader2].filter(Boolean).map((leader, i) => {
                 const LeaderTag = leader!.instagram_url ? 'a' : 'div';
                 const tagProps = leader!.instagram_url ? { href: leader!.instagram_url, target: '_blank', rel: 'noreferrer' } : {};
@@ -188,12 +188,12 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
 
           <div className="space-y-4 text-sm text-slate-600 dark:text-slate-300">
             {cell.description && (
-              <p className="leading-relaxed mb-4 bg-slate-800/30 p-4 rounded-xl border border-black/5 dark:border-white/5 text-slate-600 dark:text-slate-300">{cell.description}</p>
+              <p className="leading-relaxed mb-4 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/30 p-4 rounded-xl border-black/5 dark:border-white/5 text-slate-600 dark:text-slate-300">{cell.description}</p>
             )}
 
             <div className="grid sm:grid-cols-2 gap-3">
               {(cell.meeting_days || cell.meeting_time) && (
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/30 border border-black/5 dark:border-white/5">
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/30 border-black/5 dark:border-white/5">
                   <div className="mt-0.5 p-2 bg-blue-500/10 rounded-lg shrink-0 border border-blue-500/10">
                     <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                   </div>
@@ -205,7 +205,7 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
               )}
 
               {(cell.neighborhood || cell.address) && (
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/30 border border-black/5 dark:border-white/5">
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/30 border-black/5 dark:border-white/5">
                   <div className="mt-0.5 p-2 bg-emerald-500/10 rounded-lg shrink-0 border border-emerald-500/10">
                     <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                   </div>
@@ -249,7 +249,7 @@ function ComingSoonPlaceholder() {
   return (
     <div ref={ref} className="transition-all duration-700 ease-out"
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)' }}>
-      <div className="bg-slate-50 dark:bg-slate-900/40 border border-white/6 border-dashed rounded-3xl p-14 text-center">
+      <div className="bg-slate-50 dark:bg-slate-900/40 border border-black/6 dark:border-white/6 border-dashed rounded-3xl p-14 text-center">
         <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/15 rounded-2xl flex items-center justify-center mx-auto mb-5">
           <svg className="w-8 h-8 text-blue-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>

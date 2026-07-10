@@ -77,7 +77,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
         >
           {/* Fundo padrão quando sem imagem */}
           {!event.banner_url && (
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-50 dark:to-slate-900">
               <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 40%, white 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
               <div className="absolute inset-0 flex items-center justify-center">
                 <svg className="w-24 h-24 text-slate-900 dark:text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,7 +86,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
               </div>
             </div>
           )}
-          {event.banner_url && <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />}
+          {event.banner_url && <div className="absolute inset-0 bg-gradient-to-t from-slate-50 dark:from-slate-900 via-slate-50/40 dark:via-slate-900/40 to-transparent" />}
 
           {/* Fechar */}
           <button
@@ -125,24 +125,24 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
         <div className="p-6 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             {event.time && (
-              <div className="flex items-center gap-3 bg-slate-800/60 border border-white/6 rounded-2xl p-3.5">
+              <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/6 dark:border-white/6 rounded-2xl p-3.5">
                 <div className="w-8 h-8 bg-blue-500/15 rounded-xl flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
                 <div>
                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Horário</p>
-                  <p className="text-slate-200 font-semibold text-sm">{event.time}</p>
+                  <p className="text-slate-600 dark:text-slate-200 font-semibold text-sm">{event.time}</p>
                 </div>
               </div>
             )}
             {event.location && (
-              <div className="flex items-center gap-3 bg-slate-800/60 border border-white/6 rounded-2xl p-3.5">
+              <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/6 dark:border-white/6 rounded-2xl p-3.5">
                 <div className="w-8 h-8 bg-emerald-500/15 rounded-xl flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 </div>
                 <div className="min-w-0">
                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Local</p>
-                  <p className="text-slate-200 font-semibold text-sm truncate">{event.location}</p>
+                  <p className="text-slate-600 dark:text-slate-200 font-semibold text-sm truncate">{event.location}</p>
                 </div>
               </div>
             )}
@@ -189,7 +189,7 @@ function SpecialEventCard({ event, index }: { event: PublicEvent; index: number 
             : { background: 'radial-gradient(ellipse at 50% 0%, #92400e 0%, #1c1917 70%)' }
           }
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-slate-950/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-950 via-slate-50/75 dark:via-slate-950/75 to-white/10 dark:to-slate-950/10" />
         {/* Shimmer no hover */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 shimmer-bg" />
 
@@ -254,11 +254,11 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
         style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transitionDelay: `${index * 60}ms` }}
       >
         {/* Área de imagem / data */}
-        <div className="relative shrink-0 w-20 sm:w-24 bg-slate-800/80 border-r border-white/6 flex flex-col items-center justify-center overflow-hidden">
+        <div className="relative shrink-0 w-20 sm:w-24 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/80 border-r border-black/6 dark:border-white/6 flex flex-col items-center justify-center overflow-hidden">
           {event.banner_url ? (
             <>
               <Image src={event.banner_url} alt="Capa do Evento" fill sizes="96px" className="object-cover group-hover:scale-105 transition-transform duration-500 will-change-transform" />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-900/50 to-slate-900/20" />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-50/50 dark:from-slate-900/50 to-slate-50/20 dark:to-slate-900/20" />
               {date && (
                 <div className="relative z-10 text-center">
                   <span className="block text-2xl font-black text-slate-900 dark:text-white leading-none">{date.day}</span>
@@ -403,7 +403,7 @@ export function EventsSection({ content, events }: Props) {
             </div>
           </>
         ) : (
-          <div className="bg-slate-50 dark:bg-slate-900/40 border border-white/6 border-dashed rounded-3xl p-14 text-center">
+          <div className="bg-slate-50 dark:bg-slate-900/40 border border-black/6 dark:border-white/6 border-dashed rounded-3xl p-14 text-center">
             <div className="w-16 h-16 bg-blue-500/8 border border-blue-500/15 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <svg className="w-8 h-8 text-blue-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

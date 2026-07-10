@@ -235,7 +235,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
           </Link>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em]">ICRE — Portal de Inscrições</p>
-            <h1 className="text-sm font-bold text-slate-200 truncate">{event.title}</h1>
+            <h1 className="text-sm font-bold text-slate-600 dark:text-slate-200 truncate">{event.title}</h1>
           </div>
           {isPaid && (
             <div className="shrink-0 bg-blue-600/10 border border-blue-500/20 rounded-xl px-3 py-1.5">
@@ -246,7 +246,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
         {/* Stepper */}
         {stepId !== 'success' && (
-          <div className="bg-slate-50 dark:bg-slate-900/50 border border-white/6 rounded-2xl p-4 mb-6">
+          <div className="bg-slate-50 dark:bg-slate-900/50 border border-black/6 dark:border-white/6 rounded-2xl p-4 mb-6">
             <div className="flex items-center gap-0">
               {visibleSteps.map((label, i) => {
                 const isActive = i === currentStep;
@@ -295,7 +295,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
             {stepId === 'terms' && (
               <div>
                 {/* Header do card */}
-                <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/60 border-b border-white/6 px-7 py-5">
+                <div className="bg-gradient-to-br from-slate-50/80 dark:from-slate-800/80 to-slate-50/60 dark:to-slate-900/60 border-b border-black/6 dark:border-white/6 px-7 py-5">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-blue-500/15 border border-blue-500/25 rounded-xl flex items-center justify-center shrink-0">
                       <svg className="w-4.5 h-4.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
@@ -335,7 +335,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                   <div 
                     ref={termsBoxRef}
                     onScroll={handleTermsScroll}
-                    className="bg-slate-800/60 border border-white/6 rounded-xl p-5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-5 max-h-48 overflow-y-auto portal-scroll whitespace-pre-wrap"
+                    className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/6 dark:border-white/6 rounded-xl p-5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-5 max-h-48 overflow-y-auto portal-scroll whitespace-pre-wrap"
                   >
                     {event.terms_text || event.rules || event.description || 'Ao se inscrever, você concorda em comparecer ao evento na data e horário indicados e respeitar todas as orientações da organização.'}
                   </div>
@@ -346,7 +346,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       checked={termsAccepted}
                       disabled={!hasScrolledToBottom}
                       onChange={e => setTermsAccepted(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-600 bg-slate-800 accent-blue-500 shrink-0 disabled:opacity-50"
+                      className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-200 dark:border-slate-600 bg-white shadow-xl shadow-slate-200/50 border dark:border-transparent dark:shadow-none dark:bg-slate-800 accent-blue-500 shrink-0 disabled:opacity-50"
                     />
                     <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:text-white transition-colors leading-snug">
                       Li e aceito as regras e termos deste evento
@@ -370,7 +370,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
             {/* ─── STEP: FORM ─── */}
             {stepId === 'form' && (
               <div>
-                <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/60 border-b border-white/6 px-7 py-5">
+                <div className="bg-gradient-to-br from-slate-50/80 dark:from-slate-800/80 to-slate-50/60 dark:to-slate-900/60 border-b border-black/6 dark:border-white/6 px-7 py-5">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-violet-500/15 border border-violet-500/25 rounded-xl flex items-center justify-center shrink-0">
                       <svg className="w-4.5 h-4.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
@@ -579,7 +579,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
             {/* ─── STEP: CUSTOM FORM (Adicionais) ─── */}
             {stepId === 'custom' && hasCustomForm && (
               <div>
-                <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/60 border-b border-white/6 px-7 py-5">
+                <div className="bg-gradient-to-br from-slate-50/80 dark:from-slate-800/80 to-slate-50/60 dark:to-slate-900/60 border-b border-black/6 dark:border-white/6 px-7 py-5">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-pink-500/15 border border-pink-500/25 rounded-xl flex items-center justify-center shrink-0">
                       <svg className="w-4.5 h-4.5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
@@ -658,7 +658,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
             {/* ─── STEP: SUMMARY (Checkout) ─── */}
             {stepId === 'summary' && isPaid && (
               <div>
-                <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/60 border-b border-white/6 px-7 py-5">
+                <div className="bg-gradient-to-br from-slate-50/80 dark:from-slate-800/80 to-slate-50/60 dark:to-slate-900/60 border-b border-black/6 dark:border-white/6 px-7 py-5">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-emerald-500/15 border border-emerald-500/25 rounded-xl flex items-center justify-center shrink-0">
                       <svg className="w-4.5 h-4.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
@@ -684,7 +684,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     </div>
                   )}
 
-                  <div className="bg-slate-800/40 border border-black/10 dark:border-white/10 rounded-2xl p-5 mb-6">
+                  <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/40 border-black/10 dark:border-white/10 rounded-2xl p-5 mb-6">
                     <div className="flex justify-between items-center mb-4 pb-4 border-b border-black/10 dark:border-white/10">
                       <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">Valor da Inscrição</span>
                       <span className="text-sm font-bold text-slate-900 dark:text-white">{formatCurrency(event.ticket_price || 0)}</span>
@@ -746,7 +746,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
             {stepId === 'success' && (
               <div>
                 {/* Header de sucesso */}
-                <div className="bg-gradient-to-br from-emerald-900/30 to-slate-900/60 border-b border-emerald-500/15 px-7 py-6 text-center">
+                <div className="bg-gradient-to-br from-emerald-900/30 to-slate-50/60 dark:to-slate-900/60 border-b border-emerald-500/15 px-7 py-6 text-center">
                   <div className="relative inline-flex items-center justify-center mb-3">
                     <div className="absolute w-20 h-20 rounded-full bg-emerald-500/10 animate-ping" style={{ animationDuration: '2.5s' }} />
                     <div className="relative w-16 h-16 bg-emerald-500/15 border border-emerald-500/25 rounded-2xl flex items-center justify-center">
@@ -778,7 +778,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     )}
                     <Link
                       href="/minhas-inscricoes"
-                      className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold px-6 py-3.5 rounded-xl transition-all border border-black/5 dark:border-white/8"
+                      className="flex items-center justify-center gap-2 w-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-200 text-sm font-semibold px-6 py-3.5 rounded-xl transition-all border-black/5 dark:border-white/8"
                     >
                       Minhas Inscrições
                     </Link>

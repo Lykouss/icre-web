@@ -29,7 +29,7 @@ export function ProfileForm({ userId, fullName }: ProfileFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="fullName" className="block text-sm font-semibold text-slate-300 mb-1.5">
+        <label htmlFor="fullName" className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
           Nome Completo
         </label>
         <input
@@ -38,7 +38,7 @@ export function ProfileForm({ userId, fullName }: ProfileFormProps) {
           value={name}
           onChange={e => setName(e.target.value)}
           required
-          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+          className="w-full px-4 py-3 bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
         />
       </div>
 
@@ -46,7 +46,7 @@ export function ProfileForm({ userId, fullName }: ProfileFormProps) {
         <button
           type="submit"
           disabled={isPending || name.trim() === fullName}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold text-sm rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isPending ? (
             <>

@@ -210,7 +210,7 @@ export function MissionSection({ content }: Props) {
         {/* Stats */}
         <div
           ref={statsRef}
-          className="grid grid-cols-3 gap-0 mb-24 p-8 bg-slate-800/40 backdrop-blur-sm border border-white/6 rounded-3xl"
+          className="grid grid-cols-3 gap-0 mb-24 p-8 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/40 backdrop-blur-sm border-black/6 dark:border-white/6 rounded-3xl"
         >
           <StatCard icon={STAT_ICONS[0]} value={Number(content.active_members) || 500} suffix="+" label="Membros ativos" index={0} active={statsVisible} />
           <StatCard icon={STAT_ICONS[1]} value={Number(content.active_cells) || 4}   suffix=""  label="Células ativas"  index={1} active={statsVisible} />

@@ -271,7 +271,7 @@ export function CommunicationsManager() {
                     <span className={`block text-xs font-bold leading-tight ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-600 dark:text-slate-300'}`}>
                       {aud.title}
                     </span>
-                    <span className="block text-[10px] text-slate-400 mt-1 line-clamp-2 leading-snug">
+                    <span className="block text-[10px] text-slate-600 dark:text-slate-400 mt-1 line-clamp-2 leading-snug">
                       {aud.desc}
                     </span>
                   </button>
@@ -288,7 +288,7 @@ export function CommunicationsManager() {
                   
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      {searching ? <Loader2 className="w-5 h-5 animate-spin text-slate-400" /> : <Search className="w-5 h-5 text-slate-400" />}
+                      {searching ? <Loader2 className="w-5 h-5 animate-spin text-slate-600 dark:text-slate-400" /> : <Search className="w-5 h-5 text-slate-600 dark:text-slate-400" />}
                     </div>
                     <input
                       type="text"
@@ -339,12 +339,12 @@ export function CommunicationsManager() {
                           <div key={user.id} className="inline-flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm shadow-sm group">
                             <div className="flex flex-col">
                               <span className="font-bold text-slate-700 dark:text-slate-200 leading-none">{user.name.split(' ')[0]}</span>
-                              <span className="text-[10px] text-slate-400">{user.email}</span>
+                              <span className="text-[10px] text-slate-600 dark:text-slate-400">{user.email}</span>
                             </div>
                             <button
                               type="button"
                               onClick={() => handleRemoveManualUser(user.id)}
-                              className="p-1 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 rounded-md transition-colors text-slate-400"
+                              className="p-1 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 rounded-md transition-colors text-slate-600 dark:text-slate-400"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -395,7 +395,7 @@ export function CommunicationsManager() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-50 flex items-center gap-2"
+              className="bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-50 flex items-center gap-2"
             >
               {loading && <Loader2 className="w-5 h-5 animate-spin" />}
               {loading ? 'Disparando...' : (scheduledFor ? 'Agendar Disparo' : 'Disparar Agora')}

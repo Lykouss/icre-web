@@ -115,7 +115,7 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
               <p className="text-xs font-bold text-red-400/70 uppercase tracking-widest mb-2">Acesso bloqueado</p>
               <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Conta suspensa</h1>
               <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
-                Olá, <span className="text-slate-200 font-medium">{fullName}</span>. Seu acesso ao
+                Olá, <span className="text-slate-600 dark:text-slate-200 font-medium">{fullName}</span>. Seu acesso ao
                 sistema administrativo foi temporariamente suspenso.
               </p>
             </div>
@@ -136,7 +136,7 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
                 <p className="text-xs font-bold text-red-400/80 uppercase tracking-wider mb-2 ml-3">
                   Motivo da suspensão
                 </p>
-                <p className="text-slate-200 text-sm leading-relaxed ml-3">
+                <p className="text-slate-600 dark:text-slate-200 text-sm leading-relaxed ml-3">
                   {reason}
                 </p>
               </div>
@@ -147,7 +147,7 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
               {byName && (
                 <div className="flex items-center justify-between px-4 py-3">
                   <span className="text-xs text-slate-500 font-medium">Suspenso por</span>
-                  <span className="text-sm text-slate-200 font-semibold">{byName}</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-200 font-semibold">{byName}</span>
                 </div>
               )}
               <div className="flex items-center justify-between px-4 py-3">

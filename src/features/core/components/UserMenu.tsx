@@ -18,7 +18,7 @@ function Avatar({ name, photoUrl, roleColor = '#3b82f6' }: { name: string; photo
   const initials = name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?'
   return (
     <div
-      className="h-8 w-8 overflow-hidden flex items-center justify-center text-white font-bold text-[11px] shrink-0 transition-transform duration-200 group-hover:scale-105"
+      className="h-8 w-8 overflow-hidden flex items-center justify-center text-slate-900 dark:text-white font-bold text-[11px] shrink-0 transition-transform duration-200 group-hover:scale-105"
       style={{
         borderRadius: '9px',
         background: photoUrl ? 'transparent' : `linear-gradient(135deg, ${roleColor}cc, ${roleColor}66)`,
@@ -56,7 +56,7 @@ export function UserMenu({ fullName, roles, photoUrl }: UserMenuProps) {
       <DropdownMenu.Trigger asChild>
         <button className="flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 transition-all focus:outline-none group hover:bg-white/5 data-[state=open]:bg-white/5">
           <span className="hidden sm:flex items-center justify-end gap-1.5 text-right mr-1">
-            <p className="text-[13px] font-semibold leading-tight text-slate-200">{shortName}</p>
+            <p className="text-[13px] font-semibold leading-tight text-slate-600 dark:text-slate-200">{shortName}</p>
             <RoleBadge role={primaryRole} variant="icon" size="sm" />
           </span>
           <Avatar name={shortName} photoUrl={photoUrl} roleColor={roleColor} />
@@ -83,8 +83,8 @@ export function UserMenu({ fullName, roles, photoUrl }: UserMenuProps) {
             <div className="flex items-center gap-3.5">
               <Avatar name={fullName} photoUrl={photoUrl} roleColor={roleColor} />
               <div className="min-w-0 flex-1 flex items-center gap-1.5">
-                <p className="text-[14px] font-bold text-white truncate leading-tight">{fullName}</p>
-                <RoleBadge role={primaryRole} variant="icon" size="sm" className="bg-slate-900/50" />
+                <p className="text-[14px] font-bold text-slate-900 dark:text-white truncate leading-tight">{fullName}</p>
+                <RoleBadge role={primaryRole} variant="icon" size="sm" className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-900/50" />
               </div>
             </div>
           </div>

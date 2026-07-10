@@ -219,7 +219,7 @@ export function ReceiptClient({ registration }: Props) {
           {/* ── Header Institucional ── */}
           <div className="relative overflow-hidden">
             {/* Fundo gradiente */}
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-emerald-950/40" />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-50 dark:from-slate-800 via-slate-50 dark:via-slate-900 to-emerald-950/40" />
             {/* Pattern decorativo */}
             <div className="absolute inset-0 opacity-[0.04]" style={{
               backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
@@ -252,7 +252,7 @@ export function ReceiptClient({ registration }: Props) {
               </div>
 
               {/* Linha 2: evento */}
-              <div className="border-t border-white/6 pt-5">
+              <div className="border-t border-black/6 dark:border-white/6 pt-5">
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Evento</p>
                 <h1 className="text-xl font-black text-slate-900 dark:text-white leading-tight">{event?.title ?? 'Evento'}</h1>
                 <div className="flex flex-wrap gap-4 mt-3">
@@ -279,7 +279,7 @@ export function ReceiptClient({ registration }: Props) {
 
           {/* ── QR Code (destaque) ── */}
           {registration.ticket_signature && (
-            <div className="border-t border-white/6 bg-white mx-7 my-6 rounded-xl overflow-hidden">
+            <div className="border-t border-black/6 dark:border-white/6 bg-white mx-7 my-6 rounded-xl overflow-hidden">
               <div className="flex flex-col items-center py-6">
                 <img
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(`${registration.id}:${registration.ticket_signature}`)}`}
@@ -309,7 +309,7 @@ export function ReceiptClient({ registration }: Props) {
                 </div>
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.12em]">Participante</p>
               </div>
-              <div className="bg-slate-800/50 border border-white/6 rounded-xl divide-y divide-white/5 overflow-hidden">
+              <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 border-black/6 dark:border-white/6 rounded-xl divide-y divide-white/5 overflow-hidden">
                 <DataRow label="Nome" value={registration.name} />
                 {registration.email && <DataRow label="E-mail" value={registration.email} />}
                 {registration.phone && <DataRow label="Telefone" value={registration.phone} />}
@@ -326,7 +326,7 @@ export function ReceiptClient({ registration }: Props) {
                 </div>
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.12em]">Pagamento</p>
               </div>
-              <div className="bg-slate-800/50 border border-white/6 rounded-xl divide-y divide-white/5 overflow-hidden">
+              <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 border-black/6 dark:border-white/6 rounded-xl divide-y divide-white/5 overflow-hidden">
                 <DataRow
                   label="Valor"
                   value={isZeroValue ? 'Gratuito / Cortesia' : formatCurrency(paymentValue)}
@@ -350,7 +350,7 @@ export function ReceiptClient({ registration }: Props) {
             </section>
 
             {/* Protocolo */}
-            <div className="bg-slate-800/30 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 flex items-center justify-between gap-3">
+            <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/30 border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 flex items-center justify-between gap-3">
               <div>
                 <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-0.5">Protocolo de Inscrição</p>
                 <p className="text-sm font-black text-slate-600 dark:text-slate-300 tracking-wider">#{protocol}</p>
@@ -377,7 +377,7 @@ export function ReceiptClient({ registration }: Props) {
                   href={registration.asaas_invoice_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-black/5 dark:border-white/8 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-all"
+                  className="flex-1 flex items-center justify-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/5 dark:border-white/8 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-all"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

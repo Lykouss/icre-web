@@ -262,7 +262,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
           <div className="p-2 rounded-2xl flex flex-col sm:flex-row gap-2 transition-colors border"
                style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
             <div className="relative flex-1">
-              <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input type="text" value={search} onChange={e => setSearch(e.target.value)}
@@ -320,7 +320,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                           <Avatar photoUrl={u.photo_url} name={u.full_name} size="md" />
                           {u.is_suspended && (
                             <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-red-500 rounded-full border-2 border-[var(--admin-surface)] flex items-center justify-center shadow-lg">
-                              <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" /></svg>
+                              <svg className="w-2.5 h-2.5 text-slate-900 dark:text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" /></svg>
                             </div>
                           )}
                         </div>
@@ -373,7 +373,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
               <div className="px-8 pt-8 pb-6 border-b relative z-10" style={{ borderColor: 'var(--admin-border)' }}>
                 <div className="flex justify-between items-start mb-4">
                   <Avatar photoUrl={selectedUser.photo_url} name={selectedUser.full_name} size="lg" />
-                  <button onClick={() => setSelectedUser(null)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors text-slate-400">
+                  <button onClick={() => setSelectedUser(null)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors text-slate-600 dark:text-slate-400">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
                 </div>
@@ -394,7 +394,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                       className="flex-1 relative py-2 text-xs font-bold transition-colors z-10 rounded-xl"
                       style={{ color: panelTab === tab.id ? 'var(--admin-text-primary)' : 'var(--admin-text-muted)' }}>
                       {panelTab === tab.id && (
-                        <motion.div layoutId="tab-active" className="absolute inset-0 rounded-xl bg-white/10 shadow-sm border border-white/5" style={{ zIndex: -1 }} />
+                        <motion.div layoutId="tab-active" className="absolute inset-0 rounded-xl bg-white/10 shadow-sm border border-black/5 dark:border-white/5" style={{ zIndex: -1 }} />
                       )}
                       {tab.label}
                     </button>
@@ -414,7 +414,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                       <h4 className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--admin-text-muted)' }}>Cargos Administrativos</h4>
                       <div className="flex flex-wrap gap-2">
                         {selectedUser.roles.length > 0 ? selectedUser.roles.map(role => (
-                          <div key={role} className="flex items-center gap-2 bg-slate-900/50 pl-1 pr-3 py-1 rounded-full border border-slate-700/50 shadow-inner">
+                          <div key={role} className="flex items-center gap-2 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-900/50 pl-1 pr-3 py-1 rounded-full dark:border-slate-700/50 shadow-inner">
                             <RoleBadge role={role as AppRole} variant="chip" size="sm" />
                             {role !== 'SYSADMIN' && (
                               <button onClick={() => setPinAction({ type: 'REVOKE_ROLE', userId: selectedUser.id, role: role as AppRole, name: selectedUser.full_name })}
@@ -455,7 +455,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                             if (selectedRoleToGrant && !selectedUser.roles.includes(selectedRoleToGrant)) {
                               setPinAction({ type: 'GRANT_ROLE', userId: selectedUser.id, role: selectedRoleToGrant, name: selectedUser.full_name });
                             }
-                          }} className="w-full bg-blue-600 hover:bg-blue-500 text-white px-4 py-3 rounded-xl text-xs font-bold transition-colors shadow-lg shadow-blue-500/20">
+                          }} className="w-full bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-xs font-bold transition-colors shadow-lg shadow-blue-500/20">
                             Confirmar Promoção
                           </button>
                         </div>
@@ -481,7 +481,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                         <button onClick={() => setPinAction({ type: 'RESET_PIN', userId: selectedUser.id, name: selectedUser.full_name })}
                           className="flex flex-col items-start p-4 rounded-2xl border transition-all hover:bg-white/5 group" style={{ background: 'var(--admin-surface-alt)', borderColor: 'var(--admin-border)' }}>
                           <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div>
-                          <span className="text-xs font-bold text-slate-200">Resetar PIN</span>
+                          <span className="text-xs font-bold text-slate-600 dark:text-slate-200">Resetar PIN</span>
                           <span className="text-[10px] text-slate-500 mt-1">Exigirá novo PIN</span>
                         </button>
                         
@@ -532,7 +532,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                       </div>
 
                       <button onClick={() => setPinAction({ type: 'UPDATE_PROFILE', userId: selectedUser.id, name: selectedUser.full_name, data: { full_name: editFullName, church_role: editChurchRole, phone: editPhone, roles: editRoles } })}
-                        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-blue-500/20 text-xs uppercase tracking-widest">
+                        className="w-full bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-blue-500/20 text-xs uppercase tracking-widest">
                         Salvar Informações Básicas
                       </button>
                     </div>
@@ -548,19 +548,19 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                       <div className="flex gap-2">
                         <input value={editNewEmail} onChange={e => setEditNewEmail(e.target.value)} type="email" placeholder="Novo E-mail" className={inputCls} style={{ background: 'var(--admin-surface-alt)', borderColor: 'var(--admin-border)', color: 'var(--admin-text-primary)' }} />
                         <button onClick={() => setPinAction({ type: 'UPDATE_EMAIL', userId: selectedUser.id, newEmail: editNewEmail, name: selectedUser.full_name })} disabled={editNewEmail === selectedUser.email || !editNewEmail}
-                          className="bg-slate-700 hover:bg-slate-600 text-white font-bold px-4 rounded-xl text-xs transition-colors disabled:opacity-30 whitespace-nowrap">Alterar Email</button>
+                          className="bg-slate-700 hover:bg-slate-600 text-slate-900 dark:text-white font-bold px-4 rounded-xl text-xs transition-colors disabled:opacity-30 whitespace-nowrap">Alterar Email</button>
                       </div>
 
                       <div className="flex gap-2">
                         <input value={editNewPassword} onChange={e => setEditNewPassword(e.target.value)} type="password" placeholder="Nova Senha Direta" className={inputCls} style={{ background: 'var(--admin-surface-alt)', borderColor: 'var(--admin-border)', color: 'var(--admin-text-primary)' }} />
                         <button onClick={() => setPinAction({ type: 'RESET_PASSWORD', userId: selectedUser.id, newPassword: editNewPassword, name: selectedUser.full_name })} disabled={editNewPassword.length < 8}
-                          className="bg-slate-700 hover:bg-slate-600 text-white font-bold px-4 rounded-xl text-xs transition-colors disabled:opacity-30 whitespace-nowrap">Forçar Senha</button>
+                          className="bg-slate-700 hover:bg-slate-600 text-slate-900 dark:text-white font-bold px-4 rounded-xl text-xs transition-colors disabled:opacity-30 whitespace-nowrap">Forçar Senha</button>
                       </div>
 
                       <div className="flex gap-2">
                         <input value={editNewPinDirect} onChange={e => setEditNewPinDirect(e.target.value.replace(/\D/g, ''))} type="password" maxLength={4} placeholder="Novo PIN (4 dígitos)" className={inputCls} style={{ background: 'var(--admin-surface-alt)', borderColor: 'var(--admin-border)', color: 'var(--admin-text-primary)' }} />
                         <button onClick={() => setPinAction({ type: 'UPDATE_PIN_DIRECT', userId: selectedUser.id, newPin: editNewPinDirect, name: selectedUser.full_name })} disabled={editNewPinDirect.length !== 4}
-                          className="bg-slate-700 hover:bg-slate-600 text-white font-bold px-4 rounded-xl text-xs transition-colors disabled:opacity-30 whitespace-nowrap">Forçar PIN</button>
+                          className="bg-slate-700 hover:bg-slate-600 text-slate-900 dark:text-white font-bold px-4 rounded-xl text-xs transition-colors disabled:opacity-30 whitespace-nowrap">Forçar PIN</button>
                       </div>
                     </div>
                   </motion.div>
@@ -572,7 +572,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                     {loadingLogs ? (
                       <div className="flex justify-center py-12"><svg className="w-8 h-8 animate-spin text-slate-500" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg></div>
                     ) : logs.length === 0 ? (
-                      <div className="text-center py-12 opacity-50"><svg className="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg><p className="text-xs font-bold uppercase tracking-widest text-slate-400">Nenhum log registrado.</p></div>
+                      <div className="text-center py-12 opacity-50"><svg className="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg><p className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400">Nenhum log registrado.</p></div>
                     ) : (
                       <div className="relative pl-4 space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-700 before:to-transparent">
                         {logs.map((log, i) => (
@@ -583,7 +583,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                                  <span className="text-xs font-bold text-blue-400">{ACTION_LABELS[log.action] ?? log.action}</span>
                                  <span className="text-[10px] text-slate-500 font-bold whitespace-nowrap">{new Date(log.created_at).toLocaleDateString('pt-BR')} {new Date(log.created_at).toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'})}</span>
                                </div>
-                               <p className="text-[11px] text-slate-400">Realizado por <strong className="text-slate-200">{log.actor_name}</strong></p>
+                               <p className="text-[11px] text-slate-600 dark:text-slate-400">Realizado por <strong className="text-slate-600 dark:text-slate-200">{log.actor_name}</strong></p>
                                {log.action === 'SUSPEND_ACCESS' && typeof log.new_data?.reason === 'string' && (
                                  <p className="text-[11px] text-red-400 mt-2 bg-red-500/10 p-2 rounded-lg border border-red-500/20 italic">&ldquo;{log.new_data.reason}&rdquo;</p>
                                )}
@@ -604,7 +604,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
       {/* ── Modal de Suspensão ── */}
       <AnimatePresence>
         {suspendModalFor && !pinAction && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-950/80 backdrop-blur-sm">
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
               <div className="px-6 py-5 border-b bg-red-500/5" style={{ borderColor: 'var(--admin-border)' }}>
@@ -630,8 +630,8 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                 </div>
               </div>
               <div className="px-6 pb-6 flex gap-3">
-                <button onClick={() => setSuspendModalFor(null)} className="flex-1 py-3 font-bold rounded-xl hover:bg-white/5 transition-colors border text-slate-300" style={{ borderColor: 'var(--admin-border)' }}>Cancelar</button>
-                <button onClick={handleConfirmSuspend} disabled={!suspendReason.trim()} className="flex-1 py-3 font-bold text-white rounded-xl disabled:opacity-40 bg-red-600 hover:bg-red-500 transition-colors">Avançar para PIN</button>
+                <button onClick={() => setSuspendModalFor(null)} className="flex-1 py-3 font-bold rounded-xl hover:bg-white/5 transition-colors border text-slate-600 dark:text-slate-300" style={{ borderColor: 'var(--admin-border)' }}>Cancelar</button>
+                <button onClick={handleConfirmSuspend} disabled={!suspendReason.trim()} className="flex-1 py-3 font-bold text-slate-900 dark:text-white rounded-xl disabled:opacity-40 bg-red-600 hover:bg-red-500 transition-colors">Avançar para PIN</button>
               </div>
             </motion.div>
           </div>
@@ -641,7 +641,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
       {/* ── Modal Universal de Validação de PIN ── */}
       <AnimatePresence>
         {pinAction && (
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-950/90">
             <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }}
               className="rounded-[2.5rem] shadow-2xl w-full max-w-sm overflow-hidden border flex flex-col items-center p-8 text-center relative" style={{ background: 'var(--admin-surface)', borderColor: 'var(--admin-border)' }}>
               
@@ -653,8 +653,8 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
               </div>
               
-              <h3 className="text-xl font-black text-white mb-2">Validação de Segurança</h3>
-              <p className="text-[13px] text-slate-400 mb-8 leading-relaxed">
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">Validação de Segurança</h3>
+              <p className="text-[13px] text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
                 Você está prestes a realizar uma alteração crítica em <strong className="text-blue-400">{pinAction.name}</strong>. Insira seu PIN administrativo para confirmar.
               </p>
 
@@ -665,7 +665,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                   value={pinInput} 
                   onChange={e => { setPinInput(e.target.value.replace(/\D/g, '')); setPinError(''); }}
                   placeholder="••••" 
-                  className="w-full text-center text-4xl tracking-[1em] py-4 bg-slate-900/50 border border-slate-700 rounded-2xl focus:border-blue-500 focus:outline-none text-white font-black"
+                  className="w-full text-center text-4xl tracking-[1em] py-4 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white font-black"
                   autoFocus
                 />
                 
@@ -676,7 +676,7 @@ export function AccessManager({ users: initialUsers }: AccessManagerProps) {
                 </AnimatePresence>
 
                 <button onClick={executePinAction} disabled={pinInput.length !== 4 || isPending}
-                  className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-xs transition-all disabled:opacity-40 disabled:scale-100 active:scale-95 text-white shadow-lg"
+                  className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-xs transition-all disabled:opacity-40 disabled:scale-100 active:scale-95 text-slate-900 dark:text-white shadow-lg"
                   style={{ background: pinAction.type === 'DELETE_USER' || pinAction.type === 'SUSPEND' ? 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)' : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' }}>
                   {isPending ? 'Autenticando...' : 'Confirmar Execução'}
                 </button>

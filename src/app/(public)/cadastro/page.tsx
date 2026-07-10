@@ -361,7 +361,7 @@ export default function RegisterPage() {
             <span>Passo {currentStep + 1} de {STEPS.length}</span>
             <span>{Math.round(progress)}% concluído</span>
           </div>
-          <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 rounded-full overflow-hidden">
             <div
               className="h-full bg-blue-500 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
@@ -384,7 +384,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <div className="bg-slate-50 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-3xl p-8 shadow-2xl min-h-[420px] flex flex-col overflow-hidden">
+        <div className="bg-slate-50 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl min-h-[420px] flex flex-col overflow-hidden">
           <div className={contentClass}>
             <StepIllustration id={step.id} />
 
@@ -518,7 +518,7 @@ export default function RegisterPage() {
 
               {step.id === 'terms' && (
                 <div className="space-y-4">
-                  <div className="bg-slate-800 rounded-2xl p-4 h-48 overflow-y-auto text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-3 border border-slate-700">
+                  <div className="bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 rounded-2xl p-4 h-48 overflow-y-auto text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-3 dark:border-slate-700">
                     <TermsContent />
                   </div>
                   <label className="flex items-start gap-3 cursor-pointer group">
@@ -581,7 +581,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={goBack}
                 disabled={phase !== 'idle'}
-                className="flex items-center gap-2 px-5 py-3.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white border border-slate-700 hover:border-slate-500 rounded-2xl transition-all text-sm font-semibold disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-3.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 hover:border-slate-500 rounded-2xl transition-all text-sm font-semibold disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />

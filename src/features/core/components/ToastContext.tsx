@@ -101,7 +101,7 @@ function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id
           }}
         >
           <ToastIcon type={t.type} />
-          <span className="flex-1 text-[13px] text-slate-300">{t.message}</span>
+          <span className="flex-1 text-[13px] text-slate-600 dark:text-slate-300">{t.message}</span>
           <button
             onClick={() => onDismiss(t.id)}
             className="shrink-0 text-slate-600 hover:text-slate-400 transition-colors p-0.5 rounded"

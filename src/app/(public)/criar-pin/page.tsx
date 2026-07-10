@@ -76,7 +76,7 @@ export default function CreatePinPage() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative w-full max-w-sm">
-        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl text-center">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl text-center">
 
           {/* Ícone */}
           <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">

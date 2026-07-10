@@ -115,7 +115,7 @@ export default function AdminOnboardingPage() {
           </p>
         </div>
 
-        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-8">
 
             {errors.general && (
@@ -253,7 +253,7 @@ export default function AdminOnboardingPage() {
               </div>
             </div>
 
-            <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 rounded-2xl p-4 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               Seus dados são armazenados com segurança e utilizados exclusivamente para identificação administrativa dentro da ICRE, conforme nossa{' '}
               <a href="/privacidade" target="_blank" className="text-violet-400 hover:underline">
                 Política de Privacidade

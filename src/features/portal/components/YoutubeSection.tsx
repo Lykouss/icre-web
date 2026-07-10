@@ -16,7 +16,7 @@ export function YoutubeSection({ content }: Props) {
   return (
     <section id="youtube" className="relative py-32 px-6 bg-slate-50 dark:bg-slate-900 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-transparent to-slate-950/50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/50 dark:from-slate-950/50 via-transparent to-white/50 dark:to-slate-950/50" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-red-600/5 rounded-full blur-[130px]" />
       </div>
 
