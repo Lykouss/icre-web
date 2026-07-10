@@ -52,6 +52,7 @@ interface Props {
   isFull: boolean;
   isAdminPreview?: boolean;
   existingRegistrations: ExistingRegistration[];
+  isAuthenticated?: boolean;
 }
 
 export function EventDetailsClient({
@@ -60,6 +61,7 @@ export function EventDetailsClient({
   isFull,
   isAdminPreview,
   existingRegistrations,
+  isAuthenticated = false,
 }: Props) {
   const [rulesExpanded, setRulesExpanded] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
@@ -333,7 +335,7 @@ export function EventDetailsClient({
           {/* --- Sem inscrição, pode se inscrever --- */}
           {needsRegistration && !isFull && !hasConfirmed && !hasPendingPayment && (
             <Link
-              href={`/agenda/${event.id}/inscrever`}
+              href={isAuthenticated ? `/agenda/${event.id}/inscrever` : `/login`}
               className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20 hover:scale-[1.01]"
             >
               {isPaid ? (

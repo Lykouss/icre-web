@@ -67,6 +67,8 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
     event_id: string;
   }> = [];
 
+  const isAuthenticated = !!user;
+
   if (user) {
     const { data: { user: authUser } } = await supabase.auth.getUser();
 
@@ -123,6 +125,7 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
         isFull={isFull}
         isAdminPreview={isAdminPreview}
         existingRegistrations={existingRegistrations}
+        isAuthenticated={isAuthenticated}
       />
     </>
   );
