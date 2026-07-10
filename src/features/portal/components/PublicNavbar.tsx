@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { UserInbox } from '@/features/core/components/UserInbox';
 import { ThemeToggle } from './ThemeToggle';
+import { usePublicTheme } from './PublicThemeProvider';
 
 interface NavUser {
   fullName: string;
@@ -165,7 +166,10 @@ useEffect(() => {
   };
 
   // Estilos adaptativos ao tema da seção
-  const isDark = !isHome || sectionTheme === 'dark';
+  const { theme } = usePublicTheme();
+  
+  // Se o tema global for claro, a Navbar nunca é invertida para Dark (pois as seções ficam brancas)
+  const isDark = theme === 'dark' && (!isHome || sectionTheme === 'dark');
 
   const navBg = scrolled
     ? isDark
