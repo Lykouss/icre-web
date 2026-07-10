@@ -6,14 +6,14 @@ import { useScrollReveal } from '@/features/core/hooks/use-scroll-reveal';
 import type { CellsSectionContent, PublicCell, MeetingType } from '@/features/portal/types';
 
 const TYPE_CONFIG: Record<MeetingType, { label: string; cls: string; dot: string }> = {
-  presencial: { label: 'Presencial', cls: 'bg-emerald-500/15 border-emerald-500/25 text-emerald-400', dot: 'bg-emerald-400' },
-  online:     { label: 'Online',     cls: 'bg-blue-500/15 border-blue-500/25 text-blue-400',         dot: 'bg-blue-400' },
-  hibrido:    { label: 'Híbrido',    cls: 'bg-violet-500/15 border-violet-500/25 text-violet-400',   dot: 'bg-violet-400' },
+  presencial: { label: 'Presencial', cls: 'bg-emerald-500/15 border-emerald-500/25 text-emerald-600 dark:text-emerald-400', dot: 'bg-emerald-500 dark:bg-emerald-400' },
+  online:     { label: 'Online',     cls: 'bg-blue-500/15 border-blue-500/25 text-blue-600 dark:text-blue-400',         dot: 'bg-blue-500 dark:bg-blue-400' },
+  hibrido:    { label: 'Híbrido',    cls: 'bg-violet-500/15 border-violet-500/25 text-violet-600 dark:text-violet-400',   dot: 'bg-violet-500 dark:bg-violet-400' },
 };
 
 function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; onClick: () => void }) {
   const { ref, visible } = useScrollReveal<HTMLButtonElement>({ threshold: 0.06 });
-  const typeConfig = TYPE_CONFIG[cell.meeting_type] ?? { label: cell.meeting_type, cls: 'bg-slate-500/15 border-slate-500/25 text-slate-500 dark:text-slate-400', dot: 'bg-slate-400' };
+  const typeConfig = TYPE_CONFIG[cell.meeting_type] ?? { label: cell.meeting_type, cls: 'bg-slate-500/15 border-slate-500/25 text-slate-600 dark:text-slate-400', dot: 'bg-slate-500 dark:bg-slate-400' };
 
   return (
     <button
@@ -46,7 +46,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
 
         {/* Name Overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-6 pt-12 bg-gradient-to-t from-slate-50 dark:from-slate-900 to-transparent">
-          <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white group-hover:text-blue-300 transition-colors duration-300 leading-tight">{cell.name}</h3>
+          <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors duration-300 leading-tight">{cell.name}</h3>
         </div>
       </div>
 
@@ -59,12 +59,12 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
             <div className="flex -space-x-2 mr-2">
               {[cell.leader1, cell.leader2].filter(Boolean).map((leader, i) => (
                 leader?.photo_url ? (
-                  <div key={i} className="relative w-8 h-8 rounded-full overflow-hidden ring-2 ring-slate-800 z-10">
+                  <div key={i} className="relative w-8 h-8 rounded-full overflow-hidden ring-2 ring-white dark:ring-slate-800 z-10">
                     <Image src={leader.photo_url} alt={leader.name} fill sizes="32px" className="object-cover object-top" />
                   </div>
                 ) : (
-                  <div key={i} className="w-8 h-8 rounded-full bg-blue-500/20 ring-2 ring-slate-800 flex items-center justify-center relative z-10">
-                    <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                  <div key={i} className="w-8 h-8 rounded-full bg-blue-500/20 ring-2 ring-white dark:ring-slate-800 flex items-center justify-center relative z-10">
+                    <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                   </div>
                 )
               ))}
@@ -86,7 +86,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
           {cell.meeting_days && (
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500/20 transition-colors">
-                <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
               </div>
               <div className="flex flex-col items-start text-left">
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Encontros</span>
@@ -97,7 +97,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
           {(cell.neighborhood || cell.address) && (
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/20 transition-colors">
-                <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               </div>
               <div className="flex flex-col items-start text-left">
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Localização</span>
@@ -175,9 +175,9 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
                     )}
                     <div>
                       <span className="block text-[10px] font-semibold text-slate-500 mb-0.5 uppercase tracking-wide">Líder {i + 1}</span>
-                      <span className="block text-sm font-semibold text-slate-900 dark:text-white group-hover:text-blue-300 transition-colors">
+                      <span className="block text-sm font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">
                         {leader!.name}
-                        {leader!.instagram_url && <svg className="inline w-3 h-3 text-fuchsia-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>}
+                        {leader!.instagram_url && <svg className="inline w-3 h-3 text-fuchsia-500 dark:text-fuchsia-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>}
                       </span>
                     </div>
                   </LeaderTag>
@@ -224,7 +224,7 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
                 href={`https://wa.me/${(cell.contact_whatsapp || cell.contact_phone)!.replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 text-sm text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-4 py-3 rounded-xl transition-colors font-medium mt-2"
+                className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-4 py-3 rounded-xl transition-colors font-medium mt-2"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.524 5.847L.054 23.03a.75.75 0 00.916.916l5.183-1.47A11.931 11.931 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.5-5.2-1.374l-.373-.22-3.876 1.098 1.098-3.876-.22-.373A9.97 9.97 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
                 Entrar em contato via WhatsApp
@@ -232,7 +232,7 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
             )}
 
             {cell.instagram_url && (
-              <a href={cell.instagram_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-fuchsia-400 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 border border-fuchsia-500/20 px-4 py-2.5 rounded-xl transition-colors font-medium">
+              <a href={cell.instagram_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-fuchsia-600 dark:text-fuchsia-400 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 border border-fuchsia-500/20 px-4 py-2.5 rounded-xl transition-colors font-medium">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
                 Instagram da Célula
               </a>
