@@ -13,13 +13,13 @@ const TYPE_CONFIG: Record<MeetingType, { label: string; cls: string; dot: string
 
 function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; onClick: () => void }) {
   const { ref, visible } = useScrollReveal<HTMLButtonElement>({ threshold: 0.06 });
-  const typeConfig = TYPE_CONFIG[cell.meeting_type] ?? { label: cell.meeting_type, cls: 'bg-slate-500/15 border-slate-500/25 text-slate-400', dot: 'bg-slate-400' };
+  const typeConfig = TYPE_CONFIG[cell.meeting_type] ?? { label: cell.meeting_type, cls: 'bg-slate-500/15 border-slate-500/25 text-slate-500 dark:text-slate-400', dot: 'bg-slate-400' };
 
   return (
     <button
       ref={ref}
       onClick={onClick}
-      className="group flex flex-col text-left bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-[2rem] overflow-hidden hover:border-blue-500/30 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(59,130,246,0.2)] transition-all duration-500 ease-out w-full"
+      className="group flex flex-col text-left bg-slate-50 dark:bg-slate-900/50 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-[2rem] overflow-hidden hover:border-blue-500/30 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(59,130,246,0.2)] transition-all duration-500 ease-out w-full"
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(28px)', transitionDelay: `${index * 70}ms` }}
     >
       {/* Imagem */}
@@ -38,7 +38,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
         
         {/* Top Badge */}
         <div className="absolute top-4 left-4">
-          <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold border px-3 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-md shadow-lg ${typeConfig.cls}`}>
+          <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold border px-3 py-1.5 rounded-full bg-slate-50 dark:bg-slate-900/90 backdrop-blur-md shadow-lg ${typeConfig.cls}`}>
             <span className={`w-2 h-2 rounded-full ${typeConfig.dot} animate-pulse`} />
             {typeConfig.label}
           </span>
@@ -46,16 +46,16 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
 
         {/* Name Overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-6 pt-12 bg-gradient-to-t from-slate-900 to-transparent">
-          <h3 className="text-xl sm:text-2xl font-black text-white group-hover:text-blue-300 transition-colors duration-300 leading-tight">{cell.name}</h3>
+          <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white group-hover:text-blue-300 transition-colors duration-300 leading-tight">{cell.name}</h3>
         </div>
       </div>
 
       {/* Conteúdo */}
-      <div className="relative p-6 flex flex-col flex-1 bg-slate-900 w-full z-10">
+      <div className="relative p-6 flex flex-col flex-1 bg-slate-50 dark:bg-slate-900 w-full z-10">
         
         {/* Floating Leaders Badge */}
         {(cell.leader1 || cell.leader2) && (
-          <div className="absolute -top-6 right-6 flex items-center bg-slate-800/90 backdrop-blur-xl p-1.5 pr-4 rounded-full border border-white/10 shadow-xl group-hover:border-blue-500/30 transition-colors duration-300">
+          <div className="absolute -top-6 right-6 flex items-center bg-slate-800/90 backdrop-blur-xl p-1.5 pr-4 rounded-full border border-black/10 dark:border-white/10 shadow-xl group-hover:border-blue-500/30 transition-colors duration-300">
             <div className="flex -space-x-2 mr-2">
               {[cell.leader1, cell.leader2].filter(Boolean).map((leader, i) => (
                 leader?.photo_url ? (
@@ -71,7 +71,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
             </div>
             <div className="flex flex-col items-start justify-center text-left">
               <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-0.5">Líderes</span>
-              <span className="text-[11px] font-semibold text-slate-300 leading-none max-w-[90px] truncate">
+              <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-300 leading-none max-w-[90px] truncate">
                 {[cell.leader1, cell.leader2].filter(Boolean).map(l => {
                   const parts = l!.name.split(' ');
                   return (parts[0] === 'Pr.' || parts[0] === 'Pra.') ? (parts[1] || parts[0]) : parts[0];
@@ -90,7 +90,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
               </div>
               <div className="flex flex-col items-start text-left">
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Encontros</span>
-                <span className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">{cell.meeting_days}{cell.meeting_time && ` às ${cell.meeting_time}`}</span>
+                <span className="text-sm font-semibold text-slate-200 group-hover:text-slate-900 dark:text-white transition-colors">{cell.meeting_days}{cell.meeting_time && ` às ${cell.meeting_time}`}</span>
               </div>
             </div>
           )}
@@ -101,7 +101,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
               </div>
               <div className="flex flex-col items-start text-left">
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Localização</span>
-                <span className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors line-clamp-1">{cell.neighborhood || cell.address}</span>
+                <span className="text-sm font-semibold text-slate-200 group-hover:text-slate-900 dark:text-white transition-colors line-clamp-1">{cell.neighborhood || cell.address}</span>
               </div>
             </div>
           )}
@@ -116,17 +116,17 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
 
 /* ─── Modal ─────────────────────────────────────────────────── */
 function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => void }) {
-  const typeConfig = TYPE_CONFIG[cell.meeting_type] ?? { label: cell.meeting_type, cls: 'bg-slate-500/15 text-slate-400', dot: 'bg-slate-400' };
+  const typeConfig = TYPE_CONFIG[cell.meeting_type] ?? { label: cell.meeting_type, cls: 'bg-slate-500/15 text-slate-500 dark:text-slate-400', dot: 'bg-slate-400' };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-white dark:bg-slate-950/85 backdrop-blur-md" />
       <div
-        className="relative bg-slate-900 border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden animate-modal-in portal-scroll"
+        className="relative bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden animate-modal-in portal-scroll"
         onClick={e => e.stopPropagation()}
       >
         {/* Imagem header */}
-        <div className="relative h-40 sm:h-52 w-full bg-slate-800 shrink-0 border-b border-white/5 overflow-hidden">
+        <div className="relative h-40 sm:h-52 w-full bg-slate-800 shrink-0 border-b border-black/5 dark:border-white/5 overflow-hidden">
           {cell.image_url ? (
             <Image src={cell.image_url} alt={cell.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
           ) : (
@@ -138,13 +138,13 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/30 to-transparent" />
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-9 h-9 bg-black/50 hover:bg-black/80 text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/10 backdrop-blur-sm"
+            className="absolute top-4 right-4 w-9 h-9 bg-black/50 hover:bg-black/80 text-slate-900 dark:text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-black/10 dark:border-white/10 backdrop-blur-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
           {/* Badge no header */}
           <div className="absolute top-4 left-4">
-            <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold border px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md ${typeConfig.cls}`}>
+            <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold border px-2.5 py-1 rounded-full bg-slate-50 dark:bg-slate-900/80 backdrop-blur-md ${typeConfig.cls}`}>
               <span className={`w-1.5 h-1.5 rounded-full ${typeConfig.dot}`} />
               {typeConfig.label}
             </span>
@@ -153,17 +153,17 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
 
         <div className="p-6 sm:p-7 flex-1 overflow-y-auto portal-scroll">
           <div className="mb-5">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{cell.name}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">{cell.name}</h2>
           </div>
 
           {/* Líderes */}
           {(cell.leader1 || cell.leader2) && (
-            <div className="mb-6 p-4 bg-slate-800/50 rounded-2xl border border-white/5 flex flex-wrap gap-4 items-center">
+            <div className="mb-6 p-4 bg-slate-800/50 rounded-2xl border border-black/5 dark:border-white/5 flex flex-wrap gap-4 items-center">
               {[cell.leader1, cell.leader2].filter(Boolean).map((leader, i) => {
                 const LeaderTag = leader!.instagram_url ? 'a' : 'div';
                 const tagProps = leader!.instagram_url ? { href: leader!.instagram_url, target: '_blank', rel: 'noreferrer' } : {};
                 return (
-                  <LeaderTag key={i} {...tagProps} className={`flex items-center gap-3 ${leader!.instagram_url ? 'hover:bg-white/5 p-2 rounded-xl transition-colors cursor-pointer group' : ''}`}>
+                  <LeaderTag key={i} {...tagProps} className={`flex items-center gap-3 ${leader!.instagram_url ? 'hover:bg-black/5 dark:bg-white/5 p-2 rounded-xl transition-colors cursor-pointer group' : ''}`}>
                     {leader?.photo_url ? (
                       <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-white/10 shadow-lg shrink-0">
                         <Image src={leader.photo_url} alt={leader.name} fill sizes="40px" className="object-cover object-top" />
@@ -175,7 +175,7 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
                     )}
                     <div>
                       <span className="block text-[10px] font-semibold text-slate-500 mb-0.5 uppercase tracking-wide">Líder {i + 1}</span>
-                      <span className="block text-sm font-semibold text-white group-hover:text-blue-300 transition-colors">
+                      <span className="block text-sm font-semibold text-slate-900 dark:text-white group-hover:text-blue-300 transition-colors">
                         {leader!.name}
                         {leader!.instagram_url && <svg className="inline w-3 h-3 text-fuchsia-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>}
                       </span>
@@ -186,33 +186,33 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
             </div>
           )}
 
-          <div className="space-y-4 text-sm text-slate-300">
+          <div className="space-y-4 text-sm text-slate-600 dark:text-slate-300">
             {cell.description && (
-              <p className="leading-relaxed mb-4 bg-slate-800/30 p-4 rounded-xl border border-white/5 text-slate-300">{cell.description}</p>
+              <p className="leading-relaxed mb-4 bg-slate-800/30 p-4 rounded-xl border border-black/5 dark:border-white/5 text-slate-600 dark:text-slate-300">{cell.description}</p>
             )}
 
             <div className="grid sm:grid-cols-2 gap-3">
               {(cell.meeting_days || cell.meeting_time) && (
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/30 border border-white/5">
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/30 border border-black/5 dark:border-white/5">
                   <div className="mt-0.5 p-2 bg-blue-500/10 rounded-lg shrink-0 border border-blue-500/10">
                     <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                   </div>
                   <div>
                     <span className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Encontros</span>
-                    <span className="text-white font-medium text-sm">{cell.meeting_days}{cell.meeting_time && ` às ${cell.meeting_time}`}</span>
+                    <span className="text-slate-900 dark:text-white font-medium text-sm">{cell.meeting_days}{cell.meeting_time && ` às ${cell.meeting_time}`}</span>
                   </div>
                 </div>
               )}
 
               {(cell.neighborhood || cell.address) && (
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/30 border border-white/5">
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/30 border border-black/5 dark:border-white/5">
                   <div className="mt-0.5 p-2 bg-emerald-500/10 rounded-lg shrink-0 border border-emerald-500/10">
                     <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                   </div>
                   <div>
                     <span className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Localização</span>
-                    {cell.neighborhood && <span className="text-white font-medium text-sm block">{cell.neighborhood}</span>}
-                    {cell.address && <span className="text-slate-400 text-xs block mt-1">{cell.address}</span>}
+                    {cell.neighborhood && <span className="text-slate-900 dark:text-white font-medium text-sm block">{cell.neighborhood}</span>}
+                    {cell.address && <span className="text-slate-500 dark:text-slate-400 text-xs block mt-1">{cell.address}</span>}
                   </div>
                 </div>
               )}
@@ -249,13 +249,13 @@ function ComingSoonPlaceholder() {
   return (
     <div ref={ref} className="transition-all duration-700 ease-out"
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)' }}>
-      <div className="bg-slate-900/40 border border-white/6 border-dashed rounded-3xl p-14 text-center">
+      <div className="bg-slate-50 dark:bg-slate-900/40 border border-white/6 border-dashed rounded-3xl p-14 text-center">
         <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/15 rounded-2xl flex items-center justify-center mx-auto mb-5">
           <svg className="w-8 h-8 text-blue-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
           </svg>
         </div>
-        <p className="text-slate-400 font-semibold mb-2">Módulo de Células em desenvolvimento</p>
+        <p className="text-slate-500 dark:text-slate-400 font-semibold mb-2">Módulo de Células em desenvolvimento</p>
         <p className="text-slate-600 text-sm">As células serão exibidas aqui assim que o módulo for ativado.</p>
       </div>
     </div>
@@ -272,7 +272,7 @@ export function CellsSection({ content, cells }: Props) {
   const [selectedCell, setSelectedCell] = useState<PublicCell | null>(null);
 
   return (
-    <section id="celulas" className="relative py-32 px-6 bg-slate-900 overflow-hidden">
+    <section id="celulas" className="relative py-32 px-6 bg-slate-50 dark:bg-slate-900 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-600/5 rounded-full blur-[100px]" />
         <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-blue-600/4 rounded-full blur-[80px]" />
@@ -287,10 +287,10 @@ export function CellsSection({ content, cells }: Props) {
             </svg>
             Comunidade
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
             {content.title || 'Nossas Células'}
           </h2>
-          {content.subtitle && <p className="mt-4 text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">{content.subtitle}</p>}
+          {content.subtitle && <p className="mt-4 text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">{content.subtitle}</p>}
         </div>
 
         {cells.length > 0 ? (

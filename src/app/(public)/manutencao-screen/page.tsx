@@ -13,12 +13,12 @@ export default async function MaintenanceScreen() {
   const message = maintenance?.message || 'O site está em manutenção. Voltaremos em breve.';
   
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+    <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
       <div className="w-20 h-20 bg-amber-500/10 rounded-3xl flex items-center justify-center mb-8 border border-amber-500/20 shadow-2xl shadow-amber-500/10 animate-breathe">
         <Wrench className="w-10 h-10 text-amber-500" />
       </div>
-      <h1 className="text-3xl font-bold text-white mb-4">Site em Manutenção</h1>
-      <p className="text-slate-400 max-w-md text-lg leading-relaxed mb-8">
+      <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Site em Manutenção</h1>
+      <p className="text-slate-500 dark:text-slate-400 max-w-md text-lg leading-relaxed mb-8">
         {message}
       </p>
       

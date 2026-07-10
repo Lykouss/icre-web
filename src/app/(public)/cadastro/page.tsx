@@ -121,13 +121,13 @@ function EyeIcon({ open }: { open: boolean }) {
 function TermsContent() {
   return (
     <>
-      <p className="font-semibold text-slate-300">1. Aceitação dos Termos</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-300">1. Aceitação dos Termos</p>
       <p>Ao criar uma conta, você concorda com estes Termos de Uso e com nossa Política de Privacidade.</p>
-      <p className="font-semibold text-slate-300">2. Uso do Sistema</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-300">2. Uso do Sistema</p>
       <p>O sistema SIGE-ICRE é destinado exclusivamente a membros e visitantes da Igreja de Cristo Rocha Eterna. O uso indevido pode resultar no cancelamento da conta.</p>
-      <p className="font-semibold text-slate-300">3. Dados Pessoais</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-300">3. Dados Pessoais</p>
       <p>Coletamos nome, e-mail, telefone, data de nascimento e endereço para gerenciamento eclesial. Seus dados não serão compartilhados com terceiros.</p>
-      <p className="font-semibold text-slate-300">4. Responsabilidades</p>
+      <p className="font-semibold text-slate-600 dark:text-slate-300">4. Responsabilidades</p>
       <p>Você é responsável por manter a confidencialidade de sua senha e por todas as atividades realizadas em sua conta.</p>
       <p>
         <Link href="/termos" target="_blank" className="text-blue-400 hover:underline">
@@ -332,17 +332,17 @@ export default function RegisterPage() {
   ].join(' ');
 
   const inputClass =
-    'w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-slate-600';
+    'w-full bg-slate-800 border border-slate-700 text-slate-900 dark:text-white placeholder-slate-500 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-slate-600';
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative w-full max-w-lg animate-[fadeSlideUp_0.4s_ease_both]">
         <div className="flex items-center justify-between mb-8">
           <Link
             href="/login"
-            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium"
+            className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors text-sm font-medium"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -384,12 +384,12 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <div className="bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-3xl p-8 shadow-2xl min-h-[420px] flex flex-col overflow-hidden">
+        <div className="bg-slate-50 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-3xl p-8 shadow-2xl min-h-[420px] flex flex-col overflow-hidden">
           <div className={contentClass}>
             <StepIllustration id={step.id} />
 
-            <h2 className="text-2xl font-bold text-white mb-1 text-center">{step.title}</h2>
-            <p className="text-slate-400 text-sm mb-8 text-center">{step.subtitle}</p>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1 text-center">{step.title}</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-8 text-center">{step.subtitle}</p>
 
             <div onKeyDown={handleKeyDown} className="space-y-4">
               {step.id === 'name' && (
@@ -450,7 +450,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowPass(v => !v)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600 dark:text-slate-300 transition-colors"
                       aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}
                     >
                       <EyeIcon open={showPass} />
@@ -469,8 +469,8 @@ export default function RegisterPage() {
                           />
                         ))}
                       </div>
-                      <p className="text-xs text-slate-400">
-                        Força: <span className="font-semibold text-white">{strength.label}</span>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Força: <span className="font-semibold text-slate-900 dark:text-white">{strength.label}</span>
                       </p>
                     </div>
                   )}
@@ -485,7 +485,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowConfirm(v => !v)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600 dark:text-slate-300 transition-colors"
                       aria-label={showConfirm ? 'Ocultar confirmação' : 'Mostrar confirmação'}
                     >
                       <EyeIcon open={showConfirm} />
@@ -518,7 +518,7 @@ export default function RegisterPage() {
 
               {step.id === 'terms' && (
                 <div className="space-y-4">
-                  <div className="bg-slate-800 rounded-2xl p-4 h-48 overflow-y-auto text-xs text-slate-400 leading-relaxed space-y-3 border border-slate-700">
+                  <div className="bg-slate-800 rounded-2xl p-4 h-48 overflow-y-auto text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-3 border border-slate-700">
                     <TermsContent />
                   </div>
                   <label className="flex items-start gap-3 cursor-pointer group">
@@ -535,13 +535,13 @@ export default function RegisterPage() {
                           : 'bg-transparent border-slate-600 group-hover:border-slate-400'
                       }`}>
                         {values.termsAccepted === 'true' && (
-                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-3 h-3 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                           </svg>
                         )}
                       </div>
                     </div>
-                    <span className="text-sm text-slate-300 leading-relaxed">
+                    <span className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                       Li e aceito os{' '}
                       <Link href="/termos" target="_blank" className="text-blue-400 hover:underline">
                         Termos de Uso
@@ -581,7 +581,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={goBack}
                 disabled={phase !== 'idle'}
-                className="flex items-center gap-2 px-5 py-3.5 text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 rounded-2xl transition-all text-sm font-semibold disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-3.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white border border-slate-700 hover:border-slate-500 rounded-2xl transition-all text-sm font-semibold disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -594,7 +594,7 @@ export default function RegisterPage() {
               type="button"
               onClick={goNext}
               disabled={isPending || phase !== 'idle'}
-              className="flex-1 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/20"
+              className="flex-1 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-slate-900 dark:text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/20"
             >
               {isPending ? (
                 <>

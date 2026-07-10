@@ -150,7 +150,7 @@ export function PaymentPageClient({ payment }: Props) {
 
   if (paymentConfirmed) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center px-4">
         <div className="text-center">
           <div className="relative inline-flex items-center justify-center mb-6">
             <div className="absolute w-24 h-24 rounded-full bg-emerald-500/10 animate-ping" style={{ animationDuration: '2s' }} />
@@ -160,15 +160,15 @@ export function PaymentPageClient({ payment }: Props) {
               </svg>
             </div>
           </div>
-          <h2 className="text-2xl font-black text-white mb-2">Pagamento confirmado!</h2>
-          <p className="text-slate-400 text-sm">Redirecionando para o seu comprovante...</p>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Pagamento confirmado!</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">Redirecionando para o seu comprovante...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-amber-600/6 rounded-full blur-[120px]" />
       </div>
@@ -177,7 +177,7 @@ export function PaymentPageClient({ payment }: Props) {
         {/* Back */}
         <Link
           href={`/agenda/${payment.eventId}`}
-          className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-medium transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-medium transition-colors mb-8"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -188,17 +188,17 @@ export function PaymentPageClient({ payment }: Props) {
         {/* Header */}
         <div className="mb-6">
           <p className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Pagamento pendente</p>
-          <h1 className="text-2xl font-black text-white mb-1">{payment.eventTitle}</h1>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-1">{payment.eventTitle}</h1>
           <div className="flex items-center gap-3 flex-wrap">
             <span className="text-2xl font-black text-emerald-400">{formatCurrency(payment.value)}</span>
             {payment.dueDate && (
-              <span className="text-sm text-slate-400">· Vence em {formatDate(payment.dueDate)}</span>
+              <span className="text-sm text-slate-500 dark:text-slate-400">· Vence em {formatDate(payment.dueDate)}</span>
             )}
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-slate-900/60 border border-white/8 rounded-2xl p-1.5 mb-6">
+        <div className="flex gap-1 bg-slate-50 dark:bg-slate-900/60 border border-black/5 dark:border-white/8 rounded-2xl p-1.5 mb-6">
           {(['pix', 'boleto', 'cartao'] as Tab[])
             .filter(tab => {
               if (tab === 'pix') return payment.acceptsPix !== false;
@@ -211,10 +211,10 @@ export function PaymentPageClient({ payment }: Props) {
               onClick={() => tab !== 'cartao' && setActiveTab(tab)}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${
                 activeTab === tab
-                  ? 'bg-white/10 text-white shadow-sm'
+                  ? 'bg-black/5 dark:bg-white/10 text-slate-900 dark:text-white shadow-sm'
                   : tab === 'cartao'
                   ? 'text-slate-600 cursor-not-allowed'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'
               }`}
             >
               {tab === 'pix' && (
@@ -234,7 +234,7 @@ export function PaymentPageClient({ payment }: Props) {
               )}
               <span className="capitalize">{tab === 'cartao' ? 'Cartão' : tab.toUpperCase()}</span>
               {tab === 'cartao' && (
-                <span className="bg-slate-700 text-slate-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full">Em breve</span>
+                <span className="bg-slate-700 text-slate-500 dark:text-slate-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full">Em breve</span>
               )}
             </button>
           ))}
@@ -242,7 +242,7 @@ export function PaymentPageClient({ payment }: Props) {
 
         {/* PIX Tab */}
         {activeTab === 'pix' && (
-          <div className="bg-slate-900/60 backdrop-blur-xl border border-white/8 rounded-3xl p-8 space-y-6 shadow-2xl">
+          <div className="bg-slate-50 dark:bg-slate-900/60 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-3xl p-8 space-y-6 shadow-2xl">
             {timeLeft && (
               <div className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold ${
                 timeLeft === 'Expirado' ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-amber-500/10 border border-amber-500/20 text-amber-400'
@@ -264,7 +264,7 @@ export function PaymentPageClient({ payment }: Props) {
                     className="w-52 h-52"
                   />
                 </div>
-                <p className="text-xs text-slate-400 text-center">Escaneie com o aplicativo do seu banco</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 text-center">Escaneie com o aplicativo do seu banco</p>
               </div>
             ) : isSyncing ? (
               <div className="flex flex-col items-center py-8">
@@ -272,7 +272,7 @@ export function PaymentPageClient({ payment }: Props) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                 </svg>
-                <p className="text-slate-400 text-sm">Gerando QR Code do PIX...</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">Gerando QR Code do PIX...</p>
               </div>
             ) : (
               <div className="flex flex-col items-center py-8">
@@ -287,7 +287,7 @@ export function PaymentPageClient({ payment }: Props) {
                     href={payment.asaasInvoiceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl transition-all border border-white/10"
+                    className="mt-4 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white font-semibold py-3 px-6 rounded-xl transition-all border border-black/10 dark:border-white/10"
                   >
                     Acessar Fatura
                   </a>
@@ -297,15 +297,15 @@ export function PaymentPageClient({ payment }: Props) {
 
             {livePixCopyPaste && (
               <div>
-                <p className="text-xs text-slate-400 text-center mb-3">Ou use o PIX Copia e Cola:</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 text-center mb-3">Ou use o PIX Copia e Cola:</p>
                 <button
                   onClick={copyPix}
-                  className="w-full flex items-center gap-3 bg-slate-800/60 border border-white/10 hover:border-blue-500/40 px-4 py-3.5 rounded-xl transition-all group"
+                  className="w-full flex items-center gap-3 bg-slate-800/60 border border-black/10 dark:border-white/10 hover:border-blue-500/40 px-4 py-3.5 rounded-xl transition-all group"
                 >
-                  <code className="text-xs text-slate-300 flex-1 text-left truncate">
+                  <code className="text-xs text-slate-600 dark:text-slate-300 flex-1 text-left truncate">
                     {livePixCopyPaste}
                   </code>
-                  <div className={`shrink-0 flex items-center gap-1.5 text-xs font-bold transition-colors ${pixCopied ? 'text-emerald-400' : 'text-slate-400 group-hover:text-blue-400'}`}>
+                  <div className={`shrink-0 flex items-center gap-1.5 text-xs font-bold transition-colors ${pixCopied ? 'text-emerald-400' : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-400'}`}>
                     {pixCopied ? (
                       <>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -338,7 +338,7 @@ export function PaymentPageClient({ payment }: Props) {
             <button
               onClick={handleManualCheck}
               disabled={isChecking}
-              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
             >
               {isChecking ? (
                 <>
@@ -363,7 +363,7 @@ export function PaymentPageClient({ payment }: Props) {
 
         {/* Boleto Tab */}
         {activeTab === 'boleto' && (
-          <div className="bg-slate-900/60 backdrop-blur-xl border border-white/8 rounded-3xl p-8 space-y-6 shadow-2xl">
+          <div className="bg-slate-50 dark:bg-slate-900/60 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-3xl p-8 space-y-6 shadow-2xl">
             <div className="flex items-center gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl">
               <svg className="w-5 h-5 text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -376,15 +376,15 @@ export function PaymentPageClient({ payment }: Props) {
             {/* Código de barras */}
             {liveBoletoBarCode && (
               <div>
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Código de barras</p>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Código de barras</p>
                 <button
                   onClick={copyBarCode}
-                  className="w-full flex items-center gap-3 bg-slate-800/60 border border-white/10 hover:border-blue-500/40 px-4 py-3.5 rounded-xl transition-all group"
+                  className="w-full flex items-center gap-3 bg-slate-800/60 border border-black/10 dark:border-white/10 hover:border-blue-500/40 px-4 py-3.5 rounded-xl transition-all group"
                 >
-                  <code className="text-xs text-slate-300 flex-1 text-left break-all">
+                  <code className="text-xs text-slate-600 dark:text-slate-300 flex-1 text-left break-all">
                     {liveBoletoBarCode}
                   </code>
-                  <div className={`shrink-0 flex items-center gap-1.5 text-xs font-bold transition-colors ${barCodeCopied ? 'text-emerald-400' : 'text-slate-400 group-hover:text-blue-400'}`}>
+                  <div className={`shrink-0 flex items-center gap-1.5 text-xs font-bold transition-colors ${barCodeCopied ? 'text-emerald-400' : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-400'}`}>
                     {barCodeCopied ? 'Copiado!' : 'Copiar'}
                   </div>
                 </button>
@@ -397,7 +397,7 @@ export function PaymentPageClient({ payment }: Props) {
                 href={liveBoletoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
+                className="w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -410,7 +410,7 @@ export function PaymentPageClient({ payment }: Props) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                 </svg>
-                <p className="text-slate-400 text-sm">Gerando Boleto...</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">Gerando Boleto...</p>
               </div>
             ) : null}
 
@@ -420,7 +420,7 @@ export function PaymentPageClient({ payment }: Props) {
                 href={payment.asaasInvoiceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 border border-white/10 text-white font-semibold py-4 rounded-2xl transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white font-semibold py-4 rounded-2xl transition-all"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -441,7 +441,7 @@ export function PaymentPageClient({ payment }: Props) {
             <button
               onClick={handleManualCheck}
               disabled={isChecking}
-              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isChecking ? (
                 <>
@@ -465,18 +465,18 @@ export function PaymentPageClient({ payment }: Props) {
 
         {/* Cartão Tab (Em breve) */}
         {activeTab === 'cartao' && (
-          <div className="bg-slate-900/60 backdrop-blur-xl border border-white/8 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-slate-50 dark:bg-slate-900/60 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-3xl p-8 shadow-2xl">
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-slate-800/80 border border-white/8 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-slate-800/80 border border-black/5 dark:border-white/8 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-slate-400 mb-2">Pagamento por cartão</h3>
+              <h3 className="text-lg font-bold text-slate-500 dark:text-slate-400 mb-2">Pagamento por cartão</h3>
               <p className="text-sm text-slate-500 max-w-xs mx-auto mb-6">
                 O pagamento por cartão de crédito está em desenvolvimento e estará disponível em breve.
               </p>
-              <span className="inline-block bg-slate-800 border border-white/8 text-slate-500 text-xs font-bold px-4 py-2 rounded-full">
+              <span className="inline-block bg-slate-800 border border-black/5 dark:border-white/8 text-slate-500 text-xs font-bold px-4 py-2 rounded-full">
                 Em breve
               </span>
             </div>
@@ -484,20 +484,20 @@ export function PaymentPageClient({ payment }: Props) {
             {/* Formulário visual desabilitado */}
             <div className="space-y-3 opacity-40 pointer-events-none mt-6 border-t border-white/6 pt-6">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">Número do cartão</label>
-                <div className="w-full px-4 py-3 bg-slate-800/60 border border-white/10 rounded-2xl text-slate-600 text-sm">•••• •••• •••• ••••</div>
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">Número do cartão</label>
+                <div className="w-full px-4 py-3 bg-slate-800/60 border border-black/10 dark:border-white/10 rounded-2xl text-slate-600 text-sm">•••• •••• •••• ••••</div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">Validade</label>
-                  <div className="w-full px-4 py-3 bg-slate-800/60 border border-white/10 rounded-2xl text-slate-600 text-sm">MM/AA</div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">Validade</label>
+                  <div className="w-full px-4 py-3 bg-slate-800/60 border border-black/10 dark:border-white/10 rounded-2xl text-slate-600 text-sm">MM/AA</div>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">CVV</label>
-                  <div className="w-full px-4 py-3 bg-slate-800/60 border border-white/10 rounded-2xl text-slate-600 text-sm">•••</div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">CVV</label>
+                  <div className="w-full px-4 py-3 bg-slate-800/60 border border-black/10 dark:border-white/10 rounded-2xl text-slate-600 text-sm">•••</div>
                 </div>
               </div>
-              <div className="w-full bg-blue-600/40 text-white font-bold py-4 rounded-2xl text-center text-sm">
+              <div className="w-full bg-blue-600/40 text-slate-900 dark:text-white font-bold py-4 rounded-2xl text-center text-sm">
                 Pagar {formatCurrency(payment.value)}
               </div>
             </div>

@@ -25,7 +25,7 @@ export default function RegisterSuccessPage() {
   }, [transitionTo]);
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 overflow-hidden">
+    <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#064e3b_0%,_transparent_55%)] pointer-events-none transition-all duration-1000" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_#1e3a5f20_0%,_transparent_60%)] pointer-events-none" />
 
@@ -116,8 +116,8 @@ function CelebratePhase() {
           <Image src="/logo.svg" alt="ICRE" width={24} height={24} className="brightness-0 invert opacity-50" />
           <span className="text-slate-500 text-sm font-medium">ICRE</span>
         </div>
-        <h1 className="text-3xl font-bold text-white mb-2">Bem-vindo(a)!</h1>
-        <p className="text-slate-400 text-base">Sua conta foi criada com sucesso.</p>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Bem-vindo(a)!</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-base">Sua conta foi criada com sucesso.</p>
       </div>
 
       <div className="animate-[fadeSlideUp_0.5s_ease_0.5s_both]">
@@ -194,8 +194,8 @@ function PhotoPhase({ onNext }: PhotoPhaseProps) {
         <span className="text-slate-500 text-sm font-medium">ICRE</span>
       </div>
 
-      <h2 className="text-2xl font-bold text-white mb-2">Adicione uma foto</h2>
-      <p className="text-slate-400 text-sm mb-8">
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Adicione uma foto</h2>
+      <p className="text-slate-500 dark:text-slate-400 text-sm mb-8">
         Coloque um rosto no seu perfil. Você pode mudar isso depois.
       </p>
 
@@ -224,7 +224,7 @@ function PhotoPhase({ onNext }: PhotoPhaseProps) {
               <svg className="w-8 h-8 text-slate-500 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              <span className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors">
+              <span className="text-xs text-slate-500 group-hover:text-slate-500 dark:text-slate-400 transition-colors">
                 Clique ou arraste
               </span>
             </div>
@@ -232,7 +232,7 @@ function PhotoPhase({ onNext }: PhotoPhaseProps) {
 
           {isPending && (
             <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center">
-              <svg className="w-7 h-7 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+              <svg className="w-7 h-7 text-slate-900 dark:text-white animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
               </svg>
@@ -241,7 +241,7 @@ function PhotoPhase({ onNext }: PhotoPhaseProps) {
 
           {uploadDone && !isPending && (
             <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-emerald-500 border-2 border-slate-950 flex items-center justify-center animate-[popIn_0.4s_cubic-bezier(0.34,1.56,0.64,1)_both]">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -280,7 +280,7 @@ function PhotoPhase({ onNext }: PhotoPhaseProps) {
           type="button"
           onClick={onNext}
           disabled={isPending}
-          className="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+          className="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-slate-900 dark:text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
         >
           {uploadDone ? (
             <>
@@ -299,7 +299,7 @@ function PhotoPhase({ onNext }: PhotoPhaseProps) {
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={isPending}
-            className="w-full border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white font-semibold py-3 rounded-2xl transition-all text-sm disabled:opacity-50"
+            className="w-full border border-slate-700 hover:border-slate-500 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white font-semibold py-3 rounded-2xl transition-all text-sm disabled:opacity-50"
           >
             Escolher foto
           </button>
@@ -343,7 +343,7 @@ function RedirectPhase() {
             strokeLinecap="round"
           />
         </svg>
-        <span className="absolute text-2xl font-bold text-white">{count}</span>
+        <span className="absolute text-2xl font-bold text-slate-900 dark:text-white">{count}</span>
       </div>
 
       <div>
@@ -351,8 +351,8 @@ function RedirectPhase() {
           <Image src="/logo.svg" alt="ICRE" width={22} height={22} className="brightness-0 invert opacity-50" />
           <span className="text-slate-500 text-sm font-medium">ICRE</span>
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2">Tudo pronto!</h2>
-        <p className="text-slate-400 text-sm">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Tudo pronto!</h2>
+        <p className="text-slate-500 dark:text-slate-400 text-sm">
           Você será redirecionado para a página inicial em instantes.
         </p>
       </div>
@@ -372,7 +372,7 @@ function RedirectPhase() {
       <button
         type="button"
         onClick={() => router.push('/')}
-        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2"
+        className="w-full bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />

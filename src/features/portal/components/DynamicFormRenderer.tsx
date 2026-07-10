@@ -11,8 +11,8 @@ interface DynamicFormRendererProps {
 }
 
 export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: DynamicFormRendererProps) {
-  const cls = inputCls || 'w-full px-4 py-3 bg-slate-800/60 border border-white/10 text-white rounded-2xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all';
-  const labelCls = 'block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5';
+  const cls = inputCls || 'w-full px-4 py-3 bg-slate-800/60 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all';
+  const labelCls = 'block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5';
 
   if (!fields || fields.length === 0) return null;
 
@@ -78,7 +78,7 @@ export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: D
                       required={field.required}
                       className="w-4 h-4 text-blue-500"
                     />
-                    <span className="text-sm text-slate-300 group-hover:text-white transition-colors">{opt}</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:text-white transition-colors">{opt}</span>
                   </label>
                 ))}
               </div>
@@ -100,7 +100,7 @@ export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: D
                       }}
                       className="w-4 h-4 text-blue-500 rounded"
                     />
-                    <span className="text-sm text-slate-300 group-hover:text-white transition-colors">{opt}</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:text-white transition-colors">{opt}</span>
                   </label>
                 ))}
               </div>

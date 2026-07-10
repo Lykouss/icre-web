@@ -95,7 +95,7 @@ export function EventDetailsClient({
   const isNotOpen = event.registration_opens_at && new Date(event.registration_opens_at) > new Date();
 
   return (
-    <div className={`min-h-screen bg-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
+    <div className={`min-h-screen bg-white dark:bg-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/8 rounded-full blur-[140px]" />
@@ -107,7 +107,7 @@ export function EventDetailsClient({
         <div className="flex items-center justify-between mb-8">
           <Link
             href="/agenda"
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-medium transition-colors"
+            className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-medium transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -116,7 +116,7 @@ export function EventDetailsClient({
           </Link>
           <button
             onClick={() => setShareModalOpen(true)}
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-medium transition-colors"
+            className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-medium transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -127,7 +127,7 @@ export function EventDetailsClient({
 
         {/* Banner */}
         {event.banner_url && (
-          <div className="relative w-full aspect-video rounded-3xl overflow-hidden mb-8 border border-white/8">
+          <div className="relative w-full aspect-video rounded-3xl overflow-hidden mb-8 border border-black/5 dark:border-white/8">
             <Image src={event.banner_url} alt={event.title} fill className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent" />
           </div>
@@ -160,18 +160,18 @@ export function EventDetailsClient({
             )}
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
             {event.title}
           </h1>
 
           {event.description && (
-            <p className="text-slate-400 leading-relaxed text-base">{event.description}</p>
+            <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-base">{event.description}</p>
           )}
 
           {/* Meta info */}
           <div className="flex flex-wrap gap-5 mt-6">
             {event.date && (
-              <div className="flex items-center gap-2 text-sm text-slate-400">
+              <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                 <div className="w-8 h-8 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -181,7 +181,7 @@ export function EventDetailsClient({
               </div>
             )}
             {event.location && (
-              <div className="flex items-center gap-2 text-sm text-slate-400">
+              <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                 <div className="w-8 h-8 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -209,12 +209,12 @@ export function EventDetailsClient({
 
         {/* Regras e Termos */}
         {event.terms_text && needsRegistration && (
-          <div className="bg-slate-900/60 border border-white/8 rounded-2xl overflow-hidden mb-6">
+          <div className="bg-slate-50 dark:bg-slate-900/60 border border-black/5 dark:border-white/8 rounded-2xl overflow-hidden mb-6">
             <button
               onClick={() => setRulesExpanded(v => !v)}
-              className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-white/4 transition-colors"
+              className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-black/5 dark:bg-white/4 transition-colors"
             >
-              <span className="text-sm font-bold text-slate-300 flex items-center gap-2">
+              <span className="text-sm font-bold text-slate-600 dark:text-slate-300 flex items-center gap-2">
                 <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -225,7 +225,7 @@ export function EventDetailsClient({
               </svg>
             </button>
             {rulesExpanded && (
-              <div className="px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/6 pt-4 whitespace-pre-wrap">
+              <div className="px-6 pb-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-white/6 pt-4 whitespace-pre-wrap">
                 {event.terms_text}
               </div>
             )}
@@ -233,7 +233,7 @@ export function EventDetailsClient({
         )}
 
         {/* Card de ação */}
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-white/8 rounded-3xl p-8 shadow-2xl space-y-4">
+        <div className="bg-slate-50 dark:bg-slate-900/60 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-3xl p-8 shadow-2xl space-y-4">
 
           {/* --- Evento sem inscrição necessária --- */}
           {!needsRegistration && (
@@ -243,8 +243,8 @@ export function EventDetailsClient({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-white mb-1">Evento aberto ao público</h2>
-              <p className="text-slate-400 text-sm">Não é necessário fazer inscrição. Venha participar!</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Evento aberto ao público</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">Não é necessário fazer inscrição. Venha participar!</p>
             </div>
           )}
 
@@ -256,8 +256,8 @@ export function EventDetailsClient({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-white mb-1">Evento lotado</h2>
-              <p className="text-slate-400 text-sm">Fique de olho nos próximos eventos da nossa agenda.</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Evento lotado</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">Fique de olho nos próximos eventos da nossa agenda.</p>
             </div>
           )}
 
@@ -269,8 +269,8 @@ export function EventDetailsClient({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-white mb-1">Inscrições pausadas</h2>
-              <p className="text-slate-400 text-sm">As inscrições para este evento foram temporariamente pausadas pela organização.</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Inscrições pausadas</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">As inscrições para este evento foram temporariamente pausadas pela organização.</p>
             </div>
           )}
 
@@ -282,8 +282,8 @@ export function EventDetailsClient({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-white mb-1">Inscrições em breve</h2>
-              <p className="text-slate-400 text-sm">As inscrições iniciarão em {formatDate(event.registration_opens_at ?? null)}.</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Inscrições em breve</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">As inscrições iniciarão em {formatDate(event.registration_opens_at ?? null)}.</p>
             </div>
           )}
 
@@ -301,7 +301,7 @@ export function EventDetailsClient({
               </div>
               <Link
                 href={`/agenda/${event.id}/pagamento/${pendingPaymentRegistration!.id}`}
-                className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-amber-500/20"
+                className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 dark:text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-amber-500/20"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
@@ -310,7 +310,7 @@ export function EventDetailsClient({
               </Link>
               <Link
                 href="/suporte?title=Erro+no+Pagamento&description=Não+consegui+finalizar+o+pagamento+da+minha+inscrição."
-                className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3.5 rounded-2xl transition-all border border-white/10"
+                className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-2xl transition-all border border-black/10 dark:border-white/10"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 9v2m0 4h.01" />
@@ -339,7 +339,7 @@ export function EventDetailsClient({
               {confirmedRegistrations[0]?.ticket_signature && (
                 <Link
                   href={`/comprovante/${confirmedRegistrations[0].id}`}
-                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
+                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
@@ -352,7 +352,7 @@ export function EventDetailsClient({
               {confirmedRegistrations.length > 1 && (
                 <Link
                   href="/minhas-inscricoes"
-                  className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold py-3 rounded-2xl transition-all border border-white/10"
+                  className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-sm font-semibold py-3 rounded-2xl transition-all border border-black/10 dark:border-white/10"
                 >
                   Ver todos os comprovantes ({confirmedRegistrations.length})
                 </Link>
@@ -362,7 +362,7 @@ export function EventDetailsClient({
               {canRegisterAgain && !limitReached && !isFull && !isPaused && !isNotOpen && (
                 <Link
                   href={`/agenda/${event.id}/inscrever`}
-                  className="w-full flex items-center justify-center gap-2 bg-white/6 hover:bg-white/10 text-slate-300 text-sm font-semibold py-3 rounded-2xl transition-all border border-white/10"
+                  className="w-full flex items-center justify-center gap-2 bg-black/5 dark:bg-white/6 hover:bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 text-sm font-semibold py-3 rounded-2xl transition-all border border-black/10 dark:border-white/10"
                 >
                   Inscrever-se novamente
                 </Link>
@@ -374,7 +374,7 @@ export function EventDetailsClient({
           {needsRegistration && !isFull && !hasConfirmed && !hasPendingPayment && !isPaused && !isNotOpen && (
             <Link
               href={isAuthenticated ? `/agenda/${event.id}/inscrever` : `/login`}
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20 hover:scale-[1.01]"
+              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20 hover:scale-[1.01]"
             >
               {isPaid ? (
                 <>

@@ -27,12 +27,12 @@ export default async function ComprovantesPage() {
   const { allowed, remaining } = await checkPdfRateLimit(user.id);
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-28 pb-16 px-4">
+    <div className="min-h-screen bg-white dark:bg-slate-950 pt-28 pb-16 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-black text-white mb-1">Meus Comprovantes</h1>
-            <p className="text-slate-400 text-sm">Baixe ou visualize seus ingressos confirmados.</p>
+            <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-1">Meus Comprovantes</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">Baixe ou visualize seus ingressos confirmados.</p>
           </div>
 
           {/* Rate limit indicator */}
@@ -41,7 +41,7 @@ export default async function ComprovantesPage() {
               ? 'border-red-500/30 bg-red-500/10 text-red-400'
               : remaining <= 2
               ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
-              : 'border-white/10 bg-white/5 text-slate-400'
+              : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-slate-500 dark:text-slate-400'
           }`}>
             <LockIcon className="w-4 h-4" />
             {remaining === 0
@@ -51,11 +51,11 @@ export default async function ComprovantesPage() {
         </div>
 
         {(!registrations || registrations.length === 0) ? (
-          <div className="bg-slate-900/50 border border-white/10 rounded-3xl p-12 text-center">
+          <div className="bg-slate-50 dark:bg-slate-900/50 border border-black/10 dark:border-white/10 rounded-3xl p-12 text-center">
             <TicketIcon className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Nenhum comprovante disponível</h2>
-            <p className="text-slate-400 mb-6">Seus ingressos confirmados aparecerão aqui.</p>
-            <Link href="/agenda" className="inline-flex bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-all">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Nenhum comprovante disponível</h2>
+            <p className="text-slate-500 dark:text-slate-400 mb-6">Seus ingressos confirmados aparecerão aqui.</p>
+            <Link href="/agenda" className="inline-flex bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold px-6 py-3 rounded-xl transition-all">
               Ver agenda de eventos
             </Link>
           </div>
@@ -66,12 +66,12 @@ export default async function ComprovantesPage() {
               if (!event) return null;
 
               return (
-                <div key={reg.id} className="bg-slate-900/60 border border-white/10 rounded-2xl overflow-hidden">
+                <div key={reg.id} className="bg-slate-50 dark:bg-slate-900/60 border border-black/10 dark:border-white/10 rounded-2xl overflow-hidden">
                   <div className="flex flex-col sm:flex-row gap-5 p-5">
                     {/* Event info */}
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-white mb-2">{event.title}</h3>
-                      <div className="flex flex-col sm:flex-row gap-3 text-sm text-slate-400">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{event.title}</h3>
+                      <div className="flex flex-col sm:flex-row gap-3 text-sm text-slate-500 dark:text-slate-400">
                         {event.date && (
                           <div className="flex items-center gap-1.5">
                             <CalendarIcon className="w-4 h-4 text-slate-500" />
@@ -92,7 +92,7 @@ export default async function ComprovantesPage() {
                     <div className="flex items-center gap-3 shrink-0">
                       <Link
                         href={`/comprovante/${reg.id}`}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-slate-300 hover:text-white hover:border-white/20 text-sm font-semibold transition-all"
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:border-white/20 text-sm font-semibold transition-all"
                       >
                         <EyeIcon className="w-4 h-4" /> Visualizar
                       </Link>
@@ -110,7 +110,7 @@ export default async function ComprovantesPage() {
         )}
 
         <div className="mt-6 text-center">
-          <Link href="/minhas-inscricoes" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">
+          <Link href="/minhas-inscricoes" className="text-slate-500 hover:text-slate-600 dark:text-slate-300 text-sm transition-colors">
             ← Voltar para Minhas Inscrições
           </Link>
         </div>

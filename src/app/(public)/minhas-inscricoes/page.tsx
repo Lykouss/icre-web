@@ -65,7 +65,7 @@ export default async function MinhasInscricoesPage() {
   const hasAny    = registrations.length > 0;
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-28 pb-20 px-4">
+    <div className="min-h-screen bg-white dark:bg-slate-950 pt-28 pb-20 px-4">
       {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-blue-700/5 rounded-full blur-[140px]" />
@@ -80,8 +80,8 @@ export default async function MinhasInscricoesPage() {
             <div className="w-1 h-6 bg-blue-500 rounded-full" />
             <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.18em]">Portal ICRE</p>
           </div>
-          <h1 className="text-3xl font-black text-white mb-2">Minhas Inscrições</h1>
-          <p className="text-slate-400 text-sm">Seus ingressos e histórico de participação em eventos da ICRE.</p>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2">Minhas Inscrições</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">Seus ingressos e histórico de participação em eventos da ICRE.</p>
         </div>
 
         {/* ── Stats bar (quando há inscrições) ── */}
@@ -122,19 +122,19 @@ export default async function MinhasInscricoesPage() {
 
         {/* ── Estado vazio ── */}
         {!hasAny && (
-          <div className="bg-slate-900/50 border border-white/6 rounded-2xl p-16 text-center">
-            <div className="w-16 h-16 bg-slate-800/80 border border-white/8 rounded-2xl flex items-center justify-center mx-auto mb-5">
+          <div className="bg-slate-50 dark:bg-slate-900/50 border border-white/6 rounded-2xl p-16 text-center">
+            <div className="w-16 h-16 bg-slate-800/80 border border-black/5 dark:border-white/8 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <svg className="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
               </svg>
             </div>
-            <h2 className="text-lg font-bold text-white mb-2">Nenhuma inscrição encontrada</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Nenhuma inscrição encontrada</h2>
             <p className="text-slate-500 text-sm mb-8 max-w-sm mx-auto">
               Você ainda não se inscreveu em nenhum evento. Confira nossa agenda e garanta sua vaga!
             </p>
             <Link
               href="/agenda"
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-blue-500/20"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-blue-500/20"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -269,7 +269,7 @@ function StatCard({
   const numColors = {
     emerald: 'text-emerald-300',
     amber:   'text-amber-300',
-    slate:   'text-slate-400',
+    slate:   'text-slate-500 dark:text-slate-400',
   };
   return (
     <div className={`rounded-xl border px-4 py-4 ${colors[color]}`}>
@@ -324,9 +324,9 @@ function RegistrationCard({
   const isCancelled = variant === 'cancelled';
 
   const cardStyles = {
-    confirmed: 'bg-slate-900/60 border-white/8 hover:border-white/14 hover:bg-slate-900/80',
+    confirmed: 'bg-slate-50 dark:bg-slate-900/60 border-black/5 dark:border-white/8 hover:border-white/14 hover:bg-slate-50 dark:bg-slate-900/80',
     pending:   'bg-amber-500/4 border-amber-500/12 hover:border-amber-500/20',
-    cancelled: 'bg-slate-900/30 border-white/5 opacity-55',
+    cancelled: 'bg-slate-50 dark:bg-slate-900/30 border-black/5 dark:border-white/5 opacity-55',
   };
 
   return (
@@ -338,7 +338,7 @@ function RegistrationCard({
 
         {/* Informações */}
         <div className="flex-1 min-w-0">
-          <h3 className={`text-sm font-bold mb-1.5 truncate ${isCancelled ? 'text-slate-500 line-through' : 'text-white'}`}>
+          <h3 className={`text-sm font-bold mb-1.5 truncate ${isCancelled ? 'text-slate-500 line-through' : 'text-slate-900 dark:text-white'}`}>
             {event.title}
           </h3>
           <div className="flex flex-wrap gap-3">
@@ -377,7 +377,7 @@ function RegistrationCard({
               {reg.ticket_signature && (
                 <Link
                   href={`/comprovante/${reg.id}`}
-                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-all shadow-md shadow-blue-500/15 whitespace-nowrap"
+                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-all shadow-md shadow-blue-500/15 whitespace-nowrap"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
@@ -393,7 +393,7 @@ function RegistrationCard({
               <StatusBadge color="amber" label="Aguardando" />
               <Link
                 href={`/agenda/${reg.event_id}/pagamento/${reg.id}`}
-                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-all shadow-md shadow-amber-500/20 whitespace-nowrap"
+                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 dark:text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-all shadow-md shadow-amber-500/20 whitespace-nowrap"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -428,9 +428,9 @@ function EventTypeIcon({
   variant: 'confirmed' | 'pending' | 'cancelled';
 }) {
   const bgStyles = {
-    confirmed: 'bg-slate-800/80 border border-white/8',
+    confirmed: 'bg-slate-800/80 border border-black/5 dark:border-white/8',
     pending:   'bg-amber-500/10 border border-amber-500/15',
-    cancelled: 'bg-slate-800/40 border border-white/5',
+    cancelled: 'bg-slate-800/40 border border-black/5 dark:border-white/5',
   };
 
   const isCulto = type === 'culto' || type === 'culto_especial';

@@ -46,7 +46,7 @@ export function ContactSection({ content }: Props) {
   const subtitle = (content as unknown as Record<string, unknown>).subtitle as string || '';
 
   return (
-    <section id="contato" className="relative py-32 px-6 bg-slate-950 overflow-hidden">
+    <section id="contato" className="relative py-32 px-6 bg-white dark:bg-slate-950 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-blue-600/6 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-600/5 rounded-full blur-[90px]" />
@@ -62,17 +62,17 @@ export function ContactSection({ content }: Props) {
           <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-6">
             Fale Conosco
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
             {content.title || 'Contato'}
           </h2>
           {subtitle && (
-            <p className="mt-4 text-lg text-slate-400 max-w-xl mx-auto">{subtitle}</p>
+            <p className="mt-4 text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto">{subtitle}</p>
           )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
           {/* Infos */}
-          <div className="bg-slate-900/60 backdrop-blur-sm border border-white/8 rounded-3xl p-8 space-y-6">
+          <div className="bg-slate-50 dark:bg-slate-900/60 backdrop-blur-sm border border-black/5 dark:border-white/8 rounded-3xl p-8 space-y-6">
             {content.address && (
               <InfoRow
                 icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
@@ -109,7 +109,7 @@ export function ContactSection({ content }: Props) {
             <div className="pt-2">
               <Link
                 href="/feedback"
-                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-2xl text-sm transition-all duration-200 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25"
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold px-6 py-3 rounded-2xl text-sm transition-all duration-200 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25"
               >
                 Fale conosco
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,7 +127,7 @@ export function ContactSection({ content }: Props) {
           >
             <div className="relative">
               <div className="absolute -inset-3 bg-blue-500/8 rounded-3xl blur-xl" />
-              <div className="relative rounded-3xl overflow-hidden border border-white/8 bg-slate-800/50 aspect-4/3 shadow-2xl">
+              <div className="relative rounded-3xl overflow-hidden border border-black/5 dark:border-white/8 bg-slate-800/50 aspect-4/3 shadow-2xl">
                 {mapsUrl ? (
                   <iframe
                     src={mapsUrl}

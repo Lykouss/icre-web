@@ -92,8 +92,8 @@ export function PublicRegistrationForm({ eventId }: PublicRegistrationFormProps)
       {/* Tela de Carregamento Imersiva */}
       {isPending && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center">
-          <Loader2 className="w-12 h-12 text-white animate-spin mb-4" />
-          <p className="text-white font-bold tracking-wide">Processando pagamento em ambiente seguro...</p>
+          <Loader2 className="w-12 h-12 text-slate-900 dark:text-white animate-spin mb-4" />
+          <p className="text-slate-900 dark:text-white font-bold tracking-wide">Processando pagamento em ambiente seguro...</p>
         </div>
       )}
 
@@ -145,7 +145,7 @@ export function PublicRegistrationForm({ eventId }: PublicRegistrationFormProps)
         <button
           type="submit"
           disabled={isPending}
-          className="w-full py-3.5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3.5 bg-blue-600 text-slate-900 dark:text-white font-bold rounded-2xl hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
         >
           Confirmar inscrição
         </button>

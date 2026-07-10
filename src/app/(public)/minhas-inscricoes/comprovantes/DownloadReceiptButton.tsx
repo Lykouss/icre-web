@@ -34,7 +34,7 @@ export function DownloadReceiptButton({ registrationId, disabled, disabledReason
         onClick={handleDownload}
         disabled={disabled || isPending}
         title={disabledReason}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <DownloadIcon className="w-4 h-4" />}
         Baixar PDF

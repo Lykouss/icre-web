@@ -14,7 +14,7 @@ export function YoutubeSection({ content }: Props) {
   const videoId = content.video_id;
 
   return (
-    <section id="youtube" className="relative py-32 px-6 bg-slate-900 overflow-hidden">
+    <section id="youtube" className="relative py-32 px-6 bg-slate-50 dark:bg-slate-900 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-transparent to-slate-950/50" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-red-600/5 rounded-full blur-[130px]" />
@@ -35,7 +35,7 @@ export function YoutubeSection({ content }: Props) {
             <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
             YouTube
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
             {content.title || 'Ao Vivo'}
           </h2>
         </div>
@@ -49,9 +49,9 @@ export function YoutubeSection({ content }: Props) {
           <div className="relative">
             {/* Glow atrás do player */}
             <div className="absolute -inset-6 bg-red-500/10 rounded-3xl blur-3xl" />
-            <div className="absolute -inset-2 bg-slate-950/40 rounded-3xl" />
+            <div className="absolute -inset-2 bg-white dark:bg-slate-950/40 rounded-3xl" />
 
-            <div className="relative rounded-3xl overflow-hidden border border-white/8 shadow-2xl aspect-video bg-slate-950">
+            <div className="relative rounded-3xl overflow-hidden border border-black/5 dark:border-white/8 shadow-2xl aspect-video bg-white dark:bg-slate-950">
               {videoId ? (
                 <iframe
                   className="w-full h-full border-0"
@@ -66,13 +66,13 @@ export function YoutubeSection({ content }: Props) {
                   <div className="relative">
                     <div className="absolute inset-0 bg-red-500/20 rounded-full blur-xl animate-breathe" />
                     <div className="relative w-20 h-20 bg-red-600/90 hover:bg-red-500 rounded-full flex items-center justify-center transition-colors duration-200 cursor-default shadow-2xl shadow-red-500/30">
-                      <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-8 h-8 text-slate-900 dark:text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z"/>
                       </svg>
                     </div>
                   </div>
                   <div className="text-center">
-                    <p className="text-slate-300 font-semibold">Configure o vídeo no painel</p>
+                    <p className="text-slate-600 dark:text-slate-300 font-semibold">Configure o vídeo no painel</p>
                     <p className="text-slate-600 text-sm mt-1">Adicione um ID de vídeo do YouTube</p>
                   </div>
                 </div>
@@ -86,7 +86,7 @@ export function YoutubeSection({ content }: Props) {
                 href={content.channel_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2.5 bg-red-600 hover:bg-red-500 text-white font-bold px-7 py-3.5 rounded-2xl transition-all duration-200 hover:scale-[1.03] hover:shadow-xl hover:shadow-red-500/30 text-sm overflow-hidden relative"
+                className="group inline-flex items-center gap-2.5 bg-red-600 hover:bg-red-500 text-slate-900 dark:text-white font-bold px-7 py-3.5 rounded-2xl transition-all duration-200 hover:scale-[1.03] hover:shadow-xl hover:shadow-red-500/30 text-sm overflow-hidden relative"
               >
                 <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shimmer-bg" />
                 <svg className="relative w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

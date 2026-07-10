@@ -11,7 +11,7 @@ export function AboutSection({ content }: { content: AboutContent }) {
   const text = (content as unknown as Record<string, unknown>).text as string || content.body || '';
 
   return (
-    <section id="sobre" className="relative py-32 px-6 bg-slate-950 overflow-hidden">
+    <section id="sobre" className="relative py-32 px-6 bg-white dark:bg-slate-950 overflow-hidden">
       {/* Blurs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-32 right-0 w-[600px] h-[600px] bg-blue-600/7 rounded-full blur-[120px]" />
@@ -30,7 +30,7 @@ export function AboutSection({ content }: { content: AboutContent }) {
             {/* Glow animado no frame */}
             <div className="absolute -inset-3 bg-gradient-to-br from-blue-500/20 to-indigo-500/10 rounded-3xl blur-xl animate-breathe" />
 
-            <div className="relative rounded-3xl overflow-hidden aspect-4/3 bg-slate-800/60 border border-white/10 shadow-2xl backdrop-blur-sm">
+            <div className="relative rounded-3xl overflow-hidden aspect-4/3 bg-slate-800/60 border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-sm">
               {content.image_url ? (
                 <Image src={content.image_url} alt="Sobre a ICRE" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
               ) : (
@@ -45,11 +45,11 @@ export function AboutSection({ content }: { content: AboutContent }) {
               {/* Reflexo de luz */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none" />
               {/* Linha de borda gradiente */}
-              <div className="absolute inset-0 rounded-3xl border border-white/5 pointer-events-none" />
+              <div className="absolute inset-0 rounded-3xl border border-black/5 dark:border-white/5 pointer-events-none" />
             </div>
 
             {/* Chip flutuante — anos */}
-            <div className="absolute -bottom-5 -right-5 bg-slate-900 border border-white/10 rounded-2xl px-5 py-3.5 shadow-2xl backdrop-blur-md animate-float">
+            <div className="absolute -bottom-5 -right-5 bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-2xl px-5 py-3.5 shadow-2xl backdrop-blur-md animate-float">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-blue-500/15 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,16 +58,16 @@ export function AboutSection({ content }: { content: AboutContent }) {
                 </div>
                 <div>
                   <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-widest">Fundada em</p>
-                  <p className="text-2xl font-black text-white leading-tight">{content.founded_year || '1993'}</p>
+                  <p className="text-2xl font-black text-slate-900 dark:text-white leading-tight">{content.founded_year || '1993'}</p>
                 </div>
               </div>
             </div>
 
             {/* Chip flutuante — localização (canto superior) */}
-            <div className="absolute -top-5 -left-5 bg-slate-900 border border-white/10 rounded-2xl px-4 py-2.5 shadow-xl backdrop-blur-md animate-float" style={{ animationDelay: '1s' }}>
+            <div className="absolute -top-5 -left-5 bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-2xl px-4 py-2.5 shadow-xl backdrop-blur-md animate-float" style={{ animationDelay: '1s' }}>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-xs font-semibold text-slate-300">{content.location || 'Santa Maria, Brasília-DF'}</span>
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">{content.location || 'Santa Maria, Brasília-DF'}</span>
               </div>
             </div>
           </div>
@@ -86,7 +86,7 @@ export function AboutSection({ content }: { content: AboutContent }) {
             Quem Somos
           </div>
 
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-6">
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-6">
             {content.title || 'Sobre a ICRE'}
           </h2>
 
@@ -99,7 +99,7 @@ export function AboutSection({ content }: { content: AboutContent }) {
 
           {/* Texto com linha lateral */}
           <div className="relative pl-5 border-l-2 border-blue-500/30">
-            <p className="text-lg text-slate-400 leading-relaxed">
+            <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
               {text || 'Descreva aqui a história e a missão da sua igreja.'}
             </p>
           </div>

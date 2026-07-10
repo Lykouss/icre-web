@@ -65,9 +65,9 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
   const date = parseDate(event.date);
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-white dark:bg-slate-950/90 backdrop-blur-md" />
       <div
-        className="relative bg-slate-900 border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-modal-in"
+        className="relative bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-modal-in"
         onClick={e => e.stopPropagation()}
       >
         {/* Header com imagem */}
@@ -80,7 +80,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
             <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900">
               <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 40%, white 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
               <div className="absolute inset-0 flex items-center justify-center">
-                <svg className="w-24 h-24 text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-24 h-24 text-slate-900 dark:text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -91,7 +91,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
           {/* Fechar */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-9 h-9 bg-black/40 hover:bg-black/70 text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/10 backdrop-blur-sm"
+            className="absolute top-4 right-4 z-10 w-9 h-9 bg-black/40 hover:bg-black/70 text-slate-900 dark:text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-black/10 dark:border-white/10 backdrop-blur-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
@@ -113,11 +113,11 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
           {/* Título sobre a imagem */}
           <div className="absolute bottom-0 left-0 right-0 p-6">
             {date && (
-              <p className="text-xs text-white/60 font-semibold uppercase tracking-widest mb-1.5">
+              <p className="text-xs text-slate-900 dark:text-white/60 font-semibold uppercase tracking-widest mb-1.5">
                 {date.weekday} · {date.full}
               </p>
             )}
-            <h3 className="text-2xl font-black text-white leading-tight">{event.title}</h3>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white leading-tight">{event.title}</h3>
           </div>
         </div>
 
@@ -149,12 +149,12 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
           </div>
 
           {event.description && (
-            <p className="text-slate-400 text-sm leading-relaxed px-1">{event.description}</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed px-1">{event.description}</p>
           )}
 
           <Link
             href={`/agenda/${event.id}`}
-            className="group relative flex items-center justify-center gap-2 w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl text-sm transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30 overflow-hidden"
+            className="group relative flex items-center justify-center gap-2 w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold rounded-2xl text-sm transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30 overflow-hidden"
           >
             <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shimmer-bg" />
             <span className="relative">Tenho interesse</span>
@@ -181,7 +181,7 @@ function SpecialEventCard({ event, index }: { event: PublicEvent; index: number 
         style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(28px)', transitionDelay: `${index * 70}ms` }}
       >
         {/* Fundo */}
-        <div className="absolute inset-0 bg-slate-950" />
+        <div className="absolute inset-0 bg-white dark:bg-slate-950" />
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 will-change-transform"
           style={event.banner_url
@@ -207,19 +207,19 @@ function SpecialEventCard({ event, index }: { event: PublicEvent; index: number 
           </div>
 
           <div>
-            {date && <p className="text-sm text-slate-300/80 font-semibold mb-1.5">{date.weekday}, {date.full}</p>}
-            <h3 className="text-2xl sm:text-3xl font-black text-white group-hover:text-amber-300 transition-colors duration-300 leading-tight">{event.title}</h3>
+            {date && <p className="text-sm text-slate-600 dark:text-slate-300/80 font-semibold mb-1.5">{date.weekday}, {date.full}</p>}
+            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-amber-300 transition-colors duration-300 leading-tight">{event.title}</h3>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap mt-1">
             {event.time && (
-              <span className="flex items-center gap-1.5 text-sm text-slate-300 font-medium bg-black/25 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-sm">
+              <span className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300 font-medium bg-black/25 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10 backdrop-blur-sm">
                 <svg className="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 {event.time}
               </span>
             )}
             {event.location && (
-              <span className="flex items-center gap-1.5 text-sm text-slate-300 font-medium bg-black/25 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-sm">
+              <span className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300 font-medium bg-black/25 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10 backdrop-blur-sm">
                 <svg className="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
                 <span className="truncate max-w-[200px]">{event.location}</span>
               </span>
@@ -250,7 +250,7 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
       <div
         ref={ref}
         onClick={() => setOpen(true)}
-        className={`group relative flex overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 ease-out bg-slate-900/60 border border-white/8 hover:border-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/5 ${event.isCancelled ? 'opacity-60 grayscale-[40%]' : ''}`}
+        className={`group relative flex overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 ease-out bg-slate-50 dark:bg-slate-900/60 border border-black/5 dark:border-white/8 hover:border-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/5 ${event.isCancelled ? 'opacity-60 grayscale-[40%]' : ''}`}
         style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transitionDelay: `${index * 60}ms` }}
       >
         {/* Área de imagem / data */}
@@ -261,7 +261,7 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
               <div className="absolute inset-0 bg-gradient-to-r from-slate-900/50 to-slate-900/20" />
               {date && (
                 <div className="relative z-10 text-center">
-                  <span className="block text-2xl font-black text-white leading-none">{date.day}</span>
+                  <span className="block text-2xl font-black text-slate-900 dark:text-white leading-none">{date.day}</span>
                   <span className="block text-xs font-bold text-blue-300 uppercase tracking-wider mt-0.5">{date.month}</span>
                 </div>
               )}
@@ -270,7 +270,7 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
             <div className="flex flex-col items-center justify-center gap-1 w-full h-full">
               {date ? (
                 <>
-                  <span className="text-2xl font-black text-white leading-none">{date.day}</span>
+                  <span className="text-2xl font-black text-slate-900 dark:text-white leading-none">{date.day}</span>
                   <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">{date.month}</span>
                 </>
               ) : (
@@ -286,7 +286,7 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
         <div className="flex-1 flex items-center gap-4 px-5 py-4 min-w-0">
           <div className="flex-1 min-w-0">
             {date && <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider mb-1">{date.weekday}</p>}
-            <h3 className="font-bold text-white group-hover:text-blue-300 transition-colors duration-200 truncate text-base leading-tight">{event.title}</h3>
+            <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-blue-300 transition-colors duration-200 truncate text-base leading-tight">{event.title}</h3>
             <div className="flex items-center gap-3 mt-1.5 flex-wrap">
               {event.isCancelled && (
                 <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-md">Cancelado</span>
@@ -331,7 +331,7 @@ export function EventsSection({ content, events }: Props) {
   const regularEvents = events.filter(e => e.type !== 'especial');
 
   return (
-    <section id="eventos" className="relative py-32 px-6 bg-slate-950 overflow-hidden">
+    <section id="eventos" className="relative py-32 px-6 bg-white dark:bg-slate-950 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[110px]" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-600/4 rounded-full blur-[90px]" />
@@ -350,10 +350,10 @@ export function EventsSection({ content, events }: Props) {
             </svg>
             Agenda
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
             {content.title || 'Próximos Eventos'}
           </h2>
-          {content.subtitle && <p className="mt-4 text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">{content.subtitle}</p>}
+          {content.subtitle && <p className="mt-4 text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">{content.subtitle}</p>}
           <p className="mt-3 text-xs text-slate-600">Clique em um evento para ver mais detalhes</p>
         </div>
 
@@ -374,9 +374,9 @@ export function EventsSection({ content, events }: Props) {
             {/* Divisor */}
             {specialEvents.length > 0 && regularEvents.length > 0 && (
               <div className="flex items-center gap-4 mb-6">
-                <div className="flex-1 h-px bg-white/6" />
+                <div className="flex-1 h-px bg-black/5 dark:bg-white/6" />
                 <span className="text-xs text-slate-600 font-semibold uppercase tracking-widest">Cultos regulares</span>
-                <div className="flex-1 h-px bg-white/6" />
+                <div className="flex-1 h-px bg-black/5 dark:bg-white/6" />
               </div>
             )}
 
@@ -395,7 +395,7 @@ export function EventsSection({ content, events }: Props) {
             >
               <Link
                 href="/agenda"
-                className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold border border-white/10 hover:border-white/25 px-6 py-3 rounded-2xl hover:bg-white/5 transition-all duration-200"
+                className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-semibold border border-black/10 dark:border-white/10 hover:border-white/25 px-6 py-3 rounded-2xl hover:bg-black/5 dark:bg-white/5 transition-all duration-200"
               >
                 Ver agenda completa
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
@@ -403,13 +403,13 @@ export function EventsSection({ content, events }: Props) {
             </div>
           </>
         ) : (
-          <div className="bg-slate-900/40 border border-white/6 border-dashed rounded-3xl p-14 text-center">
+          <div className="bg-slate-50 dark:bg-slate-900/40 border border-white/6 border-dashed rounded-3xl p-14 text-center">
             <div className="w-16 h-16 bg-blue-500/8 border border-blue-500/15 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <svg className="w-8 h-8 text-blue-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <p className="text-slate-400 font-semibold mb-2">Nenhum evento programado</p>
+            <p className="text-slate-500 dark:text-slate-400 font-semibold mb-2">Nenhum evento programado</p>
             <p className="text-slate-600 text-sm mb-6">Os próximos eventos aparecerão aqui assim que forem publicados no painel.</p>
             <Link
               href="/agenda"

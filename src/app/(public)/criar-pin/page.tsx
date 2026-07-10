@@ -72,11 +72,11 @@ export default function CreatePinPage() {
   const digits = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center pt-24 pb-8 px-4">
+    <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center pt-24 pb-8 px-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative w-full max-w-sm">
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl text-center">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl text-center">
 
           {/* Ícone */}
           <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -85,10 +85,10 @@ export default function CreatePinPage() {
             </svg>
           </div>
 
-          <h1 className="text-2xl font-bold text-white mb-1">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
             {step === 'create' ? 'Crie seu PIN' : 'Confirme seu PIN'}
           </h1>
-          <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-8 leading-relaxed">
             {step === 'create'
               ? 'Escolha um PIN de 4 dígitos. Ele será exigido sempre que você acessar o sistema.'
               : 'Digite novamente para confirmar.'}
@@ -134,8 +134,8 @@ export default function CreatePinPage() {
                   className={`
                     h-16 rounded-2xl font-bold text-xl transition-all active:scale-95
                     ${isDelete
-                      ? 'text-slate-400 hover:text-white hover:bg-slate-800 bg-transparent'
-                      : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 hover:border-slate-600 shadow-sm'
+                      ? 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-800 bg-transparent'
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white border border-slate-700 hover:border-slate-600 shadow-sm'
                     }
                     disabled:opacity-50
                   `}
@@ -160,7 +160,7 @@ export default function CreatePinPage() {
           {step === 'confirm' && (
             <button
               onClick={() => { setStep('create'); setPin(''); setConfirmPin(''); setError(null); }}
-              className="mt-4 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+              className="mt-4 text-xs text-slate-500 hover:text-slate-600 dark:text-slate-300 transition-colors"
             >
               ← Redefinir PIN
             </button>

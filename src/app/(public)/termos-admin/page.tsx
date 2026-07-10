@@ -25,7 +25,7 @@ export default function AdminTermsPage() {
   };
 
   return (
-   <div className="min-h-screen bg-slate-950 flex items-center justify-center pt-24 pb-8 px-4">
+   <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center pt-24 pb-8 px-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#3b1f5e_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative w-full max-w-2xl">
@@ -39,7 +39,7 @@ export default function AdminTermsPage() {
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
           {/* Header */}
           <div className="p-8 border-b border-slate-800">
             <div className="flex items-center gap-4 mb-4">
@@ -49,8 +49,8 @@ export default function AdminTermsPage() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">Termos de Responsabilidade do Administrador</h1>
-                <p className="text-slate-400 text-sm mt-0.5">Leia com atenção antes de assumir as responsabilidades do cargo.</p>
+                <h1 className="text-xl font-bold text-slate-900 dark:text-white">Termos de Responsabilidade do Administrador</h1>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">Leia com atenção antes de assumir as responsabilidades do cargo.</p>
               </div>
             </div>
 
@@ -62,7 +62,7 @@ export default function AdminTermsPage() {
           {/* Conteúdo dos Termos — scroll obrigatório */}
           <div
             onScroll={handleScroll}
-            className="h-72 overflow-y-auto p-8 text-sm text-slate-400 leading-relaxed space-y-4 border-b border-slate-800"
+            className="h-72 overflow-y-auto p-8 text-sm text-slate-500 dark:text-slate-400 leading-relaxed space-y-4 border-b border-slate-800"
           >
             <AdminTermsContent />
 
@@ -93,13 +93,13 @@ export default function AdminTermsPage() {
                 />
                 <div className="w-5 h-5 rounded-md border-2 border-slate-600 peer-checked:bg-violet-600 peer-checked:border-violet-600 transition-all flex items-center justify-center">
                   {accepted && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
               </div>
-              <span className="text-sm text-slate-300 group-hover:text-white transition-colors leading-relaxed">
+              <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:text-white transition-colors leading-relaxed">
                 Li, compreendi e aceito os Termos de Responsabilidade do Administrador da ICRE. Comprometo-me a exercer este cargo com integridade, ética e alinhamento com os valores da igreja.
               </span>
             </label>
@@ -116,7 +116,7 @@ export default function AdminTermsPage() {
             <button
               onClick={handleAccept}
               disabled={!accepted || isPending}
-              className="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-violet-600 hover:bg-violet-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isPending ? (
                 <>

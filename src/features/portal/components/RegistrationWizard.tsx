@@ -207,13 +207,13 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
     });
   };
 
-  const inputCls = 'w-full px-4 py-3.5 bg-slate-800/80 border border-white/10 text-white rounded-xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500/40 transition-all';
+  const inputCls = 'w-full px-4 py-3.5 bg-slate-800/80 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white rounded-xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500/40 transition-all';
 
   // Stepper completo (sem o "Sucesso")
   const visibleSteps = stepLabels.slice(0, -1);
 
   return (
-    <div className={`min-h-screen bg-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
+    <div className={`min-h-screen bg-white dark:bg-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-blue-700/5 rounded-full blur-[160px]" />
@@ -226,7 +226,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
         <div className="flex items-center gap-3 mb-8">
           <Link
             href={`/agenda/${event.id}`}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+            className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 transition-all"
             title="Voltar ao evento"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,7 +246,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
         {/* Stepper */}
         {stepId !== 'success' && (
-          <div className="bg-slate-900/50 border border-white/6 rounded-2xl p-4 mb-6">
+          <div className="bg-slate-50 dark:bg-slate-900/50 border border-white/6 rounded-2xl p-4 mb-6">
             <div className="flex items-center gap-0">
               {visibleSteps.map((label, i) => {
                 const isActive = i === currentStep;
@@ -255,8 +255,8 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                   <React.Fragment key={label}>
                     <div className="flex flex-col items-center gap-1.5">
                       <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black transition-all duration-300 ${
-                        isDone ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' :
-                        isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-400/30' :
+                        isDone ? 'bg-emerald-500 text-slate-900 dark:text-white shadow-lg shadow-emerald-500/30' :
+                        isActive ? 'bg-blue-600 text-slate-900 dark:text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-400/30' :
                         'bg-slate-800 text-slate-500 border border-white/6'
                       }`}>
                         {isDone ? (
@@ -266,7 +266,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                         ) : i + 1}
                       </div>
                       <span className={`text-[10px] font-bold uppercase tracking-wide transition-colors ${
-                        isActive ? 'text-white' : isDone ? 'text-emerald-400' : 'text-slate-600'
+                        isActive ? 'text-slate-900 dark:text-white' : isDone ? 'text-emerald-400' : 'text-slate-600'
                       }`}>{label}</span>
                     </div>
                     {i < visibleSteps.length - 1 && (
@@ -289,7 +289,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
               : 'translateX(0)',
           }}
         >
-          <div className="bg-slate-900/70 backdrop-blur-xl border border-white/8 rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
+          <div className="bg-slate-50 dark:bg-slate-900/70 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
 
             {/* ─── STEP: TERMS ─── */}
             {stepId === 'terms' && (
@@ -304,7 +304,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Passo 1 de {visibleSteps.length}</p>
-                      <h2 className="text-base font-black text-white">Regras e Termos</h2>
+                      <h2 className="text-base font-black text-slate-900 dark:text-white">Regras e Termos</h2>
                     </div>
                   </div>
                 </div>
@@ -314,7 +314,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                   {(event.date || event.location) && (
                     <div className="flex flex-wrap gap-3 mb-5">
                       {event.date && (
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                           <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
@@ -322,7 +322,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                         </div>
                       )}
                       {event.location && (
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                           <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           </svg>
@@ -335,7 +335,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                   <div 
                     ref={termsBoxRef}
                     onScroll={handleTermsScroll}
-                    className="bg-slate-800/60 border border-white/6 rounded-xl p-5 text-sm text-slate-300 leading-relaxed mb-5 max-h-48 overflow-y-auto portal-scroll whitespace-pre-wrap"
+                    className="bg-slate-800/60 border border-white/6 rounded-xl p-5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-5 max-h-48 overflow-y-auto portal-scroll whitespace-pre-wrap"
                   >
                     {event.terms_text || event.rules || event.description || 'Ao se inscrever, você concorda em comparecer ao evento na data e horário indicados e respeitar todas as orientações da organização.'}
                   </div>
@@ -348,7 +348,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       onChange={e => setTermsAccepted(e.target.checked)}
                       className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-600 bg-slate-800 accent-blue-500 shrink-0 disabled:opacity-50"
                     />
-                    <span className="text-sm text-slate-300 group-hover:text-white transition-colors leading-snug">
+                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:text-white transition-colors leading-snug">
                       Li e aceito as regras e termos deste evento
                     </span>
                   </label>
@@ -356,7 +356,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                   <button
                     onClick={() => { if (termsAccepted) nextStep(); }}
                     disabled={!termsAccepted || !hasScrolledToBottom}
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                   >
                     Continuar
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -379,7 +379,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Passo 2 de {visibleSteps.length}</p>
-                      <h2 className="text-base font-black text-white">Dados do Participante</h2>
+                      <h2 className="text-base font-black text-slate-900 dark:text-white">Dados do Participante</h2>
                     </div>
                   </div>
                 </div>
@@ -407,7 +407,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
                   <form ref={formRef} onSubmit={handlePersonalDataSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Nome completo *</label>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Nome completo *</label>
                       <input 
                         name="name" 
                         type="text" 
@@ -419,7 +419,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">E-mail *</label>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">E-mail *</label>
                       <input 
                         name="email" 
                         type="email" 
@@ -431,7 +431,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Telefone *</label>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Telefone *</label>
                       <input 
                         name="phone" 
                         type="tel" 
@@ -444,7 +444,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       {isPaid && <p className="text-xs text-amber-400/80 mt-1.5 flex items-center gap-1"><span>⚠️</span> Necessário para eventuais estornos.</p>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">
                         CPF {isPaid ? '*' : <span className="text-slate-600 normal-case font-normal">(opcional)</span>}
                       </label>
                       <input
@@ -469,7 +469,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     {/* Método de pagamento */}
                     {isPaid && (
                       <div className="pt-1">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Forma de Pagamento</label>
+                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">Forma de Pagamento</label>
                         <div className="grid grid-cols-2 gap-3">
                           {/* PIX */}
                           {event.accepts_pix !== false && (
@@ -479,23 +479,23 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                               className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
                                 paymentMethod === 'pix'
                                   ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
-                                  : 'border-white/8 hover:border-white/16 bg-slate-800/40'
+                                  : 'border-black/5 dark:border-white/8 hover:border-white/16 bg-slate-800/40'
                               }`}
                             >
                               {paymentMethod === 'pix' && (
                                 <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg className="w-2.5 h-2.5 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                                   </svg>
                                 </div>
                               )}
                               <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'pix' ? 'bg-blue-500' : 'bg-slate-700'}`}>
-                                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <svg className="w-4 h-4 text-slate-900 dark:text-white" viewBox="0 0 24 24" fill="currentColor">
                                   <path d="M11.9999 2L3 7v10l9 5 9-5V7l-9-5zM12 4.236L18.764 8 12 11.764 5.236 8 12 4.236zM4 9.236l7 3.888V19.764L4 15.888V9.236zm9 10.528V13.124l7-3.888v6.652L13 19.764z"/>
                                 </svg>
                               </div>
                               <div>
-                                <p className={`text-sm font-black ${paymentMethod === 'pix' ? 'text-white' : 'text-slate-300'}`}>PIX</p>
+                                <p className={`text-sm font-black ${paymentMethod === 'pix' ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}>PIX</p>
                                 <p className="text-[10px] text-slate-500">Aprovação imediata</p>
                               </div>
                             </button>
@@ -509,23 +509,23 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                               className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
                                 paymentMethod === 'boleto'
                                   ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
-                                  : 'border-white/8 hover:border-white/16 bg-slate-800/40'
+                                  : 'border-black/5 dark:border-white/8 hover:border-white/16 bg-slate-800/40'
                               }`}
                             >
                               {paymentMethod === 'boleto' && (
                                 <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg className="w-2.5 h-2.5 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                                   </svg>
                                 </div>
                               )}
                               <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'boleto' ? 'bg-blue-500' : 'bg-slate-700'}`}>
-                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                               </div>
                               <div>
-                                <p className={`text-sm font-black ${paymentMethod === 'boleto' ? 'text-white' : 'text-slate-300'}`}>Boleto</p>
+                                <p className={`text-sm font-black ${paymentMethod === 'boleto' ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}>Boleto</p>
                                 <p className="text-[10px] text-slate-500">Até 3 dias úteis</p>
                               </div>
                             </button>
@@ -547,14 +547,14 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="px-5 py-3.5 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 text-sm font-semibold transition-all"
+                        className="px-5 py-3.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 text-sm font-semibold transition-all"
                       >
                         Voltar
                       </button>
                       <button
                         type="submit"
                         disabled={isPending}
-                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                       >
                         {isPending ? (
                           <>
@@ -588,7 +588,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-pink-400 uppercase tracking-widest">Passo 3 de {visibleSteps.length}</p>
-                      <h2 className="text-base font-black text-white">Dados Adicionais</h2>
+                      <h2 className="text-base font-black text-slate-900 dark:text-white">Dados Adicionais</h2>
                     </div>
                   </div>
                 </div>
@@ -626,14 +626,14 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="px-5 py-3.5 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 text-sm font-semibold transition-all"
+                        className="px-5 py-3.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 text-sm font-semibold transition-all"
                       >
                         Voltar
                       </button>
                       <button
                         type="submit"
                         disabled={isPending}
-                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                       >
                         {isPending ? (
                           <>
@@ -667,7 +667,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Passo Final de {visibleSteps.length}</p>
-                      <h2 className="text-base font-black text-white">Resumo da Compra</h2>
+                      <h2 className="text-base font-black text-slate-900 dark:text-white">Resumo da Compra</h2>
                     </div>
                   </div>
                 </div>
@@ -684,20 +684,20 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     </div>
                   )}
 
-                  <div className="bg-slate-800/40 border border-white/10 rounded-2xl p-5 mb-6">
-                    <div className="flex justify-between items-center mb-4 pb-4 border-b border-white/10">
-                      <span className="text-sm font-semibold text-slate-300">Valor da Inscrição</span>
-                      <span className="text-sm font-bold text-white">{formatCurrency(event.ticket_price || 0)}</span>
+                  <div className="bg-slate-800/40 border border-black/10 dark:border-white/10 rounded-2xl p-5 mb-6">
+                    <div className="flex justify-between items-center mb-4 pb-4 border-b border-black/10 dark:border-white/10">
+                      <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">Valor da Inscrição</span>
+                      <span className="text-sm font-bold text-slate-900 dark:text-white">{formatCurrency(event.ticket_price || 0)}</span>
                     </div>
-                    <div className="flex justify-between items-center mb-4 pb-4 border-b border-white/10">
+                    <div className="flex justify-between items-center mb-4 pb-4 border-b border-black/10 dark:border-white/10">
                       <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-slate-300">Taxa de Transação</span>
+                        <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">Taxa de Transação</span>
                         <span className="text-[10px] text-slate-500 mt-0.5">Cobrança do serviço de transações</span>
                       </div>
-                      <span className="text-sm font-bold text-white">{formatCurrency(paymentMethod === 'pix' ? 1.99 : 2.99)}</span>
+                      <span className="text-sm font-bold text-slate-900 dark:text-white">{formatCurrency(paymentMethod === 'pix' ? 1.99 : 2.99)}</span>
                     </div>
                     <div className="flex justify-between items-center pt-2">
-                      <span className="text-base font-black text-white">Total a Pagar</span>
+                      <span className="text-base font-black text-slate-900 dark:text-white">Total a Pagar</span>
                       <span className="text-xl font-black text-blue-400">{formatCurrency((event.ticket_price || 0) + (paymentMethod === 'pix' ? 1.99 : 2.99))}</span>
                     </div>
                   </div>
@@ -715,7 +715,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     <button
                       type="button"
                       onClick={prevStep}
-                      className="px-5 py-3.5 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 text-sm font-semibold transition-all"
+                      className="px-5 py-3.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 text-sm font-semibold transition-all"
                     >
                       Voltar
                     </button>
@@ -723,7 +723,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       type="button"
                       onClick={executeSubmit}
                       disabled={isPending}
-                      className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                      className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
                     >
                       {isPending ? (
                         <>
@@ -755,20 +755,20 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       </svg>
                     </div>
                   </div>
-                  <h2 className="text-xl font-black text-white">Inscrição Confirmada</h2>
+                  <h2 className="text-xl font-black text-slate-900 dark:text-white">Inscrição Confirmada</h2>
                   <p className="text-emerald-400/80 text-xs font-semibold uppercase tracking-widest mt-1">Registro efetuado com sucesso</p>
                 </div>
 
                 <div className="p-7">
-                  <p className="text-slate-400 text-sm leading-relaxed mb-6 text-center">
-                    Sua presença no evento <span className="text-white font-semibold">{event.title}</span> foi registrada. Te esperamos!
+                  <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6 text-center">
+                    Sua presença no evento <span className="text-slate-900 dark:text-white font-semibold">{event.title}</span> foi registrada. Te esperamos!
                   </p>
 
                   <div className="space-y-3">
                     {registrationId && (
                       <Link
                         href={`/comprovante/${registrationId}`}
-                        className="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/20"
+                        className="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold px-6 py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/20"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
@@ -778,13 +778,13 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     )}
                     <Link
                       href="/minhas-inscricoes"
-                      className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold px-6 py-3.5 rounded-xl transition-all border border-white/8"
+                      className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold px-6 py-3.5 rounded-xl transition-all border border-black/5 dark:border-white/8"
                     >
                       Minhas Inscrições
                     </Link>
                     <Link
                       href="/agenda"
-                      className="block text-center text-slate-500 hover:text-slate-300 text-sm font-medium transition-colors py-1"
+                      className="block text-center text-slate-500 hover:text-slate-600 dark:text-slate-300 text-sm font-medium transition-colors py-1"
                     >
                       Ver outros eventos
                     </Link>
@@ -797,9 +797,9 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
         {/* Rodapé */}
         <div className="mt-6 flex items-center justify-center gap-2">
-          <div className="w-px h-4 bg-white/10" />
+          <div className="w-px h-4 bg-black/5 dark:bg-white/10" />
           <p className="text-xs text-slate-600">ICRE · Portal de Eventos · Ambiente Seguro</p>
-          <div className="w-px h-4 bg-white/10" />
+          <div className="w-px h-4 bg-black/5 dark:bg-white/10" />
         </div>
       </div>
 
@@ -807,13 +807,13 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
       {showProcessingOverlay && (
         <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/85 backdrop-blur-sm">
           <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-5 mx-auto shadow-2xl shadow-blue-500/40">
-            <svg className="w-8 h-8 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-slate-900 dark:text-white animate-spin" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
             </svg>
           </div>
-          <p className="text-white font-bold text-lg">Processando inscrição...</p>
-          <p className="text-slate-400 text-sm mt-1">Por favor, não feche esta página.</p>
+          <p className="text-slate-900 dark:text-white font-bold text-lg">Processando inscrição...</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Por favor, não feche esta página.</p>
         </div>
       )}
     </div>

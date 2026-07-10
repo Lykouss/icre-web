@@ -90,18 +90,18 @@ function InboxView() {
   return (
     <div className="flex flex-col h-[85vh] max-h-[850px] max-w-6xl mx-auto">
       <div className="mb-4">
-        <button onClick={() => router.push('/')} className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-bold">
+        <button onClick={() => router.push('/')} className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors text-sm font-bold">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
           Voltar para a página inicial
         </button>
       </div>
       
-      <div className="flex flex-col md:flex-row flex-1 rounded-3xl overflow-hidden border border-white/10 bg-slate-900/60 backdrop-blur-2xl shadow-2xl shadow-black/50">
+      <div className="flex flex-col md:flex-row flex-1 rounded-3xl overflow-hidden border border-black/10 dark:border-white/10 bg-slate-50 dark:bg-slate-900/60 backdrop-blur-2xl shadow-2xl shadow-black/50">
         {/* Lista da Esquerda */}
-        <div className={`w-full md:w-1/3 md:border-r border-white/10 flex flex-col bg-slate-900/80 ${selectedItem ? 'hidden md:flex' : 'flex'}`}>
-          <div className="p-6 border-b border-white/10 shrink-0">
-            <h2 className="text-2xl font-black text-white">Notificações</h2>
-            <p className="text-slate-400 text-sm mt-1">Seu histórico de avisos e mensagens.</p>
+        <div className={`w-full md:w-1/3 md:border-r border-black/10 dark:border-white/10 flex flex-col bg-slate-50 dark:bg-slate-900/80 ${selectedItem ? 'hidden md:flex' : 'flex'}`}>
+          <div className="p-6 border-b border-black/10 dark:border-white/10 shrink-0">
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white">Notificações</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Seu histórico de avisos e mensagens.</p>
           </div>
           
           <div className="overflow-y-auto flex-1 p-3 space-y-2 custom-scrollbar">
@@ -118,17 +118,17 @@ function InboxView() {
                     className={`relative w-full text-left p-4 rounded-2xl transition-all border ${
                       isSelected 
                         ? 'bg-blue-600/10 border-blue-500/30' 
-                        : 'bg-white/5 border-transparent hover:bg-white/10'
+                        : 'bg-black/5 dark:bg-white/5 border-transparent hover:bg-black/5 dark:bg-white/10'
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       {!item.is_read && <div className="w-2 h-2 mt-1.5 shrink-0 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />}
                       <div className="flex-1 min-w-0 pr-4">
                         <div className="flex justify-between items-start mb-1">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">{typeTranslations[item.communications.type] || item.communications.type}</span>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">{typeTranslations[item.communications.type] || item.communications.type}</span>
                           <span className="text-[10px] text-slate-500">{new Date(item.created_at).toLocaleDateString()}</span>
                         </div>
-                        <p className={`text-sm truncate ${!item.is_read ? 'font-bold text-white' : 'font-medium text-slate-300'}`}>{item.communications.title}</p>
+                        <p className={`text-sm truncate ${!item.is_read ? 'font-bold text-slate-900 dark:text-white' : 'font-medium text-slate-600 dark:text-slate-300'}`}>{item.communications.title}</p>
                       </div>
                       
                       {isFetchingThis && (
@@ -145,7 +145,7 @@ function InboxView() {
         </div>
 
       {/* Detalhes da Direita */}
-      <div className={`w-full md:w-2/3 flex flex-col bg-slate-950/40 relative ${!selectedItem ? 'hidden md:flex' : 'flex'}`}>
+      <div className={`w-full md:w-2/3 flex flex-col bg-white dark:bg-slate-950/40 relative ${!selectedItem ? 'hidden md:flex' : 'flex'}`}>
         {selectedItem ? (
           <AnimatePresence mode="wait">
             <motion.div
@@ -155,8 +155,8 @@ function InboxView() {
               exit={{ opacity: 0, y: -10 }}
               className="flex flex-col h-full"
             >
-              <div className="p-6 md:p-8 border-b border-white/5 shrink-0 flex items-center gap-4">
-                <button onClick={() => router.push('/minhas-notificacoes')} className="md:hidden p-2 bg-white/5 rounded-xl hover:bg-white/10 text-white">
+              <div className="p-6 md:p-8 border-b border-black/5 dark:border-white/5 shrink-0 flex items-center gap-4">
+                <button onClick={() => router.push('/minhas-notificacoes')} className="md:hidden p-2 bg-black/5 dark:bg-white/5 rounded-xl hover:bg-black/5 dark:bg-white/10 text-slate-900 dark:text-white">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <div>
@@ -164,12 +164,12 @@ function InboxView() {
                     <span className="text-xs font-black uppercase tracking-wider text-blue-400 bg-blue-500/10 px-2 py-1 rounded-md">{typeTranslations[selectedItem.communications.type] || selectedItem.communications.type}</span>
                     <span className="text-xs text-slate-500">{new Date(selectedItem.created_at).toLocaleString()}</span>
                   </div>
-                  <h2 className="text-2xl md:text-3xl font-black text-white">{selectedItem.communications.title}</h2>
+                  <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">{selectedItem.communications.title}</h2>
                 </div>
               </div>
               
               <div className="p-6 md:p-10 flex-1 overflow-y-auto">
-                <div className="prose prose-invert max-w-none text-slate-300 whitespace-pre-wrap leading-relaxed text-sm md:text-base">
+                <div className="prose prose-invert max-w-none text-slate-600 dark:text-slate-300 whitespace-pre-wrap leading-relaxed text-sm md:text-base">
                   {selectedItem.communications.message}
                 </div>
               </div>
@@ -189,7 +189,7 @@ function InboxView() {
 
 export default function MinhasNotificacoesPage() {
   return (
-    <div className="min-h-screen bg-slate-950 px-4 pt-24 pb-20">
+    <div className="min-h-screen bg-white dark:bg-slate-950 px-4 pt-24 pb-20">
       <Suspense fallback={
         <div className="h-screen flex items-center justify-center">
           <svg className="w-10 h-10 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">

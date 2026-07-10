@@ -45,7 +45,7 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
         </svg>
       ),
       url: `https://api.whatsapp.com/send?text=${encodedTitle}%0A${encodedUrl}`,
-      color: 'hover:bg-emerald-500/20 hover:text-emerald-400 border-white/5',
+      color: 'hover:bg-emerald-500/20 hover:text-emerald-400 border-black/5 dark:border-white/5',
     },
     {
       name: 'Facebook',
@@ -55,7 +55,7 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
         </svg>
       ),
       url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-      color: 'hover:bg-blue-600/20 hover:text-blue-500 border-white/5',
+      color: 'hover:bg-blue-600/20 hover:text-blue-500 border-black/5 dark:border-white/5',
     },
     {
       name: 'Twitter',
@@ -65,7 +65,7 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
         </svg>
       ),
       url: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-      color: 'hover:bg-slate-700/50 hover:text-white border-white/5',
+      color: 'hover:bg-slate-700/50 hover:text-slate-900 dark:text-white border-black/5 dark:border-white/5',
     },
     {
       name: 'Telegram',
@@ -75,7 +75,7 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
         </svg>
       ),
       url: `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
-      color: 'hover:bg-sky-500/20 hover:text-sky-400 border-white/5',
+      color: 'hover:bg-sky-500/20 hover:text-sky-400 border-black/5 dark:border-white/5',
     }
   ];
 
@@ -88,13 +88,13 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
       />
 
       {/* Modal */}
-      <div className="relative bg-slate-900 border border-white/10 rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden transform transition-all">
+      <div className="relative bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden transform transition-all">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 pb-4 border-b border-white/5">
-          <h3 className="text-lg font-bold text-white">Compartilhar Evento</h3>
+        <div className="flex items-center justify-between p-6 pb-4 border-b border-black/5 dark:border-white/5">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Compartilhar Evento</h3>
           <button 
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5"
+            className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors p-1 rounded-lg hover:bg-black/5 dark:bg-white/5"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -113,10 +113,10 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
                 rel="noopener noreferrer"
                 className={`flex flex-col items-center gap-2 group`}
               >
-                <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center text-slate-300 bg-slate-800/50 transition-all duration-200 group-hover:scale-105 ${opt.color}`}>
+                <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center text-slate-600 dark:text-slate-300 bg-slate-800/50 transition-all duration-200 group-hover:scale-105 ${opt.color}`}>
                   {opt.icon}
                 </div>
-                <span className="text-[10px] font-medium text-slate-400 group-hover:text-slate-200 transition-colors">
+                <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-200 transition-colors">
                   {opt.name}
                 </span>
               </a>
@@ -124,19 +124,19 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
               Copiar Link
             </label>
-            <div className="flex items-center gap-2 bg-slate-800/50 border border-white/10 rounded-xl p-1.5">
+            <div className="flex items-center gap-2 bg-slate-800/50 border border-black/10 dark:border-white/10 rounded-xl p-1.5">
               <div className="flex-1 min-w-0 px-3">
-                <p className="text-sm text-slate-300 truncate font-mono">{eventUrl}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300 truncate font-mono">{eventUrl}</p>
               </div>
               <button
                 onClick={handleCopyLink}
                 className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                   copied 
                     ? 'bg-emerald-500/20 text-emerald-400' 
-                    : 'bg-blue-600 hover:bg-blue-500 text-white'
+                    : 'bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white'
                 }`}
               >
                 {copied ? (

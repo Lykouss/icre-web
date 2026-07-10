@@ -39,7 +39,7 @@ export function ContactSection({ content }: { content: ContactContent }) {
   const { ref, visible } = useScrollReveal({ threshold: 0.12 });
 
   return (
-    <section id="contato" className="relative py-32 px-6 bg-slate-950 overflow-hidden">
+    <section id="contato" className="relative py-32 px-6 bg-white dark:bg-slate-950 overflow-hidden">
       {/* Blurs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-blue-600/5 rounded-full blur-[120px]" />
@@ -59,14 +59,14 @@ export function ContactSection({ content }: { content: ContactContent }) {
             </svg>
             Contato
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
             {content.title || 'Venha nos Visitar'}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
           {/* Esquerda — Info */}
-          <div className="bg-slate-900/50 backdrop-blur-sm border border-white/6 rounded-3xl p-8">
+          <div className="bg-slate-50 dark:bg-slate-900/50 backdrop-blur-sm border border-white/6 rounded-3xl p-8">
             <div className="space-y-7">
               {content.address && (
                 <InfoRow
@@ -126,7 +126,7 @@ export function ContactSection({ content }: { content: ContactContent }) {
           {/* Direita — Mapa */}
           <div className="relative">
             <div className="absolute -inset-2 bg-blue-500/8 rounded-3xl blur-xl" />
-            <div className="relative rounded-3xl overflow-hidden border border-white/8 shadow-2xl aspect-video lg:aspect-auto lg:h-80 flex items-center justify-center bg-slate-900">
+            <div className="relative rounded-3xl overflow-hidden border border-black/5 dark:border-white/8 shadow-2xl aspect-video lg:aspect-auto lg:h-80 flex items-center justify-center bg-slate-50 dark:bg-slate-900">
               {content.maps_url ? (
                 <iframe
                   src={content.maps_url}
@@ -143,7 +143,7 @@ export function ContactSection({ content }: { content: ContactContent }) {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-400">Mapa não configurado</p>
+                    <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Mapa não configurado</p>
                     <p className="text-xs text-slate-600 mt-1">Adicione o link do Google Maps no painel</p>
                   </div>
                 </div>

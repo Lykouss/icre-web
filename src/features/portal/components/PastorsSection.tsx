@@ -8,9 +8,9 @@ import type { Pastor, PastorsSectionContent } from '@/features/portal/types';
 function PastorModal({ pastor, onClose }: { pastor: Pastor; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-white dark:bg-slate-950/90 backdrop-blur-md" />
       <div
-        className="relative bg-slate-900 border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-modal-in"
+        className="relative bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-modal-in"
         onClick={e => e.stopPropagation()}
       >
         <div className="relative w-full aspect-[4/3] bg-slate-800 overflow-hidden">
@@ -27,18 +27,18 @@ function PastorModal({ pastor, onClose }: { pastor: Pastor; onClose: () => void 
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-9 h-9 bg-black/40 hover:bg-black/70 text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/10 backdrop-blur-sm"
+            className="absolute top-4 right-4 z-10 w-9 h-9 bg-black/40 hover:bg-black/70 text-slate-900 dark:text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-black/10 dark:border-white/10 backdrop-blur-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
           <div className="absolute bottom-0 left-0 right-0 p-6">
             <p className={`text-xs font-bold uppercase tracking-[0.2em] mb-1.5 ${pastor.is_president ? 'text-yellow-400' : 'text-blue-400'}`}>{pastor.role}</p>
-            <h3 className="text-2xl font-black text-white leading-tight">{pastor.name}</h3>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white leading-tight">{pastor.name}</h3>
           </div>
         </div>
         <div className="p-6">
           {pastor.bio
-            ? <p className="text-slate-400 leading-relaxed text-sm mb-5">{pastor.bio}</p>
+            ? <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm mb-5">{pastor.bio}</p>
             : <p className="text-slate-600 text-sm italic mb-5">Sem biografia disponível.</p>
           }
           {pastor.instagram_url && (
@@ -70,7 +70,7 @@ function PastorCard({ pastor, index, isPresident, embedded }: { pastor: Pastor; 
   const gradLine = isPresident ? 'from-yellow-500 to-amber-500' : 'from-blue-500 to-indigo-500';
   const badgeBg = isPresident ? 'bg-yellow-600/90' : 'bg-blue-600/90';
 
-  const wrapperClass = `group relative bg-slate-900/60 backdrop-blur-sm border ${isPresident ? 'border-yellow-500/20' : 'border-white/8'} rounded-3xl overflow-hidden cursor-pointer ${borderHover} hover:-translate-y-2 hover:shadow-2xl ${shadowHover} transition-all duration-400 ease-out h-full flex flex-col w-full`;
+  const wrapperClass = `group relative bg-slate-50 dark:bg-slate-900/60 backdrop-blur-sm border ${isPresident ? 'border-yellow-500/20' : 'border-black/5 dark:border-white/8'} rounded-3xl overflow-hidden cursor-pointer ${borderHover} hover:-translate-y-2 hover:shadow-2xl ${shadowHover} transition-all duration-400 ease-out h-full flex flex-col w-full`;
 
   return (
     <>
@@ -93,7 +93,7 @@ function PastorCard({ pastor, index, isPresident, embedded }: { pastor: Pastor; 
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/10 to-transparent" />
           <div className="absolute inset-0 flex items-end justify-end p-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-            <span className={`inline-flex items-center gap-1.5 ${badgeBg} backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-xl translate-y-2 group-hover:translate-y-0 transition-transform duration-300`}>
+            <span className={`inline-flex items-center gap-1.5 ${badgeBg} backdrop-blur-sm text-slate-900 dark:text-white text-xs font-bold px-3 py-1.5 rounded-xl translate-y-2 group-hover:translate-y-0 transition-transform duration-300`}>
               Ver perfil
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
             </span>
@@ -101,10 +101,10 @@ function PastorCard({ pastor, index, isPresident, embedded }: { pastor: Pastor; 
         </div>
         <div className="p-5 flex-1 flex flex-col">
           <p className={`text-xs font-bold uppercase tracking-[0.18em] mb-1.5 ${textRole}`}>{pastor.role}</p>
-          <h3 className={`text-lg font-bold text-white mb-2 transition-colors duration-200 ${textNameHover}`}>{pastor.name}</h3>
+          <h3 className={`text-lg font-bold text-slate-900 dark:text-white mb-2 transition-colors duration-200 ${textNameHover}`}>{pastor.name}</h3>
           <div className="mt-auto pt-2">
             {pastor.bio ? (
-              <p className="text-sm text-slate-400 leading-relaxed line-clamp-2">{pastor.bio}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">{pastor.bio}</p>
             ) : (
               <p className="text-sm text-transparent select-none line-clamp-2">Sem biografia</p>
             )}
@@ -123,7 +123,7 @@ function CoupleCard({ p1, p2, index, isPresident }: { p1: Pastor; p2: Pastor, in
   return (
     <div 
       ref={ref} 
-      className={`relative flex flex-col sm:flex-row items-stretch gap-4 sm:gap-8 p-4 sm:p-6 rounded-[2.5rem] bg-slate-900/40 border border-white/5 backdrop-blur-sm transition-all duration-700 ease-out`}
+      className={`relative flex flex-col sm:flex-row items-stretch gap-4 sm:gap-8 p-4 sm:p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-900/40 border border-black/5 dark:border-white/5 backdrop-blur-sm transition-all duration-700 ease-out`}
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translate3d(0,0,0)' : 'translate3d(0,40px,0)', transitionDelay: `${index * 90}ms` }}
     >
       {isPresident && <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 rounded-[2.5rem] blur-xl opacity-60 pointer-events-none" />}
@@ -132,8 +132,8 @@ function CoupleCard({ p1, p2, index, isPresident }: { p1: Pastor; p2: Pastor, in
         <PastorCard pastor={p1} index={0} isPresident={isPresident} embedded />
       </div>
       
-      <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-slate-800 border border-white/10 shadow-xl z-10 -my-6 sm:my-auto sm:-mx-10 relative">
-        <div className="absolute inset-0 rounded-full border border-white/5 bg-slate-800/80 backdrop-blur-md" />
+      <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-slate-800 border border-black/10 dark:border-white/10 shadow-xl z-10 -my-6 sm:my-auto sm:-mx-10 relative">
+        <div className="absolute inset-0 rounded-full border border-black/5 dark:border-white/5 bg-slate-800/80 backdrop-blur-md" />
         <svg className={`w-5 h-5 relative z-10 ${isPresident ? 'text-yellow-400' : 'text-indigo-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
         </svg>
@@ -199,7 +199,7 @@ export function PastorsSection({ content, pastors }: Props) {
   otherPairs.sort(sortByCoupleFirst);
 
   return (
-    <section id="lideranca" className="relative py-32 px-6 bg-slate-950 overflow-hidden">
+    <section id="lideranca" className="relative py-32 px-6 bg-white dark:bg-slate-950 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/6 rounded-full blur-[110px] hidden md:block" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[90px] hidden md:block" />
@@ -216,10 +216,10 @@ export function PastorsSection({ content, pastors }: Props) {
             </svg>
             Liderança
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight mb-3">
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-3">
             {content.title || 'Nossa Liderança'}
           </h2>
-          {content.subtitle && <p className="mt-4 text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">{content.subtitle}</p>}
+          {content.subtitle && <p className="mt-4 text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">{content.subtitle}</p>}
         </div>
 
         {/* Jesus - Cruz */}
@@ -275,13 +275,13 @@ export function PastorsSection({ content, pastors }: Props) {
 
           </div>
         ) : (
-          <div className="w-full max-w-2xl bg-slate-900/40 border border-white/6 border-dashed rounded-3xl p-14 text-center">
+          <div className="w-full max-w-2xl bg-slate-50 dark:bg-slate-900/40 border border-white/6 border-dashed rounded-3xl p-14 text-center">
             <div className="w-16 h-16 bg-indigo-500/10 border border-indigo-500/15 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <svg className="w-8 h-8 text-indigo-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
             </div>
-            <p className="text-slate-400 font-semibold mb-2">Liderança em breve</p>
+            <p className="text-slate-500 dark:text-slate-400 font-semibold mb-2">Liderança em breve</p>
             <p className="text-slate-600 text-sm">Os líderes serão exibidos aqui assim que forem cadastrados no painel.</p>
           </div>
         )}

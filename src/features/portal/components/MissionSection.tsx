@@ -129,10 +129,10 @@ function StatCard({ icon, value, suffix, label, index, active }: {
       <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-blue-400 mb-4 mx-auto">
         {icon}
       </div>
-      <div className="text-4xl sm:text-5xl font-black text-white tabular-nums leading-none">
+      <div className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tabular-nums leading-none">
         {count}{suffix}
       </div>
-      <p className="text-sm text-slate-400 mt-2 font-medium">{label}</p>
+      <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">{label}</p>
     </div>
   );
 }
@@ -145,7 +145,7 @@ function PillarCard({ item, index }: { item: MissionItem; index: number }) {
   return (
     <div
       ref={ref}
-      className={`group relative bg-slate-900/60 backdrop-blur-sm border border-white/8 rounded-3xl p-8 hover:border-white/16 hover:-translate-y-2 hover:shadow-2xl ${color.glow} transition-all duration-500 ease-out overflow-hidden`}
+      className={`group relative bg-slate-50 dark:bg-slate-900/60 backdrop-blur-sm border border-black/5 dark:border-white/8 rounded-3xl p-8 hover:border-white/16 hover:-translate-y-2 hover:shadow-2xl ${color.glow} transition-all duration-500 ease-out overflow-hidden`}
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(32px)', transitionDelay: `${index * 100}ms` }}
     >
       {/* Glow background no hover */}
@@ -156,8 +156,8 @@ function PillarCard({ item, index }: { item: MissionItem; index: number }) {
         {icon}
       </div>
 
-      <h3 className="text-xl font-bold text-white mb-3 leading-tight">{item.title}</h3>
-      <p className="text-slate-400 leading-relaxed text-sm">{item.text}</p>
+      <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 leading-tight">{item.title}</h3>
+      <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">{item.text}</p>
 
       {/* Linha decorativa no hover */}
       <div className={`absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent ${color.accent} to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center`} />
@@ -176,7 +176,7 @@ export function MissionSection({ content }: Props) {
   const items = (content.items ?? []) as MissionItem[];
 
   return (
-    <section id="missao" className="relative py-32 px-6 bg-slate-900 overflow-hidden">
+    <section id="missao" className="relative py-32 px-6 bg-slate-50 dark:bg-slate-900 overflow-hidden">
       {/* Blurs de fundo */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-blue-600/6 rounded-full blur-[140px]" />
@@ -196,7 +196,7 @@ export function MissionSection({ content }: Props) {
             </svg>
             Propósito
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight mb-6">
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-6">
             {content.title || 'Nossa Missão'}
           </h2>
           {/* Linha decorativa */}

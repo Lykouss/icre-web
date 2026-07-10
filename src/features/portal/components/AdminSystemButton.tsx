@@ -51,7 +51,7 @@ export function AdminSystemButton() {
     <div className={`fixed bottom-6 right-6 z-50 transition-all duration-500 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
       <Link
         href="/dashboard"
-        className="flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-5 py-3 rounded-2xl shadow-xl border border-slate-700 hover:border-slate-600 transition-all hover:-translate-y-0.5 active:translate-y-0"
+        className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-800 text-slate-900 dark:text-white text-sm font-semibold px-5 py-3 rounded-2xl shadow-xl border border-slate-700 hover:border-slate-600 transition-all hover:-translate-y-0.5 active:translate-y-0"
       >
         <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 3H5a2 2 0 00-2 2v14a2 2 0 002 2h4M16 17l5-5m0 0l-5-5m5 5H9" />

@@ -81,7 +81,7 @@ export default function AdminOnboardingPage() {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
         <svg className="w-8 h-8 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
@@ -93,14 +93,14 @@ export default function AdminOnboardingPage() {
   if (!authorized) return null;
 
   const inputCls = (field: string) =>
-    `w-full px-4 py-3 bg-slate-800 border rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all ${
+    `w-full px-4 py-3 bg-slate-800 border rounded-xl text-slate-900 dark:text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all ${
       errors[field] ? 'border-red-500' : 'border-slate-700'
     }`;
 
-  const labelCls = 'block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5';
+  const labelCls = 'block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5';
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-28 pb-16 px-4">
+    <div className="min-h-screen bg-white dark:bg-slate-950 pt-28 pb-16 px-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#3b1f5e_0%,transparent_60%)] pointer-events-none" />
 
       <div className="relative max-w-2xl mx-auto">
@@ -108,14 +108,14 @@ export default function AdminOnboardingPage() {
           <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-4">
             Cadastro Administrativo — Passo 1 de 4
           </div>
-          <h1 className="text-3xl font-black text-white">Complete seu perfil</h1>
-          <p className="text-slate-400 text-sm mt-2 max-w-md mx-auto">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white">Complete seu perfil</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-md mx-auto">
             Precisamos de seus dados completos para ativar seu cargo administrativo.
             Todos os campos são obrigatórios.
           </p>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-8">
 
             {errors.general && (
@@ -126,7 +126,7 @@ export default function AdminOnboardingPage() {
 
             {/* Seção 1 — Dados pessoais */}
             <div>
-              <h2 className="text-sm font-bold text-slate-300 mb-5 flex items-center gap-2">
+              <h2 className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-5 flex items-center gap-2">
                 <span className="w-6 h-6 bg-violet-500/20 text-violet-400 rounded-lg flex items-center justify-center text-xs font-black">1</span>
                 Dados Pessoais
               </h2>
@@ -187,7 +187,7 @@ export default function AdminOnboardingPage() {
 
             {/* Seção 2 — Endereço */}
             <div>
-              <h2 className="text-sm font-bold text-slate-300 mb-5 flex items-center gap-2">
+              <h2 className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-5 flex items-center gap-2">
                 <span className="w-6 h-6 bg-violet-500/20 text-violet-400 rounded-lg flex items-center justify-center text-xs font-black">2</span>
                 Endereço Residencial
               </h2>
@@ -253,7 +253,7 @@ export default function AdminOnboardingPage() {
               </div>
             </div>
 
-            <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 text-xs text-slate-400 leading-relaxed">
+            <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               Seus dados são armazenados com segurança e utilizados exclusivamente para identificação administrativa dentro da ICRE, conforme nossa{' '}
               <a href="/privacidade" target="_blank" className="text-violet-400 hover:underline">
                 Política de Privacidade
@@ -263,7 +263,7 @@ export default function AdminOnboardingPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-4 rounded-2xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-violet-600 hover:bg-violet-500 text-slate-900 dark:text-white font-bold py-4 rounded-2xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isPending ? (
                 <>

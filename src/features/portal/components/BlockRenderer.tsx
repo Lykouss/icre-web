@@ -187,7 +187,7 @@ function EventsBlock({ content, layout, events }: { content: EventsContent; layo
         {content.subtitle && <p className="text-lg text-slate-500">{content.subtitle}</p>}
       </div>
       {events.length === 0 ? (
-        <p className="text-slate-400">Nenhum evento disponível no momento.</p>
+        <p className="text-slate-500 dark:text-slate-400">Nenhum evento disponível no momento.</p>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {events.map(event => (
@@ -219,7 +219,7 @@ function YoutubeBlock({ content, layout }: { content: YoutubeContent; layout: Re
   const bg = layout.bg_color !== 'transparent' ? layout.bg_color : '#0f172a';
   return (
     <Section layout={layout} style={{ backgroundColor: bg }}>
-      <h2 className="text-4xl font-bold text-white mb-10">{content.title}</h2>
+      <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-10">{content.title}</h2>
       <div className={`rounded-3xl overflow-hidden shadow-2xl aspect-video w-full`}>
         <iframe
           className="w-full h-full"
@@ -229,7 +229,7 @@ function YoutubeBlock({ content, layout }: { content: YoutubeContent; layout: Re
         />
       </div>
       {content.channel_url && (
-        <a href={content.channel_url} target="_blank" rel="noopener noreferrer" className="mt-6 text-white/70 hover:text-white font-medium transition-colors">
+        <a href={content.channel_url} target="_blank" rel="noopener noreferrer" className="mt-6 text-slate-900 dark:text-white/70 hover:text-slate-900 dark:text-white font-medium transition-colors">
           Ver canal completo →
         </a>
       )}
@@ -288,9 +288,9 @@ function ContactBlock({ content, layout }: { content: ContactContent; layout: Re
             </div>
           )}
           {!content.address && !content.phone && !content.email && (
-            <p className="text-sm text-slate-400 italic">Preencha as informações de contato no editor.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 italic">Preencha as informações de contato no editor.</p>
           )}
-          <Link href="/feedback" className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-blue-700 transition-colors">
+          <Link href="/feedback" className="inline-flex items-center gap-2 bg-blue-600 text-slate-900 dark:text-white px-6 py-3 rounded-2xl font-semibold hover:bg-blue-700 transition-colors">
             Fale conosco
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />

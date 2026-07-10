@@ -94,7 +94,7 @@ export default function AdminOnboardingPhotoPage() {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
         <svg className="w-8 h-8 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
@@ -106,7 +106,7 @@ export default function AdminOnboardingPhotoPage() {
   if (!authorized) return null;
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-28 pb-16 px-4">
+    <div className="min-h-screen bg-white dark:bg-slate-950 pt-28 pb-16 px-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#3b1f5e_0%,transparent_60%)] pointer-events-none" />
 
       <div className="relative max-w-md mx-auto">
@@ -114,13 +114,13 @@ export default function AdminOnboardingPhotoPage() {
           <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-4">
             Cadastro Administrativo — Passo 2 de 4
           </div>
-          <h1 className="text-3xl font-black text-white">Foto de perfil</h1>
-          <p className="text-slate-400 text-sm mt-2 max-w-sm mx-auto">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white">Foto de perfil</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-sm mx-auto">
             Uma foto é obrigatória para administradores. Ela aparecerá nos registros e logs do sistema.
           </p>
         </div>
 
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-white/8 rounded-3xl p-8 shadow-2xl shadow-black/40 space-y-6">
+        <div className="bg-slate-50 dark:bg-slate-900/60 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-3xl p-8 shadow-2xl shadow-black/40 space-y-6">
 
           {/* Drop zone / preview */}
           <div className="flex flex-col items-center gap-4">
@@ -147,7 +147,7 @@ export default function AdminOnboardingPhotoPage() {
 
               {isPending && (
                 <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center">
-                  <svg className="w-7 h-7 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-7 h-7 text-slate-900 dark:text-white animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                   </svg>
@@ -156,7 +156,7 @@ export default function AdminOnboardingPhotoPage() {
 
               {uploaded && !isPending && (
                 <div className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center shadow-lg">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
@@ -175,7 +175,7 @@ export default function AdminOnboardingPhotoPage() {
               type="button"
               onClick={() => inputRef.current?.click()}
               disabled={isPending}
-              className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -207,7 +207,7 @@ export default function AdminOnboardingPhotoPage() {
           <button
             onClick={handleContinue}
             disabled={!uploaded || isPending}
-            className="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-violet-500/20"
+            className="w-full bg-violet-600 hover:bg-violet-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-2xl transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-violet-500/20"
           >
             {isPending ? (
               <>

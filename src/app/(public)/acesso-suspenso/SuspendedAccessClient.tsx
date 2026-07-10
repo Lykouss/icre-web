@@ -24,7 +24,7 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
     d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 overflow-hidden relative">
+    <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4 overflow-hidden relative">
 
       {/* Blurs de fundo */}
       <div className="pointer-events-none absolute inset-0">
@@ -79,7 +79,7 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
 
         {/* Card glassmorphism */}
         <div
-          className="bg-slate-900/70 backdrop-blur-xl border border-white/8 rounded-3xl overflow-hidden shadow-2xl transition-all duration-700 delay-75"
+          className="bg-slate-50 dark:bg-slate-900/70 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-3xl overflow-hidden shadow-2xl transition-all duration-700 delay-75"
           style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0) scale(1)' : 'translateY(24px) scale(0.97)' }}
         >
           {/* Linha de destaque topo */}
@@ -113,8 +113,8 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
               style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(12px)' }}
             >
               <p className="text-xs font-bold text-red-400/70 uppercase tracking-widest mb-2">Acesso bloqueado</p>
-              <h1 className="text-2xl font-black text-white tracking-tight">Conta suspensa</h1>
-              <p className="text-slate-400 text-sm mt-2">
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Conta suspensa</h1>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
                 Olá, <span className="text-slate-200 font-medium">{fullName}</span>. Seu acesso ao
                 sistema administrativo foi temporariamente suspenso.
               </p>
@@ -122,7 +122,7 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
           </div>
 
           {/* Separador */}
-          <div className="mx-8 h-px bg-white/6" />
+          <div className="mx-8 h-px bg-black/5 dark:bg-white/6" />
 
           {/* Corpo */}
           <div
@@ -143,7 +143,7 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
             )}
 
             {/* Detalhes */}
-            <div className="bg-white/4 border border-white/8 rounded-2xl divide-y divide-white/6 overflow-hidden">
+            <div className="bg-black/5 dark:bg-white/4 border border-black/5 dark:border-white/8 rounded-2xl divide-y divide-white/6 overflow-hidden">
               {byName && (
                 <div className="flex items-center justify-between px-4 py-3">
                   <span className="text-xs text-slate-500 font-medium">Suspenso por</span>
@@ -164,7 +164,7 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                 Sua conta pública permanece ativa. Para contestar esta decisão, entre em contato
                 diretamente com a liderança da ICRE.
               </p>
@@ -178,9 +178,9 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
           >
             <Link
               href="/"
-              className="group flex items-center justify-center gap-2 w-full py-3.5 bg-white/8 hover:bg-white/12 border border-white/10 hover:border-white/20 text-white font-semibold rounded-2xl transition-all duration-200 text-sm backdrop-blur-sm"
+              className="group flex items-center justify-center gap-2 w-full py-3.5 bg-black/5 dark:bg-white/8 hover:bg-white/12 border border-black/10 dark:border-white/10 hover:border-white/20 text-slate-900 dark:text-white font-semibold rounded-2xl transition-all duration-200 text-sm backdrop-blur-sm"
             >
-              <svg className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                   d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
@@ -189,7 +189,7 @@ export function SuspendedAccessClient({ fullName, reason, byName, until }: Suspe
 
             <Link
               href="/minha-conta"
-              className="flex items-center justify-center gap-2 w-full py-3 text-slate-500 hover:text-slate-300 font-medium rounded-2xl transition-colors text-sm"
+              className="flex items-center justify-center gap-2 w-full py-3 text-slate-500 hover:text-slate-600 dark:text-slate-300 font-medium rounded-2xl transition-colors text-sm"
             >
               Acessar minha conta pública
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

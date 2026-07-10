@@ -17,9 +17,9 @@ function Section({ number, title, children }: SectionProps) {
         <span className="shrink-0 w-8 h-8 rounded-lg bg-blue-600/10 text-blue-400 text-xs font-black flex items-center justify-center mt-0.5">
           {number}
         </span>
-        <h2 className="text-xl font-bold text-white">{title}</h2>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white">{title}</h2>
       </div>
-      <div className="ml-12 text-slate-400 leading-relaxed space-y-3">
+      <div className="ml-12 text-slate-500 dark:text-slate-400 leading-relaxed space-y-3">
         {children}
       </div>
     </div>
@@ -28,7 +28,7 @@ function Section({ number, title, children }: SectionProps) {
 
 export default function PrivacidadePage() {
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* Hero */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-blue-950/60 to-slate-950 pointer-events-none" />
@@ -37,7 +37,7 @@ export default function PrivacidadePage() {
         <div className="relative max-w-3xl mx-auto px-6 pt-32 pb-16">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm font-medium transition-colors mb-10"
+            className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-600 dark:text-slate-300 text-sm font-medium transition-colors mb-10"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -52,10 +52,10 @@ export default function PrivacidadePage() {
             Documento legal
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-4">
+          <h1 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-4">
             Política de<br />Privacidade
           </h1>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
             Última atualização: março de 2026
           </p>
         </div>
@@ -63,7 +63,7 @@ export default function PrivacidadePage() {
 
       {/* Conteúdo */}
       <div className="max-w-3xl mx-auto px-6 pb-24">
-        <div className="w-full h-px bg-white/5 mb-16" />
+        <div className="w-full h-px bg-black/5 dark:bg-white/5 mb-16" />
 
         <div className="space-y-12">
           <Section number="1" title="Quem somos">
@@ -203,15 +203,15 @@ export default function PrivacidadePage() {
           </Section>
         </div>
 
-        <div className="mt-20 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="mt-20 pt-8 border-t border-black/5 dark:border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <p className="text-slate-500 text-sm">
             © {new Date().getFullYear()} Igreja de Cristo Rocha Eterna
           </p>
           <div className="flex items-center gap-6 text-sm">
-            <Link href="/termos" className="text-slate-500 hover:text-slate-300 transition-colors">
+            <Link href="/termos" className="text-slate-500 hover:text-slate-600 dark:text-slate-300 transition-colors">
               Termos de Uso
             </Link>
-            <Link href="/" className="text-slate-500 hover:text-slate-300 transition-colors">
+            <Link href="/" className="text-slate-500 hover:text-slate-600 dark:text-slate-300 transition-colors">
               Voltar ao início
             </Link>
           </div>

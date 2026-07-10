@@ -119,7 +119,7 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
         <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-[var(--admin-border)]" style={{ background: 'var(--admin-bg)' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={value} alt="" className="w-full h-full object-cover" />
-          <button onClick={() => onChange('')} className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg transition-colors backdrop-blur-sm">
+          <button onClick={() => onChange('')} className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 text-slate-900 dark:text-white rounded-lg transition-colors backdrop-blur-sm">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
@@ -138,10 +138,10 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
           <div className="rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden border border-[var(--admin-border-strong)]" style={{ background: 'var(--admin-surface)' }}>
             <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--admin-border)] shrink-0">
               <div>
-                <h3 className="font-bold text-white text-sm">Galeria de imagens</h3>
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Galeria de imagens</h3>
                 <p className="text-xs text-[var(--admin-text-muted)] mt-0.5">Selecione ou envie uma imagem</p>
               </div>
-              <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:bg-white/10 transition-colors">
+              <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-black/5 dark:bg-white/10 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -155,7 +155,7 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
               </div>
             </div>
             <div className="px-5 py-4 border-b border-[var(--admin-border)] shrink-0">
-              <label className={`flex flex-col items-center justify-center gap-2 py-6 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${uploading ? 'border-[var(--admin-border)] text-slate-500' : 'border-slate-500 hover:border-blue-500/50 hover:bg-blue-500/5 hover:text-blue-400 text-slate-400'}`}>
+              <label className={`flex flex-col items-center justify-center gap-2 py-6 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${uploading ? 'border-[var(--admin-border)] text-slate-500' : 'border-slate-500 hover:border-blue-500/50 hover:bg-blue-500/5 hover:text-blue-400 text-slate-500 dark:text-slate-400'}`}>
                 {uploading ? (
                   <><svg className="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg><span className="text-sm font-semibold">Enviando...</span></>
                 ) : (
@@ -184,17 +184,17 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
                       {value === item.url && (
                         <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">
                           <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <svg className="w-5 h-5 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/></svg>
                           </div>
                         </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-between p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="flex justify-end">
-                          <button onClick={e => { e.stopPropagation(); handleDelete(item); }} className="p-1.5 bg-red-600/90 hover:bg-red-500 text-white rounded-lg shadow-sm backdrop-blur-sm">
+                          <button onClick={e => { e.stopPropagation(); handleDelete(item); }} className="p-1.5 bg-red-600/90 hover:bg-red-500 text-slate-900 dark:text-white rounded-lg shadow-sm backdrop-blur-sm">
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                           </button>
                         </div>
-                        <p className="text-white text-[10px] font-semibold">{formatBytes(item.size_bytes)}</p>
+                        <p className="text-slate-900 dark:text-white text-[10px] font-semibold">{formatBytes(item.size_bytes)}</p>
                       </div>
                     </div>
                   ))}
@@ -490,7 +490,7 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
         {block.type === 'contact' && <ContactSection content={block.content as any} />}
         
         {['hero','about','mission','pastors','cells','events','youtube','contact'].includes(block.type) && (
-          <div className="absolute top-2 left-2 px-2 py-1 bg-blue-600 text-white text-[10px] font-bold rounded opacity-0 group-hover/block:opacity-100 pointer-events-none z-50 uppercase shadow">
+          <div className="absolute top-2 left-2 px-2 py-1 bg-blue-600 text-slate-900 dark:text-white text-[10px] font-bold rounded opacity-0 group-hover/block:opacity-100 pointer-events-none z-50 uppercase shadow">
             {SECTIONS.find(s => s.key === block.type)?.label || block.type}
           </div>
         )}
@@ -509,23 +509,23 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
           {/* Mobile Back Button when in edit mode */}
           {activeKey && (
             <button onClick={() => setActiveKey(null)} className="md:hidden w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--admin-surface-alt)] border border-[var(--admin-border)]">
-              <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+              <svg className="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
             </button>
           )}
           
           {/* View Toggles (Desktop only) */}
           <div className="hidden md:flex items-center bg-[var(--admin-surface-alt)] rounded-lg p-1 border border-[var(--admin-border)]">
-            <button onClick={() => setViewMode('desktop')} className={`p-1.5 rounded-md transition-all ${viewMode === 'desktop' ? 'bg-white text-slate-900 shadow' : 'text-slate-400 hover:text-slate-200'}`} title="Desktop">
+            <button onClick={() => setViewMode('desktop')} className={`p-1.5 rounded-md transition-all ${viewMode === 'desktop' ? 'bg-white text-slate-900 shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`} title="Desktop">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
             </button>
-            <button onClick={() => setViewMode('mobile')} className={`p-1.5 rounded-md transition-all ${viewMode === 'mobile' ? 'bg-white text-slate-900 shadow' : 'text-slate-400 hover:text-slate-200'}`} title="Mobile">
+            <button onClick={() => setViewMode('mobile')} className={`p-1.5 rounded-md transition-all ${viewMode === 'mobile' ? 'bg-white text-slate-900 shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`} title="Mobile">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
             </button>
           </div>
         </div>
         
         <div className="flex items-center gap-4">
-          <a href="/" target="_blank" rel="noopener noreferrer" className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-slate-200 transition-colors bg-[var(--admin-surface-alt)] px-3 py-2 rounded-lg border border-[var(--admin-border)]">
+          <a href="/" target="_blank" rel="noopener noreferrer" className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-200 transition-colors bg-[var(--admin-surface-alt)] px-3 py-2 rounded-lg border border-[var(--admin-border)]">
             Ver Site
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
           </a>
@@ -548,7 +548,7 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
               </span>
             )}
           <button onClick={handlePublish} disabled={isPublishing}
-            className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50 shadow-sm">
+            className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50 shadow-sm">
             {isPublishing
               ? <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
               : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
@@ -605,14 +605,14 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
             <div className="flex flex-col h-full bg-[var(--admin-surface)]">
               <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--admin-border)] shrink-0 bg-[var(--admin-surface-alt)]">
                 <div className="flex items-center gap-3">
-                  <button onClick={() => setActiveKey(null)} className="hidden md:flex w-8 h-8 items-center justify-center rounded-lg bg-[var(--admin-surface)] border border-[var(--admin-border)] hover:bg-white/5 transition-colors">
-                    <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+                  <button onClick={() => setActiveKey(null)} className="hidden md:flex w-8 h-8 items-center justify-center rounded-lg bg-[var(--admin-surface)] border border-[var(--admin-border)] hover:bg-black/5 dark:bg-white/5 transition-colors">
+                    <svg className="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
                   </button>
                   <h2 className="font-bold text-[var(--admin-text-primary)] text-[15px]">{SECTIONS.find(s => s.key === activeKey)?.label}</h2>
                 </div>
                 {activeBlock && (
                   <label className="flex items-center gap-2 cursor-pointer bg-[var(--admin-bg)] px-3 py-1.5 rounded-lg border border-[var(--admin-border)]">
-                    <span className={`text-xs font-bold ${activeBlock.is_active ? 'text-emerald-400' : 'text-slate-400'}`}>{activeBlock.is_active ? 'Visível' : 'Oculto'}</span>
+                    <span className={`text-xs font-bold ${activeBlock.is_active ? 'text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>{activeBlock.is_active ? 'Visível' : 'Oculto'}</span>
                     <div className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors" style={{ background: activeBlock.is_active ? '#10b981' : 'var(--admin-border-strong)' }}>
                       <input type="checkbox" className="sr-only" checked={activeBlock.is_active} onChange={handleToggle} disabled={isPending} />
                       <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform shadow-sm ${activeBlock.is_active ? 'translate-x-4' : 'translate-x-1'}`} />
@@ -644,11 +644,11 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
 
         {/* ── Native Real-time Preview ── */}
         {/* On mobile, if activeKey is set, we hide the preview under the absolute sidebar. But if activeKey is null, we show preview. Actually we should always render it so it's under. */}
-        <div className={`flex-1 flex flex-col bg-slate-900 overflow-y-auto relative ${activeKey ? 'hidden md:flex' : 'flex'} portal-scroll`}>
+        <div className={`flex-1 flex flex-col bg-slate-50 dark:bg-slate-900 overflow-y-auto relative ${activeKey ? 'hidden md:flex' : 'flex'} portal-scroll`}>
           
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 bg-black/80 backdrop-blur-md rounded-full border border-white/10 shadow-2xl flex items-center gap-2 pointer-events-none">
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 bg-black/80 backdrop-blur-md rounded-full border border-black/10 dark:border-white/10 shadow-2xl flex items-center gap-2 pointer-events-none">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[11px] font-bold text-white uppercase tracking-wider">Preview Real-time</span>
+            <span className="text-[11px] font-bold text-slate-900 dark:text-white uppercase tracking-wider">Preview Real-time</span>
           </div>
 
           <div className={`flex-1 mx-auto transition-all duration-300 bg-[var(--admin-bg)] ${viewMode === 'mobile' ? 'w-full max-w-[400px] border-x border-slate-700 shadow-2xl rounded-[2rem] overflow-hidden my-6 max-h-[calc(100vh-6rem)] ring-8 ring-slate-800' : 'w-full min-h-full'}`}>
@@ -670,7 +670,7 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
 
         {/* Mobile floating button to open sections list if we are just viewing the preview */}
         {!activeKey && (
-          <button onClick={() => setActiveKey(null)} className="md:hidden absolute bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center border-2 border-blue-400 z-40">
+          <button onClick={() => setActiveKey(null)} className="md:hidden absolute bottom-6 right-6 w-14 h-14 bg-blue-600 text-slate-900 dark:text-white rounded-full shadow-2xl flex items-center justify-center border-2 border-blue-400 z-40">
              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
           </button>
         )}

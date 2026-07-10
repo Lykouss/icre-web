@@ -32,7 +32,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
       ref={sectionRef}
       id="inicio"
       data-theme="dark"
-      className="relative min-h-svh flex items-center justify-center overflow-hidden bg-slate-950"
+      className="relative min-h-svh flex items-center justify-center overflow-hidden bg-white dark:bg-slate-950"
     >
       {/* Fundo com parallax */}
       {content.image_url && (
@@ -42,7 +42,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         >
           <Image src={content.image_url} alt="Capa" fill className="object-cover" priority />
           {/* Overlay multicamadas */}
-          <div className="absolute inset-0 bg-slate-950/55" />
+          <div className="absolute inset-0 bg-white dark:bg-slate-950/55" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-slate-950/20" />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/60 via-transparent to-slate-950/60" />
         </div>
@@ -101,7 +101,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
           className="transition-all duration-700 ease-out"
           style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translate3d(0, 0, 0)' : 'translate3d(0, -20px, 0)', transitionDelay: '0ms' }}
         >
-          <div className="inline-flex items-center gap-2.5 bg-white/[0.06] backdrop-blur-xl border border-white/[0.12] text-white/70 text-[11px] font-semibold tracking-[0.2em] uppercase px-5 py-2.5 rounded-full mb-12">
+          <div className="inline-flex items-center gap-2.5 bg-white/[0.06] backdrop-blur-xl border border-white/[0.12] text-slate-900 dark:text-white/70 text-[11px] font-semibold tracking-[0.2em] uppercase px-5 py-2.5 rounded-full mb-12">
             <svg className="w-3.5 h-3.5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
               <path d="M9 2a1 1 0 000 2h1V2H9zm1 0h1a1 1 0 000-2h-1v2zM8 4v5H3a1 1 0 000 2h5v7a1 1 0 002 0v-7h5a1 1 0 000-2h-5V4H8z" />
             </svg>
@@ -131,7 +131,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         {/* Subtítulo */}
         {content.subtitle && (
           <p
-            className="text-lg sm:text-xl text-white/50 max-w-xl mx-auto mb-14 leading-relaxed tracking-wide font-light transition-all duration-700 ease-out"
+            className="text-lg sm:text-xl text-slate-900 dark:text-white/50 max-w-xl mx-auto mb-14 leading-relaxed tracking-wide font-light transition-all duration-700 ease-out"
             style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translate3d(0, 0, 0)' : 'translate3d(0, 20px, 0)', transitionDelay: '260ms' }}
           >
             {content.subtitle}
@@ -146,7 +146,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
           {(content.cta_label || content.button_text) && (
             <Link
               href={content.cta_url || content.button_link || '/contato'}
-              className="group relative inline-flex items-center gap-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-4 rounded-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/40 overflow-hidden"
+              className="group relative inline-flex items-center gap-2.5 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold px-8 py-4 rounded-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/40 overflow-hidden"
             >
               {/* Shimmer no hover */}
               <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shimmer-bg" />
@@ -164,7 +164,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-all duration-700 ease-out"
         style={{ opacity: mounted ? 0.35 : 0, transitionDelay: '700ms' }}
       >
-        <span className="text-[10px] text-white/40 font-semibold tracking-[0.2em] uppercase">Scroll</span>
+        <span className="text-[10px] text-slate-900 dark:text-white/40 font-semibold tracking-[0.2em] uppercase">Scroll</span>
         <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center pt-1.5">
           <div className="w-1 h-2 bg-white/50 rounded-full animate-bounce" style={{ animationDuration: '1.8s' }} />
         </div>
