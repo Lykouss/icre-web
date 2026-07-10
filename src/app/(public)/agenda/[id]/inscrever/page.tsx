@@ -32,7 +32,7 @@ export default async function InscricaoPage({ params }: { params: Promise<{ id: 
   // Buscar evento
   const { data: event, error } = await supabase
     .from('events')
-    .select('id, title, date, time, location, description, rules, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account, terms_text, accepts_pix, accepts_boleto')
+    .select('id, title, date, time, location, description, rules, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account, terms_text, accepts_pix, accepts_boleto, registration_opens_at, is_paused')
     .eq('id', id)
     .eq('status', 'publicado')
     .eq('is_public', true)
@@ -42,7 +42,7 @@ export default async function InscricaoPage({ params }: { params: Promise<{ id: 
   if ((error || !event) && user?.isSysAdmin) {
     const { data: adminEvent } = await supabase
       .from('events')
-      .select('id, title, date, time, location, description, rules, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account, terms_text, accepts_pix, accepts_boleto')
+      .select('id, title, date, time, location, description, rules, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account, terms_text, accepts_pix, accepts_boleto, registration_opens_at, is_paused')
       .eq('id', id)
       .single();
     if (!adminEvent) notFound();
@@ -55,6 +55,16 @@ export default async function InscricaoPage({ params }: { params: Promise<{ id: 
   // Se o evento não exige inscrição, não permite acessar esta página
   if (!event.requires_registration) {
     redirect(`/agenda/${id}`);
+  }
+
+  // Se o evento está pausado, redireciona de volta
+  if (event.is_paused) {
+    redirect(`/agenda/${id}?erro=paused`);
+  }
+
+  // Se a data de abertura for no futuro, redireciona de volta
+  if (event.registration_opens_at && new Date(event.registration_opens_at) > new Date()) {
+    redirect(`/agenda/${id}?erro=not_open`);
   }
 
   // ─── Proteção server-side: verificar limite de inscrições por conta ───

@@ -109,6 +109,8 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
     accepts_boleto: initialData?.accepts_boleto ?? true,
     terms_text: initialData?.terms_text || '',
     custom_form_schema: (initialData as any)?.custom_form_schema || [],
+    is_paused: initialData?.is_paused ?? false,
+    registration_opens_at: initialData?.registration_opens_at ? new Date(initialData.registration_opens_at).toISOString().slice(0, 16) : '',
   });
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
@@ -234,6 +236,8 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           accepts_boleto: formData.accepts_boleto,
           terms_text: formData.terms_text,
           custom_form_schema: finalSchema,
+          is_paused: formData.is_paused ?? false,
+          registration_opens_at: formData.registration_opens_at ? new Date(formData.registration_opens_at).toISOString() : null,
         };
 
         let result;
@@ -553,6 +557,12 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
 
       <div className="space-y-2.5">
         <Toggle
+          checked={!!formData.is_paused}
+          onChange={v => setFormData(p => ({ ...p, is_paused: v }))}
+          label="Pausar inscrições"
+          description="Impede temporariamente novas inscrições de serem feitas"
+        />
+        <Toggle
           checked={!!formData.is_public}
           onChange={v => setFormData(p => ({ ...p, is_public: v }))}
           label="Evento público"
@@ -577,6 +587,20 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
           />
         )}
       </div>
+
+      {formData.requires_registration && (
+        <div className="mt-4">
+          <Field label="Abertura das inscrições" hint="Vazio = abertas imediatamente ao publicar">
+            <input
+              type="datetime-local"
+              className={inputCls}
+              style={{ colorScheme: 'dark' }}
+              value={formData.registration_opens_at || ''}
+              onChange={e => setFormData(p => ({ ...p, registration_opens_at: e.target.value }))}
+            />
+          </Field>
+        </div>
+      )}
 
       <SectionDivider label="Capacidade e Valor" />
 

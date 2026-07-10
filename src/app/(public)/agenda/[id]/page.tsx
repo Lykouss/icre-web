@@ -34,7 +34,7 @@ export default async function PublicEventPage({ params }: { params: Promise<{ id
   // Fetch the event
   const query = supabaseAdmin
     .from('events')
-    .select('id, title, date, time, location, description, rules, terms_text, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account')
+    .select('id, title, date, time, location, description, rules, terms_text, type, capacity, is_public, status, ticket_price, requires_registration, requires_payment, banner_url, publish_at, custom_form_schema, max_per_account, registration_opens_at, is_paused')
     .eq('id', id);
 
   if (!user?.isSysAdmin) {

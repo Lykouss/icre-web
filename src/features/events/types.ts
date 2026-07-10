@@ -59,6 +59,8 @@ export interface ChurchEvent {
   terms_text: string | null;
   accepts_pix: boolean;
   accepts_boleto: boolean;
+  registration_opens_at?: string | null;
+  is_paused?: boolean;
 }
 
 // ─── Schedule ────────────────────────────────────────────────────────────────

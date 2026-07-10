@@ -36,6 +36,8 @@ interface EventData {
   banner_url: string | null;
   max_per_account: number | null;
   terms_text?: string | null;
+  registration_opens_at?: string | null;
+  is_paused?: boolean;
 }
 
 interface ExistingRegistration {
@@ -86,6 +88,9 @@ export function EventDetailsClient({
   ).length;
   const limitReached = maxPerAccount !== null && totalActive >= maxPerAccount;
   const canRegisterAgain = maxPerAccount === null || maxPerAccount > 1;
+
+  const isPaused = event.is_paused;
+  const isNotOpen = event.registration_opens_at && new Date(event.registration_opens_at) > new Date();
 
   return (
     <div className={`min-h-screen bg-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
@@ -144,6 +149,11 @@ export function EventDetailsClient({
             {isFull && needsRegistration && (
               <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
                 Lotado
+              </span>
+            )}
+            {isPaused && needsRegistration && (
+              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                Pausado
               </span>
             )}
           </div>
@@ -237,7 +247,7 @@ export function EventDetailsClient({
           )}
 
           {/* --- Evento lotado --- */}
-          {needsRegistration && isFull && !hasConfirmed && !hasPendingPayment && (
+          {needsRegistration && isFull && !hasConfirmed && !hasPendingPayment && !isPaused && !isNotOpen && (
             <div className="text-center py-4">
               <div className="w-14 h-14 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <svg className="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,6 +256,32 @@ export function EventDetailsClient({
               </div>
               <h2 className="text-lg font-bold text-white mb-1">Evento lotado</h2>
               <p className="text-slate-400 text-sm">Fique de olho nos próximos eventos da nossa agenda.</p>
+            </div>
+          )}
+
+          {/* --- Evento Pausado --- */}
+          {needsRegistration && !hasConfirmed && !hasPendingPayment && isPaused && (
+            <div className="text-center py-4">
+              <div className="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-bold text-white mb-1">Inscrições pausadas</h2>
+              <p className="text-slate-400 text-sm">As inscrições para este evento foram temporariamente pausadas pela organização.</p>
+            </div>
+          )}
+
+          {/* --- Evento Não Aberto --- */}
+          {needsRegistration && !hasConfirmed && !hasPendingPayment && !isPaused && isNotOpen && (
+            <div className="text-center py-4">
+              <div className="w-14 h-14 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-bold text-white mb-1">Inscrições em breve</h2>
+              <p className="text-slate-400 text-sm">As inscrições iniciarão em {formatDate(event.registration_opens_at)}.</p>
             </div>
           )}
 
@@ -321,7 +357,7 @@ export function EventDetailsClient({
               )}
 
               {/* Inscrever-se novamente (se permitido) */}
-              {canRegisterAgain && !limitReached && !isFull && (
+              {canRegisterAgain && !limitReached && !isFull && !isPaused && !isNotOpen && (
                 <Link
                   href={`/agenda/${event.id}/inscrever`}
                   className="w-full flex items-center justify-center gap-2 bg-white/6 hover:bg-white/10 text-slate-300 text-sm font-semibold py-3 rounded-2xl transition-all border border-white/10"
@@ -333,7 +369,7 @@ export function EventDetailsClient({
           )}
 
           {/* --- Sem inscrição, pode se inscrever --- */}
-          {needsRegistration && !isFull && !hasConfirmed && !hasPendingPayment && (
+          {needsRegistration && !isFull && !hasConfirmed && !hasPendingPayment && !isPaused && !isNotOpen && (
             <Link
               href={isAuthenticated ? `/agenda/${event.id}/inscrever` : `/login`}
               className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20 hover:scale-[1.01]"

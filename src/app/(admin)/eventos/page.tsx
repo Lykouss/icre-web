@@ -25,7 +25,7 @@ export default async function EventosPage() {
 
   const { data, error } = await supabase
     .from('events')
-    .select('id, title, type, date, time, location, description, is_recurring, recurrence_rules, cancelled_dates, capacity, is_public, requires_registration, requires_payment, ticket_price, status, banner_url, publish_at, expires_at, created_at, rules, custom_form_schema, terms_text, max_per_account, max_per_ip, max_per_device, accepts_pix, accepts_boleto')
+    .select('id, title, type, date, time, location, description, is_recurring, recurrence_rules, cancelled_dates, capacity, is_public, requires_registration, requires_payment, ticket_price, status, banner_url, publish_at, expires_at, created_at, rules, custom_form_schema, terms_text, max_per_account, max_per_ip, max_per_device, accepts_pix, accepts_boleto, registration_opens_at, is_paused')
     .order('date', { ascending: false })
     .returns<ChurchEvent[]>();
 
