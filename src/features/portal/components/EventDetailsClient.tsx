@@ -281,7 +281,7 @@ export function EventDetailsClient({
                 </svg>
               </div>
               <h2 className="text-lg font-bold text-white mb-1">Inscrições em breve</h2>
-              <p className="text-slate-400 text-sm">As inscrições iniciarão em {formatDate(event.registration_opens_at)}.</p>
+              <p className="text-slate-400 text-sm">As inscrições iniciarão em {formatDate(event.registration_opens_at ?? null)}.</p>
             </div>
           )}
 

@@ -64,8 +64,8 @@ function Toggle({
       type="button"
       onClick={() => onChange(!checked)}
       className={`flex items-center justify-between w-full px-4 py-3 rounded-xl border-2 transition-all text-left ${checked
-          ? 'border-blue-500/50 bg-blue-500/10'
-          : 'border-[var(--admin-border)] hover:bg-white/5 bg-[var(--admin-surface)]'
+        ? 'border-blue-500/50 bg-blue-500/10'
+        : 'border-[var(--admin-border)] hover:bg-white/5 bg-[var(--admin-surface)]'
         }`}
     >
       <div>
@@ -506,14 +506,14 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
                         </div>
                       ))}
                     </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newOpts = [...(field.options || []), ''];
-                          updateCustomField(index, { options: newOpts });
-                        }}
-                        className="flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg transition-colors mt-3 text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20"
-                      >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newOpts = [...(field.options || []), ''];
+                        updateCustomField(index, { options: newOpts });
+                      }}
+                      className="flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg transition-colors mt-3 text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20"
+                    >
                       <PlusCircleIcon className="w-4 h-4" /> Adicionar nova opção
                     </button>
                   </div>
@@ -583,7 +583,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
             checked={!!formData.requires_payment}
             onChange={v => setFormData(p => ({ ...p, requires_payment: v }))}
             label="Evento pago"
-            description="Participantes pagam para garantir a vaga (via Asaas/PIX)"
+            description="Participantes pagam para garantir a vaga"
           />
         )}
       </div>
@@ -666,7 +666,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
 
       {formData.requires_payment && (
         <div className="space-y-3 mt-4">
-          <SectionDivider label="Métodos de Pagamento (Asaas)" />
+          <SectionDivider label="Métodos de Pagamento" />
           <div className="flex gap-4">
             <label className="flex items-center gap-2 text-sm font-medium cursor-pointer" style={{ color: 'var(--admin-text-primary)' }}>
               <input
