@@ -10,7 +10,9 @@ const MONTHS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'jul
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return '';
-  const d = new Date(dateStr + 'T12:00:00');
+  const parseStr = dateStr.includes('T') || dateStr.includes(' ') ? dateStr : dateStr + 'T12:00:00';
+  const d = new Date(parseStr);
+  if (isNaN(d.getTime())) return '';
   return `${WEEKDAYS[d.getDay()]}, ${d.getDate()} de ${MONTHS[d.getMonth()]} de ${d.getFullYear()}`;
 }
 
