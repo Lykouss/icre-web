@@ -42,9 +42,9 @@ export function HeroSection({ content }: { content: HeroContent }) {
         >
           <Image src={content.image_url} alt="Capa" fill className="object-cover" priority />
           {/* Overlay multicamadas */}
-          <div className="absolute inset-0 bg-white dark:bg-slate-950/55" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-950 via-slate-50/30 dark:via-slate-950/30 to-white/20 dark:to-slate-950/20" />
-          <div className="absolute inset-0 bg-gradient-to-r from-white/60 dark:from-slate-950/60 via-transparent to-white/60 dark:to-slate-950/60" />
+          <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/55" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/90 dark:from-slate-950 via-white/30 dark:via-slate-950/30 to-transparent dark:to-slate-950/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/50 dark:from-slate-950/60 via-transparent to-white/50 dark:to-slate-950/60" />
         </div>
       )}
 
@@ -54,7 +54,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
           className="absolute inset-0 will-change-transform"
           style={{ transform: `translate3d(0, ${parallaxOffset * 0.3}px, 0)` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-white dark:from-slate-950 via-blue-950/80 to-slate-50 dark:to-slate-900" />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-100 dark:from-slate-950 via-blue-100/80 dark:via-blue-950/80 to-white dark:to-slate-900" />
           <div className="absolute inset-0 bg-gradient-to-t from-white/80 dark:from-slate-950/80 via-transparent to-transparent" />
         </div>
       )}
@@ -95,20 +95,6 @@ export function HeroSection({ content }: { content: HeroContent }) {
 
       {/* Conteúdo */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-
-        {/* Badge com ícone de cruz */}
-        <div
-          className="transition-all duration-700 ease-out"
-          style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translate3d(0, 0, 0)' : 'translate3d(0, -20px, 0)', transitionDelay: '0ms' }}
-        >
-          <div className="inline-flex items-center gap-2.5 bg-white/[0.06] backdrop-blur-xl border border-white/[0.12] text-slate-900 dark:text-white/70 text-[11px] font-semibold tracking-[0.2em] uppercase px-5 py-2.5 rounded-full mb-12">
-            <svg className="w-3.5 h-3.5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M9 2a1 1 0 000 2h1V2H9zm1 0h1a1 1 0 000-2h-1v2zM8 4v5H3a1 1 0 000 2h5v7a1 1 0 002 0v-7h5a1 1 0 000-2h-5V4H8z" />
-            </svg>
-            <span className="w-1 h-1 rounded-full bg-blue-400/60" />
-            Igreja de Cristo Rocha Eterna
-          </div>
-        </div>
 
         {/* Título com gradiente */}
         <h1
