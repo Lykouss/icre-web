@@ -32,7 +32,7 @@ function PastorModal({ pastor, onClose }: { pastor: Pastor; onClose: () => void 
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
           <div className="absolute bottom-0 left-0 right-0 p-6">
-            <p className={`text-xs font-bold uppercase tracking-[0.2em] mb-1.5 ${pastor.is_president ? 'text-yellow-400' : 'text-blue-400'}`}>{pastor.role}</p>
+            <p className={`text-xs font-bold uppercase tracking-[0.2em] mb-1.5 ${pastor.is_president ? 'text-yellow-600 dark:text-yellow-400' : 'text-blue-600 dark:text-blue-400'}`}>{pastor.role}</p>
             <h3 className="text-2xl font-black text-slate-900 dark:text-white leading-tight">{pastor.name}</h3>
           </div>
         </div>
@@ -65,10 +65,10 @@ function PastorCard({ pastor, index, isPresident, embedded }: { pastor: Pastor; 
   const themeColor = isPresident ? 'yellow' : 'blue';
   const borderHover = isPresident ? 'hover:border-yellow-500/30' : 'hover:border-blue-500/30';
   const shadowHover = isPresident ? 'hover:shadow-yellow-500/20' : 'hover:shadow-blue-500/8';
-  const textRole = isPresident ? 'text-yellow-400' : 'text-blue-400';
-  const textNameHover = isPresident ? 'group-hover:text-yellow-200' : 'group-hover:text-blue-200';
+  const textRole = isPresident ? 'text-yellow-600 dark:text-yellow-400' : 'text-blue-600 dark:text-blue-400';
+  const textNameHover = isPresident ? 'group-hover:text-yellow-600 dark:group-hover:text-yellow-200' : 'group-hover:text-blue-600 dark:group-hover:text-blue-200';
   const gradLine = isPresident ? 'from-yellow-500 to-amber-500' : 'from-blue-500 to-indigo-500';
-  const badgeBg = isPresident ? 'bg-yellow-600/90' : 'bg-blue-600/90';
+  const badgeBg = isPresident ? 'bg-yellow-500/90 dark:bg-yellow-600/90' : 'bg-blue-500/90 dark:bg-blue-600/90';
 
   const wrapperClass = `group relative bg-slate-50 dark:bg-slate-900/60 backdrop-blur-sm border ${isPresident ? 'border-yellow-500/20' : 'border-black/5 dark:border-white/8'} rounded-3xl overflow-hidden cursor-pointer ${borderHover} hover:-translate-y-2 hover:shadow-2xl ${shadowHover} transition-all duration-400 ease-out h-full flex flex-col w-full`;
 
@@ -93,7 +93,7 @@ function PastorCard({ pastor, index, isPresident, embedded }: { pastor: Pastor; 
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-white/90 dark:from-slate-950/90 via-slate-50/10 dark:via-slate-950/10 to-transparent" />
           <div className="absolute inset-0 flex items-end justify-end p-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-            <span className={`inline-flex items-center gap-1.5 ${badgeBg} backdrop-blur-sm text-slate-900 dark:text-white text-xs font-bold px-3 py-1.5 rounded-xl translate-y-2 group-hover:translate-y-0 transition-transform duration-300`}>
+            <span className={`inline-flex items-center gap-1.5 ${badgeBg} backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-xl translate-y-2 group-hover:translate-y-0 transition-transform duration-300`}>
               Ver perfil
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
             </span>
@@ -134,7 +134,7 @@ function CoupleCard({ p1, p2, index, isPresident }: { p1: Pastor; p2: Pastor, in
       
       <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-black/10 dark:border-white/10 z-10 -my-6 sm:my-auto sm:-mx-10 relative">
         <div className="absolute inset-0 rounded-full border border-black/5 dark:border-white/5 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border-slate-200/50 dark:border-transparent dark:bg-slate-800/80" />
-        <svg className={`w-5 h-5 relative z-10 ${isPresident ? 'text-yellow-400' : 'text-indigo-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className={`w-5 h-5 relative z-10 ${isPresident ? 'text-yellow-600 dark:text-yellow-400' : 'text-indigo-600 dark:text-indigo-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
         </svg>
       </div>
@@ -234,8 +234,8 @@ export function PastorsSection({ content, pastors }: Props) {
             </div>
           </div>
           <div className="absolute -bottom-16 text-center">
-            <h3 className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-amber-500 tracking-widest uppercase">Jesus Cristo</h3>
-            <p className="text-[10px] text-amber-500/70 font-semibold tracking-[0.3em] uppercase mt-1">Nossa Rocha Eterna</p>
+            <h3 className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-yellow-500 dark:from-yellow-200 dark:to-amber-500 tracking-widest uppercase">Jesus Cristo</h3>
+            <p className="text-[10px] text-amber-600 dark:text-amber-500/70 font-semibold tracking-[0.3em] uppercase mt-1">Nossa Rocha Eterna</p>
           </div>
         </div>
 
