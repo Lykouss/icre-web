@@ -82,10 +82,10 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
           </span>
         </div>
         <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-10 translate-y-1 group-hover:translate-y-0">
-          <div className="bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs px-3 py-1.5 rounded-lg whitespace-nowrap">
+          <div className="bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs px-3 py-1.5 rounded-lg whitespace-nowrap">
             Login com Google estará disponível em breve
           </div>
-          <div className="w-2 h-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-l border-t dark:border-slate-700 rotate-45 absolute -top-1 left-1/2 -translate-x-1/2" />
+          <div className="w-2 h-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-l border-t dark:border-slate-700 rotate-45 absolute -top-1 left-1/2 -translate-x-1/2" />
         </div>
       </div>
 

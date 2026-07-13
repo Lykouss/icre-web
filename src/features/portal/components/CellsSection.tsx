@@ -23,7 +23,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(28px)', transitionDelay: `${index * 70}ms` }}
     >
       {/* Imagem */}
-      <div className="relative w-full aspect-[4/3] bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 shrink-0 overflow-hidden">
+      <div className="relative w-full aspect-[4/3] bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 shrink-0 overflow-hidden">
         {cell.image_url ? (
           <Image src={cell.image_url} alt={cell.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-110 transition-transform duration-1000 ease-out will-change-transform" />
         ) : (
@@ -126,7 +126,7 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
         onClick={e => e.stopPropagation()}
       >
         {/* Imagem header */}
-        <div className="relative h-40 sm:h-52 w-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 shrink-0 border-b border-black/5 dark:border-white/5 overflow-hidden">
+        <div className="relative h-40 sm:h-52 w-full bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 shrink-0 border-b border-black/5 dark:border-white/5 overflow-hidden">
           {cell.image_url ? (
             <Image src={cell.image_url} alt={cell.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
           ) : (

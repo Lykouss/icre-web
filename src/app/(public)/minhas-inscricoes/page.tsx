@@ -65,7 +65,7 @@ export default async function MinhasInscricoesPage() {
   const hasAny    = registrations.length > 0;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 pt-28 pb-20 px-4">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/40 via-white to-slate-100 dark:bg-none dark:bg-slate-950 pt-28 pb-20 px-4">
       {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-blue-700/5 rounded-full blur-[140px]" />
@@ -262,13 +262,13 @@ function StatCard({
   icon: React.ReactNode;
 }) {
   const colors = {
-    emerald: 'bg-emerald-500/8 border-emerald-500/15 text-emerald-400',
-    amber:   'bg-amber-500/8 border-amber-500/15 text-amber-400',
-    slate:   'bg-slate-800/60 border-white/6 text-slate-500',
+    emerald: 'bg-emerald-500/8 border-emerald-600/30 dark:border-emerald-500/15 text-emerald-600 dark:text-emerald-400',
+    amber:   'bg-amber-500/8 border-amber-600/30 dark:border-amber-500/15 text-amber-600 dark:text-amber-400',
+    slate:   'bg-slate-100 dark:bg-slate-800/60 border-black/10 dark:border-white/6 text-slate-500',
   };
   const numColors = {
-    emerald: 'text-emerald-300',
-    amber:   'text-amber-300',
+    emerald: 'text-emerald-600 dark:text-emerald-300',
+    amber:   'text-amber-600 dark:text-amber-300',
     slate:   'text-slate-500 dark:text-slate-400',
   };
   return (
@@ -292,12 +292,12 @@ function SectionHeader({
   count: number;
   dot?: boolean;
 }) {
-  const dotColors = { emerald: 'bg-emerald-400', amber: 'bg-amber-400 animate-pulse', slate: 'bg-slate-600' };
-  const textColors = { emerald: 'text-emerald-400', amber: 'text-amber-400', slate: 'text-slate-500' };
+  const dotColors = { emerald: 'bg-emerald-500 dark:bg-emerald-400', amber: 'bg-amber-500 dark:bg-amber-400 animate-pulse', slate: 'bg-slate-600' };
+  const textColors = { emerald: 'text-emerald-600 dark:text-emerald-400', amber: 'text-amber-600 dark:text-amber-400', slate: 'text-slate-600 dark:text-slate-500' };
   const badgeColors = {
-    emerald: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    amber:   'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    slate:   'bg-slate-800 text-slate-500 border-white/6',
+    emerald: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-600/30 dark:border-emerald-500/20',
+    amber:   'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-600/30 dark:border-amber-500/20',
+    slate:   'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-500 border-black/10 dark:border-white/6',
   };
   return (
     <div className="flex items-center gap-2.5 mb-4">
@@ -324,8 +324,8 @@ function RegistrationCard({
   const isCancelled = variant === 'cancelled';
 
   const cardStyles = {
-    confirmed: 'bg-slate-50 dark:bg-slate-900/60 border-black/5 dark:border-white/8 hover:border-white/14 hover:bg-slate-50 dark:bg-slate-900/80',
-    pending:   'bg-amber-500/4 border-amber-500/12 hover:border-amber-500/20',
+    confirmed: 'bg-slate-50 dark:bg-slate-900/60 border-black/5 dark:border-white/8 hover:border-black/15 dark:hover:border-white/14 hover:bg-slate-100 dark:hover:bg-slate-900/80',
+    pending:   'bg-amber-500/4 border-amber-600/20 dark:border-amber-500/12 hover:border-amber-600/40 dark:hover:border-amber-500/20',
     cancelled: 'bg-slate-50 dark:bg-slate-900/30 border-black/5 dark:border-white/5 opacity-55',
   };
 
@@ -377,7 +377,7 @@ function RegistrationCard({
               {reg.ticket_signature && (
                 <Link
                   href={`/comprovante/${reg.id}`}
-                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-all shadow-md shadow-blue-500/15 whitespace-nowrap"
+                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-all shadow-md shadow-blue-500/15 whitespace-nowrap"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
@@ -393,7 +393,7 @@ function RegistrationCard({
               <StatusBadge color="amber" label="Aguardando" />
               <Link
                 href={`/agenda/${reg.event_id}/pagamento/${reg.id}`}
-                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 dark:text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-all shadow-md shadow-amber-500/20 whitespace-nowrap"
+                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-3.5 py-2 rounded-lg transition-all shadow-md shadow-amber-500/20 whitespace-nowrap"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -428,9 +428,9 @@ function EventTypeIcon({
   variant: 'confirmed' | 'pending' | 'cancelled';
 }) {
   const bgStyles = {
-    confirmed: 'bg-slate-800/80 border border-black/5 dark:border-white/8',
-    pending:   'bg-amber-500/10 border border-amber-500/15',
-    cancelled: 'bg-slate-800/40 border border-black/5 dark:border-white/5',
+    confirmed: 'bg-slate-200 dark:bg-slate-800/80 border border-black/5 dark:border-white/8',
+    pending:   'bg-amber-500/10 border border-amber-600/30 dark:border-amber-500/15',
+    cancelled: 'bg-slate-100 dark:bg-slate-800/40 border border-black/5 dark:border-white/5',
   };
 
   const isCulto = type === 'culto' || type === 'culto_especial';
@@ -467,9 +467,9 @@ function StatusBadge({
   label: string;
 }) {
   const styles = {
-    emerald: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    amber:   'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    slate:   'bg-slate-800 text-slate-500 border-white/6',
+    emerald: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-600/30 dark:border-emerald-500/20',
+    amber:   'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-600/30 dark:border-amber-500/20',
+    slate:   'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-500 border-black/10 dark:border-white/6',
   };
   return (
     <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border whitespace-nowrap ${styles[color]}`}>

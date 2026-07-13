@@ -83,7 +83,7 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
+        className="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/90 backdrop-blur-md transition-opacity" 
         onClick={onClose}
       />
 

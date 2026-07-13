@@ -74,7 +74,7 @@ export default async function PublicLayout({ children }: { children: React.React
         <PendingOnboardingBanner />
         <PendingPaymentBanner />
         <PublicNavbar user={navUser} activeBlockTypes={activeBlockTypes} />
-        <div className="pt-0 min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">{children}</div>
+        <div className="pt-0 min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/40 via-white to-slate-100 dark:bg-none dark:bg-slate-950 transition-colors duration-300">{children}</div>
         <PublicFooter />
       </ToastProvider>
     </PublicThemeProvider>

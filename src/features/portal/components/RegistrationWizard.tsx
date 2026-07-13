@@ -207,7 +207,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
     });
   };
 
-  const inputCls = 'w-full px-4 py-3.5 bg-slate-800/80 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white rounded-xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500/40 transition-all';
+  const inputCls = 'w-full px-4 py-3.5 bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-white rounded-xl text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500/40 transition-all shadow-xs';
 
   // Stepper completo (sem o "Sucesso")
   const visibleSteps = stepLabels.slice(0, -1);
@@ -238,8 +238,8 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
             <h1 className="text-sm font-bold text-slate-600 dark:text-slate-200 truncate">{event.title}</h1>
           </div>
           {isPaid && (
-            <div className="shrink-0 bg-blue-600/10 border border-blue-500/20 rounded-xl px-3 py-1.5">
-              <p className="text-xs font-black text-blue-300">{formatCurrency(event.ticket_price!)}</p>
+            <div className="shrink-0 bg-blue-500/10 border border-blue-600/30 dark:border-blue-500/20 rounded-xl px-3 py-1.5">
+              <p className="text-xs font-black text-blue-600 dark:text-blue-300">{formatCurrency(event.ticket_price!)}</p>
             </div>
           )}
         </div>
@@ -255,9 +255,9 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                   <React.Fragment key={label}>
                     <div className="flex flex-col items-center gap-1.5">
                       <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black transition-all duration-300 ${
-                        isDone ? 'bg-emerald-500 text-slate-900 dark:text-white shadow-lg shadow-emerald-500/30' :
-                        isActive ? 'bg-blue-600 text-slate-900 dark:text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-400/30' :
-                        'bg-slate-800 text-slate-500 border border-white/6'
+                        isDone ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' :
+                        isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-500/30 dark:ring-blue-400/30' :
+                        'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-black/10 dark:border-white/6'
                       }`}>
                         {isDone ? (
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,11 +266,11 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                         ) : i + 1}
                       </div>
                       <span className={`text-[10px] font-bold uppercase tracking-wide transition-colors ${
-                        isActive ? 'text-slate-900 dark:text-white' : isDone ? 'text-emerald-400' : 'text-slate-600'
+                        isActive ? 'text-slate-900 dark:text-white' : isDone ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-600'
                       }`}>{label}</span>
                     </div>
                     {i < visibleSteps.length - 1 && (
-                      <div className={`flex-1 h-px mb-5 mx-2 transition-colors duration-500 ${isDone ? 'bg-emerald-500/40' : 'bg-slate-800'}`} />
+                      <div className={`flex-1 h-px mb-5 mx-2 transition-colors duration-500 ${isDone ? 'bg-emerald-500/40' : 'bg-slate-200 dark:bg-slate-800'}`} />
                     )}
                   </React.Fragment>
                 );
@@ -297,13 +297,13 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                 {/* Header do card */}
                 <div className="bg-gradient-to-br from-slate-50/80 dark:from-slate-800/80 to-slate-50/60 dark:to-slate-900/60 border-b border-black/6 dark:border-white/6 px-7 py-5">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-blue-500/15 border border-blue-500/25 rounded-xl flex items-center justify-center shrink-0">
-                      <svg className="w-4.5 h-4.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
+                    <div className="w-9 h-9 bg-blue-500/10 border border-blue-600/30 dark:border-blue-500/25 rounded-xl flex items-center justify-center shrink-0">
+                      <svg className="w-4.5 h-4.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Passo 1 de {visibleSteps.length}</p>
+                      <p className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Passo 1 de {visibleSteps.length}</p>
                       <h2 className="text-base font-black text-slate-900 dark:text-white">Regras e Termos</h2>
                     </div>
                   </div>
@@ -346,7 +346,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       checked={termsAccepted}
                       disabled={!hasScrolledToBottom}
                       onChange={e => setTermsAccepted(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-200 dark:border-slate-600 bg-white shadow-xl shadow-slate-200/50 border dark:border-transparent dark:shadow-none dark:bg-slate-800 accent-blue-500 shrink-0 disabled:opacity-50"
+                      className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-200 dark:border-slate-600 bg-white shadow-2xl shadow-slate-300/80 border dark:border-transparent dark:shadow-none dark:bg-slate-800 accent-blue-500 shrink-0 disabled:opacity-50"
                     />
                     <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:text-white transition-colors leading-snug">
                       Li e aceito as regras e termos deste evento
@@ -356,7 +356,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                   <button
                     onClick={() => { if (termsAccepted) nextStep(); }}
                     disabled={!termsAccepted || !hasScrolledToBottom}
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                   >
                     Continuar
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -372,13 +372,13 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
               <div>
                 <div className="bg-gradient-to-br from-slate-50/80 dark:from-slate-800/80 to-slate-50/60 dark:to-slate-900/60 border-b border-black/6 dark:border-white/6 px-7 py-5">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-violet-500/15 border border-violet-500/25 rounded-xl flex items-center justify-center shrink-0">
-                      <svg className="w-4.5 h-4.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
+                    <div className="w-9 h-9 bg-violet-500/10 border border-violet-600/30 dark:border-violet-500/25 rounded-xl flex items-center justify-center shrink-0">
+                      <svg className="w-4.5 h-4.5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Passo 2 de {visibleSteps.length}</p>
+                      <p className="text-[10px] font-bold text-violet-600 dark:text-violet-400 uppercase tracking-widest">Passo 2 de {visibleSteps.length}</p>
                       <h2 className="text-base font-black text-slate-900 dark:text-white">Dados do Participante</h2>
                     </div>
                   </div>
@@ -387,7 +387,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                 <div className="p-7">
                   {error && (
                     <div className="flex flex-col gap-2 mb-5">
-                      <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-500/20 text-red-400 text-sm px-4 py-3.5 rounded-xl">
+                      <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-600/30 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm px-4 py-3.5 rounded-xl">
                         <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -395,7 +395,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       </div>
                       <Link 
                         href={`/suporte?title=Erro+na+Inscrição&description=${encodeURIComponent(error)}`}
-                        className="self-start text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1.5 px-1 py-1 transition-colors"
+                        className="self-start text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1.5 px-1 py-1 transition-colors"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 9v2m0 4h.01" />
@@ -479,18 +479,18 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                               className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
                                 paymentMethod === 'pix'
                                   ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
-                                  : 'border-black/5 dark:border-white/8 hover:border-white/16 bg-slate-800/40'
+                                  : 'border-slate-200 dark:border-white/8 hover:border-slate-300 dark:hover:border-white/16 bg-slate-50 dark:bg-slate-800/40'
                               }`}
                             >
                               {paymentMethod === 'pix' && (
                                 <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                                  <svg className="w-2.5 h-2.5 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                                   </svg>
                                 </div>
                               )}
-                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'pix' ? 'bg-blue-500' : 'bg-slate-700'}`}>
-                                <svg className="w-4 h-4 text-slate-900 dark:text-white" viewBox="0 0 24 24" fill="currentColor">
+                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'pix' ? 'bg-blue-500' : 'bg-slate-200 dark:bg-slate-700'}`}>
+                                <svg className={`w-4 h-4 ${paymentMethod === 'pix' ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} viewBox="0 0 24 24" fill="currentColor">
                                   <path d="M11.9999 2L3 7v10l9 5 9-5V7l-9-5zM12 4.236L18.764 8 12 11.764 5.236 8 12 4.236zM4 9.236l7 3.888V19.764L4 15.888V9.236zm9 10.528V13.124l7-3.888v6.652L13 19.764z"/>
                                 </svg>
                               </div>
@@ -509,18 +509,18 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                               className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
                                 paymentMethod === 'boleto'
                                   ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
-                                  : 'border-black/5 dark:border-white/8 hover:border-white/16 bg-slate-800/40'
+                                  : 'border-slate-200 dark:border-white/8 hover:border-slate-300 dark:hover:border-white/16 bg-slate-50 dark:bg-slate-800/40'
                               }`}
                             >
                               {paymentMethod === 'boleto' && (
                                 <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                                  <svg className="w-2.5 h-2.5 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                                   </svg>
                                 </div>
                               )}
-                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'boleto' ? 'bg-blue-500' : 'bg-slate-700'}`}>
-                                <svg className="w-4 h-4 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === 'boleto' ? 'bg-blue-500' : 'bg-slate-200 dark:bg-slate-700'}`}>
+                                <svg className={`w-4 h-4 ${paymentMethod === 'boleto' ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                               </div>
@@ -554,7 +554,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       <button
                         type="submit"
                         disabled={isPending}
-                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                       >
                         {isPending ? (
                           <>
@@ -581,13 +581,13 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
               <div>
                 <div className="bg-gradient-to-br from-slate-50/80 dark:from-slate-800/80 to-slate-50/60 dark:to-slate-900/60 border-b border-black/6 dark:border-white/6 px-7 py-5">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-pink-500/15 border border-pink-500/25 rounded-xl flex items-center justify-center shrink-0">
-                      <svg className="w-4.5 h-4.5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
+                    <div className="w-9 h-9 bg-pink-500/10 border border-pink-600/30 dark:border-pink-500/25 rounded-xl flex items-center justify-center shrink-0">
+                      <svg className="w-4.5 h-4.5 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-pink-400 uppercase tracking-widest">Passo 3 de {visibleSteps.length}</p>
+                      <p className="text-[10px] font-bold text-pink-600 dark:text-pink-400 uppercase tracking-widest">Passo 3 de {visibleSteps.length}</p>
                       <h2 className="text-base font-black text-slate-900 dark:text-white">Dados Adicionais</h2>
                     </div>
                   </div>
@@ -596,7 +596,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                 <div className="p-7">
                   {error && (
                     <div className="flex flex-col gap-2 mb-5">
-                      <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-500/20 text-red-400 text-sm px-4 py-3.5 rounded-xl">
+                      <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-600/30 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm px-4 py-3.5 rounded-xl">
                         <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -633,7 +633,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       <button
                         type="submit"
                         disabled={isPending}
-                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                       >
                         {isPending ? (
                           <>
@@ -660,13 +660,13 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
               <div>
                 <div className="bg-gradient-to-br from-slate-50/80 dark:from-slate-800/80 to-slate-50/60 dark:to-slate-900/60 border-b border-black/6 dark:border-white/6 px-7 py-5">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-emerald-500/15 border border-emerald-500/25 rounded-xl flex items-center justify-center shrink-0">
-                      <svg className="w-4.5 h-4.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
+                    <div className="w-9 h-9 bg-emerald-500/10 border border-emerald-600/30 dark:border-emerald-500/25 rounded-xl flex items-center justify-center shrink-0">
+                      <svg className="w-4.5 h-4.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Passo Final de {visibleSteps.length}</p>
+                      <p className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Passo Final de {visibleSteps.length}</p>
                       <h2 className="text-base font-black text-slate-900 dark:text-white">Resumo da Compra</h2>
                     </div>
                   </div>
@@ -675,7 +675,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                 <div className="p-7">
                   {error && (
                     <div className="flex flex-col gap-2 mb-5">
-                      <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-500/20 text-red-400 text-sm px-4 py-3.5 rounded-xl">
+                      <div className="flex items-start gap-2.5 bg-red-500/8 border border-red-600/30 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm px-4 py-3.5 rounded-xl">
                         <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -698,7 +698,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     </div>
                     <div className="flex justify-between items-center pt-2">
                       <span className="text-base font-black text-slate-900 dark:text-white">Total a Pagar</span>
-                      <span className="text-xl font-black text-blue-400">{formatCurrency((event.ticket_price || 0) + (paymentMethod === 'pix' ? 1.99 : 2.99))}</span>
+                      <span className="text-xl font-black text-blue-600 dark:text-blue-400">{formatCurrency((event.ticket_price || 0) + (paymentMethod === 'pix' ? 1.99 : 2.99))}</span>
                     </div>
                   </div>
 
@@ -723,7 +723,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       type="button"
                       onClick={executeSubmit}
                       disabled={isPending}
-                      className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                      className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
                     >
                       {isPending ? (
                         <>
@@ -768,7 +768,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     {registrationId && (
                       <Link
                         href={`/comprovante/${registrationId}`}
-                        className="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold px-6 py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/20"
+                        className="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/20"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
@@ -778,7 +778,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     )}
                     <Link
                       href="/minhas-inscricoes"
-                      className="flex items-center justify-center gap-2 w-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-200 text-sm font-semibold px-6 py-3.5 rounded-xl transition-all border-black/5 dark:border-white/8"
+                      className="flex items-center justify-center gap-2 w-full bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-200 text-sm font-semibold px-6 py-3.5 rounded-xl transition-all border-black/5 dark:border-white/8"
                     >
                       Minhas Inscrições
                     </Link>

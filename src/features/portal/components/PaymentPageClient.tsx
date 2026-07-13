@@ -276,7 +276,7 @@ export function PaymentPageClient({ payment }: Props) {
               </div>
             ) : (
               <div className="flex flex-col items-center py-8">
-                <div className="w-16 h-16 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-4">
                   <svg className="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
@@ -287,7 +287,7 @@ export function PaymentPageClient({ payment }: Props) {
                     href={payment.asaasInvoiceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 flex items-center justify-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white font-semibold py-3 px-6 rounded-xl transition-all border-black/10 dark:border-white/10"
+                    className="mt-4 flex items-center justify-center gap-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white font-semibold py-3 px-6 rounded-xl transition-all border-black/10 dark:border-white/10"
                   >
                     Acessar Fatura
                   </a>
@@ -420,7 +420,7 @@ export function PaymentPageClient({ payment }: Props) {
                 href={payment.asaasInvoiceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/10 dark:border-white/10 text-slate-900 dark:text-white font-semibold py-4 rounded-2xl transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/10 dark:border-white/10 text-slate-900 dark:text-white font-semibold py-4 rounded-2xl transition-all"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -476,7 +476,7 @@ export function PaymentPageClient({ payment }: Props) {
               <p className="text-sm text-slate-500 max-w-xs mx-auto mb-6">
                 O pagamento por cartão de crédito está em desenvolvimento e estará disponível em breve.
               </p>
-              <span className="inline-block bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-black/5 dark:border-white/8 text-slate-500 text-xs font-bold px-4 py-2 rounded-full">
+              <span className="inline-block bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-black/5 dark:border-white/8 text-slate-500 text-xs font-bold px-4 py-2 rounded-full">
                 Em breve
               </span>
             </div>

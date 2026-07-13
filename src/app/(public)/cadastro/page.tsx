@@ -361,7 +361,7 @@ export default function RegisterPage() {
             <span>Passo {currentStep + 1} de {STEPS.length}</span>
             <span>{Math.round(progress)}% concluído</span>
           </div>
-          <div className="h-1.5 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 rounded-full overflow-hidden">
             <div
               className="h-full bg-blue-500 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
@@ -518,7 +518,7 @@ export default function RegisterPage() {
 
               {step.id === 'terms' && (
                 <div className="space-y-4">
-                  <div className="bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 rounded-2xl p-4 h-48 overflow-y-auto text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-3 dark:border-slate-700">
+                  <div className="bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 rounded-2xl p-4 h-48 overflow-y-auto text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-3 dark:border-slate-700">
                     <TermsContent />
                   </div>
                   <label className="flex items-start gap-3 cursor-pointer group">

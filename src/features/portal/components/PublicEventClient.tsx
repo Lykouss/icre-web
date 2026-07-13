@@ -317,7 +317,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
               </div>
               <label className="flex items-start gap-3 cursor-pointer mb-6">
                 <input type="checkbox" checked={termsAccepted} onChange={e => setTermsAccepted(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-200 dark:border-slate-600 bg-white shadow-xl shadow-slate-200/50 border dark:border-transparent dark:shadow-none dark:bg-slate-800" />
+                  className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-200 dark:border-slate-600 bg-white shadow-2xl shadow-slate-300/80 border dark:border-transparent dark:shadow-none dark:bg-slate-800" />
                 <span className="text-sm text-slate-600 dark:text-slate-300">Li e aceito as regras deste evento</span>
               </label>
               <button
@@ -527,7 +527,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                   href={paymentInfo.boletoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/10 dark:border-white/10 text-slate-900 dark:text-white font-semibold py-3.5 rounded-xl transition-all mb-4"
+                  className="flex items-center justify-center gap-2 w-full bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/10 dark:border-white/10 text-slate-900 dark:text-white font-semibold py-3.5 rounded-xl transition-all mb-4"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -620,7 +620,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
 
                 <Link
                   href="/minhas-inscricoes/comprovantes"
-                  className="inline-flex items-center justify-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-sm font-semibold px-6 py-3.5 rounded-2xl transition-all border-black/10 dark:border-white/10"
+                  className="inline-flex items-center justify-center gap-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-sm font-semibold px-6 py-3.5 rounded-2xl transition-all border-black/10 dark:border-white/10"
                 >
                   <svg className="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />

@@ -13,7 +13,7 @@ function PastorModal({ pastor, onClose }: { pastor: Pastor; onClose: () => void 
         className="relative bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-modal-in"
         onClick={e => e.stopPropagation()}
       >
-        <div className="relative w-full aspect-[4/3] bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 overflow-hidden">
+        <div className="relative w-full aspect-[4/3] bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 overflow-hidden">
           {pastor.photo_url ? (
             <Image src={pastor.photo_url} alt={pastor.name} fill sizes="(max-width: 768px) 100vw, 448px" className="object-cover object-top" />
           ) : (
@@ -80,7 +80,7 @@ function PastorCard({ pastor, index, isPresident, embedded }: { pastor: Pastor; 
         className={wrapperClass}
         style={!embedded ? { opacity: visible ? 1 : 0, transform: visible ? 'translate3d(0,0,0)' : 'translate3d(0,40px,0)', transitionDelay: `${index * 90}ms` } : {}}
       >
-        <div className="relative w-full aspect-[3/4] bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 overflow-hidden shrink-0">
+        <div className="relative w-full aspect-[3/4] bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 overflow-hidden shrink-0">
           {pastor.photo_url ? (
             <Image src={pastor.photo_url} alt={pastor.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px" className="object-cover object-top group-hover:scale-105 transition-transform duration-600 ease-out will-change-transform" />
           ) : (
@@ -132,7 +132,7 @@ function CoupleCard({ p1, p2, index, isPresident }: { p1: Pastor; p2: Pastor, in
         <PastorCard pastor={p1} index={0} isPresident={isPresident} embedded />
       </div>
       
-      <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-black/10 dark:border-white/10 z-10 -my-6 sm:my-auto sm:-mx-10 relative">
+      <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-black/10 dark:border-white/10 z-10 -my-6 sm:my-auto sm:-mx-10 relative">
         <div className="absolute inset-0 rounded-full border border-black/5 dark:border-white/5 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border-slate-200/50 dark:border-transparent dark:bg-slate-800/80" />
         <svg className={`w-5 h-5 relative z-10 ${isPresident ? 'text-yellow-600 dark:text-yellow-400' : 'text-indigo-600 dark:text-indigo-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />

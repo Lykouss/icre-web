@@ -65,7 +65,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
   const date = parseDate(event.date);
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-white dark:bg-slate-950/90 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/90 backdrop-blur-md" />
       <div
         className="relative bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-modal-in"
         onClick={e => e.stopPropagation()}
@@ -91,7 +91,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
           {/* Fechar */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-9 h-9 bg-black/40 hover:bg-black/70 text-slate-900 dark:text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-black/10 dark:border-white/10 backdrop-blur-sm"
+            className="absolute top-4 right-4 z-10 w-9 h-9 bg-black/40 hover:bg-black/70 text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/10 backdrop-blur-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
@@ -99,12 +99,12 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
           {/* Badges */}
           <div className="absolute top-4 left-4 flex gap-2 flex-wrap">
             {event.type === 'especial' && (
-              <span className="flex items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-black tracking-widest uppercase px-2.5 py-1 rounded-lg backdrop-blur-md">
+              <span className="flex items-center gap-1 bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-600/30 dark:border-amber-500/40 text-[10px] font-black tracking-widest uppercase px-2.5 py-1 rounded-lg backdrop-blur-md">
                 ★ Especial
               </span>
             )}
             {event.isCancelled && (
-              <span className="flex items-center gap-1 bg-red-500/20 text-red-300 border border-red-500/40 text-[10px] font-black tracking-widest uppercase px-2.5 py-1 rounded-lg backdrop-blur-md">
+              <span className="flex items-center gap-1 bg-red-500/20 text-red-600 dark:text-red-300 border border-red-600/30 dark:border-red-500/40 text-[10px] font-black tracking-widest uppercase px-2.5 py-1 rounded-lg backdrop-blur-md">
                 Cancelado
               </span>
             )}
@@ -126,8 +126,8 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
           <div className="grid grid-cols-2 gap-3">
             {event.time && (
               <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/6 dark:border-white/6 rounded-2xl p-3.5">
-                <div className="w-8 h-8 bg-blue-500/15 rounded-xl flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div className="w-8 h-8 bg-blue-500/10 rounded-xl flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
                 <div>
                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Horário</p>
@@ -137,8 +137,8 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
             )}
             {event.location && (
               <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/6 dark:border-white/6 rounded-2xl p-3.5">
-                <div className="w-8 h-8 bg-emerald-500/15 rounded-xl flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <div className="w-8 h-8 bg-emerald-500/10 rounded-xl flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 </div>
                 <div className="min-w-0">
                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Local</p>
@@ -195,12 +195,12 @@ function SpecialEventCard({ event, index }: { event: PublicEvent; index: number 
 
         <div className="relative p-7 sm:p-8 pt-44 flex flex-col gap-3">
           <div className="flex flex-wrap justify-between w-full items-start gap-2">
-            <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-amber-400 bg-amber-500/10 border border-amber-500/25 px-3 py-1.5 rounded-full backdrop-blur-md">
+            <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-600/30 dark:border-amber-500/25 px-3 py-1.5 rounded-full backdrop-blur-md">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
               Evento Especial
             </span>
             {event.isCancelled && (
-              <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-full backdrop-blur-md">
+              <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-red-600 dark:text-red-400 bg-red-500/10 border border-red-600/30 dark:border-red-500/20 px-3 py-1.5 rounded-full backdrop-blur-md">
                 Cancelado
               </span>
             )}
@@ -208,26 +208,26 @@ function SpecialEventCard({ event, index }: { event: PublicEvent; index: number 
 
           <div>
             {date && <p className="text-sm text-slate-600 dark:text-slate-300/80 font-semibold mb-1.5">{date.weekday}, {date.full}</p>}
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-amber-300 transition-colors duration-300 leading-tight">{event.title}</h3>
+            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors duration-300 leading-tight">{event.title}</h3>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap mt-1">
             {event.time && (
               <span className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300 font-medium bg-black/25 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10 backdrop-blur-sm">
-                <svg className="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <svg className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 {event.time}
               </span>
             )}
             {event.location && (
               <span className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300 font-medium bg-black/25 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10 backdrop-blur-sm">
-                <svg className="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                <svg className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
                 <span className="truncate max-w-[200px]">{event.location}</span>
               </span>
             )}
           </div>
 
           {/* CTA inline */}
-          <div className="flex items-center gap-2 mt-2 text-amber-400/70 group-hover:text-amber-300 text-xs font-bold uppercase tracking-widest transition-colors duration-200">
+          <div className="flex items-center gap-2 mt-2 text-amber-600/70 dark:text-amber-400/70 group-hover:text-amber-600 dark:group-hover:text-amber-300 text-xs font-bold uppercase tracking-widest transition-colors duration-200">
             <span>Ver detalhes</span>
             <svg className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
           </div>
@@ -262,7 +262,7 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
               {date && (
                 <div className="relative z-10 text-center">
                   <span className="block text-2xl font-black text-slate-900 dark:text-white leading-none">{date.day}</span>
-                  <span className="block text-xs font-bold text-blue-300 uppercase tracking-wider mt-0.5">{date.month}</span>
+                  <span className="block text-xs font-bold text-blue-600 dark:text-blue-300 uppercase tracking-wider mt-0.5">{date.month}</span>
                 </div>
               )}
             </>
@@ -271,7 +271,7 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
               {date ? (
                 <>
                   <span className="text-2xl font-black text-slate-900 dark:text-white leading-none">{date.day}</span>
-                  <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">{date.month}</span>
+                  <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">{date.month}</span>
                 </>
               ) : (
                 <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,10 +286,10 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
         <div className="flex-1 flex items-center gap-4 px-5 py-4 min-w-0">
           <div className="flex-1 min-w-0">
             {date && <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider mb-1">{date.weekday}</p>}
-            <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-blue-300 transition-colors duration-200 truncate text-base leading-tight">{event.title}</h3>
+            <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors duration-200 truncate text-base leading-tight">{event.title}</h3>
             <div className="flex items-center gap-3 mt-1.5 flex-wrap">
               {event.isCancelled && (
-                <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-md">Cancelado</span>
+                <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-red-600 dark:text-red-400 bg-red-500/10 border border-red-600/30 dark:border-red-500/20 px-2 py-0.5 rounded-md">Cancelado</span>
               )}
               {event.time && (
                 <span className="flex items-center gap-1 text-xs text-slate-500">
@@ -395,7 +395,7 @@ export function EventsSection({ content, events }: Props) {
             >
               <Link
                 href="/agenda"
-                className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-semibold border border-black/10 dark:border-white/10 hover:border-white/25 px-6 py-3 rounded-2xl hover:bg-black/5 dark:bg-white/5 transition-all duration-200"
+                className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-semibold border border-black/10 dark:border-white/10 hover:border-black/25 dark:hover:border-white/25 px-6 py-3 rounded-2xl hover:bg-black/5 dark:bg-white/5 transition-all duration-200"
               >
                 Ver agenda completa
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
@@ -413,7 +413,7 @@ export function EventsSection({ content, events }: Props) {
             <p className="text-slate-600 text-sm mb-6">Os próximos eventos aparecerão aqui assim que forem publicados no painel.</p>
             <Link
               href="/agenda"
-              className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm font-semibold border border-blue-500/20 hover:border-blue-400/40 px-5 py-2.5 rounded-2xl hover:bg-blue-500/8 transition-all duration-200"
+              className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-semibold border border-blue-600/30 dark:border-blue-500/20 hover:border-blue-600/50 dark:hover:border-blue-400/40 px-5 py-2.5 rounded-2xl hover:bg-blue-500/8 transition-all duration-200"
             >
               Ver agenda completa
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>

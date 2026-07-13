@@ -138,23 +138,23 @@ export function EventDetailsClient({
           <div className="flex items-center gap-3 mb-4 flex-wrap">
             <span className={`text-xs font-bold px-3 py-1.5 rounded-full border ${
               event.type === 'culto'
-                ? 'bg-blue-500/10 border-blue-500/20 text-blue-400'
-                : 'bg-violet-500/10 border-violet-500/20 text-violet-400'
+                ? 'bg-blue-500/10 border-blue-600/30 dark:border-blue-500/20 text-blue-600 dark:text-blue-400'
+                : 'bg-violet-500/10 border-violet-600/30 dark:border-violet-500/20 text-violet-600 dark:text-violet-400'
             }`}>
               {event.type === 'culto' ? 'Culto' : 'Evento Especial'}
             </span>
             {isPaid && (
-              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-600/30 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
                 {formatCurrency(event.ticket_price!)}
               </span>
             )}
             {isFull && needsRegistration && (
-              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
+              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-red-500/10 border border-red-600/30 dark:border-red-500/20 text-red-600 dark:text-red-400">
                 Lotado
               </span>
             )}
             {isPaused && needsRegistration && (
-              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400">
+              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-600/30 dark:border-amber-500/20 text-amber-600 dark:text-amber-400">
                 Pausado
               </span>
             )}
@@ -172,8 +172,8 @@ export function EventDetailsClient({
           <div className="flex flex-wrap gap-5 mt-6">
             {event.date && (
               <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                <div className="w-8 h-8 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 bg-blue-500/10 border border-blue-600/30 dark:border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
@@ -182,8 +182,8 @@ export function EventDetailsClient({
             )}
             {event.location && (
               <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                <div className="w-8 h-8 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 bg-blue-500/10 border border-blue-600/30 dark:border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
                 </div>
@@ -193,13 +193,13 @@ export function EventDetailsClient({
             {spotsLeft !== null && (
               <div className="flex items-center gap-2 text-sm">
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                  isFull ? 'bg-red-500/10 border border-red-500/20' : 'bg-emerald-500/10 border border-emerald-500/20'
+                  isFull ? 'bg-red-500/10 border border-red-600/30 dark:border-red-500/20' : 'bg-emerald-500/10 border border-emerald-600/30 dark:border-emerald-500/20'
                 }`}>
-                  <svg className={`w-4 h-4 ${isFull ? 'text-red-400' : 'text-emerald-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`w-4 h-4 ${isFull ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
-                <span className={`font-semibold ${isFull ? 'text-red-400' : 'text-slate-200'}`}>
+                <span className={`font-semibold ${isFull ? 'text-red-600 dark:text-red-400' : 'text-slate-700 dark:text-slate-200'}`}>
                   {isFull ? 'Evento lotado' : `${spotsLeft} vaga${spotsLeft !== 1 ? 's' : ''} disponível`}
                 </span>
               </div>
@@ -238,8 +238,8 @@ export function EventDetailsClient({
           {/* --- Evento sem inscrição necessária --- */}
           {!needsRegistration && (
             <div className="text-center py-4">
-              <div className="w-14 h-14 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <svg className="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-blue-500/10 border border-blue-600/30 dark:border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -251,8 +251,8 @@ export function EventDetailsClient({
           {/* --- Evento lotado --- */}
           {needsRegistration && isFull && !hasConfirmed && !hasPendingPayment && !isPaused && !isNotOpen && (
             <div className="text-center py-4">
-              <div className="w-14 h-14 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <svg className="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-red-500/10 border border-red-600/30 dark:border-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                 </svg>
               </div>
@@ -264,8 +264,8 @@ export function EventDetailsClient({
           {/* --- Evento Pausado --- */}
           {needsRegistration && !hasConfirmed && !hasPendingPayment && isPaused && (
             <div className="text-center py-4">
-              <div className="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <svg className="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-amber-500/10 border border-amber-600/30 dark:border-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
@@ -277,8 +277,8 @@ export function EventDetailsClient({
           {/* --- Evento Não Aberto --- */}
           {needsRegistration && !hasConfirmed && !hasPendingPayment && !isPaused && isNotOpen && (
             <div className="text-center py-4">
-              <div className="w-14 h-14 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <svg className="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-blue-500/10 border border-blue-600/30 dark:border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -290,13 +290,13 @@ export function EventDetailsClient({
           {/* --- Pagamento pendente --- */}
           {hasPendingPayment && (
             <div className="flex flex-col gap-3">
-              <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4">
-                <svg className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-600/30 dark:border-amber-500/20 rounded-2xl p-4">
+                <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <p className="text-sm font-bold text-amber-300">Pagamento pendente</p>
-                  <p className="text-xs text-amber-400/70 mt-0.5">Você já tem uma inscrição aguardando confirmação de pagamento.</p>
+                  <p className="text-sm font-bold text-amber-700 dark:text-amber-300">Pagamento pendente</p>
+                  <p className="text-xs text-amber-700/80 dark:text-amber-400/70 mt-0.5">Você já tem uma inscrição aguardando confirmação de pagamento.</p>
                 </div>
               </div>
               <Link
@@ -310,7 +310,7 @@ export function EventDetailsClient({
               </Link>
               <Link
                 href="/suporte?title=Erro+no+Pagamento&description=Não+consegui+finalizar+o+pagamento+da+minha+inscrição."
-                className="w-full flex items-center justify-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-2xl transition-all border-black/10 dark:border-white/10"
+                className="w-full flex items-center justify-center gap-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-2xl transition-all border-black/10 dark:border-white/10"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 9v2m0 4h.01" />
@@ -323,13 +323,13 @@ export function EventDetailsClient({
           {/* --- Inscrito confirmado --- */}
           {hasConfirmed && !hasPendingPayment && (
             <div className="flex flex-col gap-3">
-              <div className="flex items-start gap-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4">
-                <svg className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-start gap-3 bg-emerald-500/10 border border-emerald-600/30 dark:border-emerald-500/20 rounded-2xl p-4">
+                <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <p className="text-sm font-bold text-emerald-300">Você já está inscrito!</p>
-                  <p className="text-xs text-emerald-400/70 mt-0.5">
+                  <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">Você já está inscrito!</p>
+                  <p className="text-xs text-emerald-700/80 dark:text-emerald-400/70 mt-0.5">
                     {confirmedRegistrations.length === 1 ? 'Sua inscrição foi confirmada.' : `Você tem ${confirmedRegistrations.length} inscrições confirmadas.`}
                   </p>
                 </div>
@@ -352,7 +352,7 @@ export function EventDetailsClient({
               {confirmedRegistrations.length > 1 && (
                 <Link
                   href="/minhas-inscricoes"
-                  className="w-full flex items-center justify-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-sm font-semibold py-3 rounded-2xl transition-all border-black/10 dark:border-white/10"
+                  className="w-full flex items-center justify-center gap-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-sm font-semibold py-3 rounded-2xl transition-all border-black/10 dark:border-white/10"
                 >
                   Ver todos os comprovantes ({confirmedRegistrations.length})
                 </Link>

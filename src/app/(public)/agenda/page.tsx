@@ -70,10 +70,10 @@ export default async function PublicEventsPage() {
       <div className="relative max-w-6xl mx-auto px-4 pt-28 pb-16">
         <div className="text-center mb-14">
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
-            <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full">
+            <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-600/30 dark:border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full">
               Agenda
             </div>
-            <Link href="/minhas-inscricoes" className="inline-flex items-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-xs font-semibold px-4 py-2 rounded-full transition-all border-black/10 dark:border-white/10">
+            <Link href="/minhas-inscricoes" className="inline-flex items-center gap-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-xs font-semibold px-4 py-2 rounded-full transition-all border-black/10 dark:border-white/10">
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
               Minhas Inscrições
             </Link>
@@ -89,7 +89,7 @@ export default async function PublicEventsPage() {
         {(!events || events.length === 0) ? (
           <div className="flex flex-col items-center justify-center py-20 bg-slate-50 dark:bg-slate-900/40 border border-black/6 dark:border-white/6 border-dashed rounded-3xl">
             <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/15 rounded-2xl flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-blue-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-8 h-8 text-blue-600/60 dark:text-blue-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
@@ -136,7 +136,7 @@ export default async function PublicEventsPage() {
                       <div className="absolute bottom-3 left-3 flex gap-2">
                         <div className="bg-slate-50 dark:bg-slate-900/80 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl px-3 py-2 text-center shadow-lg">
                           <p className="text-lg font-black text-slate-900 dark:text-white leading-none">{date.getDate().toString().padStart(2, '0')}</p>
-                          <p className="text-xs font-bold text-blue-400 uppercase">{MONTHS_SHORT[date.getMonth()]}</p>
+                          <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase">{MONTHS_SHORT[date.getMonth()]}</p>
                         </div>
                         {event.isCancelled && (
                           <div className="bg-red-500/90 backdrop-blur-md border border-red-400/50 rounded-xl px-3 py-2 flex items-center shadow-lg">
@@ -150,18 +150,18 @@ export default async function PublicEventsPage() {
                     <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end">
                       <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg border backdrop-blur-sm ${
                         event.type === 'culto'
-                          ? 'bg-blue-500/20 border-blue-500/30 text-blue-300'
-                          : 'bg-violet-500/20 border-violet-500/30 text-violet-300'
+                          ? 'bg-blue-500/20 border-blue-600/40 dark:border-blue-500/30 text-blue-600 dark:text-blue-300'
+                          : 'bg-violet-500/20 border-violet-600/40 dark:border-violet-500/30 text-violet-600 dark:text-violet-300'
                       }`}>
                         {event.type === 'culto' ? 'Culto' : 'Especial'}
                       </span>
                       {isPaid && (
-                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg border backdrop-blur-sm bg-amber-500/20 border-amber-500/30 text-amber-300">
+                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg border backdrop-blur-sm bg-amber-500/20 border-amber-600/40 dark:border-amber-500/30 text-amber-600 dark:text-amber-300">
                           R$ {Number(event.ticket_price).toFixed(2)}
                         </span>
                       )}
                       {isRegistered && (
-                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg border backdrop-blur-sm bg-emerald-500/20 border-emerald-500/30 text-emerald-300 flex items-center gap-1">
+                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg border backdrop-blur-sm bg-emerald-500/20 border-emerald-600/40 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-300 flex items-center gap-1">
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
                           Inscrito
                         </span>
@@ -171,7 +171,7 @@ export default async function PublicEventsPage() {
 
                   {/* Conteúdo */}
                   <div className="p-5">
-                    <h2 className="font-bold text-slate-900 dark:text-white text-base leading-snug mb-2 group-hover:text-blue-300 transition-colors line-clamp-2">
+                    <h2 className="font-bold text-slate-900 dark:text-white text-base leading-snug mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors line-clamp-2">
                       {event.title}
                     </h2>
 
@@ -202,8 +202,8 @@ export default async function PublicEventsPage() {
                       <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${
                         event.requires_registration
                           ? isPaid
-                            ? 'bg-amber-500/10 text-amber-400'
-                            : 'bg-blue-500/10 text-blue-400'
+                            ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                            : 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
                           : 'bg-black/5 dark:bg-white/5 text-slate-500 dark:text-slate-400'
                       }`}>
                         {event.requires_registration
@@ -211,7 +211,7 @@ export default async function PublicEventsPage() {
                           : 'Entrada livre'
                         }
                       </span>
-                      <span className="text-blue-400 group-hover:text-blue-300 flex items-center gap-1 text-xs font-semibold transition-colors">
+                      <span className="text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 flex items-center gap-1 text-xs font-semibold transition-colors">
                         Ver mais
                         <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />

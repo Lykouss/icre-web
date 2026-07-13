@@ -115,7 +115,7 @@ export function ProfileClient({
                 <button
                   onClick={handleDismissGift}
                   disabled={isDismissingGift}
-                  className="w-full bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50"
+                  className="w-full bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50"
                 >
                   {isDismissingGift ? 'Fechando...' : 'Fechar'}
                 </button>

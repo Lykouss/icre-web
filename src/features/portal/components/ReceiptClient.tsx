@@ -377,7 +377,7 @@ export function ReceiptClient({ registration }: Props) {
                   href={registration.asaas_invoice_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-white shadow-xl shadow-slate-200/50 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/5 dark:border-white/8 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-all"
+                  className="flex-1 flex items-center justify-center gap-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/5 dark:border-white/8 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-all"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
