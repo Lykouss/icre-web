@@ -10,7 +10,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 md:hover:bg-slate-200 md:dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-700 transition-colors"
+      className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none"
       title={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
     >
       {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
