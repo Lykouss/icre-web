@@ -422,7 +422,7 @@ function DataRow({
       <span className="text-xs text-slate-500 font-medium shrink-0">{label}</span>
       <span className={`text-sm text-right ${
         mono ? 'font-mono text-slate-500 dark:text-slate-400 text-xs' :
-        valueClass ?? 'font-medium text-slate-200'
+        valueClass ?? 'font-medium text-slate-800 dark:text-slate-200'
       }`}>
         {value}
       </span>

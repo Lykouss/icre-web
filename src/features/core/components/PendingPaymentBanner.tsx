@@ -16,6 +16,8 @@ export function PendingPaymentBanner() {
   const pathname = usePathname();
 
   useEffect(() => {
+    let channel: ReturnType<typeof createClient>['channel'] | null = null;
+    
     async function checkPending() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -38,9 +40,9 @@ export function PendingPaymentBanner() {
         .limit(1)
         .maybeSingle();
 
-      if (data) {
-        setPending(data as PendingReg);
-      } else {
+      let activePending = data as PendingReg | null;
+
+      if (!activePending) {
         // Tenta fallback por email
         const { data: fallbackData } = await supabase
           .from('event_registrations')
@@ -51,11 +53,36 @@ export function PendingPaymentBanner() {
           .maybeSingle();
         
         if (fallbackData) {
-          setPending(fallbackData as PendingReg);
+          activePending = fallbackData as PendingReg;
         }
       }
+      
+      setPending(activePending);
+
+      if (activePending) {
+        // Subscribe to real-time updates for this registration
+        channel = supabase.channel(`payment_status_${activePending.id}`)
+          .on(
+            'postgres_changes',
+            { event: 'UPDATE', schema: 'public', table: 'event_registrations', filter: `id=eq.${activePending.id}` },
+            (payload) => {
+              if (payload.new.status !== 'pendente_pagamento') {
+                setPending(null);
+              }
+            }
+          )
+          .subscribe();
+      }
     }
+    
     checkPending();
+    
+    return () => {
+      if (channel) {
+        const supabase = createClient();
+        supabase.removeChannel(channel);
+      }
+    };
   }, [pathname]); // re-check if user navigates (so if they pay, it vanishes)
 
   if (!pending) return null;
@@ -70,7 +97,7 @@ export function PendingPaymentBanner() {
     : pending.events?.title || 'Evento';
 
   return (
-    <div className="bg-amber-500 text-amber-950 px-4 py-3 text-sm font-medium border-b border-amber-600/20 shadow-md relative z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-amber-500 text-amber-950 px-4 py-3 text-sm font-medium border-t border-amber-600/20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-[100] animate-in slide-in-from-bottom-full duration-300">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
