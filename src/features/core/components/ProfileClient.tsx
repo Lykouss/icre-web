@@ -80,15 +80,15 @@ export function ProfileClient({
     { id: 'conta', label: 'Minha Conta' },
   ];
 
-  const inputClass = 'w-full bg-slate-800/50 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-slate-500';
+  const inputClass = 'w-full bg-blue-50/50 dark:bg-slate-800/50 border border-blue-300/60 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-slate-500';
   const labelClass = 'block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5';
   const initials   = fullName.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950">
       {currentGift && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-slate-50 dark:bg-slate-900 border border-emerald-500/30 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden">
+          <div className="bg-blue-100 dark:bg-slate-900 border border-emerald-500/30 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden">
             <div className="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl" />
             <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl" />
             
@@ -115,7 +115,7 @@ export function ProfileClient({
                 <button
                   onClick={handleDismissGift}
                   disabled={isDismissingGift}
-                  className="w-full bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50"
+                  className="w-full bg-white/80 shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50"
                 >
                   {isDismissingGift ? 'Fechando...' : 'Fechar'}
                 </button>

@@ -21,7 +21,26 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          try {
+            let theme = localStorage.getItem('public-theme');
+            if (theme === 'dark') {
+              document.documentElement.classList.add('dark');
+            } else if (theme === 'light') {
+              document.documentElement.classList.remove('dark');
+            } else {
+              // fallback if no localStorage, though we also use cookies
+              // we can rely on nextjs rendering the cookie theme or just do nothing here 
+              // wait, the server actually doesn't render it. So we rely on cookie or system.
+              if (document.cookie.includes('public-theme=dark')) {
+                 document.documentElement.classList.add('dark');
+              }
+            }
+          } catch (e) {}
+        `}} />
+      </head>
       <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased`}>
         {/* Limpa service workers residuais do PWA antigo que causam reload loops */}
         <script dangerouslySetInnerHTML={{ __html: `

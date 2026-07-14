@@ -74,7 +74,17 @@ export default async function PublicLayout({ children }: { children: React.React
         <PendingOnboardingBanner />
         <PendingPaymentBanner />
         <PublicNavbar user={navUser} activeBlockTypes={activeBlockTypes} />
-        <div className="pt-0 min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/40 via-white to-slate-100 dark:bg-none dark:bg-slate-950 transition-colors duration-300">{children}</div>
+        <div className="pt-0 min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:to-slate-950 dark:bg-slate-950 transition-colors duration-300 relative">
+          <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+            {/* Light mode ambient orbs */}
+            <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-blue-400/15 rounded-full blur-[140px] dark:hidden" />
+            <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[120px] dark:hidden" />
+            <div className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] bg-sky-300/15 rounded-full blur-[140px] dark:hidden" />
+          </div>
+          <div className="relative z-10">
+            {children}
+          </div>
+        </div>
         <PublicFooter />
       </ToastProvider>
     </PublicThemeProvider>

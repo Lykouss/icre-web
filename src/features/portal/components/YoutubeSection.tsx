@@ -14,7 +14,7 @@ export function YoutubeSection({ content }: Props) {
   const videoId = content.video_id;
 
   return (
-    <section id="youtube" className="relative py-32 px-6 bg-slate-50 dark:bg-slate-900 overflow-hidden">
+    <section id="youtube" className="relative py-32 px-6 bg-transparent dark:bg-slate-950 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-white/50 dark:from-slate-950/50 via-transparent to-white/50 dark:to-slate-950/50" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-red-600/5 rounded-full blur-[130px]" />
@@ -49,9 +49,9 @@ export function YoutubeSection({ content }: Props) {
           <div className="relative">
             {/* Glow atrás do player */}
             <div className="absolute -inset-6 bg-red-500/10 rounded-3xl blur-3xl" />
-            <div className="absolute -inset-2 bg-white dark:bg-slate-950/40 rounded-3xl" />
+            <div className="absolute -inset-2 bg-white/60 dark:bg-slate-950/40 rounded-3xl backdrop-blur-md" />
 
-            <div className="relative rounded-3xl overflow-hidden border border-black/5 dark:border-white/8 shadow-2xl aspect-video bg-white dark:bg-slate-950">
+            <div className="relative rounded-3xl overflow-hidden border border-black/5 dark:border-white/8 shadow-2xl shadow-blue-900/10 dark:shadow-none aspect-video bg-blue-100 dark:bg-slate-900/50 backdrop-blur-xl">
               {videoId ? (
                 <iframe
                   className="w-full h-full border-0"

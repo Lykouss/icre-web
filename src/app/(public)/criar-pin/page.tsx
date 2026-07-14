@@ -73,10 +73,10 @@ export default function CreatePinPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center pt-24 pb-8 px-4">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#e0f2fe_0%,_transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative w-full max-w-sm">
-        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl text-center">
+        <div className="bg-white/60 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 backdrop-blur-xl rounded-3xl p-8 shadow-2xl text-center">
 
           {/* Ícone */}
           <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -135,7 +135,7 @@ export default function CreatePinPage() {
                     h-16 rounded-2xl font-bold text-xl transition-all active:scale-95
                     ${isDelete
                       ? 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-800 bg-transparent'
-                      : 'bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white border border-slate-700 hover:border-slate-600 shadow-sm'
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white border border-blue-300/60 dark:border-slate-700 hover:border-slate-600 shadow-sm'
                     }
                     disabled:opacity-50
                   `}

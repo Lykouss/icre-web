@@ -8,12 +8,12 @@ import type { Pastor, PastorsSectionContent } from '@/features/portal/types';
 function PastorModal({ pastor, onClose }: { pastor: Pastor; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-white dark:bg-slate-950/90 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/90 backdrop-blur-md" />
       <div
-        className="relative bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-modal-in"
+        className={`relative ${pastor.is_president ? 'bg-yellow-50/95 border-yellow-200/60' : 'bg-blue-50/95 border-blue-200/60'} dark:bg-slate-900/50 backdrop-blur-2xl border dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-lg flex flex-col overflow-hidden animate-modal-in`}
         onClick={e => e.stopPropagation()}
       >
-        <div className="relative w-full aspect-[4/3] bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 overflow-hidden">
+        <div className="relative w-full aspect-[4/3] bg-white/60 backdrop-blur-xl shadow-2xl shadow-blue-900/5 border border-white/60 dark:border-transparent dark:shadow-none dark:bg-slate-800 overflow-hidden">
           {pastor.photo_url ? (
             <Image src={pastor.photo_url} alt={pastor.name} fill sizes="(max-width: 768px) 100vw, 448px" className="object-cover object-top" />
           ) : (
@@ -27,7 +27,7 @@ function PastorModal({ pastor, onClose }: { pastor: Pastor; onClose: () => void 
           <div className="absolute inset-0 bg-gradient-to-t from-slate-50 dark:from-slate-900 via-slate-50/20 dark:via-slate-900/20 to-transparent" />
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-9 h-9 bg-black/40 hover:bg-black/70 text-slate-900 dark:text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-black/10 dark:border-white/10 backdrop-blur-sm"
+            className="absolute top-4 right-4 z-10 w-9 h-9 bg-white/40 hover:bg-white/70 text-slate-900 dark:bg-black/40 dark:hover:bg-black/70 dark:text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/60 dark:border-white/10 backdrop-blur-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
@@ -58,9 +58,8 @@ function PastorModal({ pastor, onClose }: { pastor: Pastor; onClose: () => void 
   );
 }
 
-function PastorCard({ pastor, index, isPresident, embedded }: { pastor: Pastor; index: number, isPresident?: boolean, embedded?: boolean }) {
+function PastorCard({ pastor, index, isPresident, embedded, onSelect }: { pastor: Pastor; index: number, isPresident?: boolean, embedded?: boolean, onSelect: (p: Pastor) => void }) {
   const { ref, visible } = useScrollReveal<HTMLDivElement>({ threshold: 0.08 });
-  const [open, setOpen] = useState(false);
 
   const themeColor = isPresident ? 'yellow' : 'blue';
   const borderHover = isPresident ? 'hover:border-yellow-500/30' : 'hover:border-blue-500/30';
@@ -70,17 +69,17 @@ function PastorCard({ pastor, index, isPresident, embedded }: { pastor: Pastor; 
   const gradLine = isPresident ? 'from-yellow-500 to-amber-500' : 'from-blue-500 to-indigo-500';
   const badgeBg = isPresident ? 'bg-yellow-500/90 dark:bg-yellow-600/90' : 'bg-blue-500/90 dark:bg-blue-600/90';
 
-  const wrapperClass = `group relative bg-slate-50 dark:bg-slate-900/60 backdrop-blur-sm border ${isPresident ? 'border-yellow-500/20' : 'border-black/5 dark:border-white/8'} rounded-3xl overflow-hidden cursor-pointer ${borderHover} hover:-translate-y-2 hover:shadow-2xl ${shadowHover} transition-all duration-400 ease-out h-full flex flex-col w-full`;
+  const wrapperClass = `group relative ${isPresident ? 'bg-yellow-50 dark:bg-slate-900/50 border-yellow-300/60 dark:border-yellow-500/30' : 'bg-blue-100 dark:bg-slate-900/50 border-blue-300/60 dark:border-white/8'} backdrop-blur-xl border rounded-3xl overflow-hidden cursor-pointer ${borderHover} hover:-translate-y-2 hover:shadow-2xl ${shadowHover} transition-all duration-400 ease-out h-full flex flex-col w-full`;
 
   return (
     <>
       <div
         ref={!embedded ? ref : undefined}
-        onClick={() => setOpen(true)}
+        onClick={() => onSelect(pastor)}
         className={wrapperClass}
         style={!embedded ? { opacity: visible ? 1 : 0, transform: visible ? 'translate3d(0,0,0)' : 'translate3d(0,40px,0)', transitionDelay: `${index * 90}ms` } : {}}
       >
-        <div className="relative w-full aspect-[3/4] bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 overflow-hidden shrink-0">
+        <div className="relative w-full aspect-[3/4] bg-blue-100/30 backdrop-blur-md shadow-2xl shadow-blue-900/5 border border-blue-200/50 dark:border-transparent dark:shadow-none dark:bg-slate-800 overflow-hidden shrink-0">
           {pastor.photo_url ? (
             <Image src={pastor.photo_url} alt={pastor.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px" className="object-cover object-top group-hover:scale-105 transition-transform duration-600 ease-out will-change-transform" />
           ) : (
@@ -112,35 +111,34 @@ function PastorCard({ pastor, index, isPresident, embedded }: { pastor: Pastor; 
         </div>
         <div className={`absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r ${gradLine} scale-x-0 group-hover:scale-x-100 transition-transform duration-400 origin-left`} />
       </div>
-      {open && <PastorModal pastor={pastor} onClose={() => setOpen(false)} />}
     </>
   );
 }
 
-function CoupleCard({ p1, p2, index, isPresident }: { p1: Pastor; p2: Pastor, index: number, isPresident?: boolean }) {
+function CoupleCard({ p1, p2, index, isPresident, onSelect }: { p1: Pastor; p2: Pastor, index: number, isPresident?: boolean, onSelect: (p: Pastor) => void }) {
   const { ref, visible } = useScrollReveal<HTMLDivElement>({ threshold: 0.1 });
   
   return (
     <div 
       ref={ref} 
-      className={`relative flex flex-col sm:flex-row items-stretch gap-4 sm:gap-8 p-4 sm:p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-900/40 border border-black/5 dark:border-white/5 backdrop-blur-sm transition-all duration-700 ease-out`}
+      className={`relative flex flex-col sm:flex-row items-stretch gap-4 sm:gap-8 p-4 sm:p-6 rounded-[2.5rem] ${isPresident ? 'bg-yellow-50 border-yellow-300/60' : 'bg-blue-100 border-blue-300/60'} dark:bg-slate-900/50 backdrop-blur-xl border dark:border-white/5 transition-all duration-700 ease-out`}
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translate3d(0,0,0)' : 'translate3d(0,40px,0)', transitionDelay: `${index * 90}ms` }}
     >
       {isPresident && <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 rounded-[2.5rem] blur-xl opacity-60 pointer-events-none" />}
       
       <div className="flex-1 w-full sm:w-[280px] md:w-[320px] max-w-[320px] flex">
-        <PastorCard pastor={p1} index={0} isPresident={isPresident} embedded />
+        <PastorCard pastor={p1} index={0} isPresident={isPresident} embedded onSelect={onSelect} />
       </div>
       
-      <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-black/10 dark:border-white/10 z-10 -my-6 sm:my-auto sm:-mx-10 relative">
-        <div className="absolute inset-0 rounded-full border border-black/5 dark:border-white/5 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border-slate-200/50 dark:border-transparent dark:bg-slate-800/80" />
+      <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-blue-100/50 backdrop-blur-xl shadow-2xl shadow-blue-900/5 border border-blue-200/50 dark:border-transparent dark:shadow-none dark:bg-slate-800 z-10 -my-6 sm:my-auto sm:-mx-10 relative">
+        <div className="absolute inset-0 rounded-full border border-blue-200/50 dark:border-white/5 bg-blue-50/80 backdrop-blur-md dark:backdrop-blur-none dark:border-transparent dark:bg-slate-800/80" />
         <svg className={`w-5 h-5 relative z-10 ${isPresident ? 'text-yellow-600 dark:text-yellow-400' : 'text-indigo-600 dark:text-indigo-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
         </svg>
       </div>
 
       <div className="flex-1 w-full sm:w-[280px] md:w-[320px] max-w-[320px] flex">
-        <PastorCard pastor={p2} index={1} isPresident={isPresident} embedded />
+        <PastorCard pastor={p2} index={1} isPresident={isPresident} embedded onSelect={onSelect} />
       </div>
     </div>
   );
@@ -175,6 +173,7 @@ interface Props {
 
 export function PastorsSection({ content, pastors }: Props) {
   const { ref, visible } = useScrollReveal({ threshold: 0.1 });
+  const [selectedPastor, setSelectedPastor] = useState<Pastor | null>(null);
   
   const presidents = pastors.filter(p => p.is_president);
   const others = pastors.filter(p => !p.is_president);
@@ -199,7 +198,7 @@ export function PastorsSection({ content, pastors }: Props) {
   otherPairs.sort(sortByCoupleFirst);
 
   return (
-    <section id="lideranca" className="relative py-32 px-6 bg-white dark:bg-slate-950 overflow-hidden">
+    <section id="lideranca" className="relative py-32 px-6 bg-transparent dark:bg-slate-950 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/6 rounded-full blur-[110px] hidden md:block" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[90px] hidden md:block" />
@@ -247,8 +246,8 @@ export function PastorsSection({ content, pastors }: Props) {
               <div className="w-full flex flex-col items-center gap-10">
                 {presidentPairs.map((item, i) => (
                   Array.isArray(item) 
-                    ? <CoupleCard key={`pres-couple-${i}`} p1={item[0]} p2={item[1]} index={i} isPresident />
-                    : <div key={item.id} className="w-full sm:w-[280px] md:w-[320px] max-w-[320px]"><PastorCard pastor={item} index={i} isPresident /></div>
+                    ? <CoupleCard key={`pres-couple-${i}`} p1={item[0]} p2={item[1]} index={i} isPresident onSelect={setSelectedPastor} />
+                    : <div key={item.id} className="w-full sm:w-[280px] md:w-[320px] max-w-[320px]"><PastorCard pastor={item} index={i} isPresident onSelect={setSelectedPastor} /></div>
                 ))}
               </div>
             )}
@@ -267,15 +266,15 @@ export function PastorsSection({ content, pastors }: Props) {
               <div className="w-full flex flex-wrap justify-center gap-8 items-stretch">
                 {otherPairs.map((item, i) => (
                   Array.isArray(item)
-                    ? <CoupleCard key={`other-couple-${i}`} p1={item[0]} p2={item[1]} index={i + presidentPairs.length} />
-                    : <div key={item.id} className="w-full sm:w-[280px] md:w-[320px] max-w-[320px] flex"><PastorCard pastor={item} index={i + presidentPairs.length} /></div>
+                    ? <CoupleCard key={`other-couple-${i}`} p1={item[0]} p2={item[1]} index={i + presidentPairs.length} onSelect={setSelectedPastor} />
+                    : <div key={item.id} className="w-full sm:w-[280px] md:w-[320px] max-w-[320px] flex"><PastorCard pastor={item} index={i + presidentPairs.length} onSelect={setSelectedPastor} /></div>
                 ))}
               </div>
             )}
 
           </div>
         ) : (
-          <div className="w-full max-w-2xl bg-slate-50 dark:bg-slate-900/40 border border-black/6 dark:border-white/6 border-dashed rounded-3xl p-14 text-center">
+          <div className="w-full max-w-2xl bg-white/40 dark:bg-slate-900/50 backdrop-blur-xl/40 border border-black/6 dark:border-white/6 border-dashed rounded-3xl p-14 text-center">
             <div className="w-16 h-16 bg-indigo-500/10 border border-indigo-500/15 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <svg className="w-8 h-8 text-indigo-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -286,6 +285,7 @@ export function PastorsSection({ content, pastors }: Props) {
           </div>
         )}
       </div>
+      {selectedPastor && <PastorModal pastor={selectedPastor} onClose={() => setSelectedPastor(null)} />}
     </section>
   );
 }

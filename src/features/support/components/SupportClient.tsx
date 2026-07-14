@@ -125,30 +125,26 @@ function OpenTicketModal({
     });
   }
 
-  const inputStyle: React.CSSProperties = {
-    background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.1)',
-  };
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-slate-900/40 dark:bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div
-        className="relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
-        style={{ background: '#0d1526', border: '1px solid rgba(255,255,255,0.12)', animation: 'modal-in 0.25s ease-out' }}
+        className="relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden bg-blue-50 dark:bg-[#0d1526] border border-blue-300/60 dark:border-white/10" style={{ animation: 'modal-in 0.25s ease-out' }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-blue-300/60 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.15)', border: '1px solid rgba(37,99,235,0.3)' }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-500/15 border border-blue-500/30">
               <MessageSquare className="w-4.5 h-4.5 text-blue-400" />
             </div>
             <div>
-              <h2 className="text-[15px] font-bold text-slate-100">Abrir Novo Chamado</h2>
+              <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100">Abrir Novo Chamado</h2>
               <p className="text-[11px] text-slate-500">Descreva o que aconteceu</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-300 hover:bg-white/8 transition-all">
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-700 dark:text-slate-300 hover:bg-black/5 dark:bg-white/8 transition-all">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -166,10 +162,7 @@ function OpenTicketModal({
               onChange={e => setSubject(e.target.value)}
               placeholder="Ex.: Não consigo acessar meu comprovante"
               maxLength={120}
-              className="w-full h-10 px-4 rounded-xl text-sm text-slate-200 placeholder-slate-600 outline-none transition-all"
-              style={inputStyle}
-              onFocus={e => { e.currentTarget.style.borderColor = 'rgba(59,130,246,0.5)'; }}
-              onBlur={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+              className="w-full h-10 px-4 rounded-xl text-sm text-slate-900 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-600 outline-none transition-all bg-white dark:bg-white/5 border border-blue-300/60 dark:border-white/10 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
             />
           </div>
 
@@ -184,10 +177,7 @@ function OpenTicketModal({
               placeholder="Breve descrição do que aconteceu…"
               rows={4}
               maxLength={2000}
-              className="w-full px-4 py-3 rounded-xl text-sm text-slate-200 placeholder-slate-600 outline-none transition-all resize-none"
-              style={inputStyle}
-              onFocus={e => { e.currentTarget.style.borderColor = 'rgba(59,130,246,0.5)'; }}
-              onBlur={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+              className="w-full px-4 py-3 rounded-xl text-sm text-slate-900 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-600 outline-none transition-all resize-none bg-white dark:bg-white/5 border border-blue-300/60 dark:border-white/10 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
             />
             <p className="text-right text-[11px] text-slate-600">{description.length}/2000</p>
           </div>
@@ -227,8 +217,8 @@ function OpenTicketModal({
             {uploadedUrls.length > 0 && (
               <div className="space-y-1">
                 {uploadedUrls.map((url, i) => (
-                  <div key={i} className="flex items-center justify-between px-3 py-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                    <span className="text-[12px] text-slate-400 truncate">{url.split('/').pop()}</span>
+                  <div key={i} className="flex items-center justify-between px-3 py-2 rounded-lg bg-blue-100/50 dark:bg-white/5 border border-blue-300/60 dark:border-white/10">
+                    <span className="text-[12px] text-slate-500 dark:text-slate-400 truncate">{url.split('/').pop()}</span>
                     <button type="button" onClick={() => removeAttachment(i)} className="ml-2 text-slate-600 hover:text-red-400 transition-colors">
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -267,7 +257,7 @@ function MsgAvatar({ name, avatarUrl, isAdmin }: { name: string; avatarUrl?: str
   const bg = isAdmin ? 'rgba(37,99,235,0.25)' : 'rgba(100,116,139,0.25)';
   return (
     <div
-      className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-[11px] font-bold text-white overflow-hidden"
+      className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-[11px] font-bold text-slate-900 dark:text-white overflow-hidden"
       style={{ background: bg, border: `1.5px solid ${isAdmin ? 'rgba(37,99,235,0.4)' : 'rgba(100,116,139,0.4)'}` }}
     >
       {avatarUrl
@@ -444,11 +434,10 @@ function ChatInterface({
     <div className="flex flex-col h-full" style={{ maxHeight: 'calc(100vh - 200px)', minHeight: '500px' }}>
       {/* Header */}
       <div
-        className="flex items-center justify-between px-5 py-4 rounded-t-2xl"
-        style={{ background: 'rgba(13,21,38,1)', border: '1px solid rgba(255,255,255,0.08)', borderBottom: 'none' }}
+        className="flex items-center justify-between px-5 py-4 rounded-t-2xl bg-blue-100 dark:bg-[#0d1526] border border-blue-300/60 dark:border-white/10 border-b-0"
       >
         <div>
-          <h2 className="text-[15px] font-bold text-slate-100 leading-tight">{ticket.subject}</h2>
+          <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight">{ticket.subject}</h2>
           <div className="flex items-center gap-2 mt-1.5">
             <StatusBadge status={ticket.status} />
             <UrgencyBadge urgency={ticket.urgency} />
@@ -469,8 +458,7 @@ function ChatInterface({
 
       {/* Messages */}
       <div
-        className="flex-1 overflow-y-auto px-4 py-4 space-y-3 portal-scroll"
-        style={{ background: 'rgba(6,11,23,0.8)', border: '1px solid rgba(255,255,255,0.06)', borderTop: 'none', borderBottom: 'none' }}
+        className="flex-1 overflow-y-auto px-4 py-4 space-y-3 portal-scroll bg-white/50 dark:bg-[#060b17]/80 border-x border-blue-300/60 dark:border-white/5"
       >
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center py-12">
@@ -497,9 +485,9 @@ function ChatInterface({
             <React.Fragment key={msg.id}>
               {showDate && (
                 <div className="flex items-center gap-3 my-3">
-                  <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+                  <div className="flex-1 h-px bg-blue-300/60 dark:bg-white/10" />
                   <span className="text-[10px] text-slate-600 font-medium">{formatDate(msg.created_at)}</span>
-                  <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+                  <div className="flex-1 h-px bg-blue-300/60 dark:bg-white/10" />
                 </div>
               )}
 
@@ -517,12 +505,12 @@ function ChatInterface({
                 <div className="max-w-[72%] space-y-0.5">
                   {/* Nome do remetente */}
                   {!isOwn && showAvatar && (
-                    <p className={`text-[10px] font-semibold px-1 ${msg.is_admin ? 'text-blue-400' : 'text-slate-400'}`}>
+                    <p className={`text-[10px] font-semibold px-1 ${msg.is_admin ? 'text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}>
                       {senderName}
                     </p>
                   )}
                   {isOwn && showAvatar && (
-                    <p className="text-[10px] font-semibold text-slate-400 px-1 text-right">Você</p>
+                    <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 px-1 text-right">Você</p>
                   )}
 
                   {/* Bolha da mensagem */}
@@ -569,20 +557,18 @@ function ChatInterface({
       {/* Footer */}
       {isTicketClosed ? (
         <div
-          className="px-5 py-4 rounded-b-2xl text-center text-sm text-slate-500"
-          style={{ background: 'rgba(13,21,38,1)', border: '1px solid rgba(255,255,255,0.08)', borderTop: 'none' }}
+          className="px-5 py-4 rounded-b-2xl text-center text-sm text-slate-500 bg-blue-100 dark:bg-[#0d1526] border border-blue-300/60 dark:border-white/10 border-t-0"
         >
           Este chamado foi encerrado.
         </div>
       ) : (
         <div
-          className="rounded-b-2xl"
-          style={{ background: 'rgba(13,21,38,1)', border: '1px solid rgba(255,255,255,0.08)', borderTop: 'none' }}
+          className="rounded-b-2xl bg-blue-100 dark:bg-[#0d1526] border border-blue-300/60 dark:border-white/10 border-t-0"
         >
           {uploadedUrls.length > 0 && (
             <div className="flex flex-wrap gap-2 px-4 pt-3">
               {uploadedUrls.map((url, i) => (
-                <div key={i} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] text-slate-400" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div key={i} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] text-slate-500 dark:text-slate-400 bg-white dark:bg-white/5 border border-blue-300/60 dark:border-white/10">
                   <Paperclip className="w-3 h-3" />
                   <span className="max-w-[100px] truncate">{url.split('/').pop()}</span>
                   <button onClick={() => setUploadedUrls(p => p.filter((_, j) => j !== i))} className="text-slate-600 hover:text-red-400 transition-colors">
@@ -603,7 +589,7 @@ function ChatInterface({
               type="button"
               onClick={() => fileRef.current?.click()}
               disabled={uploading || uploadedUrls.length >= 3}
-              className="p-2.5 rounded-xl text-slate-600 hover:text-slate-300 transition-colors disabled:opacity-40 shrink-0"
+              className="p-2.5 rounded-xl text-slate-600 hover:text-slate-700 dark:text-slate-300 transition-colors disabled:opacity-40 shrink-0"
               title="Anexar arquivo"
             >
               {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Paperclip className="w-5 h-5" />}
@@ -613,10 +599,7 @@ function ChatInterface({
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
               placeholder="Digite sua mensagem…"
-              className="flex-1 h-11 px-4 rounded-xl text-sm text-slate-200 placeholder-slate-600 outline-none transition-all"
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
-              onFocus={e => { e.currentTarget.style.borderColor = 'rgba(59,130,246,0.4)'; }}
-              onBlur={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+              className="flex-1 h-11 px-4 rounded-xl text-sm text-slate-900 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-600 outline-none transition-all bg-white dark:bg-white/5 border border-blue-300/60 dark:border-white/10 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(e as unknown as React.FormEvent); } }}
             />
             <button
@@ -640,34 +623,32 @@ function NoTicketState({ onOpenModal }: { onOpenModal: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div
-        className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6"
-        style={{ background: 'rgba(37,99,235,0.12)', border: '1px solid rgba(37,99,235,0.2)' }}
+        className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 bg-blue-100/50 dark:bg-blue-500/10 border border-blue-300/60 dark:border-blue-500/20"
       >
         <MessageSquare className="w-9 h-9 text-blue-400" />
       </div>
-      <h2 className="text-xl font-bold text-slate-100 mb-2">Precisa de ajuda específica?</h2>
-      <p className="text-slate-400 text-sm max-w-sm mb-6 leading-relaxed">
+      <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Precisa de ajuda específica?</h2>
+      <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm mb-6 leading-relaxed">
         Abra um chamado e nossa equipe responderá em breve.
       </p>
 
       {/* Alerta de regras */}
       <div
-        className="flex items-start gap-3 px-5 py-4 rounded-2xl text-left max-w-md mb-8"
-        style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}
+        className="flex items-start gap-3 px-5 py-4 rounded-2xl text-left max-w-md mb-8 bg-amber-50 dark:bg-amber-500/10 border border-amber-300/60 dark:border-amber-500/20"
       >
         <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
         <div>
-          <p className="text-[13px] font-semibold text-amber-300 mb-1">Atenção</p>
-          <p className="text-[12px] text-amber-200/70 leading-relaxed">
-            Só é permitido ter <strong className="text-amber-200">1 (um) chamado aberto</strong> por vez.
-            Chamados sem interação do usuário por <strong className="text-amber-200">15 dias</strong> são encerrados automaticamente.
+          <p className="text-[13px] font-semibold text-amber-600 dark:text-amber-300 mb-1">Atenção</p>
+          <p className="text-[12px] text-amber-700 dark:text-amber-200/70 leading-relaxed">
+            Só é permitido ter <strong className="text-amber-600 dark:text-amber-200">1 (um) chamado aberto</strong> por vez.
+            Chamados sem interação do usuário por <strong className="text-amber-600 dark:text-amber-200">15 dias</strong> são encerrados automaticamente.
           </p>
         </div>
       </div>
 
       <button
         onClick={onOpenModal}
-        className="flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white transition-all hover:scale-105"
+        className="flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-slate-900 dark:text-white transition-all hover:scale-105"
         style={{ background: 'var(--admin-accent, #2563eb)', boxShadow: '0 4px 20px rgba(37,99,235,0.3)' }}
         onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 30px rgba(37,99,235,0.5)')}
         onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 4px 20px rgba(37,99,235,0.3)')}
@@ -685,24 +666,18 @@ export function SupportClient({ userId, initialTicket, initialMessages }: Suppor
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(37,99,235,0.08) 0%, transparent 60%), #060b17',
-      }}
-    >
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 text-slate-900 dark:text-white">
       <div className="max-w-3xl mx-auto px-4 pt-32 pb-16">
         {/* Page Header */}
         <div className="mb-8">
           <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-semibold mb-4"
-            style={{ background: 'rgba(37,99,235,0.15)', color: '#93c5fd', border: '1px solid rgba(37,99,235,0.25)' }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-semibold mb-4 bg-blue-500/15 text-blue-600 dark:text-blue-300 border border-blue-500/25"
           >
             <MessageSquare className="w-3.5 h-3.5" />
             Suporte Técnico
           </div>
-          <h1 className="text-3xl font-black text-white">Seus Chamados</h1>
-          <p className="text-slate-400 mt-1">Fale diretamente com nossa equipe de suporte.</p>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white">Seus Chamados</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Fale diretamente com nossa equipe de suporte.</p>
         </div>
 
         {initialTicket ? (

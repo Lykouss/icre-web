@@ -332,11 +332,11 @@ export default function RegisterPage() {
   ].join(' ');
 
   const inputClass =
-    'w-full bg-slate-800 border border-slate-700 text-slate-900 dark:text-white placeholder-slate-500 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-slate-600';
+    'w-full bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 text-slate-900 dark:text-white placeholder-slate-500 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all duration-200 hover:border-slate-600';
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 flex items-center justify-center p-4 text-slate-900 dark:text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#e0f2fe_0%,_transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative w-full max-w-lg animate-[fadeSlideUp_0.4s_ease_both]">
         <div className="flex items-center justify-between mb-8">
@@ -350,7 +350,7 @@ export default function RegisterPage() {
             Voltar
           </Link>
           <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="ICRE" width={24} height={24} className="brightness-0 invert opacity-60" />
+            <Image src="/logo.svg" alt="ICRE" width={24} height={24} className="dark:brightness-0 dark:invert opacity-80 dark:opacity-60" />
             <span className="text-slate-500 text-sm font-medium">ICRE</span>
           </div>
         </div>
@@ -384,7 +384,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <div className="bg-slate-50 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl min-h-[420px] flex flex-col overflow-hidden">
+        <div className="bg-slate-50 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl min-h-[420px] flex flex-col overflow-hidden">
           <div className={contentClass}>
             <StepIllustration id={step.id} />
 
@@ -518,7 +518,7 @@ export default function RegisterPage() {
 
               {step.id === 'terms' && (
                 <div className="space-y-4">
-                  <div className="bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 rounded-2xl p-4 h-48 overflow-y-auto text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-3 dark:border-slate-700">
+                  <div className="bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 rounded-2xl p-4 h-48 overflow-y-auto text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-3 dark:border-blue-300/60 dark:border-slate-700">
                     <TermsContent />
                   </div>
                   <label className="flex items-start gap-3 cursor-pointer group">
@@ -581,7 +581,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={goBack}
                 disabled={phase !== 'idle'}
-                className="flex items-center gap-2 px-5 py-3.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 hover:border-slate-500 rounded-2xl transition-all text-sm font-semibold disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-3.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white border border-slate-200 dark:border-blue-300/60 dark:border-slate-700 hover:border-slate-500 rounded-2xl transition-all text-sm font-semibold disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />

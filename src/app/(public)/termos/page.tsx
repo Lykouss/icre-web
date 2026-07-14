@@ -29,22 +29,24 @@ function Section({ number, title, children }: SectionProps) {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 text-slate-900 dark:text-white">
       {/* Hero */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-blue-950/60 to-white dark:to-slate-950 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-200/20 to-transparent dark:from-blue-900/10 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative max-w-3xl mx-auto px-6 pt-32 pb-16">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-600 dark:text-slate-300 text-sm font-medium transition-colors mb-10"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Voltar ao início
-          </Link>
+          <div className="mb-10">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-600 dark:text-slate-300 text-sm font-medium transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Voltar ao início
+            </Link>
+          </div>
 
           <div className="inline-flex items-center gap-2 bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-6">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +210,7 @@ export default function TermsPage() {
           </Section>
         </div>
 
-        <div className="mt-20 pt-8 border-t border-black/5 dark:border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="mt-20 pt-8 border-t border-blue-300/60 dark:border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <p className="text-slate-500 text-sm">
             © {new Date().getFullYear()} Igreja de Cristo Rocha Eterna
           </p>

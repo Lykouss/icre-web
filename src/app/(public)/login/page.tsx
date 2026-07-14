@@ -12,23 +12,24 @@ export default function LoginPage() {
   const [view, setView] = useState<View>('login');
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 flex items-center justify-center p-4 text-slate-900 dark:text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#e0f2fe_0%,_transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,_#1e3a5f_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative w-full max-w-md animate-[fadeSlideUp_0.4s_ease_both]">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-500/30">
-            <Image src="/logo.svg" alt="ICRE" width={32} height={32} className="brightness-0 invert" />
+        <div className="flex items-center justify-center gap-5 mb-8">
+          <Image src="/logo.svg" alt="ICRE" width={56} height={56} className="dark:brightness-0 dark:invert shrink-0" />
+          <div className="w-[1.5px] h-14 bg-slate-300 dark:bg-slate-700 rounded-full shrink-0" />
+          <div className="text-left">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
+              {view === 'login' ? 'Bem-vindo de volta' : 'Recuperar senha'}
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">
+              {view === 'login' ? 'ICRE — Igreja de Cristo Rocha Eterna' : 'Enviaremos um link para seu e-mail'}
+            </p>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-            {view === 'login' ? 'Bem-vindo de volta' : 'Recuperar senha'}
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-            {view === 'login' ? 'ICRE — Igreja de Cristo Rocha Eterna' : 'Enviaremos um link para seu e-mail'}
-          </p>
         </div>
 
-        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl">
+        <div className="bg-white/60 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
           {view === 'login' ? (
             <LoginForm onForgot={() => setView('forgot')} />
           ) : (
@@ -60,13 +61,13 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
   const [token, setToken] = useState<string>('');
 
   const inputClass =
-    'w-full bg-slate-800 border border-slate-700 text-slate-900 dark:text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all';
+    'w-full bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 text-slate-900 dark:text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all';
 
   return (
     <div className="space-y-5">
       {/* Google — em breve */}
       <div className="relative group">
-        <div className="w-full flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/40 dark:border-slate-700/50 rounded-xl px-4 py-3 cursor-not-allowed select-none backdrop-blur-sm">
+        <div className="w-full flex items-center gap-3 bg-white/80 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50 rounded-xl px-4 py-3 cursor-not-allowed select-none backdrop-blur-sm">
           <svg className="w-5 h-5 shrink-0 opacity-35" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -82,10 +83,10 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
           </span>
         </div>
         <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-10 translate-y-1 group-hover:translate-y-0">
-          <div className="bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs px-3 py-1.5 rounded-lg whitespace-nowrap">
+          <div className="bg-white dark:bg-slate-800 shadow-2xl shadow-slate-300/80 dark:shadow-none border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs px-3 py-1.5 rounded-lg whitespace-nowrap">
             Login com Google estará disponível em breve
           </div>
-          <div className="w-2 h-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 border-l border-t dark:border-slate-700 rotate-45 absolute -top-1 left-1/2 -translate-x-1/2" />
+          <div className="w-2 h-2 bg-white dark:bg-slate-800 shadow-2xl shadow-slate-300/80 dark:shadow-none border border-slate-200 dark:border-slate-700 border-r-0 border-b-0 rotate-45 absolute -top-1 left-1/2 -translate-x-1/2" />
         </div>
       </div>
 
@@ -196,7 +197,7 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
   const [token, setToken] = useState<string>('');
 
   const inputClass =
-    'w-full bg-slate-800 border border-slate-700 text-slate-900 dark:text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all';
+    'w-full bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 text-slate-900 dark:text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all';
 
   if (state?.success) {
     return (
@@ -260,7 +261,7 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {isPending ? (
           <>

@@ -64,17 +64,17 @@ export default function ResetPasswordPage() {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 text-slate-900 dark:text-white flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 text-slate-900 dark:text-white flex items-center justify-center px-4">
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-blue-600/6 rounded-full blur-[140px]" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-blue-500/20 dark:bg-blue-600/6 rounded-full blur-[140px]" />
       </div>
 
       <div className="relative w-full max-w-md">
@@ -85,13 +85,13 @@ export default function ResetPasswordPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-black text-white">Redefinir Senha</h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white">Redefinir Senha</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             {sessionReady ? 'Escolha uma nova senha para sua conta.' : 'Link de redefinição inválido ou expirado.'}
           </p>
         </div>
 
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-white/8 rounded-3xl overflow-hidden shadow-2xl">
+        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-white/8 rounded-3xl overflow-hidden shadow-2xl">
           {success ? (
             <div className="p-8 text-center">
               <div className="relative inline-flex items-center justify-center mb-6">
@@ -102,8 +102,8 @@ export default function ResetPasswordPage() {
                   </svg>
                 </div>
               </div>
-              <h2 className="text-xl font-black text-white mb-2">Senha atualizada!</h2>
-              <p className="text-slate-400 text-sm mb-6">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white mb-2">Senha atualizada!</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
                 Sua senha foi redefinida com sucesso. Redirecionando...
               </p>
               <div className="w-full bg-slate-800 rounded-full h-1 overflow-hidden">
@@ -117,8 +117,8 @@ export default function ResetPasswordPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-white mb-2">Link expirado</h2>
-              <p className="text-slate-400 text-sm mb-6">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Link expirado</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
                 Este link de redefinição é inválido ou já expirou. Solicite um novo.
               </p>
               <Link
@@ -140,7 +140,7 @@ export default function ResetPasswordPage() {
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">
                   Nova senha
                 </label>
                 <input
@@ -150,12 +150,12 @@ export default function ResetPasswordPage() {
                   placeholder="Mínimo 6 caracteres"
                   required
                   minLength={6}
-                  className="w-full px-4 py-3 bg-slate-800/60 border border-white/10 text-white rounded-2xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500/50 transition-all"
+                  className="w-full px-4 py-3 bg-slate-800/60 border border-blue-300/60 dark:border-white/10 text-white rounded-2xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500/50 transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">
                   Confirmar nova senha
                 </label>
                 <input
@@ -170,7 +170,7 @@ export default function ResetPasswordPage() {
                       ? 'border-red-500/50 focus:ring-red-500'
                       : confirm && confirm === password
                       ? 'border-emerald-500/50 focus:ring-emerald-500'
-                      : 'border-white/10 focus:ring-blue-500 focus:border-blue-500/50'
+                      : 'border-blue-300/60 dark:border-white/10 focus:ring-blue-500 focus:border-blue-500/50'
                   }`}
                 />
                 {confirm && confirm !== password && (
@@ -202,7 +202,7 @@ export default function ResetPasswordPage() {
               </button>
 
               <div className="text-center">
-                <Link href="/login" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">
+                <Link href="/login" className="text-slate-500 hover:text-slate-600 dark:text-slate-300 text-sm transition-colors">
                   Voltar ao login
                 </Link>
               </div>

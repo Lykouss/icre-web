@@ -96,10 +96,10 @@ function InboxView() {
         </button>
       </div>
       
-      <div className="flex flex-col md:flex-row flex-1 rounded-3xl overflow-hidden border border-black/10 dark:border-white/10 bg-slate-50 dark:bg-slate-900/60 backdrop-blur-2xl shadow-2xl shadow-black/50">
+      <div className="flex flex-col md:flex-row flex-1 rounded-3xl overflow-hidden border border-blue-300/60 dark:border-slate-800 bg-blue-100 dark:bg-slate-900/60 backdrop-blur-2xl shadow-2xl shadow-black/50">
         {/* Lista da Esquerda */}
-        <div className={`w-full md:w-1/3 md:border-r border-black/10 dark:border-white/10 flex flex-col bg-slate-50 dark:bg-slate-900/80 ${selectedItem ? 'hidden md:flex' : 'flex'}`}>
-          <div className="p-6 border-b border-black/10 dark:border-white/10 shrink-0">
+        <div className={`w-full md:w-1/3 md:border-r border-blue-300/60 dark:border-slate-800 flex flex-col bg-blue-100 dark:bg-slate-900/80 ${selectedItem ? 'hidden md:flex' : 'flex'}`}>
+          <div className="p-6 border-b border-blue-300/60 dark:border-slate-800 shrink-0">
             <h2 className="text-2xl font-black text-slate-900 dark:text-white">Notificações</h2>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Seu histórico de avisos e mensagens.</p>
           </div>
@@ -145,7 +145,7 @@ function InboxView() {
         </div>
 
       {/* Detalhes da Direita */}
-      <div className={`w-full md:w-2/3 flex flex-col bg-white dark:bg-slate-950/40 relative ${!selectedItem ? 'hidden md:flex' : 'flex'}`}>
+      <div className={`w-full md:w-2/3 flex flex-col bg-white/40 dark:bg-slate-950/40 relative ${!selectedItem ? 'hidden md:flex' : 'flex'}`}>
         {selectedItem ? (
           <AnimatePresence mode="wait">
             <motion.div
@@ -155,7 +155,7 @@ function InboxView() {
               exit={{ opacity: 0, y: -10 }}
               className="flex flex-col h-full"
             >
-              <div className="p-6 md:p-8 border-b border-black/5 dark:border-white/5 shrink-0 flex items-center gap-4">
+              <div className="p-6 md:p-8 border-b border-blue-300/60 dark:border-slate-800 shrink-0 flex items-center gap-4">
                 <button onClick={() => router.push('/minhas-notificacoes')} className="md:hidden p-2 bg-black/5 dark:bg-white/5 rounded-xl hover:bg-black/5 dark:bg-white/10 text-slate-900 dark:text-white">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
@@ -189,7 +189,7 @@ function InboxView() {
 
 export default function MinhasNotificacoesPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 px-4 pt-24 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 px-4 pt-24 pb-20">
       <Suspense fallback={
         <div className="h-screen flex items-center justify-center">
           <svg className="w-10 h-10 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">

@@ -95,7 +95,7 @@ export function EventDetailsClient({
   const isNotOpen = event.registration_opens_at && new Date(event.registration_opens_at) > new Date();
 
   return (
-    <div className={`min-h-screen bg-white dark:bg-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/8 rounded-full blur-[140px]" />
@@ -127,9 +127,9 @@ export function EventDetailsClient({
 
         {/* Banner */}
         {event.banner_url && (
-          <div className="relative w-full aspect-video rounded-3xl overflow-hidden mb-8 border border-black/5 dark:border-white/8">
+          <div className="dark relative w-full aspect-video rounded-3xl overflow-hidden mb-8 border border-transparent shadow-2xl">
             <Image src={event.banner_url} alt={event.title} fill className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-white/60 dark:from-slate-950/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
           </div>
         )}
 
@@ -209,7 +209,7 @@ export function EventDetailsClient({
 
         {/* Regras e Termos */}
         {event.terms_text && needsRegistration && (
-          <div className="bg-slate-50 dark:bg-slate-900/60 border border-black/5 dark:border-white/8 rounded-2xl overflow-hidden mb-6">
+          <div className="bg-blue-100 dark:bg-slate-900/50 border border-blue-300/60 dark:border-white/8 rounded-2xl overflow-hidden mb-6">
             <button
               onClick={() => setRulesExpanded(v => !v)}
               className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-black/5 dark:bg-white/4 transition-colors"
@@ -233,7 +233,7 @@ export function EventDetailsClient({
         )}
 
         {/* Card de ação */}
-        <div className="bg-slate-50 dark:bg-slate-900/60 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-3xl p-8 shadow-2xl space-y-4">
+        <div className="bg-blue-100 dark:bg-slate-900/50 backdrop-blur-xl border border-blue-300/60 dark:border-white/8 rounded-3xl p-8 shadow-2xl space-y-4">
 
           {/* --- Evento sem inscrição necessária --- */}
           {!needsRegistration && (

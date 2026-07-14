@@ -27,7 +27,7 @@ export default async function ComprovantesPage() {
   const { allowed, remaining } = await checkPdfRateLimit(user.id);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 pt-28 pb-16 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 pt-28 pb-16 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
@@ -51,7 +51,7 @@ export default async function ComprovantesPage() {
         </div>
 
         {(!registrations || registrations.length === 0) ? (
-          <div className="bg-slate-50 dark:bg-slate-900/50 border border-black/10 dark:border-white/10 rounded-3xl p-12 text-center">
+          <div className="bg-blue-100 dark:bg-slate-900/50 border border-blue-300/60 dark:border-white/10 rounded-3xl p-12 text-center">
             <TicketIcon className="w-16 h-16 text-slate-700 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Nenhum comprovante disponível</h2>
             <p className="text-slate-500 dark:text-slate-400 mb-6">Seus ingressos confirmados aparecerão aqui.</p>
@@ -66,7 +66,7 @@ export default async function ComprovantesPage() {
               if (!event) return null;
 
               return (
-                <div key={reg.id} className="bg-slate-50 dark:bg-slate-900/60 border border-black/10 dark:border-white/10 rounded-2xl overflow-hidden">
+                <div key={reg.id} className="bg-blue-100 dark:bg-slate-900/60 border border-blue-300/60 dark:border-white/10 rounded-2xl overflow-hidden">
                   <div className="flex flex-col sm:flex-row gap-5 p-5">
                     {/* Event info */}
                     <div className="flex-1">

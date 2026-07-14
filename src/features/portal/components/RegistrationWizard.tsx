@@ -213,7 +213,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
   const visibleSteps = stepLabels.slice(0, -1);
 
   return (
-    <div className={`min-h-screen bg-white dark:bg-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 ${isAdminPreview ? 'pt-10' : ''}`}>
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-blue-700/5 rounded-full blur-[160px]" />
@@ -246,7 +246,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
         {/* Stepper */}
         {stepId !== 'success' && (
-          <div className="bg-slate-50 dark:bg-slate-900/50 border border-black/6 dark:border-white/6 rounded-2xl p-4 mb-6">
+          <div className="bg-blue-100 dark:bg-slate-900/50 border border-blue-300/60 dark:border-white/6 rounded-2xl p-4 mb-6">
             <div className="flex items-center gap-0">
               {visibleSteps.map((label, i) => {
                 const isActive = i === currentStep;
@@ -289,7 +289,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
               : 'translateX(0)',
           }}
         >
-          <div className="bg-slate-50 dark:bg-slate-900/70 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
+          <div className="bg-blue-100 dark:bg-slate-900/70 backdrop-blur-xl border border-blue-300/60 dark:border-white/8 rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
 
             {/* ─── STEP: TERMS ─── */}
             {stepId === 'terms' && (
@@ -479,7 +479,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                               className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
                                 paymentMethod === 'pix'
                                   ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
-                                  : 'border-slate-200 dark:border-white/8 hover:border-slate-300 dark:hover:border-white/16 bg-slate-50 dark:bg-slate-800/40'
+                                  : 'border-blue-300/60 dark:border-white/8 hover:border-blue-400 dark:hover:border-white/16 bg-blue-100 dark:bg-slate-800/40'
                               }`}
                             >
                               {paymentMethod === 'pix' && (
@@ -509,7 +509,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                               className={`relative flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
                                 paymentMethod === 'boleto'
                                   ? 'border-blue-500 bg-blue-500/8 shadow-lg shadow-blue-500/10'
-                                  : 'border-slate-200 dark:border-white/8 hover:border-slate-300 dark:hover:border-white/16 bg-slate-50 dark:bg-slate-800/40'
+                                  : 'border-blue-300/60 dark:border-white/8 hover:border-blue-400 dark:hover:border-white/16 bg-blue-100 dark:bg-slate-800/40'
                               }`}
                             >
                               {paymentMethod === 'boleto' && (

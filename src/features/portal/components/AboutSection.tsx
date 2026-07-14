@@ -11,7 +11,7 @@ export function AboutSection({ content }: { content: AboutContent }) {
   const text = (content as unknown as Record<string, unknown>).text as string || content.body || '';
 
   return (
-    <section id="sobre" className="relative py-32 px-6 bg-white dark:bg-slate-950 overflow-hidden">
+    <section id="sobre" className="relative py-32 px-6 bg-transparent dark:bg-slate-950 overflow-hidden">
       {/* Blurs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-32 right-0 w-[600px] h-[600px] bg-blue-600/7 rounded-full blur-[120px]" />
@@ -30,41 +30,41 @@ export function AboutSection({ content }: { content: AboutContent }) {
             {/* Glow animado no frame */}
             <div className="absolute -inset-3 bg-gradient-to-br from-blue-500/20 to-indigo-500/10 rounded-3xl blur-xl animate-breathe" />
 
-            <div className="relative rounded-3xl overflow-hidden aspect-4/3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-sm">
+            <div className="relative rounded-3xl overflow-hidden aspect-4/3 bg-blue-100 backdrop-blur-xl dark:backdrop-blur-none border border-blue-300/60 dark:border-transparent dark:bg-slate-800/60 shadow-2xl shadow-blue-900/10 dark:shadow-none">
               {content.image_url ? (
                 <Image src={content.image_url} alt="Sobre a ICRE" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
               ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-50 dark:from-slate-800 to-slate-50 dark:to-slate-900">
-                  <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-                  <svg className="w-16 h-16 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-blue-50 dark:from-slate-800 to-indigo-50/50 dark:to-slate-900">
+                  <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, #3b82f6 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+                  <svg className="w-16 h-16 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <p className="text-sm text-slate-500">Imagem configurável no painel</p>
+                  <p className="text-sm text-blue-500/70 font-medium">Imagem configurável no painel</p>
                 </div>
               )}
               {/* Reflexo de luz */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-transparent pointer-events-none" />
               {/* Linha de borda gradiente */}
-              <div className="absolute inset-0 rounded-3xl border border-black/5 dark:border-white/5 pointer-events-none" />
+              <div className="absolute inset-0 rounded-3xl border border-white/60 dark:border-white/5 pointer-events-none" />
             </div>
 
             {/* Chip flutuante — anos */}
-            <div className="absolute -bottom-5 -right-5 bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-2xl px-5 py-3.5 shadow-2xl backdrop-blur-md animate-float">
+            <div className="absolute -bottom-5 -right-5 bg-white/80 dark:bg-slate-900/50 backdrop-blur-xl border border-blue-100 dark:border-white/10 rounded-2xl px-5 py-3.5 shadow-2xl shadow-blue-900/10 animate-float">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-500/15 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-widest">Fundada em</p>
+                  <p className="text-[10px] text-blue-500/70 font-bold uppercase tracking-widest">Fundada em</p>
                   <p className="text-2xl font-black text-slate-900 dark:text-white leading-tight">{content.founded_year || '1993'}</p>
                 </div>
               </div>
             </div>
 
             {/* Chip flutuante — localização (canto superior) */}
-            <div className="absolute -top-5 -left-5 bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-2xl px-4 py-2.5 shadow-xl backdrop-blur-md animate-float" style={{ animationDelay: '1s' }}>
+            <div className="absolute -top-5 -left-5 bg-white/60 dark:bg-slate-900/50 backdrop-blur-xl border border-white/60 dark:border-white/10 rounded-2xl px-4 py-2.5 shadow-xl backdrop-blur-md animate-float" style={{ animationDelay: '1s' }}>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">{content.location || 'Santa Maria, Brasília-DF'}</span>

@@ -67,7 +67,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/90 backdrop-blur-md" />
       <div
-        className="relative bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-modal-in"
+        className="relative bg-blue-50/95 dark:bg-slate-900/50 backdrop-blur-2xl border border-blue-200/60 dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-modal-in"
         onClick={e => e.stopPropagation()}
       >
         {/* Header com imagem */}
@@ -91,7 +91,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
           {/* Fechar */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-9 h-9 bg-black/40 hover:bg-black/70 text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/10 backdrop-blur-sm"
+            className="absolute top-4 right-4 z-10 w-9 h-9 bg-white/40 hover:bg-white/70 text-slate-900 dark:bg-black/40 dark:hover:bg-black/70 dark:text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/10 backdrop-blur-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
@@ -125,7 +125,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
         <div className="p-6 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             {event.time && (
-              <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/6 dark:border-white/6 rounded-2xl p-3.5">
+              <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-white/60/50 dark:border-transparent dark:bg-slate-800/60 border-black/6 dark:border-white/6 rounded-2xl p-3.5">
                 <div className="w-8 h-8 bg-blue-500/10 rounded-xl flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
@@ -136,7 +136,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
               </div>
             )}
             {event.location && (
-              <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/6 dark:border-white/6 rounded-2xl p-3.5">
+              <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-white/60/50 dark:border-transparent dark:bg-slate-800/60 border-black/6 dark:border-white/6 rounded-2xl p-3.5">
                 <div className="w-8 h-8 bg-emerald-500/10 rounded-xl flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 </div>
@@ -167,21 +167,20 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
 }
 
 /* ─── Evento Especial Card ──────────────────────────────────── */
-function SpecialEventCard({ event, index }: { event: PublicEvent; index: number }) {
+function SpecialEventCard({ event, index, onSelect }: { event: PublicEvent; index: number, onSelect: (e: PublicEvent) => void }) {
   const { ref, visible } = useScrollReveal<HTMLDivElement>({ threshold: 0.06 });
-  const [open, setOpen] = useState(false);
   const date = parseDate(event.date);
 
   return (
     <>
       <div
         ref={ref}
-        onClick={() => setOpen(true)}
-        className={`group relative overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-out border border-amber-500/20 hover:border-amber-400/50 hover:shadow-[0_0_40px_rgba(245,158,11,0.15)] hover:-translate-y-1 ${event.isCancelled ? 'opacity-60 grayscale-[40%]' : ''}`}
+        onClick={() => onSelect(event)}
+        className={`dark group relative overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-out border border-amber-500/20 hover:border-amber-400/50 hover:shadow-[0_0_40px_rgba(245,158,11,0.15)] hover:-translate-y-1 ${event.isCancelled ? 'opacity-60 grayscale-[40%]' : ''}`}
         style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(28px)', transitionDelay: `${index * 70}ms` }}
       >
         {/* Fundo */}
-        <div className="absolute inset-0 bg-white dark:bg-slate-950" />
+        <div className="absolute inset-0 bg-transparent" />
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 will-change-transform"
           style={event.banner_url
@@ -189,7 +188,7 @@ function SpecialEventCard({ event, index }: { event: PublicEvent; index: number 
             : { background: 'radial-gradient(ellipse at 50% 0%, #92400e 0%, #1c1917 70%)' }
           }
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-950 via-slate-50/75 dark:via-slate-950/75 to-white/10 dark:to-slate-950/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-slate-950/10" />
         {/* Shimmer no hover */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 shimmer-bg" />
 
@@ -213,13 +212,13 @@ function SpecialEventCard({ event, index }: { event: PublicEvent; index: number 
 
           <div className="flex items-center gap-3 flex-wrap mt-1">
             {event.time && (
-              <span className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300 font-medium bg-black/25 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10 backdrop-blur-sm">
+              <span className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300 font-medium bg-black/25 px-3 py-1.5 rounded-xl border border-white/60 dark:border-white/10 backdrop-blur-sm">
                 <svg className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 {event.time}
               </span>
             )}
             {event.location && (
-              <span className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300 font-medium bg-black/25 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10 backdrop-blur-sm">
+              <span className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300 font-medium bg-black/25 px-3 py-1.5 rounded-xl border border-white/60 dark:border-white/10 backdrop-blur-sm">
                 <svg className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
                 <span className="truncate max-w-[200px]">{event.location}</span>
               </span>
@@ -234,27 +233,26 @@ function SpecialEventCard({ event, index }: { event: PublicEvent; index: number 
         </div>
       </div>
 
-      {open && <EventModal event={event} onClose={() => setOpen(false)} />}
+      
     </>
   );
 }
 
 /* ─── Culto Regular Card ────────────────────────────────────── */
-function EventCard({ event, index }: { event: PublicEvent; index: number }) {
+function EventCard({ event, index, onSelect }: { event: PublicEvent; index: number, onSelect: (e: PublicEvent) => void }) {
   const { ref, visible } = useScrollReveal<HTMLDivElement>({ threshold: 0.06 });
-  const [open, setOpen] = useState(false);
   const date = parseDate(event.date);
 
   return (
     <>
       <div
         ref={ref}
-        onClick={() => setOpen(true)}
-        className={`group relative flex overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 ease-out bg-slate-50 dark:bg-slate-900/60 border border-black/5 dark:border-white/8 hover:border-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/5 ${event.isCancelled ? 'opacity-60 grayscale-[40%]' : ''}`}
+        onClick={() => onSelect(event)}
+        className={`group relative flex overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 ease-out bg-blue-100 dark:bg-slate-900/50 backdrop-blur-xl border border-blue-300/60 dark:border-white/8 hover:border-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/5 ${event.isCancelled ? 'opacity-60 grayscale-[40%]' : ''}`}
         style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transitionDelay: `${index * 60}ms` }}
       >
         {/* Área de imagem / data */}
-        <div className="relative shrink-0 w-20 sm:w-24 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/80 border-r border-black/6 dark:border-white/6 flex flex-col items-center justify-center overflow-hidden">
+        <div className="dark relative shrink-0 w-20 sm:w-24 bg-slate-800/80 border-r border-white/6 flex flex-col items-center justify-center overflow-hidden">
           {event.banner_url ? (
             <>
               <Image src={event.banner_url} alt="Capa do Evento" fill sizes="96px" className="object-cover group-hover:scale-105 transition-transform duration-500 will-change-transform" />
@@ -315,7 +313,7 @@ function EventCard({ event, index }: { event: PublicEvent; index: number }) {
         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-500 scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center" />
       </div>
 
-      {open && <EventModal event={event} onClose={() => setOpen(false)} />}
+      
     </>
   );
 }
@@ -327,11 +325,12 @@ interface Props {
 
 export function EventsSection({ content, events }: Props) {
   const { ref, visible } = useScrollReveal({ threshold: 0.1 });
+  const [selectedEvent, setSelectedEvent] = useState<PublicEvent | null>(null);
   const specialEvents = events.filter(e => e.type === 'especial');
   const regularEvents = events.filter(e => e.type !== 'especial');
 
   return (
-    <section id="eventos" className="relative py-32 px-6 bg-white dark:bg-slate-950 overflow-hidden">
+    <section id="eventos" className="relative py-32 px-6 bg-transparent dark:bg-slate-950 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[110px]" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-600/4 rounded-full blur-[90px]" />
@@ -366,7 +365,7 @@ export function EventsSection({ content, events }: Props) {
             {specialEvents.length > 0 && (
               <div className="space-y-4 mb-8">
                 {specialEvents.map((event, i) => (
-                  <SpecialEventCard key={event.id} event={event} index={i} />
+                  <SpecialEventCard key={event.id} event={event} index={i} onSelect={setSelectedEvent} />
                 ))}
               </div>
             )}
@@ -384,7 +383,7 @@ export function EventsSection({ content, events }: Props) {
             {regularEvents.length > 0 && (
               <div className="space-y-3">
                 {regularEvents.map((event, i) => (
-                  <EventCard key={event.id} event={event} index={i} />
+                  <EventCard key={event.id} event={event} index={i} onSelect={setSelectedEvent} />
                 ))}
               </div>
             )}
@@ -395,7 +394,7 @@ export function EventsSection({ content, events }: Props) {
             >
               <Link
                 href="/agenda"
-                className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-semibold border border-black/10 dark:border-white/10 hover:border-black/25 dark:hover:border-white/25 px-6 py-3 rounded-2xl hover:bg-black/5 dark:bg-white/5 transition-all duration-200"
+                className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-semibold border border-white/60 dark:border-white/10 hover:border-black/25 dark:hover:border-white/25 px-6 py-3 rounded-2xl hover:bg-black/5 dark:bg-white/5 transition-all duration-200"
               >
                 Ver agenda completa
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
@@ -403,7 +402,7 @@ export function EventsSection({ content, events }: Props) {
             </div>
           </>
         ) : (
-          <div className="bg-slate-50 dark:bg-slate-900/40 border border-black/6 dark:border-white/6 border-dashed rounded-3xl p-14 text-center">
+          <div className="bg-blue-100 dark:bg-slate-900/50 backdrop-blur-xl border border-blue-300/60 dark:border-white/6 border-dashed rounded-3xl p-14 text-center">
             <div className="w-16 h-16 bg-blue-500/8 border border-blue-500/15 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <svg className="w-8 h-8 text-blue-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -421,6 +420,7 @@ export function EventsSection({ content, events }: Props) {
           </div>
         )}
       </div>
+      {selectedEvent && <EventModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />}
     </section>
   );
 }

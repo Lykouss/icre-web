@@ -25,7 +25,7 @@ export default function AdminTermsPage() {
   };
 
   return (
-   <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center pt-24 pb-8 px-4">
+   <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/40 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 text-slate-900 dark:text-white flex items-center justify-center pt-24 pb-8 px-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#3b1f5e_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative w-full max-w-2xl">
@@ -39,9 +39,9 @@ export default function AdminTermsPage() {
           </div>
         </div>
 
-        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+        <div className="bg-blue-100 dark:bg-slate-900 border border-blue-300/60 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
           {/* Header */}
-          <div className="p-8 border-b border-slate-200 dark:border-slate-800">
+          <div className="p-8 border-b border-blue-300/60 dark:border-slate-800">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 bg-violet-500/10 border border-violet-500/20 rounded-2xl flex items-center justify-center shrink-0">
                 <svg className="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +62,7 @@ export default function AdminTermsPage() {
           {/* Conteúdo dos Termos — scroll obrigatório */}
           <div
             onScroll={handleScroll}
-            className="h-72 overflow-y-auto p-8 text-sm text-slate-500 dark:text-slate-400 leading-relaxed space-y-4 border-b border-slate-200 dark:border-slate-800"
+            className="h-72 overflow-y-auto p-8 text-sm text-slate-500 dark:text-slate-400 leading-relaxed space-y-4 border-b border-blue-300/60 dark:border-slate-800"
           >
             <AdminTermsContent />
 
@@ -73,6 +73,7 @@ export default function AdminTermsPage() {
 
           {/* Rodapé com aceite */}
           <div className="p-8 space-y-5">
+
             {!scrolledToBottom && (
               <p className="text-xs text-slate-500 text-center flex items-center justify-center gap-1.5">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

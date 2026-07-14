@@ -32,7 +32,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
       ref={sectionRef}
       id="inicio"
       data-theme="dark"
-      className="relative min-h-svh flex items-center justify-center overflow-hidden bg-white dark:bg-slate-950"
+      className="dark relative min-h-svh flex items-center justify-center overflow-hidden bg-transparent"
     >
       {/* Fundo com parallax */}
       {content.image_url && (
@@ -43,7 +43,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
           <Image src={content.image_url} alt="Capa" fill className="object-cover" priority />
           {/* Overlay multicamadas */}
           <div className="absolute inset-0 bg-white/15 dark:bg-slate-950/55" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/80 dark:from-slate-950 via-white/10 dark:via-slate-950/30 to-transparent dark:to-slate-950/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/80 dark:from-transparent via-white/10 dark:via-slate-950/40 to-transparent dark:to-slate-950/20" />
           <div className="absolute inset-0 bg-gradient-to-r from-white/30 dark:from-slate-950/60 via-transparent to-white/30 dark:to-slate-950/60" />
         </div>
       )}

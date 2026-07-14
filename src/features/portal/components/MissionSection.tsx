@@ -145,7 +145,7 @@ function PillarCard({ item, index }: { item: MissionItem; index: number }) {
   return (
     <div
       ref={ref}
-      className={`group relative bg-slate-50 dark:bg-slate-900/60 backdrop-blur-sm border border-black/5 dark:border-white/8 rounded-3xl p-8 hover:border-white/16 hover:-translate-y-2 hover:shadow-2xl ${color.glow} transition-all duration-500 ease-out overflow-hidden`}
+      className={`group relative bg-white/60 dark:bg-slate-900/50 backdrop-blur-xl/60 backdrop-blur-sm border border-black/5 dark:border-white/8 rounded-3xl p-8 hover:border-white/16 hover:-translate-y-2 hover:shadow-2xl ${color.glow} transition-all duration-500 ease-out overflow-hidden`}
       style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(32px)', transitionDelay: `${index * 100}ms` }}
     >
       {/* Glow background no hover */}
@@ -176,7 +176,7 @@ export function MissionSection({ content }: Props) {
   const items = (content.items ?? []) as MissionItem[];
 
   return (
-    <section id="missao" className="relative py-32 px-6 bg-slate-50 dark:bg-slate-900 overflow-hidden">
+    <section id="missao" className="relative py-32 px-6 bg-transparent dark:bg-slate-950 overflow-hidden">
       {/* Blurs de fundo */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-blue-600/6 rounded-full blur-[140px]" />
@@ -210,7 +210,7 @@ export function MissionSection({ content }: Props) {
         {/* Stats */}
         <div
           ref={statsRef}
-          className="grid grid-cols-3 gap-0 mb-24 p-8 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/40 backdrop-blur-sm border-black/6 dark:border-white/6 rounded-3xl"
+          className="grid grid-cols-3 gap-0 mb-24 p-8 bg-blue-100 backdrop-blur-xl dark:backdrop-blur-none border border-blue-300/60 dark:border-transparent dark:bg-slate-800/40 rounded-3xl shadow-2xl shadow-blue-900/10"
         >
           <StatCard icon={STAT_ICONS[0]} value={Number(content.active_members) || 500} suffix="+" label="Membros ativos" index={0} active={statsVisible} />
           <StatCard icon={STAT_ICONS[1]} value={Number(content.active_cells) || 4}   suffix=""  label="Células ativas"  index={1} active={statsVisible} />

@@ -38,7 +38,7 @@ export function ProfileForm({ userId, fullName }: ProfileFormProps) {
           value={name}
           onChange={e => setName(e.target.value)}
           required
-          className="w-full px-4 py-3 bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+          className="w-full px-4 py-3 bg-blue-50/50 dark:bg-white/5 border border-blue-300/60 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
         />
       </div>
 
