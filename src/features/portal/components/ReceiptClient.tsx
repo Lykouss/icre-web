@@ -92,7 +92,7 @@ export function ReceiptClient({ registration }: Props) {
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(255, 255, 255);
-    doc.text('ICRE — Igreja Cristã Reformada Evangélica', 14, 18);
+    doc.text('ICRE — Igreja de Cristo Rocha Eterna', 14, 18);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(148, 163, 184);
@@ -238,7 +238,7 @@ export function ReceiptClient({ registration }: Props) {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em]">Igreja Cristã Reformada Evangélica</p>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em]">Igreja de Cristo Rocha Eterna</p>
                     <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Sistema de Gestão · Comprovante Oficial</p>
                   </div>
                 </div>
@@ -372,19 +372,6 @@ export function ReceiptClient({ registration }: Props) {
                 </svg>
                 Baixar PDF
               </button>
-              {registration.asaas_invoice_url && (
-                <a
-                  href={registration.asaas_invoice_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/5 dark:border-white/8 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-all"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                  Ver Fatura
-                </a>
-              )}
             </div>
           </div>
 
