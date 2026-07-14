@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { usePathname } from 'next/navigation';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 interface PendingReg {
   id: string;
@@ -16,7 +17,7 @@ export function PendingPaymentBanner() {
   const pathname = usePathname();
 
   useEffect(() => {
-    let channel: ReturnType<typeof createClient>['channel'] | null = null;
+    let channel: RealtimeChannel | null = null;
     
     async function checkPending() {
       const supabase = createClient();
