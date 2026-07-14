@@ -658,7 +658,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
             {/* ─── STEP: SUMMARY (Checkout) ─── */}
             {stepId === 'summary' && isPaid && (
               <div>
-                <div className="bg-gradient-to-br from-slate-50/80 dark:from-slate-800/80 to-slate-50/60 dark:to-slate-900/60 border-b border-black/6 dark:border-white/6 px-7 py-5">
+                <div className="bg-gradient-to-br from-emerald-50 dark:from-emerald-900/30 to-slate-50/60 dark:to-slate-900/60 border-b border-black/6 dark:border-white/6 px-7 py-5">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-emerald-500/10 border border-emerald-600/30 dark:border-emerald-500/25 rounded-xl flex items-center justify-center shrink-0">
                       <svg className="w-4.5 h-4.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px', height:'18px'}}>
@@ -746,7 +746,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
             {stepId === 'success' && (
               <div>
                 {/* Header de sucesso */}
-                <div className="bg-gradient-to-br from-emerald-900/30 to-slate-50/60 dark:to-slate-900/60 border-b border-emerald-500/15 px-7 py-6 text-center">
+                <div className="bg-gradient-to-br from-emerald-50 dark:from-emerald-900/30 to-slate-50/60 dark:to-slate-900/60 border-b border-emerald-500/15 px-7 py-6 text-center">
                   <div className="relative inline-flex items-center justify-center mb-3">
                     <div className="absolute w-20 h-20 rounded-full bg-emerald-500/10 animate-ping" style={{ animationDuration: '2.5s' }} />
                     <div className="relative w-16 h-16 bg-emerald-500/15 border border-emerald-500/25 rounded-2xl flex items-center justify-center">
@@ -805,9 +805,9 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
 
       {/* Processing overlay */}
       {showProcessingOverlay && (
-        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/85 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-white/90 dark:bg-black/85 backdrop-blur-sm">
           <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-5 mx-auto shadow-2xl shadow-blue-500/40">
-            <svg className="w-8 h-8 text-slate-900 dark:text-white animate-spin" fill="none" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-white animate-spin" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
             </svg>

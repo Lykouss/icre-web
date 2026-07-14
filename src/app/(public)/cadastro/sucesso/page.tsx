@@ -26,8 +26,8 @@ export default function RegisterSuccessPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#064e3b_0%,_transparent_55%)] pointer-events-none transition-all duration-1000" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_#1e3a5f20_0%,_transparent_60%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#e0f2fe_0%,_transparent_55%)] dark:bg-[radial-gradient(ellipse_at_top,_#064e3b_0%,_transparent_55%)] pointer-events-none transition-all duration-1000" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_#1e3a5f10_0%,_transparent_60%)] dark:bg-[radial-gradient(ellipse_at_bottom_right,_#1e3a5f20_0%,_transparent_60%)] pointer-events-none" />
 
       <Particles />
 
@@ -113,7 +113,7 @@ function CelebratePhase() {
 
       <div className="animate-[fadeSlideUp_0.5s_ease_0.3s_both]">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Image src="/logo.svg" alt="ICRE" width={24} height={24} className="brightness-0 invert opacity-50" />
+          <Image src="/logo.svg" alt="ICRE" width={24} height={24} className="dark:brightness-0 dark:invert opacity-50" />
           <span className="text-slate-500 text-sm font-medium">ICRE</span>
         </div>
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Bem-vindo(a)!</h1>
@@ -190,7 +190,7 @@ function PhotoPhase({ onNext }: PhotoPhaseProps) {
   return (
     <div className="text-center animate-[fadeSlideUp_0.5s_ease_both]">
       <div className="flex items-center justify-center gap-2 mb-6">
-        <Image src="/logo.svg" alt="ICRE" width={22} height={22} className="brightness-0 invert opacity-50" />
+        <Image src="/logo.svg" alt="ICRE" width={22} height={22} className="dark:brightness-0 dark:invert opacity-50" />
         <span className="text-slate-500 text-sm font-medium">ICRE</span>
       </div>
 
@@ -348,7 +348,7 @@ function RedirectPhase() {
 
       <div>
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Image src="/logo.svg" alt="ICRE" width={22} height={22} className="brightness-0 invert opacity-50" />
+          <Image src="/logo.svg" alt="ICRE" width={22} height={22} className="dark:brightness-0 dark:invert opacity-50" />
           <span className="text-slate-500 text-sm font-medium">ICRE</span>
         </div>
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Tudo pronto!</h2>

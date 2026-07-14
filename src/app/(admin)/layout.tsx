@@ -7,6 +7,7 @@ import { AdminSidebarShell } from '@/features/core/components/AdminSidebarShell'
 import { ToastProvider } from '@/features/core/components/ToastContext';
 import { MaintenanceProvider } from '@/features/core/components/MaintenanceProvider';
 import { GlobalNotificationListener } from '@/features/core/components/GlobalNotificationListener';
+import { AdminThemeEnforcer } from '@/features/core/components/AdminThemeEnforcer';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -25,6 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <ToastProvider>
+      <AdminThemeEnforcer />
       <GlobalNotificationListener />
       <MaintenanceProvider>
         <AdminSidebarShell
