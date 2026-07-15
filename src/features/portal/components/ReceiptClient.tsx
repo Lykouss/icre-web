@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useRef } from 'react';
 import Link from 'next/link';
@@ -59,20 +59,20 @@ function formatCurrency(value: number | null): string {
 }
 
 const METHOD_LABELS: Record<string, string> = {
-  asaas_pix:    'PIX',
+  asaas_pix: 'PIX',
   asaas_boleto: 'Boleto BancÃ¡rio',
-  pix:          'PIX',
-  cartao:       'CartÃ£o de CrÃ©dito',
-  dinheiro:     'Dinheiro',
-  cortesia:     'Cortesia',
-  gift:         'Cortesia (Gift)',
+  pix: 'PIX',
+  cartao: 'CartÃ£o de CrÃ©dito',
+  dinheiro: 'Dinheiro',
+  cortesia: 'Cortesia',
+  gift: 'Cortesia (Gift)',
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  gratuito:  'Gratuito',
-  pago:      'Pago',
-  pendente:  'Pendente',
-  cortesia:  'Cortesia',
+  gratuito: 'Gratuito',
+  pago: 'Pago',
+  pendente: 'Pendente',
+  cortesia: 'Cortesia',
 };
 
 export function ReceiptClient({ registration }: Props) {
@@ -138,7 +138,7 @@ export function ReceiptClient({ registration }: Props) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(80, 100, 130);
-    if (event?.date) { doc.text(`Data: ${formatDate(event.date)}${event.time ? ` Ã s ${event.time.slice(0,5)}` : ''}`, 14, y); y += 7; }
+    if (event?.date) { doc.text(`Data: ${formatDate(event.date)}${event.time ? ` Ã s ${event.time.slice(0, 5)}` : ''}`, 14, y); y += 7; }
     if (event?.location) { doc.text(`Local: ${event.location}`, 14, y); y += 7; }
 
     // â”€â”€ Participante â”€â”€
@@ -286,7 +286,7 @@ export function ReceiptClient({ registration }: Props) {
                       <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      {formatDate(event.date)}{event.time ? ` Â· ${event.time.slice(0,5)}` : ''}
+                      {formatDate(event.date)}{event.time ? ` Â· ${event.time.slice(0, 5)}` : ''}
                     </div>
                   )}
                   {event?.location && (
@@ -392,7 +392,7 @@ export function ReceiptClient({ registration }: Props) {
               <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 border-black/6 dark:border-white/6 rounded-xl divide-y divide-white/5 overflow-hidden">
                 <DataRow
                   label="Valor"
-                  value={isZeroValue ? 'Gratuito / Cortesia' : formatCurrency(paymentValue)}
+                  value={isZeroValue ? 'Gratuito' : formatCurrency(paymentValue)}
                   valueClass={isZeroValue ? 'text-emerald-400 font-black text-base' : 'text-white font-black text-base'}
                 />
                 {registration.payment_method && (
@@ -428,7 +428,8 @@ export function ReceiptClient({ registration }: Props) {
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
               <button
                 onClick={handleDownloadPDF}
-                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/15"
+                disabled={requiresTermsAcceptance}
+                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/15 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -470,10 +471,9 @@ function DataRow({
   return (
     <div className="flex items-center justify-between px-4 py-3 gap-4">
       <span className="text-xs text-slate-500 font-medium shrink-0">{label}</span>
-      <span className={`text-sm text-right ${
-        mono ? 'font-mono text-slate-500 dark:text-slate-400 text-xs' :
-        valueClass ?? 'font-medium text-slate-800 dark:text-slate-200'
-      }`}>
+      <span className={`text-sm text-right ${mono ? 'font-mono text-slate-500 dark:text-slate-400 text-xs' :
+          valueClass ?? 'font-medium text-slate-800 dark:text-slate-200'
+        }`}>
         {value}
       </span>
     </div>

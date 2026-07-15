@@ -237,11 +237,16 @@ export async function markNotificationAsRead(notificationId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'Não autenticado' };
 
-  const { error } = await supabase
+  const admin = await createAdminClient();
+  const { error } = await admin
     .from('user_notifications')
     .update({ is_read: true, read_at: new Date().toISOString() })
     .eq('id', notificationId)
     .eq('user_id', user.id); // ensure they own it
+
+  if (error) {
+    console.error('[markNotificationAsRead] error', error);
+  }
 
   return { success: !error, error: error?.message };
 }
