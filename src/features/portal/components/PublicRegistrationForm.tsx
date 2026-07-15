@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState, useTransition, useEffect, useRef } from 'react';
 import { createRegistration } from '@/features/events/actions/registrations';
@@ -17,7 +17,7 @@ export function PublicRegistrationForm({ eventId }: PublicRegistrationFormProps)
   const [phone, setPhone] = useState('');
   const [cpf, setCpf] = useState('');
 
-  // PrevenÃ§Ã£o estrita contra Race Conditions
+  // Prevenção estrita contra Race Conditions
   const isSubmittingRef = useRef(false);
 
   // Funcionalidade de Rascunho
@@ -81,8 +81,8 @@ export function PublicRegistrationForm({ eventId }: PublicRegistrationFormProps)
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-xl font-bold text-white mb-2">InscriÃ§Ã£o confirmada!</h2>
-        <p className="text-slate-500 text-sm">Sua presenÃ§a foi registrada. Te esperamos!</p>
+        <h2 className="text-xl font-bold text-slate-900 mb-2">Inscrição confirmada!</h2>
+        <p className="text-slate-500 text-sm">Sua presença foi registrada. Te esperamos!</p>
       </div>
     );
   }
@@ -92,12 +92,12 @@ export function PublicRegistrationForm({ eventId }: PublicRegistrationFormProps)
       {/* Tela de Carregamento Imersiva */}
       {isPending && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center">
-          <Loader2 className="w-12 h-12 text-white animate-spin mb-4" />
-          <p className="text-white font-bold tracking-wide">Processando pagamento em ambiente seguro...</p>
+          <Loader2 className="w-12 h-12 text-slate-900 dark:text-white animate-spin mb-4" />
+          <p className="text-slate-900 dark:text-white font-bold tracking-wide">Processando pagamento em ambiente seguro...</p>
         </div>
       )}
 
-      <h2 className="text-xl font-bold text-white mb-1">Fazer inscriÃ§Ã£o</h2>
+      <h2 className="text-xl font-bold text-slate-900 mb-1">Fazer inscrição</h2>
       <p className="text-sm text-slate-500 mb-6">Preencha seus dados para garantir sua vaga.</p>
 
       {error && (
@@ -147,7 +147,7 @@ export function PublicRegistrationForm({ eventId }: PublicRegistrationFormProps)
           disabled={isPending}
           className="w-full py-3.5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
         >
-          Confirmar inscriÃ§Ã£o
+          Confirmar inscrição
         </button>
       </form>
     </div>

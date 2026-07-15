@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { createPortal } from 'react-dom';
 import { useEffect, useState, useTransition, useCallback, useRef } from 'react';
@@ -20,7 +20,7 @@ import { EventsSection }  from '@/features/portal/components/EventsSection';
 import { YoutubeSection } from '@/features/portal/components/YoutubeSection';
 import { ContactSection } from '@/features/portal/components/ContactSection';
 
-// â”€â”€ SeÃ§Ãµes editÃ¡veis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Seções editáveis ─────────────────────────────────────────────
 
 type SectionKey = 'hero' | 'about' | 'mission' | 'pastors' | 'cells' | 'events' | 'youtube' | 'contact';
 
@@ -28,16 +28,16 @@ interface SectionMeta { key: SectionKey; label: string; icon: React.ReactNode }
 
 const SECTIONS: SectionMeta[] = [
   { key: 'hero',    label: 'Capa',       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> },
-  { key: 'about',   label: 'Sobre nÃ³s',  icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
-  { key: 'mission', label: 'MissÃ£o',     icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg> },
-  { key: 'pastors', label: 'LideranÃ§a',  icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
-  { key: 'cells',   label: 'CÃ©lulas',    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
+  { key: 'about',   label: 'Sobre nós',  icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+  { key: 'mission', label: 'Missão',     icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg> },
+  { key: 'pastors', label: 'Liderança',  icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
+  { key: 'cells',   label: 'Células',    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
   { key: 'events',  label: 'Eventos',    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> },
   { key: 'youtube', label: 'YouTube',    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
   { key: 'contact', label: 'Contato',    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
 ];
 
-// â”€â”€ Primitivos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Primitivos ───────────────────────────────────────────────────
 
 const inputCls = 'w-full px-3 py-2 bg-[var(--admin-surface-alt)] border border-[var(--admin-border)] rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm text-[var(--admin-text-primary)] placeholder-slate-500 transition-all';
 
@@ -60,7 +60,7 @@ function SectionDivider({ label }: { label: string }) {
   );
 }
 
-// â”€â”€ Galeria de mÃ­dia â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Galeria de mídia ─────────────────────────────────────────────
 
 const QUOTA_MB = 200;
 
@@ -119,7 +119,7 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
         <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-[var(--admin-border)]" style={{ background: 'var(--admin-bg)' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={value} alt="" className="w-full h-full object-cover" />
-          <button onClick={() => onChange('')} className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg transition-colors backdrop-blur-sm">
+          <button onClick={() => onChange('')} className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 text-slate-900 dark:text-white rounded-lg transition-colors backdrop-blur-sm">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
@@ -138,7 +138,7 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
           <div className="rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden border border-[var(--admin-border-strong)]" style={{ background: 'var(--admin-surface)' }}>
             <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--admin-border)] shrink-0">
               <div>
-                <h3 className="font-bold text-white text-sm">Galeria de imagens</h3>
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Galeria de imagens</h3>
                 <p className="text-xs text-[var(--admin-text-muted)] mt-0.5">Selecione ou envie uma imagem</p>
               </div>
               <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-black/5 dark:bg-white/10 transition-colors">
@@ -159,7 +159,7 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
                 {uploading ? (
                   <><svg className="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg><span className="text-sm font-semibold">Enviando...</span></>
                 ) : (
-                  <><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg><span className="text-sm font-bold">Enviar nova imagem</span><span className="text-xs font-medium text-[var(--admin-text-muted)]">JPG, PNG, WebP Â· MÃ¡x. 10 MB</span></>
+                  <><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg><span className="text-sm font-bold">Enviar nova imagem</span><span className="text-xs font-medium text-[var(--admin-text-muted)]">JPG, PNG, WebP · Máx. 10 MB</span></>
                 )}
                 <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="sr-only" onChange={handleUpload} disabled={uploading} />
               </label>
@@ -171,7 +171,7 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
               ) : items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-[var(--admin-text-muted)]">
                   <svg className="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                  <p className="text-sm font-bold">A galeria estÃ¡ vazia.</p>
+                  <p className="text-sm font-bold">A galeria está vazia.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -184,17 +184,17 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
                       {value === item.url && (
                         <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">
                           <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <svg className="w-5 h-5 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/></svg>
                           </div>
                         </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-between p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="flex justify-end">
-                          <button onClick={e => { e.stopPropagation(); handleDelete(item); }} className="p-1.5 bg-red-600/90 hover:bg-red-500 text-white rounded-lg shadow-sm backdrop-blur-sm">
+                          <button onClick={e => { e.stopPropagation(); handleDelete(item); }} className="p-1.5 bg-red-600/90 hover:bg-red-500 text-slate-900 dark:text-white rounded-lg shadow-sm backdrop-blur-sm">
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                           </button>
                         </div>
-                        <p className="text-white text-[10px] font-semibold">{formatBytes(item.size_bytes)}</p>
+                        <p className="text-slate-900 dark:text-white text-[10px] font-semibold">{formatBytes(item.size_bytes)}</p>
                       </div>
                     </div>
                   ))}
@@ -208,16 +208,16 @@ function MediaPicker({ value, onChange }: { value: string; onChange: (url: strin
   );
 }
 
-// â”€â”€ FormulÃ¡rios por seÃ§Ã£o â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Formulários por seção ────────────────────────────────────────
 
 function HeroForm({ c, set }: { c: Record<string, unknown>; set: (k: string, v: unknown) => void }) {
   return (
     <div className="space-y-4">
-      <Field label="TÃ­tulo principal"><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder="Bem-vindo Ã  ICRE" /></Field>
-      <Field label="SubtÃ­tulo"><textarea className={inputCls} rows={2} value={c.subtitle as string ?? ''} onChange={e => set('subtitle', e.target.value)} placeholder="Uma breve descriÃ§Ã£o..." /></Field>
+      <Field label="Título principal"><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder="Bem-vindo à ICRE" /></Field>
+      <Field label="Subtítulo"><textarea className={inputCls} rows={2} value={c.subtitle as string ?? ''} onChange={e => set('subtitle', e.target.value)} placeholder="Uma breve descrição..." /></Field>
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Texto do botÃ£o"><input className={inputCls} value={c.cta_label as string ?? c.button_text as string ?? ''} onChange={e => set('cta_label', e.target.value)} placeholder="Saiba mais" /></Field>
-        <Field label="Link do botÃ£o"><input className={inputCls} value={c.cta_url as string ?? c.button_link as string ?? ''} onChange={e => set('cta_url', e.target.value)} placeholder="/contato" /></Field>
+        <Field label="Texto do botão"><input className={inputCls} value={c.cta_label as string ?? c.button_text as string ?? ''} onChange={e => set('cta_label', e.target.value)} placeholder="Saiba mais" /></Field>
+        <Field label="Link do botão"><input className={inputCls} value={c.cta_url as string ?? c.button_link as string ?? ''} onChange={e => set('cta_url', e.target.value)} placeholder="/contato" /></Field>
       </div>
       <Field label="Imagem de fundo">
         <MediaPicker value={c.image_url as string ?? ''} onChange={v => set('image_url', v)} />
@@ -229,11 +229,11 @@ function HeroForm({ c, set }: { c: Record<string, unknown>; set: (k: string, v: 
 function AboutForm({ c, set }: { c: Record<string, unknown>; set: (k: string, v: unknown) => void }) {
   return (
     <div className="space-y-4">
-      <Field label="TÃ­tulo"><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder="Sobre nÃ³s" /></Field>
-      <Field label="Texto"><textarea className={inputCls} rows={8} value={c.text as string ?? c.body as string ?? ''} onChange={e => set('text', e.target.value)} placeholder="A histÃ³ria e missÃ£o da igreja..." /></Field>
+      <Field label="Título"><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder="Sobre nós" /></Field>
+      <Field label="Texto"><textarea className={inputCls} rows={8} value={c.text as string ?? c.body as string ?? ''} onChange={e => set('text', e.target.value)} placeholder="A história e missão da igreja..." /></Field>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Field label="Ano de fundaÃ§Ã£o"><input type="number" className={inputCls} value={c.founded_year as string ?? ''} onChange={e => set('founded_year', e.target.value)} placeholder="1993" /></Field>
-        <Field label="LocalizaÃ§Ã£o"><input className={inputCls} value={c.location as string ?? ''} onChange={e => set('location', e.target.value)} placeholder="Santa Maria, BrasÃ­lia-DF" /></Field>
+        <Field label="Ano de fundação"><input type="number" className={inputCls} value={c.founded_year as string ?? ''} onChange={e => set('founded_year', e.target.value)} placeholder="1993" /></Field>
+        <Field label="Localização"><input className={inputCls} value={c.location as string ?? ''} onChange={e => set('location', e.target.value)} placeholder="Santa Maria, Brasília-DF" /></Field>
       </div>
       <Field label="Imagem Destacada">
         <MediaPicker value={c.image_url as string ?? ''} onChange={v => set('image_url', v)} />
@@ -255,12 +255,12 @@ function MissionForm({ c, set }: { c: Record<string, unknown>; set: (k: string, 
 
   return (
     <div className="space-y-4">
-      <Field label="TÃ­tulo da seÃ§Ã£o"><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder="Nossa MissÃ£o" /></Field>
-      <SectionDivider label="MÃ©tricas" />
+      <Field label="Título da seção"><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder="Nossa Missão" /></Field>
+      <SectionDivider label="Métricas" />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
         <Field label="Membros Ativos"><input type="number" className={inputCls} value={c.active_members as string ?? ''} onChange={e => set('active_members', e.target.value)} placeholder="500" /></Field>
-        <Field label="CÃ©lulas Ativas"><input type="number" className={inputCls} value={c.active_cells as string ?? ''} onChange={e => set('active_cells', e.target.value)} placeholder="4" /></Field>
-        <Field label="Anos de HistÃ³ria"><input type="number" className={inputCls} value={c.history_years as string ?? ''} onChange={e => set('history_years', e.target.value)} placeholder="33" /></Field>
+        <Field label="Células Ativas"><input type="number" className={inputCls} value={c.active_cells as string ?? ''} onChange={e => set('active_cells', e.target.value)} placeholder="4" /></Field>
+        <Field label="Anos de História"><input type="number" className={inputCls} value={c.history_years as string ?? ''} onChange={e => set('history_years', e.target.value)} placeholder="33" /></Field>
       </div>
       <SectionDivider label="Pilares" />
       <div className="space-y-4">
@@ -272,8 +272,8 @@ function MissionForm({ c, set }: { c: Record<string, unknown>; set: (k: string, 
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
               </button>
             </div>
-            <input className={inputCls} placeholder="TÃ­tulo do Pilar" value={item.title ?? ''} onChange={e => setItem(i, 'title', e.target.value)} />
-            <textarea className={inputCls} placeholder="DescriÃ§Ã£o detalhada..." rows={3} value={item.text ?? ''} onChange={e => setItem(i, 'text', e.target.value)} />
+            <input className={inputCls} placeholder="Título do Pilar" value={item.title ?? ''} onChange={e => setItem(i, 'title', e.target.value)} />
+            <textarea className={inputCls} placeholder="Descrição detalhada..." rows={3} value={item.text ?? ''} onChange={e => setItem(i, 'text', e.target.value)} />
           </div>
         ))}
         <button onClick={addItem}
@@ -292,8 +292,8 @@ function SimpleHeaderForm({ c, set, titlePlaceholder, subtitlePlaceholder, hint 
 }) {
   return (
     <div className="space-y-4">
-      <Field label="TÃ­tulo da seÃ§Ã£o" hint={hint}><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder={titlePlaceholder} /></Field>
-      <Field label="SubtÃ­tulo"><input className={inputCls} value={c.subtitle as string ?? ''} onChange={e => set('subtitle', e.target.value)} placeholder={subtitlePlaceholder} /></Field>
+      <Field label="Título da seção" hint={hint}><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder={titlePlaceholder} /></Field>
+      <Field label="Subtítulo"><input className={inputCls} value={c.subtitle as string ?? ''} onChange={e => set('subtitle', e.target.value)} placeholder={subtitlePlaceholder} /></Field>
     </div>
   );
 }
@@ -301,8 +301,8 @@ function SimpleHeaderForm({ c, set, titlePlaceholder, subtitlePlaceholder, hint 
 function YoutubeForm({ c, set }: { c: Record<string, unknown>; set: (k: string, v: unknown) => void }) {
   return (
     <div className="space-y-4">
-      <Field label="TÃ­tulo"><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder="Ao Vivo" /></Field>
-      <Field label="ID do vÃ­deo" hint="Cole apenas o ID apÃ³s ?v= na URL. Ex: youtube.com/watch?v=dQw4w... â†’ dQw4w...">
+      <Field label="Título"><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder="Ao Vivo" /></Field>
+      <Field label="ID do vídeo" hint="Cole apenas o ID após ?v= na URL. Ex: youtube.com/watch?v=dQw4w... → dQw4w...">
         <input className={inputCls} value={c.video_id as string ?? ''} onChange={e => set('video_id', e.target.value)} placeholder="dQw4w9WgXcQ" />
       </Field>
       <Field label="URL do canal"><input className={inputCls} value={c.channel_url as string ?? ''} onChange={e => set('channel_url', e.target.value)} placeholder="https://youtube.com/@..." /></Field>
@@ -313,15 +313,15 @@ function YoutubeForm({ c, set }: { c: Record<string, unknown>; set: (k: string, 
 function ContactForm({ c, set }: { c: Record<string, unknown>; set: (k: string, v: unknown) => void }) {
   return (
     <div className="space-y-4">
-      <Field label="TÃ­tulo"><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder="Contato" /></Field>
-      <Field label="SubtÃ­tulo"><input className={inputCls} value={c.subtitle as string ?? ''} onChange={e => set('subtitle', e.target.value)} placeholder="Venha nos visitar..." /></Field>
-      <Field label="EndereÃ§o"><input className={inputCls} value={c.address as string ?? ''} onChange={e => set('address', e.target.value)} placeholder="Rua, nÃºmero, bairro â€” Cidade/UF" /></Field>
+      <Field label="Título"><input className={inputCls} value={c.title as string ?? ''} onChange={e => set('title', e.target.value)} placeholder="Contato" /></Field>
+      <Field label="Subtítulo"><input className={inputCls} value={c.subtitle as string ?? ''} onChange={e => set('subtitle', e.target.value)} placeholder="Venha nos visitar..." /></Field>
+      <Field label="Endereço"><input className={inputCls} value={c.address as string ?? ''} onChange={e => set('address', e.target.value)} placeholder="Rua, número, bairro — Cidade/UF" /></Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Telefone"><input className={inputCls} value={c.phone as string ?? ''} onChange={e => set('phone', e.target.value)} placeholder="(XX) XXXXX-XXXX" /></Field>
         <Field label="E-mail"><input className={inputCls} value={c.email as string ?? ''} onChange={e => set('email', e.target.value)} placeholder="contato@..." /></Field>
       </div>
-      <Field label="HorÃ¡rios"><input className={inputCls} value={c.schedule as string ?? ''} onChange={e => set('schedule', e.target.value)} placeholder="Dom 9h e 19h / Qua 19h30" /></Field>
-      <Field label="URL embed Google Maps" hint="No Maps: Compartilhar â†’ Incorporar mapa â†’ Copiar o link do src.">
+      <Field label="Horários"><input className={inputCls} value={c.schedule as string ?? ''} onChange={e => set('schedule', e.target.value)} placeholder="Dom 9h e 19h / Qua 19h30" /></Field>
+      <Field label="URL embed Google Maps" hint="No Maps: Compartilhar → Incorporar mapa → Copiar o link do src.">
         <textarea className={inputCls} rows={4} value={c.maps_embed_url as string ?? c.maps_url as string ?? ''} onChange={e => set('maps_embed_url', e.target.value)} placeholder="https://www.google.com/maps/embed?..." />
       </Field>
     </div>
@@ -359,7 +359,7 @@ function IframePreview({ children, className }: { children: React.ReactNode; cla
   );
 }
 
-// â”€â”€ Componente principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Componente principal ─────────────────────────────────────────
 
 interface SiteEditorProps {
   blocks: SiteBlock[];
@@ -503,7 +503,7 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] md:h-[calc(100vh-8rem)] -m-4 md:m-0 overflow-hidden bg-[var(--admin-bg)] relative">
       
-      {/* â”€â”€ Top Bar â”€â”€ */}
+      {/* ── Top Bar ── */}
       <div className="flex items-center justify-between px-4 py-3 bg-[var(--admin-surface)] border-b border-[var(--admin-border)] shrink-0 z-20 shadow-sm">
         <div className="flex items-center gap-3">
           {/* Mobile Back Button when in edit mode */}
@@ -515,10 +515,10 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
           
           {/* View Toggles (Desktop only) */}
           <div className="hidden md:flex items-center bg-[var(--admin-surface-alt)] rounded-lg p-1 border border-[var(--admin-border)]">
-            <button onClick={() => setViewMode('desktop')} className={`p-1.5 rounded-md transition-all ${viewMode === 'desktop' ? 'bg-white text-white shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`} title="Desktop">
+            <button onClick={() => setViewMode('desktop')} className={`p-1.5 rounded-md transition-all ${viewMode === 'desktop' ? 'bg-white text-slate-900 shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`} title="Desktop">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
             </button>
-            <button onClick={() => setViewMode('mobile')} className={`p-1.5 rounded-md transition-all ${viewMode === 'mobile' ? 'bg-white text-white shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`} title="Mobile">
+            <button onClick={() => setViewMode('mobile')} className={`p-1.5 rounded-md transition-all ${viewMode === 'mobile' ? 'bg-white text-slate-900 shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`} title="Mobile">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
             </button>
           </div>
@@ -539,7 +539,7 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
             ) : hasUnpublished ? (
               <span className="hidden sm:flex items-center gap-1.5 text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-md px-2 py-1 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                AlteraÃ§Ãµes pendentes
+                Alterações pendentes
               </span>
             ) : (
               <span className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-2 py-1 font-medium">
@@ -560,7 +560,7 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
 
     <div className="flex-1 flex overflow-hidden relative">
         
-        {/* â”€â”€ Sidebar (Master-Detail) â”€â”€ */}
+        {/* ── Sidebar (Master-Detail) ── */}
         <aside className={`absolute inset-0 md:relative z-30 flex flex-col w-full md:w-[400px] shrink-0 bg-[var(--admin-surface)] border-r border-[var(--admin-border)] shadow-2xl md:shadow-none transition-transform duration-300 ${!activeKey && 'md:w-80'} ${!activeKey ? 'translate-x-0' : (activeKey ? 'translate-x-0' : '-translate-x-full')} md:translate-x-0`}>
           
           {/* Master View: List of Sections */}
@@ -582,7 +582,7 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
                         <div className="flex items-center gap-2 mt-1">
                           <span className={`w-2 h-2 rounded-full ${b.is_active ? 'bg-emerald-400' : 'bg-slate-500'}`} />
                           <p className={`text-[11px] font-semibold ${b.is_active ? 'text-emerald-500' : 'text-slate-500'}`}>
-                            {b.is_active ? 'VisÃ­vel no site' : 'Oculto'}
+                            {b.is_active ? 'Visível no site' : 'Oculto'}
                           </p>
                           {hasDraft && (
                             <>
@@ -612,7 +612,7 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
                 </div>
                 {activeBlock && (
                   <label className="flex items-center gap-2 cursor-pointer bg-[var(--admin-bg)] px-3 py-1.5 rounded-lg border border-[var(--admin-border)]">
-                    <span className={`text-xs font-bold ${activeBlock.is_active ? 'text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>{activeBlock.is_active ? 'VisÃ­vel' : 'Oculto'}</span>
+                    <span className={`text-xs font-bold ${activeBlock.is_active ? 'text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>{activeBlock.is_active ? 'Visível' : 'Oculto'}</span>
                     <div className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors" style={{ background: activeBlock.is_active ? '#10b981' : 'var(--admin-border-strong)' }}>
                       <input type="checkbox" className="sr-only" checked={activeBlock.is_active} onChange={handleToggle} disabled={isPending} />
                       <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform shadow-sm ${activeBlock.is_active ? 'translate-x-4' : 'translate-x-1'}`} />
@@ -623,16 +623,16 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
               <div className="flex-1 overflow-y-auto px-5 py-6" style={{ scrollbarWidth: 'thin' }}>
                 {!activeBlock ? (
                   <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-5 text-center">
-                    <p className="text-sm font-bold text-amber-400">Bloco nÃ£o encontrado no banco de dados.</p>
+                    <p className="text-sm font-bold text-amber-400">Bloco não encontrado no banco de dados.</p>
                   </div>
                 ) : (
                   <div className="pb-10">
                     {activeKey === 'hero'    && <HeroForm c={activeContent} set={set} />}
                     {activeKey === 'about'   && <AboutForm c={activeContent} set={set} />}
                     {activeKey === 'mission' && <MissionForm c={activeContent} set={set} />}
-                    {activeKey === 'pastors' && <SimpleHeaderForm c={activeContent} set={set} titlePlaceholder="Nossa LideranÃ§a" subtitlePlaceholder="ConheÃ§a quem guia nossa comunidade" hint="A lista de pastores Ã© gerenciada no mÃ³dulo LideranÃ§a." />}
-                    {activeKey === 'cells'   && <SimpleHeaderForm c={activeContent} set={set} titlePlaceholder="Nossas CÃ©lulas" subtitlePlaceholder="Encontre uma cÃ©lula perto de vocÃª" hint="As cÃ©lulas sÃ£o gerenciadas no mÃ³dulo de CÃ©lulas." />}
-                    {activeKey === 'events'  && <SimpleHeaderForm c={activeContent} set={set} titlePlaceholder="PrÃ³ximos Eventos" subtitlePlaceholder="Venha participar" hint="Os eventos sÃ£o gerenciados automaticamente." />}
+                    {activeKey === 'pastors' && <SimpleHeaderForm c={activeContent} set={set} titlePlaceholder="Nossa Liderança" subtitlePlaceholder="Conheça quem guia nossa comunidade" hint="A lista de pastores é gerenciada no módulo Liderança." />}
+                    {activeKey === 'cells'   && <SimpleHeaderForm c={activeContent} set={set} titlePlaceholder="Nossas Células" subtitlePlaceholder="Encontre uma célula perto de você" hint="As células são gerenciadas no módulo de Células." />}
+                    {activeKey === 'events'  && <SimpleHeaderForm c={activeContent} set={set} titlePlaceholder="Próximos Eventos" subtitlePlaceholder="Venha participar" hint="Os eventos são gerenciados automaticamente." />}
                     {activeKey === 'youtube' && <YoutubeForm c={activeContent} set={set} />}
                     {activeKey === 'contact' && <ContactForm c={activeContent} set={set} />}
                   </div>
@@ -642,13 +642,13 @@ export function SiteEditor({ blocks: initialBlocks, pastors, cells, events }: Si
           )}
         </aside>
 
-        {/* â”€â”€ Native Real-time Preview â”€â”€ */}
+        {/* ── Native Real-time Preview ── */}
         {/* On mobile, if activeKey is set, we hide the preview under the absolute sidebar. But if activeKey is null, we show preview. Actually we should always render it so it's under. */}
         <div className={`flex-1 flex flex-col bg-slate-50 dark:bg-slate-900 overflow-y-auto relative ${activeKey ? 'hidden md:flex' : 'flex'} portal-scroll`}>
           
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 bg-black/80 backdrop-blur-md rounded-full border border-black/10 dark:border-white/10 shadow-2xl flex items-center gap-2 pointer-events-none">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[11px] font-bold text-white uppercase tracking-wider">Preview Real-time</span>
+            <span className="text-[11px] font-bold text-slate-900 dark:text-white uppercase tracking-wider">Preview Real-time</span>
           </div>
 
           <div className={`flex-1 mx-auto transition-all duration-300 bg-[var(--admin-bg)] ${viewMode === 'mobile' ? 'w-full max-w-[400px] border-x border-slate-700 shadow-2xl rounded-[2rem] overflow-hidden my-6 max-h-[calc(100vh-6rem)] ring-8 ring-slate-800' : 'w-full min-h-full'}`}>

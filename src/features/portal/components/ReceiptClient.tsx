@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useRef } from 'react';
 import Link from 'next/link';
@@ -36,7 +36,7 @@ interface Props {
   registration: RegistrationData;
 }
 
-const MONTHS = ['janeiro', 'fevereiro', 'marÃ§o', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const MONTHS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return '';
@@ -54,18 +54,18 @@ function formatDateTime(dateStr: string | null): string {
 }
 
 function formatCurrency(value: number | null): string {
-  if (value === null) return 'â€”';
+  if (value === null) return '—';
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 }
 
 const METHOD_LABELS: Record<string, string> = {
   asaas_pix: 'PIX',
-  asaas_boleto: 'Boleto BancÃ¡rio',
+  asaas_boleto: 'Boleto Bancário',
   pix: 'PIX',
-  cartao: 'CartÃ£o de CrÃ©dito',
+  cartao: 'Cartão de Crédito',
   dinheiro: 'Dinheiro',
   cortesia: 'Cortesia',
-  gift: 'Cortesia (Gift)',
+  gift: 'Cortesia',
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -82,7 +82,7 @@ export function ReceiptClient({ registration }: Props) {
 
   const requiresTermsAcceptance = registration.is_gift && !registration.terms_accepted_at;
 
-  // Protocolo (Ãºltimos 8 chars do UUID em maiÃºsculo)
+  // Protocolo (últimos 8 chars do UUID em maiúsculo)
   const protocol = registration.id.replace(/-/g, '').slice(-8).toUpperCase();
 
   const handleAcceptTerms = async () => {
@@ -105,27 +105,27 @@ export function ReceiptClient({ registration }: Props) {
     };
     const doc = new JsPDF() as DocType;
 
-    // â”€â”€ Header â”€â”€
+    // ── Header ──
     doc.setFillColor(15, 23, 42); // slate-900
     doc.rect(0, 0, 210, 40, 'F');
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(255, 255, 255);
-    doc.text('ICRE â€” Igreja de Cristo Rocha Eterna', 14, 18);
+    doc.text('ICRE — Igreja de Cristo Rocha Eterna', 14, 18);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(148, 163, 184);
-    doc.text('Sistema de GestÃ£o EclesiÃ¡stica â€” Comprovante de InscriÃ§Ã£o', 14, 28);
+    doc.text('Sistema de Gestão Eclesiástica — Comprovante de Inscrição', 14, 28);
     doc.setFontSize(9);
     doc.setTextColor(52, 211, 153);
-    doc.text(`âœ“ CONFIRMADO  |  Protocolo: #${protocol}`, 14, 36);
+    doc.text(`✓ CONFIRMADO  |  Protocolo: #${protocol}`, 14, 36);
 
-    // â”€â”€ Linha separadora â”€â”€
+    // ── Linha separadora ──
     doc.setDrawColor(30, 58, 138);
     doc.setLineWidth(0.5);
     doc.line(14, 44, 196, 44);
 
-    // â”€â”€ Evento â”€â”€
+    // ── Evento ──
     let y = 54;
     doc.setFontSize(13);
     doc.setFont('helvetica', 'bold');
@@ -138,10 +138,10 @@ export function ReceiptClient({ registration }: Props) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(80, 100, 130);
-    if (event?.date) { doc.text(`Data: ${formatDate(event.date)}${event.time ? ` Ã s ${event.time.slice(0, 5)}` : ''}`, 14, y); y += 7; }
+    if (event?.date) { doc.text(`Data: ${formatDate(event.date)}${event.time ? ` às ${event.time.slice(0, 5)}` : ''}`, 14, y); y += 7; }
     if (event?.location) { doc.text(`Local: ${event.location}`, 14, y); y += 7; }
 
-    // â”€â”€ Participante â”€â”€
+    // ── Participante ──
     y += 6;
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
@@ -158,7 +158,7 @@ export function ReceiptClient({ registration }: Props) {
     if (registration.email) { doc.text(`E-mail: ${registration.email}`, 14, y); y += 7; }
     if (registration.phone) { doc.text(`Telefone: ${registration.phone}`, 14, y); y += 7; }
 
-    // â”€â”€ Pagamento â”€â”€
+    // ── Pagamento ──
     y += 6;
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
@@ -170,18 +170,18 @@ export function ReceiptClient({ registration }: Props) {
     doc.setFontSize(10);
     doc.setTextColor(40, 40, 40);
     doc.text(`Valor: ${formatCurrency(registration.payment_amount ?? event?.ticket_price ?? null)}`, 14, y); y += 7;
-    if (registration.payment_method) { doc.text(`MÃ©todo: ${METHOD_LABELS[registration.payment_method] ?? registration.payment_method}`, 14, y); y += 7; }
+    if (registration.payment_method) { doc.text(`Método: ${METHOD_LABELS[registration.payment_method] ?? registration.payment_method}`, 14, y); y += 7; }
     if (registration.paid_at) { doc.text(`Pago em: ${formatDateTime(registration.paid_at)}`, 14, y); y += 7; }
     if (registration.asaas_payment_id) { doc.text(`Ref. Asaas: ${registration.asaas_payment_id}`, 14, y); y += 7; }
 
-    // â”€â”€ Status â”€â”€
+    // ── Status ──
     y += 8;
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(22, 163, 74);
-    doc.text('âœ“ PAGAMENTO/ISENÃ‡ÃƒO CONFIRMADO', 14, y);
+    doc.text('✓ PAGAMENTO/ISENÇÃO CONFIRMADO', 14, y);
 
-    // â”€â”€ QR Code â”€â”€
+    // ── QR Code ──
     if (registration.ticket_signature && !requiresTermsAcceptance) {
       y += 18;
       const qrData = `${registration.id}:${registration.ticket_signature}`;
@@ -196,17 +196,17 @@ export function ReceiptClient({ registration }: Props) {
       y += 18;
       doc.setFontSize(9);
       doc.setTextColor(220, 38, 38);
-      doc.text('Ingresso bloqueado. Ã‰ necessÃ¡rio aceitar os termos de participaÃ§Ã£o online.', 14, y);
+      doc.text('Ingresso bloqueado. É necessário aceitar os termos de participação online.', 14, y);
       y += 10;
     }
 
-    // â”€â”€ Protocolo â”€â”€
+    // ── Protocolo ──
     y += 6;
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
     doc.text(`Protocolo: #${protocol}  |  ID: ${registration.id}`, 14, y);
     y += 5;
-    doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')} â€” SIGE-Web ICRE`, 14, y);
+    doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')} — SIGE-Web ICRE`, 14, y);
 
     doc.save(`comprovante-icre-${protocol}.pdf`);
   };
@@ -227,7 +227,7 @@ export function ReceiptClient({ registration }: Props) {
 
       <div className="relative max-w-2xl mx-auto px-4 pt-24 pb-16">
 
-        {/* Breadcrumb / navegaÃ§Ã£o */}
+        {/* Breadcrumb / navegação */}
         <Link
           href="/minhas-inscricoes"
           className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-200 text-sm font-medium transition-colors mb-8 group"
@@ -235,13 +235,13 @@ export function ReceiptClient({ registration }: Props) {
           <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Minhas InscriÃ§Ãµes
+          Minhas Inscrições
         </Link>
 
         {/* Card principal */}
         <div ref={receiptRef} className="bg-slate-50 dark:bg-slate-900/70 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
 
-          {/* â”€â”€ Header Institucional â”€â”€ */}
+          {/* ── Header Institucional ── */}
           <div className="relative overflow-hidden">
             {/* Fundo gradiente */}
             <div className="absolute inset-0 bg-gradient-to-br from-slate-50 dark:from-slate-800 via-slate-50 dark:via-slate-900 to-emerald-950/40" />
@@ -254,7 +254,7 @@ export function ReceiptClient({ registration }: Props) {
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-500/60 to-transparent" />
 
             <div className="relative px-7 py-6">
-              {/* Linha 1: organizaÃ§Ã£o */}
+              {/* Linha 1: organização */}
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-emerald-500/15 border border-emerald-500/25 rounded-xl flex items-center justify-center">
@@ -264,7 +264,7 @@ export function ReceiptClient({ registration }: Props) {
                   </div>
                   <div>
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em]">Igreja de Cristo Rocha Eterna</p>
-                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Sistema de GestÃ£o Â· Comprovante Oficial</p>
+                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Sistema de Gestão · Comprovante Oficial</p>
                   </div>
                 </div>
                 {/* Badge confirmado */}
@@ -279,14 +279,14 @@ export function ReceiptClient({ registration }: Props) {
               {/* Linha 2: evento */}
               <div className="border-t border-black/6 dark:border-white/6 pt-5">
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Evento</p>
-                <h1 className="text-xl font-black text-white leading-tight">{event?.title ?? 'Evento'}</h1>
+                <h1 className="text-xl font-black text-slate-900 dark:text-white leading-tight">{event?.title ?? 'Evento'}</h1>
                 <div className="flex flex-wrap gap-4 mt-3">
                   {event?.date && (
                     <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                       <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      {formatDate(event.date)}{event.time ? ` Â· ${event.time.slice(0, 5)}` : ''}
+                      {formatDate(event.date)}{event.time ? ` · ${event.time.slice(0, 5)}` : ''}
                     </div>
                   )}
                   {event?.location && (
@@ -302,7 +302,7 @@ export function ReceiptClient({ registration }: Props) {
             </div>
           </div>
 
-          {/* â”€â”€ QR Code (destaque) â”€â”€ */}
+          {/* ── QR Code (destaque) ── */}
           {registration.ticket_signature && (
             <div className="border-t border-black/6 dark:border-white/6 bg-white mx-7 my-6 rounded-xl overflow-hidden relative">
               {requiresTermsAcceptance && (
@@ -312,9 +312,9 @@ export function ReceiptClient({ registration }: Props) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">Aceite os Termos</h3>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">Aceite os Termos</h3>
                   <p className="text-sm text-slate-600 mb-4 max-w-sm">
-                    Para visualizar seu ingresso e ter acesso ao evento, vocÃª precisa ler e aceitar os termos de participaÃ§Ã£o.
+                    Para visualizar seu ingresso e ter acesso ao evento, você precisa ler e aceitar os termos de participação.
                   </p>
                 </div>
               )}
@@ -338,7 +338,7 @@ export function ReceiptClient({ registration }: Props) {
             <div className="mx-7 mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-xl p-5">
               <h4 className="font-bold text-red-800 dark:text-red-400 mb-2 text-sm uppercase tracking-wider">Termos do Evento</h4>
               <div className="text-sm text-red-900/80 dark:text-red-300/80 mb-4 max-h-32 overflow-y-auto pr-2 custom-scrollbar whitespace-pre-wrap text-left">
-                {event?.terms_text || 'Ao confirmar sua inscriÃ§Ã£o, vocÃª concorda com os termos e regras de participaÃ§Ã£o estabelecidos pela organizaÃ§Ã£o do evento.'}
+                {event?.terms_text || 'Ao confirmar sua inscrição, você concorda com os termos e regras de participação estabelecidos pela organização do evento.'}
               </div>
               <button
                 onClick={handleAcceptTerms}
@@ -359,7 +359,7 @@ export function ReceiptClient({ registration }: Props) {
             </div>
           )}
 
-          {/* â”€â”€ SeÃ§Ãµes de dados â”€â”€ */}
+          {/* ── Seções de dados ── */}
           <div className="px-7 pb-7 space-y-5">
 
             {/* Participante */}
@@ -392,11 +392,11 @@ export function ReceiptClient({ registration }: Props) {
               <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 border-black/6 dark:border-white/6 rounded-xl divide-y divide-white/5 overflow-hidden">
                 <DataRow
                   label="Valor"
-                  value={isZeroValue ? 'Gratuito' : formatCurrency(paymentValue)}
-                  valueClass={isZeroValue ? 'text-emerald-400 font-black text-base' : 'text-white font-black text-base'}
+                  value={isZeroValue ? 'Gratuito / Cortesia' : formatCurrency(paymentValue)}
+                  valueClass={isZeroValue ? 'text-emerald-400 font-black text-base' : 'text-slate-900 dark:text-white font-black text-base'}
                 />
                 {registration.payment_method && (
-                  <DataRow label="MÃ©todo" value={METHOD_LABELS[registration.payment_method] ?? registration.payment_method} />
+                  <DataRow label="Método" value={METHOD_LABELS[registration.payment_method] ?? registration.payment_method} />
                 )}
                 <DataRow
                   label="Status"
@@ -415,7 +415,7 @@ export function ReceiptClient({ registration }: Props) {
             {/* Protocolo */}
             <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/30 border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 flex items-center justify-between gap-3">
               <div>
-                <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-0.5">Protocolo de InscriÃ§Ã£o</p>
+                <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-0.5">Protocolo de Inscrição</p>
                 <p className="text-sm font-black text-slate-600 dark:text-slate-300 tracking-wider">#{protocol}</p>
               </div>
               <div className="text-right">
@@ -424,7 +424,7 @@ export function ReceiptClient({ registration }: Props) {
               </div>
             </div>
 
-            {/* AÃ§Ãµes */}
+            {/* Ações */}
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
               <button
                 onClick={handleDownloadPDF}
@@ -439,14 +439,14 @@ export function ReceiptClient({ registration }: Props) {
             </div>
           </div>
 
-          {/* â”€â”€ RodapÃ© institucional â”€â”€ */}
+          {/* ── Rodapé institucional ── */}
           <div className="border-t border-black/5 dark:border-white/5 bg-slate-50 dark:bg-slate-900/40 px-7 py-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-1">
               <p className="text-[10px] text-slate-600 font-medium">
-                ICRE Â· Sistema de GestÃ£o EclesiÃ¡stica Â· SIGE-Web
+                ICRE · Sistema de Gestão Eclesiástica · SIGE-Web
               </p>
               <p className="text-[10px] text-slate-700">
-                Este comprovante Ã© vÃ¡lido e permanente
+                Este comprovante é válido e permanente
               </p>
             </div>
           </div>
@@ -456,7 +456,7 @@ export function ReceiptClient({ registration }: Props) {
   );
 }
 
-// â”€â”€ Componente de linha de dado â”€â”€
+// ── Componente de linha de dado ──
 function DataRow({
   label,
   value,

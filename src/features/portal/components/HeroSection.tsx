@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -59,7 +59,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
         </div>
       )}
 
-      {/* Blurs atmosfÃ©ricos */}
+      {/* Blurs atmosféricos */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
           className="absolute top-1/4 left-1/3 w-[700px] h-[700px] bg-blue-500/10 rounded-full blur-[160px] will-change-transform"
@@ -93,15 +93,15 @@ export function HeroSection({ content }: { content: HeroContent }) {
         />
       </div>
 
-      {/* ConteÃºdo */}
+      {/* Conteúdo */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
 
-        {/* TÃ­tulo com gradiente */}
+        {/* Título com gradiente */}
         <h1
           className="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-black leading-[0.95] tracking-tight mb-8 transition-all duration-700 ease-out text-gradient-blue"
           style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translate3d(0, 0, 0)' : 'translate3d(0, 36px, 0)', transitionDelay: '120ms' }}
         >
-          {content.title || 'Bem-vindo Ã  ICRE'}
+          {content.title || 'Bem-vindo à ICRE'}
         </h1>
 
         {/* Linha decorativa */}
@@ -114,7 +114,7 @@ export function HeroSection({ content }: { content: HeroContent }) {
           <div className="h-px w-16 bg-gradient-to-l from-transparent to-blue-500/60 rounded-full" />
         </div>
 
-        {/* SubtÃ­tulo */}
+        {/* Subtítulo */}
         {content.subtitle && (
           <p
             className="text-lg sm:text-xl text-slate-900 dark:text-white/50 max-w-xl mx-auto mb-14 leading-relaxed tracking-wide font-light transition-all duration-700 ease-out"

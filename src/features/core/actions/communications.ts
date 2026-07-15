@@ -103,16 +103,16 @@ export async function sendSystemNotificationToUser(userId: string, type: Communi
   try {
     const admin = await createAdminClient();
     
-    // Prevent duplicate recent notifications (within last 10 minutes) to avoid React Strict Mode concurrency issues
-    const { data: recent } = await admin
-      .from('communications')
-      .select('id')
-      .eq('created_by', userId)
-      .eq('title', title)
-      .gte('created_at', new Date(Date.now() - 10 * 60000).toISOString())
+    // Prevent duplicate recent notifications by checking if there's already an unread notification with the same title
+    const { data: unreadDuplicates } = await admin
+      .from('user_notifications')
+      .select('id, communications!inner(title)')
+      .eq('user_id', userId)
+      .eq('is_read', false)
+      .eq('communications.title', title)
       .limit(1);
       
-    if (recent && recent.length > 0) {
+    if (unreadDuplicates && unreadDuplicates.length > 0) {
       return { success: true };
     }
 
