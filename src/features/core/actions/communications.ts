@@ -138,7 +138,7 @@ export async function sendSystemNotificationToUser(
     return { success: false };
   }
 }
-}
+
 
 export async function syncRegistrationNotifications(userId: string, email: string) {
   try {
@@ -154,7 +154,8 @@ export async function syncRegistrationNotifications(userId: string, email: strin
 
     for (const reg of registrations) {
       const notified = Array.isArray(reg.notified_events) ? reg.notified_events : [];
-      const eventTitle = reg.events?.title || 'o evento';
+      const eventObj = Array.isArray(reg.events) ? reg.events[0] : reg.events;
+      const eventTitle = eventObj?.title || 'o evento';
       let toNotify = '';
       let msgType: CommunicationType = 'INFO';
       let title = '';
