@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useRef } from 'react';
 import Link from 'next/link';
@@ -320,7 +320,7 @@ export function ReceiptClient({ registration }: Props) {
               )}
               <div className={`flex flex-col items-center py-6 ${requiresTermsAcceptance ? 'opacity-20 blur-sm' : ''}`}>
                 <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(`${registration.id}:${registration.ticket_signature}`)}`}
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(requiresTermsAcceptance ? 'TERMOS_NAO_ACEITOS' : `${registration.id}:${registration.ticket_signature}`)}`}
                   alt="QR Code do Ingresso"
                   className="w-52 h-52 mb-3 pointer-events-none"
                 />
@@ -392,7 +392,7 @@ export function ReceiptClient({ registration }: Props) {
               <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 border-black/6 dark:border-white/6 rounded-xl divide-y divide-white/5 overflow-hidden">
                 <DataRow
                   label="Valor"
-                  value={isZeroValue ? 'Gratuito / Cortesia' : formatCurrency(paymentValue)}
+                  value={isZeroValue ? 'Gratuito' : formatCurrency(paymentValue)}
                   valueClass={isZeroValue ? 'text-emerald-400 font-black text-base' : 'text-slate-900 dark:text-white font-black text-base'}
                 />
                 {registration.payment_method && (
@@ -472,7 +472,7 @@ function DataRow({
     <div className="flex items-center justify-between px-4 py-3 gap-4">
       <span className="text-xs text-slate-500 font-medium shrink-0">{label}</span>
       <span className={`text-sm text-right ${mono ? 'font-mono text-slate-500 dark:text-slate-400 text-xs' :
-          valueClass ?? 'font-medium text-slate-800 dark:text-slate-200'
+        valueClass ?? 'font-medium text-slate-800 dark:text-slate-200'
         }`}>
         {value}
       </span>
