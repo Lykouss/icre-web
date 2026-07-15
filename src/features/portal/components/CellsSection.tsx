@@ -6,9 +6,9 @@ import { useScrollReveal } from '@/features/core/hooks/use-scroll-reveal';
 import type { CellsSectionContent, PublicCell, MeetingType } from '@/features/portal/types';
 
 const TYPE_CONFIG: Record<MeetingType, { label: string; cls: string; dot: string }> = {
-  presencial: { label: 'Presencial', cls: 'bg-emerald-500/15 border-emerald-500/25 text-emerald-600 dark:text-emerald-400', dot: 'bg-emerald-500 dark:bg-emerald-400' },
-  online:     { label: 'Online',     cls: 'bg-blue-500/15 border-blue-500/25 text-blue-600 dark:text-blue-400',         dot: 'bg-blue-500 dark:bg-blue-400' },
-  hibrido:    { label: 'Híbrido',    cls: 'bg-violet-500/15 border-violet-500/25 text-violet-600 dark:text-violet-400',   dot: 'bg-violet-500 dark:bg-violet-400' },
+  presencial: { label: 'Presencial', cls: 'bg-emerald-600/90 border-emerald-500/30 text-white dark:bg-emerald-500/15 dark:border-emerald-500/25 dark:text-emerald-400', dot: 'bg-emerald-300 dark:bg-emerald-400' },
+  online:     { label: 'Online',     cls: 'bg-blue-600/90 border-blue-500/30 text-white dark:bg-blue-500/15 dark:border-blue-500/25 dark:text-blue-400',         dot: 'bg-blue-300 dark:bg-blue-400' },
+  hibrido:    { label: 'Híbrido',    cls: 'bg-violet-600/90 border-violet-500/30 text-white dark:bg-violet-500/15 dark:border-violet-500/25 dark:text-violet-400',   dot: 'bg-violet-300 dark:bg-violet-400' },
 };
 
 function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; onClick: () => void }) {
@@ -34,7 +34,7 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
             </svg>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-950 via-slate-50/40 dark:via-slate-900/40 to-transparent opacity-90" />
+        <div className="absolute inset-0 dark:bg-gradient-to-t dark:from-slate-950 dark:via-slate-900/40 dark:to-transparent dark:opacity-90" />
         
         {/* Top Badge */}
         <div className="absolute top-4 left-4">
@@ -45,8 +45,8 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
         </div>
 
         {/* Name Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 pt-12 bg-gradient-to-t from-slate-50 dark:from-slate-900 to-transparent">
-          <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors duration-300 leading-tight">{cell.name}</h3>
+        <div className="absolute bottom-0 left-0 right-0 p-6 pt-12">
+          <h3 className="text-xl sm:text-2xl font-black text-white mix-blend-difference dark:mix-blend-normal transition-colors duration-300 leading-tight">{cell.name}</h3>
         </div>
       </div>
 
@@ -135,7 +135,7 @@ function CellDetailModal({ cell, onClose }: { cell: PublicCell; onClose: () => v
               <svg className="w-12 h-12 text-blue-500/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-50 dark:from-slate-900 via-slate-50/30 dark:via-slate-900/30 to-transparent" />
+          <div className="absolute inset-0 dark:bg-gradient-to-t dark:from-slate-900 dark:via-slate-900/30 dark:to-transparent" />
           <button
             onClick={onClose}
             className="absolute top-4 right-4 w-9 h-9 bg-white/40 hover:bg-white/70 text-slate-900 dark:bg-black/50 dark:hover:bg-black/80 dark:text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/10 backdrop-blur-sm"

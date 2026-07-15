@@ -99,33 +99,38 @@ export async function dispatchCommunication(payload: DispatchPayload): Promise<{
   }
 }
 
-export async function sendSystemNotificationToUser(
-  userId: string,
-  type: CommunicationType,
-  title: string,
-  message: string
-) {
+export async function sendSystemNotificationToUser(userId: string, type: CommunicationType, title: string, message: string) {
   try {
     const admin = await createAdminClient();
     
-    // Create communication
+    // Prevent duplicate recent notifications (within last 10 minutes) to avoid React Strict Mode concurrency issues
+    const { data: recent } = await admin
+      .from('communications')
+      .select('id')
+      .eq('created_by', userId)
+      .eq('title', title)
+      .gte('created_at', new Date(Date.now() - 10 * 60000).toISOString())
+      .limit(1);
+      
+    if (recent && recent.length > 0) {
+      return { success: true };
+    }
+
     const { data: comm, error: commError } = await admin
       .from('communications')
       .insert({
         type,
         title,
         message,
-        audience_filter: { type: 'MANUAL', userIds: [userId] },
-        // Use a system user ID or let created_by be null if allowed, 
-        // since it's an internal system message. Assuming foreign key allows null,
-        // or we just omit created_by.
+        send_to: 'SPECIFIC',
+        status: 'SENT',
+        created_by: userId,
       })
       .select('id')
       .single();
 
-    if (commError || !comm) throw new Error(commError?.message || 'Error creating communication');
+    if (commError || !comm) throw commError;
 
-    // Assign to user
     await admin.from('user_notifications').insert({
       user_id: userId,
       communication_id: comm.id,
