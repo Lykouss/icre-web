@@ -1,12 +1,12 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ShareEventModal } from './ShareEventModal';
 
-const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-const MONTHS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const WEEKDAYS = ['Domingo', 'Segunda', 'TerÃ§a', 'Quarta', 'Quinta', 'Sexta', 'SÃ¡bado'];
+const MONTHS = ['janeiro', 'fevereiro', 'marÃ§o', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return '';
@@ -74,7 +74,7 @@ export function EventDetailsClient({
   const needsRegistration = event.requires_registration || isPaid;
   const maxPerAccount = event.max_per_account;
 
-  // Inscrições confirmadas ou pendentes de pagamento
+  // InscriÃ§Ãµes confirmadas ou pendentes de pagamento
   const confirmedRegistrations = existingRegistrations.filter(
     r => r.status === 'confirmado'
   );
@@ -112,7 +112,7 @@ export function EventDetailsClient({
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Voltar à agenda
+            Voltar Ã  agenda
           </Link>
           <button
             onClick={() => setShareModalOpen(true)}
@@ -177,7 +177,7 @@ export function EventDetailsClient({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <span className="font-medium text-slate-600 dark:text-slate-200">{formatDate(event.date)}{event.time && ` · ${event.time.slice(0, 5)}`}</span>
+                <span className="font-medium text-slate-600 dark:text-slate-200">{formatDate(event.date)}{event.time && ` Â· ${event.time.slice(0, 5)}`}</span>
               </div>
             )}
             {event.location && (
@@ -200,7 +200,7 @@ export function EventDetailsClient({
                   </svg>
                 </div>
                 <span className={`font-semibold ${isFull ? 'text-red-600 dark:text-red-400' : 'text-slate-700 dark:text-slate-200'}`}>
-                  {isFull ? 'Evento lotado' : `${spotsLeft} vaga${spotsLeft !== 1 ? 's' : ''} disponível`}
+                  {isFull ? 'Evento lotado' : `${spotsLeft} vaga${spotsLeft !== 1 ? 's' : ''} disponÃ­vel`}
                 </span>
               </div>
             )}
@@ -232,10 +232,10 @@ export function EventDetailsClient({
           </div>
         )}
 
-        {/* Card de ação */}
+        {/* Card de aÃ§Ã£o */}
         <div className="bg-blue-100 dark:bg-slate-900/50 backdrop-blur-xl border border-blue-300/60 dark:border-white/8 rounded-3xl p-8 shadow-2xl space-y-4">
 
-          {/* --- Evento sem inscrição necessária --- */}
+          {/* --- Evento sem inscriÃ§Ã£o necessÃ¡ria --- */}
           {!needsRegistration && (
             <div className="text-center py-4">
               <div className="w-14 h-14 bg-blue-500/10 border border-blue-600/30 dark:border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -243,8 +243,8 @@ export function EventDetailsClient({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Evento aberto ao público</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-sm">Não é necessário fazer inscrição. Venha participar!</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Evento aberto ao pÃºblico</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">NÃ£o Ã© necessÃ¡rio fazer inscriÃ§Ã£o. Venha participar!</p>
             </div>
           )}
 
@@ -257,7 +257,7 @@ export function EventDetailsClient({
                 </svg>
               </div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Evento lotado</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-sm">Fique de olho nos próximos eventos da nossa agenda.</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">Fique de olho nos prÃ³ximos eventos da nossa agenda.</p>
             </div>
           )}
 
@@ -269,12 +269,12 @@ export function EventDetailsClient({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Inscrições pausadas</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-sm">As inscrições para este evento foram temporariamente pausadas pela organização.</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">InscriÃ§Ãµes pausadas</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">As inscriÃ§Ãµes para este evento foram temporariamente pausadas pela organizaÃ§Ã£o.</p>
             </div>
           )}
 
-          {/* --- Evento Não Aberto --- */}
+          {/* --- Evento NÃ£o Aberto --- */}
           {needsRegistration && !hasConfirmed && !hasPendingPayment && !isPaused && isNotOpen && (
             <div className="text-center py-4">
               <div className="w-14 h-14 bg-blue-500/10 border border-blue-600/30 dark:border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -282,8 +282,8 @@ export function EventDetailsClient({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Inscrições em breve</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-sm">As inscrições iniciarão em {formatDate(event.registration_opens_at ?? null)}.</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">InscriÃ§Ãµes em breve</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">As inscriÃ§Ãµes iniciarÃ£o em {formatDate(event.registration_opens_at ?? null)}.</p>
             </div>
           )}
 
@@ -296,7 +296,7 @@ export function EventDetailsClient({
                 </svg>
                 <div>
                   <p className="text-sm font-bold text-amber-700 dark:text-amber-300">Pagamento pendente</p>
-                  <p className="text-xs text-amber-700/80 dark:text-amber-400/70 mt-0.5">Você já tem uma inscrição aguardando confirmação de pagamento.</p>
+                  <p className="text-xs text-amber-700/80 dark:text-amber-400/70 mt-0.5">VocÃª jÃ¡ tem uma inscriÃ§Ã£o aguardando confirmaÃ§Ã£o de pagamento.</p>
                 </div>
               </div>
               <Link
@@ -309,7 +309,7 @@ export function EventDetailsClient({
                 Continuar pagamento
               </Link>
               <Link
-                href="/suporte?title=Erro+no+Pagamento&description=Não+consegui+finalizar+o+pagamento+da+minha+inscrição."
+                href="/suporte?title=Erro+no+Pagamento&description=NÃ£o+consegui+finalizar+o+pagamento+da+minha+inscriÃ§Ã£o."
                 className="w-full flex items-center justify-center gap-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-3.5 rounded-2xl transition-all border-black/10 dark:border-white/10"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,18 +328,18 @@ export function EventDetailsClient({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">Você já está inscrito!</p>
+                  <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">VocÃª jÃ¡ estÃ¡ inscrito!</p>
                   <p className="text-xs text-emerald-700/80 dark:text-emerald-400/70 mt-0.5">
-                    {confirmedRegistrations.length === 1 ? 'Sua inscrição foi confirmada.' : `Você tem ${confirmedRegistrations.length} inscrições confirmadas.`}
+                    {confirmedRegistrations.length === 1 ? 'Sua inscriÃ§Ã£o foi confirmada.' : `VocÃª tem ${confirmedRegistrations.length} inscriÃ§Ãµes confirmadas.`}
                   </p>
                 </div>
               </div>
 
-              {/* Botão ver comprovante */}
+              {/* BotÃ£o ver comprovante */}
               {confirmedRegistrations[0]?.ticket_signature && (
                 <Link
                   href={`/comprovante/${confirmedRegistrations[0].id}`}
-                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
+                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
@@ -348,7 +348,7 @@ export function EventDetailsClient({
                 </Link>
               )}
 
-              {/* Múltiplos comprovantes */}
+              {/* MÃºltiplos comprovantes */}
               {confirmedRegistrations.length > 1 && (
                 <Link
                   href="/minhas-inscricoes"
@@ -370,18 +370,18 @@ export function EventDetailsClient({
             </div>
           )}
 
-          {/* --- Sem inscrição, pode se inscrever --- */}
+          {/* --- Sem inscriÃ§Ã£o, pode se inscrever --- */}
           {needsRegistration && !isFull && !hasConfirmed && !hasPendingPayment && !isPaused && !isNotOpen && (
             <Link
               href={isAuthenticated ? `/agenda/${event.id}/inscrever` : `/login`}
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20 hover:scale-[1.01]"
+              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20 hover:scale-[1.01]"
             >
               {isPaid ? (
                 <>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                   </svg>
-                  Garantir ingresso — {formatCurrency(event.ticket_price!)}
+                  Garantir ingresso â€” {formatCurrency(event.ticket_price!)}
                 </>
               ) : (
                 <>
@@ -405,3 +405,4 @@ export function EventDetailsClient({
     </div>
   );
 }
+

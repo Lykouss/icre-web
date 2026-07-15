@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useTransition, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
@@ -48,8 +48,8 @@ function isValidCpfClient(cpf: string): boolean {
 
 type Step = 'terms' | 'form' | 'payment' | 'success';
 
-const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-const MONTHS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const WEEKDAYS = ['Domingo', 'Segunda', 'TerÃ§a', 'Quarta', 'Quinta', 'Sexta', 'SÃ¡bado'];
+const MONTHS = ['janeiro', 'fevereiro', 'marÃ§o', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return '';
@@ -111,7 +111,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Synchronous lock — prevents double-submit from rapid clicks
+    // Synchronous lock â€” prevents double-submit from rapid clicks
     if (isSubmittingRef.current) return;
     isSubmittingRef.current = true;
 
@@ -120,7 +120,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
     // CPF validation client-side
     if (isPaid && cpfValue) {
       if (!isValidCpfClient(cpfValue.replace(/\D/g, ''))) {
-        setCpfError('CPF inválido. Verifique os dígitos.');
+        setCpfError('CPF invÃ¡lido. Verifique os dÃ­gitos.');
         isSubmittingRef.current = false;
         return;
       }
@@ -172,7 +172,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
       const result = await checkAndUpdatePaymentStatus(registrationId);
       if (result.paid) setStep('success');
       else if (result.error) setError(result.error);
-      else setError('Pagamento ainda não confirmado. Aguarde alguns instantes e tente novamente.');
+      else setError('Pagamento ainda nÃ£o confirmado. Aguarde alguns instantes e tente novamente.');
     });
   };
 
@@ -183,7 +183,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
     setTimeout(() => setPixCopied(false), 3000);
   };
 
-  const inputCls = 'w-full px-4 py-3 bg-slate-800/60 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500/50 transition-all';
+  const inputCls = 'w-full px-4 py-3 bg-slate-800/60 border border-black/10 dark:border-white/10 text-white rounded-2xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500/50 transition-all';
 
   const formFields: FormField[] = event.custom_form_schema ?? [];
 
@@ -197,12 +197,12 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
       <div className="relative max-w-3xl mx-auto px-4 pt-28 pb-16">
         <Link
           href="/agenda"
-          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-medium transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white text-sm font-medium transition-colors mb-8"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Voltar à agenda
+          Voltar Ã  agenda
         </Link>
 
         {/* Banner */}
@@ -230,7 +230,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
             )}
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4">
             {event.title}
           </h1>
 
@@ -246,7 +246,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <span className="font-medium text-slate-600 dark:text-slate-200">{formatDate(event.date)}{event.time && ` · ${event.time.slice(0, 5)}`}</span>
+                <span className="font-medium text-slate-600 dark:text-slate-200">{formatDate(event.date)}{event.time && ` Â· ${event.time.slice(0, 5)}`}</span>
               </div>
             )}
             {event.location && (
@@ -269,17 +269,17 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                   </svg>
                 </div>
                 <span className={`font-semibold ${isFull ? 'text-red-400' : 'text-slate-200'}`}>
-                  {isFull ? 'Evento lotado' : `${spotsLeft} vaga${spotsLeft !== 1 ? 's' : ''} disponível`}
+                  {isFull ? 'Evento lotado' : `${spotsLeft} vaga${spotsLeft !== 1 ? 's' : ''} disponÃ­vel`}
                 </span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Card de ação */}
+        {/* Card de aÃ§Ã£o */}
         <div className="bg-slate-50 dark:bg-slate-900/60 backdrop-blur-xl border border-black/5 dark:border-white/8 rounded-3xl overflow-hidden shadow-2xl">
 
-          {/* === STEP: INFO (sem inscrição necessária) === */}
+          {/* === STEP: INFO (sem inscriÃ§Ã£o necessÃ¡ria) === */}
           {!needsRegistration && (
             <div className="p-8 text-center">
               <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -287,9 +287,9 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Evento aberto ao público</h2>
+              <h2 className="text-xl font-bold text-white mb-2">Evento aberto ao pÃºblico</h2>
               <p className="text-slate-500 dark:text-slate-400 text-sm">
-                Não é necessário fazer inscrição. Venha participar!
+                NÃ£o Ã© necessÃ¡rio fazer inscriÃ§Ã£o. Venha participar!
               </p>
             </div>
           )}
@@ -302,18 +302,18 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Evento lotado</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-sm">Fique de olho nos próximos eventos da nossa agenda.</p>
+              <h2 className="text-xl font-bold text-white mb-2">Evento lotado</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">Fique de olho nos prÃ³ximos eventos da nossa agenda.</p>
             </div>
           )}
 
           {/* === STEP: TERMS === */}
           {needsRegistration && !isFull && step === 'terms' && (
             <div className="p-8">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Regras e Termos</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Leia com atenção antes de prosseguir.</p>
+              <h2 className="text-xl font-bold text-white mb-2">Regras e Termos</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Leia com atenÃ§Ã£o antes de prosseguir.</p>
               <div className="bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/5 dark:border-white/8 rounded-2xl p-5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6 max-h-48 overflow-y-auto">
-                {event.rules || event.description || 'Ao se inscrever, você concorda em comparecer ao evento na data e horário indicados e respeitar todas as orientações da organização.'}
+                {event.rules || event.description || 'Ao se inscrever, vocÃª concorda em comparecer ao evento na data e horÃ¡rio indicados e respeitar todas as orientaÃ§Ãµes da organizaÃ§Ã£o.'}
               </div>
               <label className="flex items-start gap-3 cursor-pointer mb-6">
                 <input type="checkbox" checked={termsAccepted} onChange={e => setTermsAccepted(e.target.checked)}
@@ -323,21 +323,21 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
               <button
                 onClick={() => { if (termsAccepted) { saveDraft(); setStep('form'); } }}
                 disabled={!termsAccepted}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-40"
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-40"
               >
-                Avançar
+                AvanÃ§ar
               </button>
             </div>
           )}
 
-          {/* === STEP: FORMULÁRIO === */}
+          {/* === STEP: FORMULÃRIO === */}
           {needsRegistration && !isFull && step === 'form' && (
             <div className="p-8">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-1">Fazer inscrição</h2>
+              <h2 className="text-xl font-bold text-white mb-1">Fazer inscriÃ§Ã£o</h2>
               <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
                 {isPaid
                   ? `Garanta sua vaga por ${formatCurrency(event.ticket_price!)} e finalize o pagamento.`
-                  : 'Preencha seus dados para confirmar sua presença.'}
+                  : 'Preencha seus dados para confirmar sua presenÃ§a.'}
               </p>
 
               {error && (
@@ -361,7 +361,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">Telefone *</label>
                   <input name="phone" type="tel" required placeholder="(XX) XXXXX-XXXX" className={inputCls} />
-                  <p className="text-xs text-red-400 mt-1.5 font-semibold">⚠️ Este número será utilizado caso seja necessário realizar estorno.</p>
+                  <p className="text-xs text-red-400 mt-1.5 font-semibold">âš ï¸ Este nÃºmero serÃ¡ utilizado caso seja necessÃ¡rio realizar estorno.</p>
                 </div>
 
                 <div>
@@ -407,13 +407,13 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                         }`}
                       >
                         <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${paymentMethod === 'pix' ? 'bg-blue-500' : 'bg-slate-700'}`}>
-                          <svg className="w-4 h-4 text-slate-900 dark:text-white" viewBox="0 0 24 24" fill="currentColor">
+                          <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M11.9999 2L3 7v10l9 5 9-5V7l-9-5zM12 4.236L18.764 8 12 11.764 5.236 8 12 4.236zM4 9.236l7 3.888V19.764L4 15.888V9.236zm9 10.528V13.124l7-3.888v6.652L13 19.764z"/>
                           </svg>
                         </div>
                         <div>
-                          <p className={`text-sm font-bold ${paymentMethod === 'pix' ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}>PIX</p>
-                          <p className="text-xs text-slate-500">Instantâneo</p>
+                          <p className={`text-sm font-bold ${paymentMethod === 'pix' ? 'text-white' : 'text-slate-600 dark:text-slate-300'}`}>PIX</p>
+                          <p className="text-xs text-slate-500">InstantÃ¢neo</p>
                         </div>
                       </button>
 
@@ -427,12 +427,12 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                         }`}
                       >
                         <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${paymentMethod === 'boleto' ? 'bg-blue-500' : 'bg-slate-700'}`}>
-                          <svg className="w-4 h-4 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                         </div>
                         <div>
-                          <p className={`text-sm font-bold ${paymentMethod === 'boleto' ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}>Boleto</p>
+                          <p className={`text-sm font-bold ${paymentMethod === 'boleto' ? 'text-white' : 'text-slate-600 dark:text-slate-300'}`}>Boleto</p>
                           <p className="text-xs text-slate-500">Vence em 3 dias</p>
                         </div>
                       </button>
@@ -442,17 +442,17 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
 
                 <div className="flex gap-3 pt-1">
                   <button type="button" onClick={() => setStep('terms')}
-                    className="px-4 py-3 rounded-2xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-semibold transition-colors">
+                    className="px-4 py-3 rounded-2xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-white text-sm font-semibold transition-colors">
                     Voltar
                   </button>
                   <button
                     type="submit"
                     disabled={isPending}
-                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold py-3 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                   >
                     {isPending ? (
                       <><svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg> {isPaid ? 'Gerando pagamento...' : 'Confirmando...'}</>
-                    ) : isPaid ? `Continuar — ${formatCurrency(event.ticket_price!)}` : 'Confirmar inscrição'}
+                    ) : isPaid ? `Continuar â€” ${formatCurrency(event.ticket_price!)}` : 'Confirmar inscriÃ§Ã£o'}
                   </button>
                 </div>
               </form>
@@ -469,8 +469,8 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">Finalize o pagamento</h2>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">{formatCurrency(paymentInfo.value)} · Vence em {new Date(paymentInfo.dueDate).toLocaleDateString('pt-BR')}</p>
+                  <h2 className="text-lg font-bold text-white">Finalize o pagamento</h2>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{formatCurrency(paymentInfo.value)} Â· Vence em {new Date(paymentInfo.dueDate).toLocaleDateString('pt-BR')}</p>
                 </div>
               </div>
 
@@ -490,7 +490,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
 
                   {paymentInfo.pixCopyPaste && (
                     <div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 text-center mb-2">Ou use o código PIX Copia e Cola:</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 text-center mb-2">Ou use o cÃ³digo PIX Copia e Cola:</p>
                       <button
                         onClick={copyPix}
                         className="w-full flex items-center gap-3 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/60 border-black/10 dark:border-white/10 hover:border-blue-500/40 px-4 py-3 rounded-xl transition-all group"
@@ -527,7 +527,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                   href={paymentInfo.boletoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/10 dark:border-white/10 text-slate-900 dark:text-white font-semibold py-3.5 rounded-xl transition-all mb-4"
+                  className="flex items-center justify-center gap-2 w-full bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 border-black/10 dark:border-white/10 text-white font-semibold py-3.5 rounded-xl transition-all mb-4"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -543,7 +543,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full text-blue-400 hover:text-blue-300 text-sm font-semibold border border-blue-500/20 hover:border-blue-400/40 py-3 rounded-xl transition-all mb-4"
               >
-                Abrir página de pagamento
+                Abrir pÃ¡gina de pagamento
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
@@ -561,7 +561,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
               <button
                 onClick={handleCheckPayment}
                 disabled={isCheckingPayment}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isCheckingPayment ? (
                   <>
@@ -576,7 +576,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                     </svg>
-                    Já paguei — confirmar
+                    JÃ¡ paguei â€” confirmar
                   </>
                 )}
               </button>
@@ -595,13 +595,13 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                 </div>
               </div>
 
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
-                {isPaid ? 'Pagamento confirmado!' : 'Inscrição confirmada!'}
+              <h2 className="text-2xl font-black text-white mb-2">
+                {isPaid ? 'Pagamento confirmado!' : 'InscriÃ§Ã£o confirmada!'}
               </h2>
               <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 max-w-sm mx-auto">
                 {isPaid
-                  ? 'Seu pagamento foi confirmado. Seu comprovante está disponível abaixo.'
-                  : 'Sua presença foi registrada. Te esperamos!'
+                  ? 'Seu pagamento foi confirmado. Seu comprovante estÃ¡ disponÃ­vel abaixo.'
+                  : 'Sua presenÃ§a foi registrada. Te esperamos!'
                 }
               </p>
 
@@ -609,7 +609,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
                 {registrationId && isPaid && (
                   <a
                     href={`/comprovante/${registrationId}`}
-                    className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold px-6 py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
+                    className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-500/20"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -620,7 +620,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
 
                 <Link
                   href="/minhas-inscricoes/comprovantes"
-                  className="inline-flex items-center justify-center gap-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-sm font-semibold px-6 py-3.5 rounded-2xl transition-all border-black/10 dark:border-white/10"
+                  className="inline-flex items-center justify-center gap-2 bg-white shadow-2xl shadow-slate-300/80 border border-slate-200 dark:border-transparent dark:shadow-none dark:bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold px-6 py-3.5 rounded-2xl transition-all border-black/10 dark:border-white/10"
                 >
                   <svg className="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
@@ -632,7 +632,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
               <div className="mt-4">
                 <Link
                   href="/agenda"
-                  className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-medium transition-colors"
+                  className="text-slate-500 dark:text-slate-400 hover:text-white text-sm font-medium transition-colors"
                 >
                   Ver outros eventos
                 </Link>
@@ -646,11 +646,11 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
       {showDraftModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-slate-950/80 backdrop-blur-sm p-4">
           <div className="bg-slate-50 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-2xl p-6 max-w-sm w-full">
-            <h3 className="text-slate-900 dark:text-white font-bold text-lg mb-2">Inscrição em andamento</h3>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mb-5">Você tem uma inscrição em andamento. Deseja continuar de onde parou?</p>
+            <h3 className="text-white font-bold text-lg mb-2">InscriÃ§Ã£o em andamento</h3>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-5">VocÃª tem uma inscriÃ§Ã£o em andamento. Deseja continuar de onde parou?</p>
             <div className="flex gap-3">
-              <button onClick={() => { clearDraft(); setShowDraftModal(false); }} className="flex-1 py-2.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 text-sm font-semibold hover:bg-black/5 dark:bg-white/5">Começar do zero</button>
-              <button onClick={() => { setStep('form'); setShowDraftModal(false); }} className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white text-sm font-bold">Continuar</button>
+              <button onClick={() => { clearDraft(); setShowDraftModal(false); }} className="flex-1 py-2.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 text-sm font-semibold hover:bg-black/5 dark:bg-white/5">ComeÃ§ar do zero</button>
+              <button onClick={() => { setStep('form'); setShowDraftModal(false); }} className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold">Continuar</button>
             </div>
           </div>
         </div>
@@ -661,11 +661,11 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
         <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
           <div className="animate-pulse">
             <div className="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-              <svg className="w-10 h-10 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
             </div>
           </div>
-          <p className="text-slate-900 dark:text-white font-bold text-lg">Processando pagamento em ambiente seguro...</p>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Por favor, aguarde. Não feche esta página.</p>
+          <p className="text-white font-bold text-lg">Processando pagamento em ambiente seguro...</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Por favor, aguarde. NÃ£o feche esta pÃ¡gina.</p>
         </div>
       )}
     </div>

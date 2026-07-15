@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -19,7 +19,7 @@ export interface PublicEvent {
 }
 
 const MONTH_SHORT = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-const WEEKDAY = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const WEEKDAY = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'SÃ¡b'];
 
 function parseDate(dateStr: string | null) {
   if (!dateStr) return null;
@@ -32,7 +32,7 @@ function parseDate(dateStr: string | null) {
   };
 }
 
-/* ─── Alert Banner ─────────────────────────────────────────── */
+/* â”€â”€â”€ Alert Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AlertBanner({ events }: { events: PublicEvent[] }) {
   const cancelledCount = events.filter(e => e.isCancelled).length;
   const specialSoon = events.find(e => e.type === 'especial' && !e.isCancelled);
@@ -60,7 +60,7 @@ function AlertBanner({ events }: { events: PublicEvent[] }) {
   return null;
 }
 
-/* ─── Modal ─────────────────────────────────────────────────── */
+/* â”€â”€â”€ Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => void }) {
   const date = parseDate(event.date);
   return (
@@ -75,7 +75,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
           className="relative h-52 sm:h-60 bg-cover bg-center overflow-hidden"
           style={event.banner_url ? { backgroundImage: `url(${event.banner_url})` } : {}}
         >
-          {/* Fundo padrão quando sem imagem */}
+          {/* Fundo padrÃ£o quando sem imagem */}
           {!event.banner_url && (
             <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-50 dark:to-slate-900">
               <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 40%, white 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
@@ -86,7 +86,8 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
               </div>
             </div>
           )}
-          {event.banner_url && <div className="absolute inset-0 bg-gradient-to-t from-slate-50 dark:from-slate-900 via-slate-50/40 dark:via-slate-900/40 to-transparent" />}
+          {/* Fundo gradiente */}
+          {event.banner_url && <div className="absolute inset-0 dark:bg-gradient-to-t dark:from-slate-900 dark:via-slate-900/30 dark:to-transparent" />}
 
           {/* Fechar */}
           <button
@@ -100,7 +101,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
           <div className="absolute top-4 left-4 flex gap-2 flex-wrap">
             {event.type === 'especial' && (
               <span className="flex items-center gap-1 bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-600/30 dark:border-amber-500/40 text-[10px] font-black tracking-widest uppercase px-2.5 py-1 rounded-lg backdrop-blur-md">
-                ★ Especial
+                â˜… Especial
               </span>
             )}
             {event.isCancelled && (
@@ -110,14 +111,18 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
             )}
           </div>
 
-          {/* Título sobre a imagem */}
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            {date && (
-              <p className="text-xs text-slate-900 dark:text-white/60 font-semibold uppercase tracking-widest mb-1.5">
-                {date.weekday} · {date.full}
-              </p>
-            )}
-            <h3 className="text-2xl font-black text-slate-900 dark:text-white leading-tight">{event.title}</h3>
+          {/* TÃ­tulo sobre a imagem */}
+          <div className="absolute bottom-4 left-4 right-4">
+            <div className="inline-flex flex-col max-w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-5 py-4 rounded-2xl border border-white/60 dark:border-white/10 shadow-xl group-hover:border-blue-500/30 transition-colors">
+              {date && (
+                <p className="text-xs text-slate-700 dark:text-white/80 font-bold uppercase tracking-widest mb-1.5">
+                  {date.weekday} Â· {date.full}
+                </p>
+              )}
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white leading-tight">
+                {event.title}
+              </h3>
+            </div>
           </div>
         </div>
 
@@ -130,7 +135,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
                   <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Horário</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">HorÃ¡rio</p>
                   <p className="text-slate-600 dark:text-slate-200 font-semibold text-sm">{event.time}</p>
                 </div>
               </div>
@@ -154,7 +159,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
 
           <Link
             href={`/agenda/${event.id}`}
-            className="group relative flex items-center justify-center gap-2 w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold rounded-2xl text-sm transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30 overflow-hidden"
+            className="group relative flex items-center justify-center gap-2 w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl text-sm transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30 overflow-hidden"
           >
             <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shimmer-bg" />
             <span className="relative">Tenho interesse</span>
@@ -166,7 +171,7 @@ function EventModal({ event, onClose }: { event: PublicEvent; onClose: () => voi
   );
 }
 
-/* ─── Evento Especial Card ──────────────────────────────────── */
+/* â”€â”€â”€ Evento Especial Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SpecialEventCard({ event, index, onSelect }: { event: PublicEvent; index: number, onSelect: (e: PublicEvent) => void }) {
   const { ref, visible } = useScrollReveal<HTMLDivElement>({ threshold: 0.06 });
   const date = parseDate(event.date);
@@ -238,7 +243,7 @@ function SpecialEventCard({ event, index, onSelect }: { event: PublicEvent; inde
   );
 }
 
-/* ─── Culto Regular Card ────────────────────────────────────── */
+/* â”€â”€â”€ Culto Regular Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function EventCard({ event, index, onSelect }: { event: PublicEvent; index: number, onSelect: (e: PublicEvent) => void }) {
   const { ref, visible } = useScrollReveal<HTMLDivElement>({ threshold: 0.06 });
   const date = parseDate(event.date);
@@ -251,7 +256,7 @@ function EventCard({ event, index, onSelect }: { event: PublicEvent; index: numb
         className={`group relative flex overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 ease-out bg-blue-100 dark:bg-slate-900/50 backdrop-blur-xl border border-blue-300/60 dark:border-white/8 hover:border-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/5 ${event.isCancelled ? 'opacity-60 grayscale-[40%]' : ''}`}
         style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transitionDelay: `${index * 60}ms` }}
       >
-        {/* Área de imagem / data */}
+        {/* Ãrea de imagem / data */}
         <div className="dark relative shrink-0 w-20 sm:w-24 bg-slate-800/80 border-r border-white/6 flex flex-col items-center justify-center overflow-hidden">
           {event.banner_url ? (
             <>
@@ -280,7 +285,7 @@ function EventCard({ event, index, onSelect }: { event: PublicEvent; index: numb
           )}
         </div>
 
-        {/* Conteúdo */}
+        {/* ConteÃºdo */}
         <div className="flex-1 flex items-center gap-4 px-5 py-4 min-w-0">
           <div className="flex-1 min-w-0">
             {date && <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider mb-1">{date.weekday}</p>}
@@ -350,7 +355,7 @@ export function EventsSection({ content, events }: Props) {
             Agenda
           </div>
           <h2 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
-            {content.title || 'Próximos Eventos'}
+            {content.title || 'PrÃ³ximos Eventos'}
           </h2>
           {content.subtitle && <p className="mt-4 text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">{content.subtitle}</p>}
           <p className="mt-3 text-xs text-slate-600">Clique em um evento para ver mais detalhes</p>
@@ -409,7 +414,7 @@ export function EventsSection({ content, events }: Props) {
               </svg>
             </div>
             <p className="text-slate-500 dark:text-slate-400 font-semibold mb-2">Nenhum evento programado</p>
-            <p className="text-slate-600 text-sm mb-6">Os próximos eventos aparecerão aqui assim que forem publicados no painel.</p>
+            <p className="text-slate-600 text-sm mb-6">Os prÃ³ximos eventos aparecerÃ£o aqui assim que forem publicados no painel.</p>
             <Link
               href="/agenda"
               className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-semibold border border-blue-600/30 dark:border-blue-500/20 hover:border-blue-600/50 dark:hover:border-blue-400/40 px-5 py-2.5 rounded-2xl hover:bg-blue-500/8 transition-all duration-200"

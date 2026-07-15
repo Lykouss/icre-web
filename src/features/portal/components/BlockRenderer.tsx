@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import Image from 'next/image';
 import type {
   SiteBlock, BlockLayout, BlockAlignment, BlockWidth, BlockPadding,
@@ -149,7 +149,7 @@ function AboutBlock({ content, layout }: { content: AboutContent; layout: Requir
     <Section layout={layout}>
       <div className={`grid ${content.image_url ? 'md:grid-cols-2' : 'grid-cols-1'} gap-12 items-center w-full`}>
         <div className={`flex flex-col ${FLEX_ALIGN[layout.alignment]} ${TEXT_ALIGN[layout.alignment]}`}>
-          <h2 className="text-4xl font-bold text-slate-900 mb-6">{content.title}</h2>
+          <h2 className="text-4xl font-bold text-white mb-6">{content.title}</h2>
           <p className="text-lg text-slate-600 leading-relaxed whitespace-pre-wrap">{content.text}</p>
         </div>
         {content.image_url && (
@@ -165,12 +165,12 @@ function AboutBlock({ content, layout }: { content: AboutContent; layout: Requir
 function MissionBlock({ content, layout }: { content: MissionContent; layout: Required<BlockLayout> }) {
   return (
     <Section layout={layout}>
-      <h2 className="text-4xl font-bold text-slate-900 mb-12">{content.title}</h2>
+      <h2 className="text-4xl font-bold text-white mb-12">{content.title}</h2>
       <div className="grid md:grid-cols-3 gap-8 w-full">
         {(content.items ?? []).map((item, i) => (
           <div key={i} className={`bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col ${FLEX_ALIGN[layout.alignment]} ${TEXT_ALIGN[layout.alignment]}`}>
             <div className="text-5xl mb-4">{item.icon}</div>
-            <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
+            <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
             <p className="text-slate-600 leading-relaxed">{item.text}</p>
           </div>
         ))}
@@ -183,11 +183,11 @@ function EventsBlock({ content, layout, events }: { content: EventsContent; layo
   return (
     <Section layout={layout}>
       <div className={`mb-12 flex flex-col ${FLEX_ALIGN[layout.alignment]} ${TEXT_ALIGN[layout.alignment]} w-full`}>
-        <h2 className="text-4xl font-bold text-slate-900 mb-3">{content.title}</h2>
+        <h2 className="text-4xl font-bold text-white mb-3">{content.title}</h2>
         {content.subtitle && <p className="text-lg text-slate-500">{content.subtitle}</p>}
       </div>
       {events.length === 0 ? (
-        <p className="text-slate-500 dark:text-slate-400">Nenhum evento disponível no momento.</p>
+        <p className="text-slate-500 dark:text-slate-400">Nenhum evento disponÃ­vel no momento.</p>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {events.map(event => (
@@ -196,9 +196,9 @@ function EventsBlock({ content, layout, events }: { content: EventsContent; layo
                 {event.date
                   ? new Date(event.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })
                   : 'Em breve'}
-                {event.time && ` · ${event.time.slice(0, 5)}`}
+                {event.time && ` Â· ${event.time.slice(0, 5)}`}
               </div>
-              <h3 className="font-bold text-slate-900 text-lg mb-2 group-hover:text-blue-700 transition-colors">{event.title}</h3>
+              <h3 className="font-bold text-white text-lg mb-2 group-hover:text-blue-700 transition-colors">{event.title}</h3>
               {event.location && <p className="text-sm text-slate-500">{event.location}</p>}
               <div className="mt-4 text-sm font-semibold text-blue-600 flex items-center gap-1">
                 Ver detalhes
@@ -219,7 +219,7 @@ function YoutubeBlock({ content, layout }: { content: YoutubeContent; layout: Re
   const bg = layout.bg_color !== 'transparent' ? layout.bg_color : '#0f172a';
   return (
     <Section layout={layout} style={{ backgroundColor: bg }}>
-      <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-10">{content.title}</h2>
+      <h2 className="text-4xl font-bold text-white mb-10">{content.title}</h2>
       <div className={`rounded-3xl overflow-hidden shadow-2xl aspect-video w-full`}>
         <iframe
           className="w-full h-full"
@@ -229,8 +229,8 @@ function YoutubeBlock({ content, layout }: { content: YoutubeContent; layout: Re
         />
       </div>
       {content.channel_url && (
-        <a href={content.channel_url} target="_blank" rel="noopener noreferrer" className="mt-6 text-slate-900 dark:text-white/70 hover:text-slate-900 dark:text-white font-medium transition-colors">
-          Ver canal completo →
+        <a href={content.channel_url} target="_blank" rel="noopener noreferrer" className="mt-6 text-white/70 hover:text-white font-medium transition-colors">
+          Ver canal completo â†’
         </a>
       )}
     </Section>
@@ -241,7 +241,7 @@ function ContactBlock({ content, layout }: { content: ContactContent; layout: Re
   return (
     <Section layout={layout}>
       <div className={`mb-12 flex flex-col ${FLEX_ALIGN[layout.alignment]} ${TEXT_ALIGN[layout.alignment]} w-full`}>
-        <h2 className="text-4xl font-bold text-slate-900 mb-3">{content.title}</h2>
+        <h2 className="text-4xl font-bold text-white mb-3">{content.title}</h2>
         {content.subtitle && <p className="text-lg text-slate-500">{content.subtitle}</p>}
       </div>
       <div className="grid md:grid-cols-2 gap-8 items-start w-full">
@@ -254,7 +254,7 @@ function ContactBlock({ content, layout }: { content: ContactContent; layout: Re
                 </svg>
               </div>
               <div>
-                <p className="font-semibold text-slate-800">Endereço</p>
+                <p className="font-semibold text-slate-800">EndereÃ§o</p>
                 <p className="text-slate-500 text-sm mt-0.5">{content.address}</p>
               </div>
             </div>
@@ -288,9 +288,9 @@ function ContactBlock({ content, layout }: { content: ContactContent; layout: Re
             </div>
           )}
           {!content.address && !content.phone && !content.email && (
-            <p className="text-sm text-slate-500 dark:text-slate-400 italic">Preencha as informações de contato no editor.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 italic">Preencha as informaÃ§Ãµes de contato no editor.</p>
           )}
-          <Link href="/feedback" className="inline-flex items-center gap-2 bg-blue-600 text-slate-900 dark:text-white px-6 py-3 rounded-2xl font-semibold hover:bg-blue-700 transition-colors">
+          <Link href="/feedback" className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-blue-700 transition-colors">
             Fale conosco
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />

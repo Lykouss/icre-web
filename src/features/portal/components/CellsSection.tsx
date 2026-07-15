@@ -45,8 +45,10 @@ function CellCard({ cell, index, onClick }: { cell: PublicCell; index: number; o
         </div>
 
         {/* Name Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 pt-12">
-          <h3 className="text-xl sm:text-2xl font-black text-white mix-blend-difference dark:mix-blend-normal transition-colors duration-300 leading-tight">{cell.name}</h3>
+        <div className="absolute bottom-4 left-4 right-16">
+          <div className="inline-flex max-w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/60 dark:border-white/10 shadow-xl group-hover:border-blue-500/30 transition-colors">
+            <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors duration-300 leading-tight truncate">{cell.name}</h3>
+          </div>
         </div>
       </div>
 

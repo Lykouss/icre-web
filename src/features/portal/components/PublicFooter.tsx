@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -24,12 +24,12 @@ export function PublicFooter() {
                 <Image src="/logo.svg" alt="ICRE Logo" fill className="object-contain dark:invert dark:brightness-0" />
               </div>
               <div className="flex flex-col">
-                <span className="font-black text-xl tracking-tight text-slate-900 dark:text-white leading-none">ICRE</span>
+                <span className="font-black text-xl tracking-tight text-white leading-none">ICRE</span>
                 <span className="text-[9px] font-bold tracking-[0.2em] text-slate-500 dark:text-slate-400 uppercase mt-1">Rocha Eterna</span>
               </div>
             </Link>
             <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-8 max-w-xs">
-              Nosso chamado é viver o evangelho genuíno, amando a Deus e servindo ao próximo com excelência e paixão.
+              Nosso chamado Ã© viver o evangelho genuÃ­no, amando a Deus e servindo ao prÃ³ximo com excelÃªncia e paixÃ£o.
             </p>
             {/* Redes Sociais */}
             <div className="flex items-center gap-4">
@@ -41,23 +41,23 @@ export function PublicFooter() {
 
           {/* Links 1 */}
           <div className="md:col-span-3 lg:col-span-2 lg:col-start-6">
-            <h4 className="text-slate-900 dark:text-white font-bold mb-5 tracking-wide">Navegação</h4>
+            <h4 className="text-white font-bold mb-5 tracking-wide">NavegaÃ§Ã£o</h4>
             <ul className="space-y-3 text-sm text-slate-500 dark:text-slate-400">
-              <li><Link href="/#inicio" className="hover:text-blue-400 transition-colors">Início</Link></li>
-              <li><Link href="/#sobre" className="hover:text-blue-400 transition-colors">Sobre Nós</Link></li>
-              <li><Link href="/#lideranca" className="hover:text-blue-400 transition-colors">Liderança</Link></li>
-              <li><Link href="/#celulas" className="hover:text-blue-400 transition-colors">Células</Link></li>
+              <li><Link href="/#inicio" className="hover:text-blue-400 transition-colors">InÃ­cio</Link></li>
+              <li><Link href="/#sobre" className="hover:text-blue-400 transition-colors">Sobre NÃ³s</Link></li>
+              <li><Link href="/#lideranca" className="hover:text-blue-400 transition-colors">LideranÃ§a</Link></li>
+              <li><Link href="/#celulas" className="hover:text-blue-400 transition-colors">CÃ©lulas</Link></li>
               <li><Link href="/agenda" className="hover:text-blue-400 transition-colors">Agenda de Eventos</Link></li>
             </ul>
           </div>
 
           {/* Links 2 */}
           <div className="md:col-span-4 lg:col-span-3">
-            <h4 className="text-slate-900 dark:text-white font-bold mb-5 tracking-wide">Contato & Ajuda</h4>
+            <h4 className="text-white font-bold mb-5 tracking-wide">Contato & Ajuda</h4>
             <ul className="space-y-3 text-sm text-slate-500 dark:text-slate-400">
               <li><Link href="/feedback" className="hover:text-blue-400 transition-colors">Fale Conosco</Link></li>
-              <li><Link href="/ajuda" className="hover:text-blue-400 transition-colors">Dúvidas Frequentes</Link></li>
-              <li><Link href="/suporte" className="hover:text-blue-400 transition-colors">Suporte Técnico</Link></li>
+              <li><Link href="/ajuda" className="hover:text-blue-400 transition-colors">DÃºvidas Frequentes</Link></li>
+              <li><Link href="/suporte" className="hover:text-blue-400 transition-colors">Suporte TÃ©cnico</Link></li>
             </ul>
           </div>
 
@@ -66,10 +66,10 @@ export function PublicFooter() {
         {/* Bottom Line */}
         <div className="pt-8 border-t border-blue-200/50 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-slate-500 text-xs text-center md:text-left">
-            © {new Date().getFullYear()} Igreja de Cristo Rocha Eterna. Todos os direitos reservados.
+            Â© {new Date().getFullYear()} Igreja de Cristo Rocha Eterna. Todos os direitos reservados.
           </p>
           <div className="flex items-center gap-6 text-xs text-slate-500">
-            <Link href="/privacidade" className="hover:text-slate-600 dark:text-slate-300 transition-colors">Política de Privacidade</Link>
+            <Link href="/privacidade" className="hover:text-slate-600 dark:text-slate-300 transition-colors">PolÃ­tica de Privacidade</Link>
             <Link href="/termos" className="hover:text-slate-600 dark:text-slate-300 transition-colors">Termos de Uso</Link>
           </div>
         </div>

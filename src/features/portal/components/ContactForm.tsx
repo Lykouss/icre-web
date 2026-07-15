@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link';
 import { useScrollReveal } from '@/features/core/hooks/use-scroll-reveal';
@@ -53,7 +53,7 @@ export function ContactSection({ content }: Props) {
       </div>
 
       <div className="relative max-w-6xl mx-auto">
-        {/* Título */}
+        {/* TÃ­tulo */}
         <div
           ref={titleRef}
           className="text-center mb-16 transition-all duration-700 ease-out"
@@ -76,7 +76,7 @@ export function ContactSection({ content }: Props) {
             {content.address && (
               <InfoRow
                 icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
-                label="Endereço" value={content.address} delay={0}
+                label="EndereÃ§o" value={content.address} delay={0}
               />
             )}
             {content.phone && (
@@ -98,18 +98,18 @@ export function ContactSection({ content }: Props) {
             {content.schedule && (
               <InfoRow
                 icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
-                label="Horários" value={content.schedule} delay={240}
+                label="HorÃ¡rios" value={content.schedule} delay={240}
               />
             )}
 
             {!content.address && !content.phone && !content.email && (
-              <p className="text-sm text-slate-500 italic">Configure as informações de contato no painel.</p>
+              <p className="text-sm text-slate-500 italic">Configure as informaÃ§Ãµes de contato no painel.</p>
             )}
 
             <div className="pt-2">
               <Link
                 href="/feedback"
-                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-bold px-6 py-3 rounded-2xl text-sm transition-all duration-200 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25"
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-2xl text-sm transition-all duration-200 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25"
               >
                 Fale conosco
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +134,7 @@ export function ContactSection({ content }: Props) {
                     className="w-full h-full border-0"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="Localização da ICRE"
+                    title="LocalizaÃ§Ã£o da ICRE"
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-slate-600">
