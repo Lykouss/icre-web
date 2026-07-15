@@ -882,3 +882,24 @@ export async function markGiftAsNotified(registrationId: string) {
   }
   return { success: true };
 }
+ e x p o r t   a s y n c   f u n c t i o n   a c c e p t R e g i s t r a t i o n T e r m s ( r e g i s t r a t i o n I d :   s t r i n g )   { 
+     c o n s t   u s e r   =   a w a i t   g e t C u r r e n t U s e r ( ) ; 
+     i f   ( ! u s e r )   r e t u r n   {   e r r o r :   ' N ã o   a u t o r i z a d o '   } ; 
+     c o n s t   s u p a b a s e   =   a w a i t   c r e a t e C l i e n t ( ) ; 
+     
+     c o n s t   {   e r r o r   }   =   a w a i t   s u p a b a s e 
+         . f r o m ( ' e v e n t _ r e g i s t r a t i o n s ' ) 
+         . u p d a t e ( {   t e r m s _ a c c e p t e d _ a t :   n e w   D a t e ( ) . t o I S O S t r i n g ( )   } ) 
+         . e q ( ' i d ' ,   r e g i s t r a t i o n I d ) 
+         . i s ( ' t e r m s _ a c c e p t e d _ a t ' ,   n u l l ) ; 
+ 
+     i f   ( e r r o r )   { 
+         c o n s o l e . e r r o r ( ' [ a c c e p t R e g i s t r a t i o n T e r m s ]   E r r o r : ' ,   e r r o r ) ; 
+         r e t u r n   {   e r r o r :   ' F a l h a   a o   a c e i t a r   o s   t e r m o s '   } ; 
+     } 
+ 
+     r e v a l i d a t e P a t h ( ' / c o m p r o v a n t e / '   +   r e g i s t r a t i o n I d ) ; 
+     r e t u r n   {   s u c c e s s :   t r u e   } ; 
+ } 
+  
+ 

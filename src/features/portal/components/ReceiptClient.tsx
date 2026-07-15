@@ -11,6 +11,7 @@ interface EventData {
   location: string | null;
   type: string;
   ticket_price: number | null;
+  terms_text?: string | null;
 }
 
 interface RegistrationData {
@@ -26,6 +27,8 @@ interface RegistrationData {
   asaas_payment_id: string | null;
   asaas_invoice_url: string | null;
   ticket_signature?: string | null;
+  is_gift?: boolean;
+  terms_accepted_at?: string | null;
   events: EventData | null;
 }
 
@@ -74,10 +77,26 @@ const STATUS_LABELS: Record<string, string> = {
 
 export function ReceiptClient({ registration }: Props) {
   const receiptRef = useRef<HTMLDivElement>(null);
+  const [isAcceptingTerms, setIsAcceptingTerms] = React.useState(false);
   const event = registration.events;
+
+  const requiresTermsAcceptance = registration.is_gift && !registration.terms_accepted_at;
 
   // Protocolo (últimos 8 chars do UUID em maiúsculo)
   const protocol = registration.id.replace(/-/g, '').slice(-8).toUpperCase();
+
+  const handleAcceptTerms = async () => {
+    setIsAcceptingTerms(true);
+    try {
+      const { acceptRegistrationTerms } = await import('@/features/events/actions/registrations');
+      await acceptRegistrationTerms(registration.id);
+    } catch (e) {
+      console.error(e);
+      alert('Erro ao aceitar termos. Tente novamente.');
+    } finally {
+      setIsAcceptingTerms(false);
+    }
+  };
 
   const handleDownloadPDF = async () => {
     const { default: JsPDF } = await import('jspdf');
@@ -163,7 +182,7 @@ export function ReceiptClient({ registration }: Props) {
     doc.text('✓ PAGAMENTO/ISENÇÃO CONFIRMADO', 14, y);
 
     // ── QR Code ──
-    if (registration.ticket_signature) {
+    if (registration.ticket_signature && !requiresTermsAcceptance) {
       y += 18;
       const qrData = `${registration.id}:${registration.ticket_signature}`;
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
@@ -173,6 +192,12 @@ export function ReceiptClient({ registration }: Props) {
       doc.setFont('helvetica', 'normal');
       doc.text('Apresente este QR Code no check-in do evento.', 62, y + 20);
       y += 50;
+    } else if (requiresTermsAcceptance) {
+      y += 18;
+      doc.setFontSize(9);
+      doc.setTextColor(220, 38, 38);
+      doc.text('Ingresso bloqueado. É necessário aceitar os termos de participação online.', 14, y);
+      y += 10;
     }
 
     // ── Protocolo ──
@@ -279,12 +304,25 @@ export function ReceiptClient({ registration }: Props) {
 
           {/* ── QR Code (destaque) ── */}
           {registration.ticket_signature && (
-            <div className="border-t border-black/6 dark:border-white/6 bg-white mx-7 my-6 rounded-xl overflow-hidden">
-              <div className="flex flex-col items-center py-6">
+            <div className="border-t border-black/6 dark:border-white/6 bg-white mx-7 my-6 rounded-xl overflow-hidden relative">
+              {requiresTermsAcceptance && (
+                <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
+                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-3">
+                    <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">Aceite os Termos</h3>
+                  <p className="text-sm text-slate-600 mb-4 max-w-sm">
+                    Para visualizar seu ingresso e ter acesso ao evento, você precisa ler e aceitar os termos de participação.
+                  </p>
+                </div>
+              )}
+              <div className={`flex flex-col items-center py-6 ${requiresTermsAcceptance ? 'opacity-20 blur-sm' : ''}`}>
                 <img
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(`${registration.id}:${registration.ticket_signature}`)}`}
                   alt="QR Code do Ingresso"
-                  className="w-52 h-52 mb-3"
+                  className="w-52 h-52 mb-3 pointer-events-none"
                 />
                 <div className="flex items-center gap-2 text-slate-600">
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -293,6 +331,31 @@ export function ReceiptClient({ registration }: Props) {
                   <p className="text-xs font-bold text-slate-700 uppercase tracking-widest">Apresente no Check-in</p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {requiresTermsAcceptance && (
+            <div className="mx-7 mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-xl p-5">
+              <h4 className="font-bold text-red-800 dark:text-red-400 mb-2 text-sm uppercase tracking-wider">Termos do Evento</h4>
+              <div className="text-sm text-red-900/80 dark:text-red-300/80 mb-4 max-h-32 overflow-y-auto pr-2 custom-scrollbar whitespace-pre-wrap text-left">
+                {event?.terms_text || 'Ao confirmar sua inscrição, você concorda com os termos e regras de participação estabelecidos pela organização do evento.'}
+              </div>
+              <button
+                onClick={handleAcceptTerms}
+                disabled={isAcceptingTerms}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
+              >
+                {isAcceptingTerms ? (
+                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Eu li e aceito os termos
+                  </>
+                )}
+              </button>
             </div>
           )}
 

@@ -138,11 +138,75 @@ export async function sendSystemNotificationToUser(
     return { success: false };
   }
 }
+}
+
+export async function syncRegistrationNotifications(userId: string, email: string) {
+  try {
+    const admin = await createAdminClient();
+    
+    // Buscar inscrições atreladas a este usuário (pelo email)
+    const { data: registrations, error: fetchError } = await admin
+      .from('event_registrations')
+      .select('id, event_id, status, is_gift, notified_events, events(title)')
+      .eq('email', email);
+
+    if (fetchError || !registrations) return;
+
+    for (const reg of registrations) {
+      const notified = Array.isArray(reg.notified_events) ? reg.notified_events : [];
+      const eventTitle = reg.events?.title || 'o evento';
+      let toNotify = '';
+      let msgType: CommunicationType = 'INFO';
+      let title = '';
+      let message = '';
+
+      if (reg.is_gift && !notified.includes('GIFT')) {
+        toNotify = 'GIFT';
+        msgType = 'INFO';
+        title = 'Você ganhou um Ingresso! 🎁';
+        message = `Você foi presenteado com uma inscrição para o evento "${eventTitle}". Acesse seu comprovante para visualizar e aceitar os termos de participação.`;
+      } else if (reg.status === 'pendente_pagamento' && !notified.includes('PENDING')) {
+        toNotify = 'PENDING';
+        msgType = 'WARNING';
+        title = 'Pagamento Pendente ⏳';
+        message = `Você tem um pagamento pendente para "${eventTitle}". Acesse sua aba de inscrições para concluir o pagamento.`;
+      } else if (reg.status === 'confirmado' && !reg.is_gift && !notified.includes('CONFIRMED')) {
+        toNotify = 'CONFIRMED';
+        msgType = 'INFO';
+        title = 'Inscrição Confirmada! 🎉';
+        message = `Sua inscrição para "${eventTitle}" foi confirmada com sucesso! Acesse a aba de inscrições para ver seu ingresso.`;
+      } else if (reg.status === 'cancelado' && !notified.includes('CANCELLED')) {
+        toNotify = 'CANCELLED';
+        msgType = 'WARNING';
+        title = 'Tempo Expirado ⏰';
+        message = `O tempo limite para pagamento da inscrição em "${eventTitle}" expirou. Sua inscrição foi cancelada automaticamente.`;
+      }
+
+      if (toNotify) {
+        // Envia notificação
+        await sendSystemNotificationToUser(userId, msgType, title, message);
+        
+        // Atualiza a lista de notificações enviadas nesta inscrição
+        const newNotified = [...notified, toNotify];
+        await admin
+          .from('event_registrations')
+          .update({ notified_events: newNotified })
+          .eq('id', reg.id);
+      }
+    }
+  } catch (e) {
+    console.error('[syncRegistrationNotifications] error', e);
+  }
+}
 
 export async function getUserInbox() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { data: [], error: 'Não autenticado' };
+
+  if (user.email) {
+    await syncRegistrationNotifications(user.id, user.email);
+  }
 
   const { data, error } = await supabase
     .from('user_notifications')
