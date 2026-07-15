@@ -99,6 +99,46 @@ export async function dispatchCommunication(payload: DispatchPayload): Promise<{
   }
 }
 
+export async function sendSystemNotificationToUser(
+  userId: string,
+  type: CommunicationType,
+  title: string,
+  message: string
+) {
+  try {
+    const admin = await createAdminClient();
+    
+    // Create communication
+    const { data: comm, error: commError } = await admin
+      .from('communications')
+      .insert({
+        type,
+        title,
+        message,
+        audience_filter: { type: 'MANUAL', userIds: [userId] },
+        // Use a system user ID or let created_by be null if allowed, 
+        // since it's an internal system message. Assuming foreign key allows null,
+        // or we just omit created_by.
+      })
+      .select('id')
+      .single();
+
+    if (commError || !comm) throw new Error(commError?.message || 'Error creating communication');
+
+    // Assign to user
+    await admin.from('user_notifications').insert({
+      user_id: userId,
+      communication_id: comm.id,
+      is_read: false,
+    });
+    
+    return { success: true };
+  } catch (e) {
+    console.error('[sendSystemNotificationToUser] failed', e);
+    return { success: false };
+  }
+}
+
 export async function getUserInbox() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

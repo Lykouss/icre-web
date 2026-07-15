@@ -81,14 +81,9 @@ export function UserInbox() {
         <DropdownMenu.Content
           align="end"
           sideOffset={16}
-          className="z-50 w-80 max-h-[28rem] rounded-2xl shadow-2xl overflow-y-auto overflow-x-hidden portal-scroll border animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2"
-          style={{ 
-            background: 'rgba(15, 23, 42, 0.95)', 
-            backdropFilter: 'blur(16px)',
-            borderColor: 'rgba(255,255,255,0.1)'
-          }}
+          className="z-50 w-80 max-h-[28rem] rounded-2xl shadow-2xl overflow-y-auto overflow-x-hidden portal-scroll border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2"
         >
-          <div className="sticky top-0 px-4 py-3 border-b border-black/5 dark:border-white/5 bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-900/90 z-10 flex justify-between items-center">
+          <div className="sticky top-0 px-4 py-3 border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-slate-900/90 backdrop-blur-md z-10 flex justify-between items-center">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">Caixa de Entrada</h3>
             {unreadCount > 0 && <span className="text-[10px] font-bold bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">{unreadCount} não lidas</span>}
           </div>
@@ -108,7 +103,7 @@ export function UserInbox() {
                     setOpen(false);
                     router.push(`/minhas-notificacoes?id=${item.id}`);
                   }}
-                  className={`relative p-4 outline-none cursor-pointer transition-colors border-b border-white/5 last:border-b-0 hover:bg-white/5 ${!item.is_read ? 'bg-blue-500/5' : ''}`}
+                  className={`relative p-4 outline-none cursor-pointer transition-colors border-b border-black/5 dark:border-white/5 last:border-b-0 hover:bg-slate-50 dark:hover:bg-white/5 ${!item.is_read ? 'bg-blue-500/5' : ''}`}
                 >
                   <div className="flex items-start gap-3">
                     {!item.is_read && <div className="w-2 h-2 mt-1.5 shrink-0 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />}
@@ -117,7 +112,7 @@ export function UserInbox() {
                         <span className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-400">{typeTranslations[item.communications.type] || item.communications.type}</span>
                         <span className="text-[10px] text-slate-500">{new Date(item.created_at).toLocaleDateString()}</span>
                       </div>
-                      <p className={`text-sm ${!item.is_read ? 'font-bold text-white' : 'font-medium text-slate-300'}`}>{item.communications.title}</p>
+                      <p className={`text-sm ${!item.is_read ? 'font-bold text-slate-900 dark:text-white' : 'font-medium text-slate-600 dark:text-slate-300'}`}>{item.communications.title}</p>
                       <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 line-clamp-3 leading-relaxed">{item.communications.message}</p>
                     </div>
                   </div>

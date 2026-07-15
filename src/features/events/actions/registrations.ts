@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/features/core/api/get-current-user';
+import { sendSystemNotificationToUser } from '@/features/core/actions/communications';
 import { isValidUuid, isValidPhone, isValidEmail } from '@/lib/action-validators';
 import {
   createOrFindAsaasCustomer,
@@ -387,6 +388,17 @@ export async function createPublicRegistration(
     }
 
     await logEventHistory(eventId, 'inscrição_aguardando_pagamento', user?.id, null, { registration_id, payment_id: payment.id });
+    
+    if (user?.id) {
+      // Notification of pending payment to the inbox
+      await sendSystemNotificationToUser(
+        user.id,
+        'WARNING',
+        'Pagamento Pendente',
+        `Você tem um pagamento pendente para o evento "${event.title}". Acesse sua aba de inscrições para concluir o pagamento e garantir sua vaga.`
+      );
+    }
+
     revalidatePath(`/agenda/${eventId}`);
 
     return {
