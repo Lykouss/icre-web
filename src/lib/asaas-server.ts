@@ -89,7 +89,7 @@ export async function createOrFindAsaasCustomer(
         customerId = existingCpf.data[0].id;
       }
     } catch (error) {
-      console.warn('Busca por CPF falhou, caindo para fallback ou criação:', error);
+      console.warn('Busca por CPF falhou, caindo para fallback ou criacao:', error instanceof Error ? error.message : 'Unknown error');
     }
   }
 
@@ -102,7 +102,7 @@ export async function createOrFindAsaasCustomer(
         customerId = existingEmail.data[0].id;
       }
     } catch (error) {
-      console.warn('Busca por e-mail falhou, caindo para criação:', error);
+      console.warn('Busca por e-mail falhou, caindo para criacao:', error instanceof Error ? error.message : 'Unknown error');
     }
   }
 

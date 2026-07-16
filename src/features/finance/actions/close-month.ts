@@ -74,7 +74,7 @@ export async function closeMonth(month: number, year: number) {
     .single();
 
   if (error) {
-    console.error('Erro ao fechar caixa:', JSON.stringify(error, null, 2));
+    console.error('Erro ao fechar caixa:', error instanceof Error ? error.message : String(error));
     return { error: 'Falha ao registrar o fechamento.' };
   }
 

@@ -51,7 +51,7 @@ async function uploadFile(
 
   const { error } = await admin.storage
     .from(bucket)
-    .upload(fullPath, file, { upsert: true, contentType: file.type });
+    .upload(fullPath, file, { upsert: true, contentType: file.type, cacheControl: '31536000' });
 
   if (error) {
     console.error(`[upload] ${bucket}/${fullPath}:`, error.message);

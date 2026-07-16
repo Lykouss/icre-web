@@ -96,15 +96,19 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
     try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
   }, [DRAFT_KEY]);
 
-  // Auto-polling PIX every 10s
+  // Auto-polling PIX every 10s (max 60 tentativas = ~10 min)
+  const [pixCheckCount, setPixCheckCount] = useState(0);
+  const MAX_PIX_CHECKS = 60;
+
   useEffect(() => {
-    if (step !== 'payment' || !registrationId || !paymentInfo?.pixQrCode) return;
+    if (step !== 'payment' || !registrationId || !paymentInfo?.pixQrCode || pixCheckCount >= MAX_PIX_CHECKS) return;
     const interval = setInterval(async () => {
+      setPixCheckCount(prev => prev + 1);
       const result = await checkAndUpdatePaymentStatus(registrationId);
       if (result.paid) { clearDraft(); setStep('success'); }
     }, 10_000);
     return () => clearInterval(interval);
-  }, [step, registrationId, paymentInfo?.pixQrCode, clearDraft]);
+  }, [step, registrationId, paymentInfo?.pixQrCode, clearDraft, pixCheckCount]);
 
   const isPaid = event.requires_payment && (event.ticket_price ?? 0) > 0;
   const needsRegistration = event.requires_registration || isPaid;

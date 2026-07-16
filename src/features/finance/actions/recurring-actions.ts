@@ -61,7 +61,7 @@ export async function createRecurring(formData: FormData) {
     .single();
 
   if (error) {
-    console.error('Erro ao criar recorrente:', JSON.stringify(error, null, 2));
+    console.error('Erro ao criar recorrente:', error instanceof Error ? error.message : String(error));
     return { error: 'Falha ao salvar.' };
   }
 
@@ -100,7 +100,7 @@ export async function toggleRecurring(id: string, active: boolean) {
     .eq('id', id);
 
   if (error) {
-    console.error('Erro ao atualizar recorrente:', JSON.stringify(error, null, 2));
+    console.error('Erro ao atualizar recorrente:', error instanceof Error ? error.message : String(error));
     return { error: 'Falha ao atualizar.' };
   }
 
@@ -140,7 +140,7 @@ export async function deleteRecurring(id: string) {
     .eq('id', id);
 
   if (error) {
-    console.error('Erro ao deletar recorrente:', JSON.stringify(error, null, 2));
+    console.error('Erro ao deletar recorrente:', error instanceof Error ? error.message : String(error));
     return { error: 'Falha ao excluir.' };
   }
 

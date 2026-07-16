@@ -142,7 +142,7 @@ export function EventForm({ initialData, onSaved, onCancel }: EventFormProps) {
     setIsUploading(true);
     e.target.value = '';
     const ext = file.name.split('.').pop();
-    const { error } = await supabase.storage.from('site-images').upload(`event-${Date.now()}.${ext}`, file, { cacheControl: '3600', upsert: false });
+    const { error } = await supabase.storage.from('site-images').upload(`event-${Date.now()}.${ext}`, file, { cacheControl: '31536000', upsert: false });
     if (error) toast('error', 'Erro ao enviar imagem.');
     else { toast('success', 'Imagem enviada!'); await loadGallery(); }
     setIsUploading(false);

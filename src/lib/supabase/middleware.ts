@@ -1,6 +1,11 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+// CACHE GLOBAL PARA EDGE RUNTIME
+let cachedMaintenance: any = null;
+let lastMaintenanceCheck = 0;
+const MAINTENANCE_CACHE_TTL = 60 * 1000; // 1 minuto
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -40,11 +45,18 @@ export async function updateSession(request: NextRequest) {
 
   // 3. Verificação de Manutenção (Redirecionamento Invisível - Rewrite)
   if (pathname !== '/manutencao-screen' && !pathname.startsWith('/api') && !pathname.startsWith('/_next')) {
-    const { data: maintenance } = await supabaseAdmin
-      .from('site_maintenance')
-      .select('is_portal_maintenance, is_sige_maintenance, scheduled_portal, scheduled_sige, auto_activate_scheduled, auto_deactivate_expected, scheduled_at, expected_end_at')
-      .eq('id', 1)
-      .maybeSingle();
+    const nowTs = Date.now();
+    if (!cachedMaintenance || nowTs - lastMaintenanceCheck > MAINTENANCE_CACHE_TTL) {
+      const { data: fetchMaintenance } = await supabaseAdmin
+        .from('site_maintenance')
+        .select('is_portal_maintenance, is_sige_maintenance, scheduled_portal, scheduled_sige, auto_activate_scheduled, auto_deactivate_expected, scheduled_at, expected_end_at')
+        .eq('id', 1)
+        .maybeSingle();
+      cachedMaintenance = fetchMaintenance;
+      lastMaintenanceCheck = nowTs;
+    }
+
+    const maintenance = cachedMaintenance;
 
     if (maintenance) {
       const now = new Date();

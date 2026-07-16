@@ -148,7 +148,7 @@ export function AdminMemberPanel({
     const supabase = createClient();
     const ext = file.name.split('.').pop();
     const fileName = `${member.id}-${Date.now()}.${ext}`;
-    const { data, error } = await supabase.storage.from('avatars').upload(fileName, file);
+    const { data, error } = await supabase.storage.from('avatars').upload(fileName, file, { cacheControl: '31536000' });
     if (!error && data) {
       const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(data.path);
       setPhotoUrl(urlData.publicUrl);

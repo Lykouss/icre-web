@@ -7,6 +7,20 @@ export async function updateOwnPassword(password: string) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Não autorizado' };
 
+  // Validação de complexidade da senha
+  if (!password || password.length < 8) {
+    return { error: 'A senha deve ter pelo menos 8 caracteres.' };
+  }
+  if (!/[A-Z]/.test(password)) {
+    return { error: 'A senha deve conter pelo menos uma letra maiúscula.' };
+  }
+  if (!/[a-z]/.test(password)) {
+    return { error: 'A senha deve conter pelo menos uma letra minúscula.' };
+  }
+  if (!/\d/.test(password)) {
+    return { error: 'A senha deve conter pelo menos um número.' };
+  }
+
   const supabase = await createClient();
 
   // 1. Atualizar a senha no auth

@@ -35,6 +35,6 @@ export async function saveFinanceLog({
   });
 
   if (error) {
-    console.error('Erro ao salvar log financeiro:', JSON.stringify(error, null, 2));
+    console.error('Erro ao salvar log financeiro:', error instanceof Error ? error.message : String(error));
   }
 }

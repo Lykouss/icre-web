@@ -58,15 +58,26 @@ export function PaymentPageClient({ payment }: Props) {
   const [liveBoletoBarCode, setLiveBoletoBarCode] = useState(payment.boletoBarCode);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  // Poll para gerar PIX ou Boleto caso falhe na geração inicial
+  // Poll para gerar PIX ou Boleto caso falhe na geração inicial (max 20 tentativas = ~60s)
+  const [syncRetries, setSyncRetries] = useState(0);
+  const MAX_SYNC_RETRIES = 20;
+
   useEffect(() => {
     if (paymentConfirmed) return;
     const missingPix = !isBoleto && !livePixQrCode;
     const missingBoleto = isBoleto && !liveBoletoUrl;
     
-    if (missingPix || missingBoleto) {
+    if ((missingPix || missingBoleto) && syncRetries < MAX_SYNC_RETRIES) {
       setIsSyncing(true);
       const syncInterval = setInterval(async () => {
+        setSyncRetries(prev => {
+          if (prev >= MAX_SYNC_RETRIES) {
+            clearInterval(syncInterval);
+            setIsSyncing(false);
+            return prev;
+          }
+          return prev + 1;
+        });
         const details = await syncPaymentDetails(payment.registrationId);
         if (details && !details.error) {
           if (!isBoleto && details.pixQrCode) {
@@ -83,8 +94,10 @@ export function PaymentPageClient({ payment }: Props) {
         }
       }, 3000);
       return () => clearInterval(syncInterval);
+    } else if (syncRetries >= MAX_SYNC_RETRIES) {
+      setIsSyncing(false);
     }
-  }, [paymentConfirmed, isBoleto, livePixQrCode, liveBoletoUrl, payment.registrationId]);
+  }, [paymentConfirmed, isBoleto, livePixQrCode, liveBoletoUrl, payment.registrationId, syncRetries]);
 
   // Countdown do PIX
   useEffect(() => {
@@ -104,7 +117,10 @@ export function PaymentPageClient({ payment }: Props) {
     return () => clearInterval(interval);
   }, [payment.pixExpirationDate]);
 
-  // Auto-polling a cada 10s
+  // Auto-polling a cada 10s (max 60 tentativas = ~10 min)
+  const [checkRetries, setCheckRetries] = useState(0);
+  const MAX_CHECK_RETRIES = 60;
+
   const checkPayment = useCallback(() => {
     startChecking(async () => {
       const result = await checkAndUpdatePaymentStatus(payment.registrationId);
@@ -116,10 +132,13 @@ export function PaymentPageClient({ payment }: Props) {
   }, [payment.registrationId, router]);
 
   useEffect(() => {
-    if (paymentConfirmed) return;
-    const interval = setInterval(checkPayment, 10_000);
+    if (paymentConfirmed || checkRetries >= MAX_CHECK_RETRIES) return;
+    const interval = setInterval(() => {
+      setCheckRetries(prev => prev + 1);
+      checkPayment();
+    }, 10_000);
     return () => clearInterval(interval);
-  }, [checkPayment, paymentConfirmed]);
+  }, [checkPayment, paymentConfirmed, checkRetries]);
 
   const handleManualCheck = () => {
     setCheckError('');

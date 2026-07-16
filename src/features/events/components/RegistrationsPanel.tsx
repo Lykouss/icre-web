@@ -3,7 +3,6 @@
 import React, { useState, useTransition, useRef } from 'react';
 import { useToast } from '@/features/core/components/ToastContext';
 import {
-  createRegistration,
   cancelRegistration,
   updateRegistrationPayment,
   giftRegistration,

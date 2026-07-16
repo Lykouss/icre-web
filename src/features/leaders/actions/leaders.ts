@@ -25,7 +25,7 @@ async function uploadLeaderPhoto(
 
   const { error } = await admin.storage
     .from('site-images')
-    .upload(fullPath, file, { upsert: true, contentType: file.type });
+    .upload(fullPath, file, { upsert: true, contentType: file.type, cacheControl: '31536000' });
 
   if (error) {
     console.error('[leaders upload]', fullPath, error.message);
