@@ -147,7 +147,7 @@ export async function createPublicRegistration(
   // Validate Turnstile
   const isHuman = await verifyTurnstileToken(turnstileToken);
   if (!isHuman) {
-    return { error: 'Verificação de seguranÃƒÂ§a falhou. Por favor, tente novamente.' };
+    return { error: 'Verificação de segurança falhou. Por favor, tente novamente.' };
   }
 
   const name      = (formData.get('name')     as string)?.trim();
@@ -179,24 +179,24 @@ export async function createPublicRegistration(
     .eq('id', eventId)
     .single();
 
-  if (!event) return { error: 'Evento nÃƒÂ£o encontrado.' };
+  if (!event) return { error: 'Evento não encontrado.' };
 
   // Access control
   if (event.status !== 'publicado' && !user?.isSysAdmin) {
-    return { error: 'Evento nÃƒÂ£o está disponível para inscriÃƒÂ§ÃƒÂµes.' };
+    return { error: 'Evento não está disponível para inscrições.' };
   }
   if (!event.requires_registration) {
-    return { error: 'Este evento nÃƒÂ£o requer inscrição prÃƒÂ©via.' };
+    return { error: 'Este evento não requer inscrição prévia.' };
   }
   if (event.publish_at && new Date(event.publish_at) > new Date() && !user?.isSysAdmin) {
-    return { error: 'As inscriÃƒÂ§ÃƒÂµes para este evento ainda nÃƒÂ£o estÃƒÂ£o abertas.' };
+    return { error: 'As inscrições para este evento ainda não estão abertas.' };
   }
 
   const needsPayment = event.requires_payment && (event.ticket_price ?? 0) > 0;
 
   // CPF required for paid events
   if (needsPayment) {
-    if (!cpf) return { error: 'CPF ÃƒÂ© obrigatório para eventos pagos.' };
+    if (!cpf) return { error: 'CPF é obrigatório para eventos pagos.' };
     if (!isValidCpf(cpf)) return { error: 'CPF inválido. Verifique os dígitos.' };
   }
 
@@ -218,7 +218,7 @@ export async function createPublicRegistration(
       .eq('event_id', eventId)
       .eq('ip_address', ipAddress)
       .in('status', ['confirmado', 'pendente_pagamento']);
-    if ((count ?? 0) >= event.max_per_ip) return { error: 'Limite de inscriÃƒÂ§ÃƒÂµes por IP atingido.' };
+    if ((count ?? 0) >= event.max_per_ip) return { error: 'Limite de inscrições por IP atingido.' };
   }
 
   // Device limit check
@@ -229,7 +229,7 @@ export async function createPublicRegistration(
       .eq('event_id', eventId)
       .eq('device_id', deviceId)
       .in('status', ['confirmado', 'pendente_pagamento']);
-    if ((count ?? 0) >= event.max_per_device) return { error: 'Limite de inscriÃƒÂ§ÃƒÂµes por dispositivo atingido.' };
+    if ((count ?? 0) >= event.max_per_device) return { error: 'Limite de inscrições por dispositivo atingido.' };
   }
 
   // Duplicate email check
@@ -304,10 +304,10 @@ export async function createPublicRegistration(
   // 1. Verificar disponibilidade do Asaas ANTES de criar a inscrição
   const asaasOk = await checkAsaasHealth();
   if (!asaasOk) {
-    // Rollback imediato: nÃƒÂ£o vale deixar inscrição pendente sem pagamento
+    // Rollback imediato: não vale deixar inscrição pendente sem pagamento
     await safeRollbackRegistration(supabaseAdmin, registration_id, 'asaas_health_check_failed');
     return {
-      error: 'O sistema de pagamentos está temporáriamente indisponível. Sua inscrição nÃƒÂ£o foi cobrada. Por favor, tente novamente em alguns minutos.',
+      error: 'O sistema de pagamentos está temporáriamente indisponível. Sua inscrição não foi cobrada. Por favor, tente novamente em alguns minutos.',
     };
   }
 
@@ -368,7 +368,7 @@ export async function createPublicRegistration(
       }
     }
 
-    // UPDATE atÃƒÂ´mico: só avanÃƒÂ§a o status após ter o payment.id
+    // UPDATE atômico: só avança o status após ter o payment.id
     const { error: updateErr } = await supabaseAdmin
       .from('event_registrations')
       .update({
@@ -379,7 +379,7 @@ export async function createPublicRegistration(
       .eq('id', registration_id);
 
     if (updateErr) {
-      // O pagamento foi criado no Asaas mas nÃƒÂ£o associamos — log crítico
+      // O pagamento foi criado no Asaas mas não associamos —  log crítico
       console.error('[createPublicRegistration] CRITICAL: Asaas payment created but DB update failed:', updateErr.message, { registration_id, payment_id: payment.id });
       // Não deletar: o usuário pode ter sido cobrado. Marcar para reconciliação manual.
       return {
@@ -395,7 +395,7 @@ export async function createPublicRegistration(
         user.id,
         'WARNING',
         'Pagamento Pendente',
-        `VocÃƒÂª tem um pagamento pendente para o evento "${event.title}". Acesse sua aba de inscriÃƒÂ§ÃƒÂµes para concluir o pagamento e garantir sua vaga.`
+        `Você tem um pagamento pendente para o evento "${event.title}". Acesse sua aba de inscrições para concluir o pagamento e garantir sua vaga.`
       );
     }
 
@@ -422,14 +422,14 @@ export async function createPublicRegistration(
     // Rollback seguro com retry e fallback para cancelamento
     await safeRollbackRegistration(supabaseAdmin, registration_id, errMsg);
 
-    // Diferenciar tipos de erro para mensagem mais ÃƒÂºtil
+    // Diferenciar tipos de erro para mensagem mais útil
     if (errMsg.includes('timeout') || errMsg.includes('abort')) {
-      return { error: 'O sistema de pagamentos demorou muito para responder. Sua inscrição foi cancelada e vocÃƒÂª nÃƒÂ£o será cobrado. Tente novamente.' };
+      return { error: 'O sistema de pagamentos demorou muito para responder. Sua inscrição foi cancelada e você não será cobrado. Tente novamente.' };
     }
     if (errMsg.includes('401') || errMsg.includes('403')) {
       return { error: 'Erro de configuração no sistema de pagamentos. Contate a ICRE.' };
     }
-    return { error: 'Falha ao gerar o pagamento. Sua inscrição foi cancelada e vocÃƒÂª nÃƒÂ£o será cobrado. Tente novamente em instantes.' };
+    return { error: 'Falha ao gerar o pagamento. Sua inscrição foi cancelada e você não será cobrado. Tente novamente em instantes.' };
   }
 }
 
@@ -535,11 +535,11 @@ export async function processCheckin(eventId: string, qrCodeData: string): Promi
     .eq('id', registrationId)
     .single();
 
-  if (error || !reg) return { success: false, error: 'Inscrição nÃƒÂ£o encontrada.' };
-  if (reg.status !== 'confirmado') return { success: false, error: 'Inscrição nÃƒÂ£o está confirmada.' };
+  if (error || !reg) return { success: false, error: 'Inscrição não encontrada.' };
+  if (reg.status !== 'confirmado') return { success: false, error: 'Inscrição não está confirmada.' };
   if (reg.event_id !== eventId) return { success: false, error: 'O ingresso pertence a outro evento.' };
 
-  // Validar se o evento permite check-in (nÃƒÂ£o encerrado e ÃƒÂ© o dia certo)
+  // Validar se o evento permite check-in (não encerrado e é o dia certo)
   const { data: eventData } = await supabase.from('events').select('status, date').eq('id', eventId).single();
   if (eventData) {
     if (eventData.status === 'encerrado') {
@@ -556,7 +556,7 @@ export async function processCheckin(eventId: string, qrCodeData: string): Promi
       const [year, month, day] = eventData.date.split('-');
       const eventDateBR = `${day}/${month}/${year}`;
       if (todayBR !== eventDateBR) {
-        return { success: false, error: 'Check-in nÃƒÂ£o permitido. O evento nÃƒÂ£o ÃƒÂ© hoje.' };
+        return { success: false, error: 'Check-in não permitido. O evento não é hoje.' };
       }
     }
   }
@@ -763,7 +763,7 @@ export async function checkInAttendance(eventId: string, name: string, memberId?
       const [year, month, day] = eventData.date.split('-');
       const eventDateBR = `${day}/${month}/${year}`;
       if (todayBR !== eventDateBR) {
-        return { error: 'Check-in manual nÃƒÂ£o permitido. O evento nÃƒÂ£o ÃƒÂ© hoje.' };
+        return { error: 'Check-in manual não permitido. O evento não é hoje.' };
       }
     }
   }
@@ -786,7 +786,7 @@ export async function checkInAttendance(eventId: string, name: string, memberId?
 
   if (error) {
     console.error('[checkInAttendance]', error.message);
-    return { error: 'Falha ao registrar a presenÃƒÂ§a.' };
+    return { error: 'Falha ao registrar a presença.' };
   }
 
   revalidatePath(`/eventos/${eventId}`);
