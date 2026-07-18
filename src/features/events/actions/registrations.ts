@@ -883,7 +883,8 @@ export async function markGiftAsNotified(registrationId: string) {
     return { error: 'Acesso negado.' };
   }
   
-  const { error } = await supabase
+  const supabaseAdmin = await createAdminClient();
+  const { error } = await supabaseAdmin
     .from('event_registrations')
     .update({ gift_notified_at: new Date().toISOString() })
     .eq('id', registrationId)
@@ -921,7 +922,8 @@ export async function acceptRegistrationTerms(registrationId: string) {
     if (!isOwner) return { error: 'Acesso negado.' };
   }
   
-  const { error } = await supabase
+  const supabaseAdmin = await createAdminClient();
+  const { error } = await supabaseAdmin
     .from('event_registrations')
     .update({ terms_accepted_at: new Date().toISOString() })
     .eq('id', registrationId)
