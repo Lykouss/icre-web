@@ -65,7 +65,7 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
         </svg>
       ),
       url: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-      color: 'hover:bg-slate-700/50 hover:text-slate-900 dark:text-white border-black/5 dark:border-white/5',
+      color: 'hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-white border-black/5 dark:border-white/5',
     },
     {
       name: 'Telegram',
@@ -94,7 +94,7 @@ export function ShareEventModal({ isOpen, onClose, eventUrl, eventTitle }: Props
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">Compartilhar Evento</h3>
           <button 
             onClick={onClose}
-            className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors p-1 rounded-lg hover:bg-black/5 dark:bg-white/5"
+            className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors p-1 rounded-lg hover:bg-black/5 dark:bg-white/5"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />

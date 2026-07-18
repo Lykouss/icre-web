@@ -134,7 +134,7 @@ export default function CreatePinPage() {
                   className={`
                     h-16 rounded-2xl font-bold text-xl transition-all active:scale-95
                     ${isDelete
-                      ? 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-800 bg-transparent'
+                      ? 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-800 bg-transparent'
                       : 'bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white border border-blue-300/60 dark:border-slate-700 hover:border-slate-600 shadow-sm'
                     }
                     disabled:opacity-50

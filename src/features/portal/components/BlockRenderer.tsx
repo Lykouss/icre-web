@@ -229,7 +229,7 @@ function YoutubeBlock({ content, layout }: { content: YoutubeContent; layout: Re
         />
       </div>
       {content.channel_url && (
-        <a href={content.channel_url} target="_blank" rel="noopener noreferrer" className="mt-6 text-slate-900 dark:text-white/70 hover:text-slate-900 dark:text-white font-medium transition-colors">
+        <a href={content.channel_url} target="_blank" rel="noopener noreferrer" className="mt-6 text-slate-900 dark:text-white/70 hover:text-slate-900 dark:hover:text-white font-medium transition-colors">
           Ver canal completo →
         </a>
       )}

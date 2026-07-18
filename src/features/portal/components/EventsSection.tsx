@@ -399,7 +399,7 @@ export function EventsSection({ content, events }: Props) {
             >
               <Link
                 href="/agenda"
-                className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-semibold border border-white/60 dark:border-white/10 hover:border-black/25 dark:hover:border-white/25 px-6 py-3 rounded-2xl hover:bg-black/5 dark:bg-white/5 transition-all duration-200"
+                className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-semibold border border-white/60 dark:border-white/10 hover:border-black/25 dark:hover:border-white/25 px-6 py-3 rounded-2xl hover:bg-black/5 dark:bg-white/5 transition-all duration-200"
               >
                 Ver agenda completa
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>

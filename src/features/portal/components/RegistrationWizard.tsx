@@ -226,7 +226,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
         <div className="flex items-center gap-3 mb-8">
           <Link
             href={`/agenda/${event.id}`}
-            className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 transition-all"
+            className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-black/5 dark:bg-white/5 transition-all"
             title="Voltar ao evento"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -348,7 +348,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       onChange={e => setTermsAccepted(e.target.checked)}
                       className="mt-0.5 w-4 h-4 text-blue-500 rounded border-slate-200 dark:border-slate-600 bg-white shadow-2xl shadow-slate-300/80 border dark:border-transparent dark:shadow-none dark:bg-slate-800 accent-blue-500 shrink-0 disabled:opacity-50"
                     />
-                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:text-white transition-colors leading-snug">
+                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:hover:text-white transition-colors leading-snug">
                       Li e aceito as regras e termos deste evento
                     </span>
                   </label>
@@ -547,7 +547,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="px-5 py-3.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 text-sm font-semibold transition-all"
+                        className="px-5 py-3.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-black/5 dark:bg-white/5 text-sm font-semibold transition-all"
                       >
                         Voltar
                       </button>
@@ -626,7 +626,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="px-5 py-3.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 text-sm font-semibold transition-all"
+                        className="px-5 py-3.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-black/5 dark:bg-white/5 text-sm font-semibold transition-all"
                       >
                         Voltar
                       </button>
@@ -715,7 +715,7 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
                     <button
                       type="button"
                       onClick={prevStep}
-                      className="px-5 py-3.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 text-sm font-semibold transition-all"
+                      className="px-5 py-3.5 rounded-xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-black/5 dark:bg-white/5 text-sm font-semibold transition-all"
                     >
                       Voltar
                     </button>

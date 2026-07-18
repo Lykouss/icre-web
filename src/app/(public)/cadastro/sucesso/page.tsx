@@ -299,7 +299,7 @@ function PhotoPhase({ onNext }: PhotoPhaseProps) {
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={isPending}
-            className="w-full border border-slate-200 dark:border-slate-700 hover:border-slate-500 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white font-semibold py-3 rounded-2xl transition-all text-sm disabled:opacity-50"
+            className="w-full border border-slate-200 dark:border-slate-700 hover:border-slate-500 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold py-3 rounded-2xl transition-all text-sm disabled:opacity-50"
           >
             Escolher foto
           </button>

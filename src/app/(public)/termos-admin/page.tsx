@@ -100,7 +100,7 @@ export default function AdminTermsPage() {
                   )}
                 </div>
               </div>
-              <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:text-white transition-colors leading-relaxed">
+              <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:hover:text-white transition-colors leading-relaxed">
                 Li, compreendi e aceito os Termos de Responsabilidade do Administrador da ICRE. Comprometo-me a exercer este cargo com integridade, ética e alinhamento com os valores da igreja.
               </span>
             </label>

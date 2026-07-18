@@ -279,7 +279,7 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
       <button
         type="button"
         onClick={onBack}
-        className="w-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-medium transition-colors py-1"
+        className="w-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-medium transition-colors py-1"
       >
         ← Voltar para o login
       </button>

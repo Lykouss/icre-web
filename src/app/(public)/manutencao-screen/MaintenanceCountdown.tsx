@@ -77,7 +77,7 @@ export function MaintenanceCountdown({ expectedEndAt, serverTime, autoDeactivate
       {isFinished && !autoDeactivate && (
         <button 
           onClick={() => window.location.href = '/'}
-          className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 hover:bg-slate-700 px-4 py-2 rounded-full border-slate-200 dark:border-slate-700 hover:border-slate-600"
+          className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors bg-white/80 backdrop-blur-md dark:backdrop-blur-none border border-slate-200/50 dark:border-transparent dark:bg-slate-800/50 hover:bg-slate-700 px-4 py-2 rounded-full border-slate-200 dark:border-slate-700 hover:border-slate-600"
         >
           <RefreshCw className="w-4 h-4" />
           Tentar acessar novamente

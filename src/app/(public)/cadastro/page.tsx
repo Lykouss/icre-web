@@ -342,7 +342,7 @@ export default function RegisterPage() {
         <div className="flex items-center justify-between mb-8">
           <Link
             href="/login"
-            className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors text-sm font-medium"
+            className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors text-sm font-medium"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -581,7 +581,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={goBack}
                 disabled={phase !== 'idle'}
-                className="flex items-center gap-2 px-5 py-3.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white border border-slate-200 dark:border-blue-300/60 dark:border-slate-700 hover:border-slate-500 rounded-2xl transition-all text-sm font-semibold disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-3.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-blue-300/60 dark:border-slate-700 hover:border-slate-500 rounded-2xl transition-all text-sm font-semibold disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />

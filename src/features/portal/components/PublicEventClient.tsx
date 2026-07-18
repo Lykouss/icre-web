@@ -201,7 +201,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
       <div className="relative max-w-3xl mx-auto px-4 pt-28 pb-16">
         <Link
           href="/agenda"
-          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-medium transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-medium transition-colors mb-8"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -446,7 +446,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
 
                 <div className="flex gap-3 pt-1">
                   <button type="button" onClick={() => setStep('terms')}
-                    className="px-4 py-3 rounded-2xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-semibold transition-colors">
+                    className="px-4 py-3 rounded-2xl border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-semibold transition-colors">
                     Voltar
                   </button>
                   <button
@@ -636,7 +636,7 @@ export function PublicEventClient({ event, spotsLeft, isFull, isAdminPreview }: 
               <div className="mt-4">
                 <Link
                   href="/agenda"
-                  className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm font-medium transition-colors"
+                  className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-medium transition-colors"
                 >
                   Ver outros eventos
                 </Link>

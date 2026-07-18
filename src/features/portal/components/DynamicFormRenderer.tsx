@@ -78,7 +78,7 @@ export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: D
                       required={field.required}
                       className="w-4 h-4 text-blue-500"
                     />
-                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:text-white transition-colors">{opt}</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:hover:text-white transition-colors">{opt}</span>
                   </label>
                 ))}
               </div>
@@ -100,7 +100,7 @@ export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: D
                       }}
                       className="w-4 h-4 text-blue-500 rounded"
                     />
-                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:text-white transition-colors">{opt}</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:hover:text-white transition-colors">{opt}</span>
                   </label>
                 ))}
               </div>
