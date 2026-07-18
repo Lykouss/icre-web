@@ -11,6 +11,7 @@ interface DynamicFormRendererProps {
 }
 
 export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: DynamicFormRendererProps) {
+  const formId = React.useId();
   const cls = inputCls || 'w-full px-4 py-3 bg-slate-800/60 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all';
   const labelCls = 'block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5';
 
@@ -68,16 +69,17 @@ export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: D
             {field.type === 'multiple_choice' && (
               <div className="space-y-2">
                 {(field.options || []).map((opt, idx) => {
-                  const uniqueId = `${field.id}-${idx}`;
+                  const uniqueId = `${formId}-${field.id}-${idx}`;
+                  const uniqueName = `${formId}-${field.id}`;
                   return (
                     <label key={uniqueId} htmlFor={uniqueId} className="flex items-center gap-3 cursor-pointer group">
                       <input
                         id={uniqueId}
                         type="radio"
-                        name={field.id}
+                        name={uniqueName}
                         value={opt}
                         checked={stringValue === opt}
-                        onChange={() => onChange(field.id, opt)}
+                        onChange={(e) => { if (e.target.checked) onChange(field.id, opt); }}
                         required={field.required}
                         className="w-4 h-4 text-blue-500"
                       />
@@ -91,7 +93,7 @@ export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: D
             {field.type === 'checkboxes' && (
               <div className="space-y-2">
                 {(field.options || []).map((opt, idx) => {
-                  const uniqueId = `${field.id}-${idx}`;
+                  const uniqueId = `${formId}-${field.id}-${idx}`;
                   return (
                     <label key={uniqueId} htmlFor={uniqueId} className="flex items-center gap-3 cursor-pointer group">
                       <input
