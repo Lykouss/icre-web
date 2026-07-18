@@ -19,7 +19,7 @@ export default async function ComprovantePage({ params }: { params: Promise<{ id
     .select(`
       id, name, email, phone, status, payment_status, member_id,
       payment_method, payment_amount, paid_at, is_gift, terms_accepted_at,
-      asaas_payment_id, asaas_invoice_url, ticket_signature,
+      asaas_payment_id, asaas_invoice_url, ticket_signature, gifted_by,
       events!inner ( id, title, date, time, location, type, ticket_price, terms_text )
     `)
     .eq('id', id)
@@ -40,7 +40,9 @@ export default async function ComprovantePage({ params }: { params: Promise<{ id
     .maybeSingle();
   const memberId = memberData?.id;
 
-  const isOwner = (memberId && raw.member_id === memberId) || (raw.email && authUser.email && raw.email === authUser.email);
+  const isOwner = (memberId && raw.member_id === memberId) || 
+                  (raw.email && authUser.email && raw.email === authUser.email) || 
+                  (raw.gifted_by === authUser.id);
   const isAdmin = user.isSysAdmin || user.roles.includes('CHURCH_ADMIN');
 
   if (!isOwner && !isAdmin) {

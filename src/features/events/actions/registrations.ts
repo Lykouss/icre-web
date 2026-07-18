@@ -899,7 +899,7 @@ export async function acceptRegistrationTerms(registrationId: string) {
   // SECURITY: Verificar que a inscricao pertence ao usuario
   const { data: reg } = await supabase
     .from('event_registrations')
-    .select('email, member_id')
+    .select('email, member_id, gifted_by')
     .eq('id', registrationId)
     .single();
 
@@ -908,7 +908,9 @@ export async function acceptRegistrationTerms(registrationId: string) {
   if (!user.isAdmin) {
     const { data: profile } = await supabase.from('profiles').select('email').eq('id', user.id).single();
     const { data: member } = await supabase.from('members').select('id').eq('user_id', user.id).maybeSingle();
-    const isOwner = (profile?.email && reg.email === profile.email) || (member?.id && reg.member_id === member.id);
+    const isOwner = (profile?.email && reg.email === profile.email) || 
+                    (member?.id && reg.member_id === member.id) ||
+                    (reg.gifted_by === user.id);
     if (!isOwner) return { error: 'Acesso negado.' };
   }
   
