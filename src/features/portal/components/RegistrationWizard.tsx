@@ -109,9 +109,22 @@ export function RegistrationWizard({ event, spotsLeft, isFull, isAdminPreview }:
   
   // Se não houver texto personalizado de termos, libera automático
   useEffect(() => {
-    if (!event.terms_text) setHasScrolledToBottom(true);
-  }, [event.terms_text]);
-
+    if (!event.terms_text) {
+      setHasScrolledToBottom(true);
+    } else {
+      // Pequeno delay para aguardar a renderização do elemento
+      const timeoutId = setTimeout(() => {
+        if (termsBoxRef.current) {
+          const { scrollHeight, clientHeight } = termsBoxRef.current;
+          // Se o texto não for suficiente para gerar scroll, libera o botão
+          if (scrollHeight <= clientHeight + 10) {
+            setHasScrolledToBottom(true);
+          }
+        }
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [event.terms_text, currentStep]);
   const goTo = useCallback((index: number, dir: 'forward' | 'back') => {
     if (animating) return;
     setDirection(dir);

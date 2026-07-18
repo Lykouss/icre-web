@@ -67,42 +67,50 @@ export function DynamicFormRenderer({ fields, responses, onChange, inputCls }: D
 
             {field.type === 'multiple_choice' && (
               <div className="space-y-2">
-                {(field.options || []).map((opt, idx) => (
-                  <label key={`${idx}-${opt}`} className="flex items-center gap-3 cursor-pointer group">
-                    <input
-                      type="radio"
-                      name={field.id}
-                      value={opt}
-                      checked={stringValue === opt}
-                      onChange={() => onChange(field.id, opt)}
-                      required={field.required}
-                      className="w-4 h-4 text-blue-500"
-                    />
-                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:hover:text-white transition-colors">{opt}</span>
-                  </label>
-                ))}
+                {(field.options || []).map((opt, idx) => {
+                  const uniqueId = `${field.id}-${idx}`;
+                  return (
+                    <label key={uniqueId} htmlFor={uniqueId} className="flex items-center gap-3 cursor-pointer group">
+                      <input
+                        id={uniqueId}
+                        type="radio"
+                        name={field.id}
+                        value={opt}
+                        checked={stringValue === opt}
+                        onChange={() => onChange(field.id, opt)}
+                        required={field.required}
+                        className="w-4 h-4 text-blue-500"
+                      />
+                      <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:hover:text-white transition-colors">{opt}</span>
+                    </label>
+                  );
+                })}
               </div>
             )}
 
             {field.type === 'checkboxes' && (
               <div className="space-y-2">
-                {(field.options || []).map((opt, idx) => (
-                  <label key={`${idx}-${opt}`} className="flex items-center gap-3 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      value={opt}
-                      checked={arrayValue.includes(opt)}
-                      onChange={e => {
-                        const next = e.target.checked
-                          ? [...arrayValue, opt]
-                          : arrayValue.filter(v => v !== opt);
-                        onChange(field.id, next);
-                      }}
-                      className="w-4 h-4 text-blue-500 rounded"
-                    />
-                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:hover:text-white transition-colors">{opt}</span>
-                  </label>
-                ))}
+                {(field.options || []).map((opt, idx) => {
+                  const uniqueId = `${field.id}-${idx}`;
+                  return (
+                    <label key={uniqueId} htmlFor={uniqueId} className="flex items-center gap-3 cursor-pointer group">
+                      <input
+                        id={uniqueId}
+                        type="checkbox"
+                        value={opt}
+                        checked={arrayValue.includes(opt)}
+                        onChange={e => {
+                          const next = e.target.checked
+                            ? [...arrayValue, opt]
+                            : arrayValue.filter(v => v !== opt);
+                          onChange(field.id, next);
+                        }}
+                        className="w-4 h-4 text-blue-500 rounded border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
+                      />
+                      <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:hover:text-white transition-colors">{opt}</span>
+                    </label>
+                  );
+                })}
               </div>
             )}
           </div>
