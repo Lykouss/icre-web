@@ -4,6 +4,7 @@ import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { getUserInbox, markNotificationAsRead } from '@/features/core/actions/communications';
+import { renderMessageWithLinks } from '@/lib/render-message';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type InboxItem = {
@@ -170,7 +171,7 @@ function InboxView() {
               
               <div className="p-6 md:p-10 flex-1 overflow-y-auto">
                 <div className="prose prose-invert max-w-none text-slate-600 dark:text-slate-300 whitespace-pre-wrap leading-relaxed text-sm md:text-base">
-                  {selectedItem.communications.message}
+                  {renderMessageWithLinks(selectedItem.communications.message)}
                 </div>
               </div>
             </motion.div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { renderMessageWithLinks } from '@/lib/render-message';
 
 export type AnnouncementPayload = {
   id: string; // The user_notification id
@@ -81,7 +82,7 @@ export function FullscreenAnnouncement({ announcement, onClose }: FullscreenAnno
               
               <h2 className="text-2xl font-black text-center text-slate-900 dark:text-white mb-4">{announcement.title}</h2>
               <div className="text-slate-600 dark:text-slate-300 text-sm text-center leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto portal-scroll">
-                {announcement.message}
+                {renderMessageWithLinks(announcement.message)}
               </div>
             </div>
 

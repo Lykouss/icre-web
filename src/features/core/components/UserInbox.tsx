@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { getUserInbox, markNotificationAsRead } from '../actions/communications';
+import { renderMessageWithLinks } from '@/lib/render-message';
 import { AnnouncementPayload } from './FullscreenAnnouncement';
 
 type InboxItem = {
@@ -113,7 +114,7 @@ export function UserInbox() {
                         <span className="text-[10px] text-slate-500">{new Date(item.created_at).toLocaleDateString()}</span>
                       </div>
                       <p className={`text-sm ${!item.is_read ? 'font-bold text-slate-900 dark:text-white' : 'font-medium text-slate-600 dark:text-slate-300'}`}>{item.communications.title}</p>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 line-clamp-3 leading-relaxed">{item.communications.message}</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 line-clamp-3 leading-relaxed">{renderMessageWithLinks(item.communications.message)}</p>
                     </div>
                   </div>
                 </DropdownMenu.Item>

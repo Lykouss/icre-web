@@ -168,34 +168,36 @@ export async function syncRegistrationNotifications(userId: string, email: strin
         toNotify = 'GIFT';
         msgType = 'INFO';
         title = 'Você ganhou um Ingresso! 🎁';
-        message = `Você foi presenteado com uma inscrição para o evento "${eventTitle}". Acesse seu comprovante para visualizar e aceitar os termos de participação.`;
+        message = `Você foi presenteado com uma inscrição para o evento [${eventTitle}](/agenda/${reg.event_id}). Acesse seu [comprovante](/comprovante/${reg.id}) para visualizar e aceitar os termos de participação.`;
       } else if (reg.status === 'pendente_pagamento' && !notified.includes('PENDING')) {
         toNotify = 'PENDING';
         msgType = 'WARNING';
         title = 'Pagamento Pendente ⏳';
-        message = `Você tem um pagamento pendente para "${eventTitle}". Acesse sua aba de inscrições para concluir o pagamento.`;
+        message = `Você tem um pagamento pendente para o evento [${eventTitle}](/agenda/${reg.event_id}). Acesse sua [aba de inscrições](/minhas-inscricoes) para concluir o pagamento.`;
       } else if (reg.status === 'confirmado' && !reg.is_gift && !notified.includes('CONFIRMED')) {
         toNotify = 'CONFIRMED';
         msgType = 'INFO';
         title = 'Inscrição Confirmada! 🎉';
-        message = `Sua inscrição para "${eventTitle}" foi confirmada com sucesso! Acesse a aba de inscrições para ver seu ingresso.`;
+        message = `Sua inscrição para o evento [${eventTitle}](/agenda/${reg.event_id}) foi confirmada com sucesso! Acesse seu [comprovante de inscrição](/comprovante/${reg.id}) para ver seu QR Code de acesso.`;
       } else if (reg.status === 'cancelado' && !notified.includes('CANCELLED')) {
         toNotify = 'CANCELLED';
         msgType = 'WARNING';
         title = 'Tempo Expirado ⏰';
-        message = `O tempo limite para pagamento da inscrição em "${eventTitle}" expirou. Sua inscrição foi cancelada automaticamente.`;
+        message = `O tempo limite para pagamento da inscrição no evento [${eventTitle}](/agenda/${reg.event_id}) expirou. Sua inscrição foi cancelada automaticamente.`;
       }
 
       if (toNotify) {
         // Envia notificação
-        await sendSystemNotificationToUser(userId, msgType, title, message);
+        const result = await sendSystemNotificationToUser(userId, msgType, title, message);
         
-        // Atualiza a lista de notificações enviadas nesta inscrição
-        const newNotified = [...notified, toNotify];
-        await admin
-          .from('event_registrations')
-          .update({ notified_events: newNotified })
-          .eq('id', reg.id);
+        if (result?.success) {
+          // Atualiza a lista de notificações enviadas nesta inscrição
+          const newNotified = [...notified, toNotify];
+          await admin
+            .from('event_registrations')
+            .update({ notified_events: newNotified })
+            .eq('id', reg.id);
+        }
       }
     }
   } catch (e) {
