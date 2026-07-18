@@ -89,7 +89,10 @@ export function ReceiptClient({ registration }: Props) {
     setIsAcceptingTerms(true);
     try {
       const { acceptRegistrationTerms } = await import('@/features/events/actions/registrations');
-      await acceptRegistrationTerms(registration.id);
+      const result = await acceptRegistrationTerms(registration.id);
+      if (result.error) {
+        alert('Erro: ' + result.error);
+      }
     } catch (e) {
       console.error(e);
       alert('Erro ao aceitar termos. Tente novamente.');

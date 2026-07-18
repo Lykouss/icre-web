@@ -911,9 +911,11 @@ export async function acceptRegistrationTerms(registrationId: string) {
   if (!reg) return { error: 'Inscrição não encontrada.' };
 
   if (!user.isAdmin) {
+    const { data: { user: authUser } } = await supabase.auth.getUser();
     const { data: profile } = await supabase.from('profiles').select('email').eq('id', user.id).single();
     const { data: member } = await supabase.from('members').select('id').eq('user_id', user.id).maybeSingle();
     const isOwner = (profile?.email && reg.email === profile.email) || 
+                    (authUser?.email && reg.email === authUser.email) ||
                     (member?.id && reg.member_id === member.id) ||
                     (reg.gifted_by === user.id);
     if (!isOwner) return { error: 'Acesso negado.' };
