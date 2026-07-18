@@ -873,8 +873,13 @@ export async function markGiftAsNotified(registrationId: string) {
 
   if (!reg) return { error: 'Inscrição não encontrada.' };
 
+  const { data: { user: authUser } } = await supabase.auth.getUser();
   const { data: profile } = await supabase.from('profiles').select('email').eq('id', user.id).single();
-  if (!user.isAdmin && (!profile?.email || reg.email !== profile.email)) {
+  
+  const authEmail = authUser?.email;
+  const profileEmail = profile?.email;
+  
+  if (!user.isAdmin && reg.email !== authEmail && reg.email !== profileEmail) {
     return { error: 'Acesso negado.' };
   }
   

@@ -122,8 +122,6 @@ export async function sendSystemNotificationToUser(userId: string, type: Communi
         type,
         title,
         message,
-        send_to: 'SPECIFIC',
-        status: 'SENT',
         created_by: userId,
       })
       .select('id')
